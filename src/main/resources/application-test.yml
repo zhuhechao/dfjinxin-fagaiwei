@@ -1,0 +1,113 @@
+spring:
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        druid:
+            driver-class-name: com.mysql.jdbc.Driver
+            url: jdbc:mysql://10.1.2.33:3306/cleanse_db?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+            username: cleanse_sys
+            password: cleanse_sys
+            initial-size: 10
+            max-active: 100
+            min-idle: 10
+            max-wait: 60000
+            pool-prepared-statements: true
+            max-pool-prepared-statement-per-connection-size: 20
+            time-between-eviction-runs-millis: 60000
+            min-evictable-idle-time-millis: 300000
+            #Oracle需要打开注释
+            #validation-query: SELECT 1 FROM DUAL
+            test-while-idle: true
+            test-on-borrow: false
+            test-on-return: false
+            stat-view-servlet:
+                enabled: true
+                url-pattern: /druid/*
+                #login-username: admin
+                #login-password: admin
+            filter:
+                stat:
+                    log-slow-sql: true
+                    slow-sql-millis: 1000
+                    merge-sql: false
+                wall:
+                    config:
+                        multi-statement-allow: true
+#远程ssh系统参数
+system-params:
+    ssh-host: 10.1.2.33
+    ssh-port: 22
+    ssh-user: etl
+    ssh-pwd: etl123
+    sh-check: /home/etl/ETLAuto/dqc/dqc.sh
+    sh-cleanse: /home/etl/ETLAuto/wash/data_wash/bin/wash.sh
+    sh-etl: /home/etl/ETLAuto/wash/data_wash/bin/publish.sh
+    sh-etl-now: /home/etl/ETLAuto/wash/data_wash/bin/wash_now.sh
+    sh-tm: /home/etl/ETLAuto/dqc/mask.sh
+    sh-refresh: /home/cleanse/bin/refresh-impala-metadata.sh
+    sh-cleanse-mode: 0
+    sh-exec-mode: remote
+    sql-dialect: impala
+
+#CA认证中心配置
+gov-redirect:
+    cleanse-web-url : http://172.26.52.168:8095/dataprocess-web/#/caLogin
+    desensitize-web-url : http://172.26.52.168:8095/dataprocess-web/#/caLogin
+    tagmanager-web-url : http://172.26.52.168:8095/dataprocess-web/#/caLogin
+
+#hive数据源
+hive:
+    #    user: hive
+    #    password: hive
+    #    url: jdbc:hive2://192.166.162.140:10000/default
+    user: hive
+    password: hive
+    url: jdbc:hive2://10.1.3.147:21050/hisdb;auth=noSasl
+    driver-class-name: org.apache.hive.jdbc.HiveDriver
+    filters: stat
+    initialSize: 2
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: false
+    maxPoolPreparedStatementPerConnectionSize: 500
+#执行元数据更新所需的参数
+metadata-update-params:
+    run-script: /home/cleanse/msync/metadata-sync-wrap.sh
+    job-type: 3
+
+java:
+    udf:
+        source: .\dfjinxin-fast\udf\JSUDF     #源文件存放路径(没有后缀)
+        path: .\dfjinxin-fast\udf\java\           #文件生成后存放路径
+        name: JSUDF    #源java udf文件类名
+        script: JAVASCRIPT_SOURCE   #需要替换的script源码
+        funcname: FUNCTION_NAME     #需要替换的script函数名
+#        javac: D:\Program Files\Java\jdk1.8.0_121\bin\javac.exe
+#        jar:  D:\Program Files\Java\jdk1.8.0_121\bin\jar.exe
+#        dependencyJar: .\dfjinxin-fast\udf\hive-exec-3.1.1.jar     #依赖编译的包
+#        hdfs: hdfs://master:8020/apps/cleanse
+#        jdbc: jdbc:hive2://10.1.3.147:10000
+#        user: tomcat
+
+#指向springcloud注册中心eureka
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://localhost:8761/eureka/
+#  instance:
+#    status-page-url: http://localhost:${server.port}
+#    instance-id: dfjinxin-fast-1:${server.port}
+
+
+##多数据源的配置
+#dynamic:
+#  datasource:
+#    sdatadb:
+#        driver-class-name: com.mysql.jdbc.Driver
+#        url: jdbc:mysql://10.1.2.33:3306/sdata?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+#        username: cleanse_sys
+#        password: cleanse_sys

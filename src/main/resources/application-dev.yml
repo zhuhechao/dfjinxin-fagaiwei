@@ -1,0 +1,10 @@
+spring:
+    profiles:
+        include: db
+
+mysql:
+    url: jdbc:mysql://localhost:3306/cleanse_0724?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: root
+
+#logPath: E:/0729/demo_logs

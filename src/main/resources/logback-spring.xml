@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+
+    <springProfile name="dev,test">
+        <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
+        <property name="LOG_HOME" value="./fagaiwei_logs"/>
+    </springProfile>
+    <springProfile name="prod">
+        <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
+        <property name="LOG_HOME" value="./logs"/>
+    </springProfile>
+
+    <!-- 将日志输出到控制台 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoder的默认实现类是ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- 按照每天生成日志文件 -->
+    <!--普通日志-->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Prudent>true</Prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/record/record_%d{yyyy-MM-dd}.log</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} [%file:%line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ERROR级别日志 -->
+    <!-- 滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件 RollingFileAppender-->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 过滤器，只记录WARN级别的日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <!-- 最常用的滚动策略，它根据时间来制定滚动策略.既负责滚动也负责出发滚动 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/error/error_%d{yyyy-MM-dd}.log</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger [%file:%line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 开发环境 -->
+    <springProfile name="dev">
+        <logger name="org.springframework.web" level="ERROR"/>
+        <logger name="org.springboot.sample" level="ERROR" />
+        <logger name="io.dfjinxin" level="DEBUG" />
+
+        <!-- 为某个包下的所有类的指定Appender -->
+        <logger name="io.dfjinxin" level="DEBUG" additivity="false">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR"/>
+        </logger>
+
+        <!-- 日志输出级别 -->
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR"/>
+        </root>
+
+    </springProfile>
+
+    <!-- 测试环境 -->
+    <springProfile name="test">
+        <logger name="org.springframework.web" level="ERROR"/>
+        <logger name="org.springboot.sample" level="ERROR" />
+        <logger name="io.dfjinxin" level="DEBUG" />
+
+        <!-- 为某个包下的所有类的指定Appender -->
+        <logger name="io.dfjinxin" level="DEBUG" additivity="false">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR"/>
+        </logger>
+
+        <!-- 日志输出级别 -->
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR"/>
+        </root>
+
+    </springProfile>
+
+    <!-- 生产环境 -->
+    <springProfile name="prod">
+        <logger name="org.springframework.web" level="ERROR"/>
+        <logger name="org.springboot.sample" level="ERROR" />
+        <logger name="io.dfjinxin" level="DEBUG" />
+
+        <!-- 为某个包下的所有类的指定Appender -->
+        <logger name="io.dfjinxin" level="DEBUG" additivity="false">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR"/>
+        </logger>
+
+        <!-- 日志输出级别 -->
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR"/>
+        </root>
+    </springProfile>
+
+</configuration>

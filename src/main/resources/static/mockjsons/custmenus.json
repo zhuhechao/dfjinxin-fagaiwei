@@ -1,0 +1,160 @@
+[
+  {
+    "rootMenuId": "1",
+    "rootMenuName": "数据接入",
+    "outLink": "Y",
+    "menuUrl": "http://www.baidu.com",
+    "children": []
+  },
+  {
+    "rootMenuId": "2",
+    "rootMenuName": "数据清洗",
+    "outLink": "N",
+    "menuUrl": "1",
+    "list": [
+      {
+        "menuId": "21",
+        "name": "数据清洗",
+        "url": "",
+        "parentId": "2",
+        "list": [
+          {
+            "menuId": "211",
+            "name": "信息调研",
+            "url": "",
+            "parentId": "21"
+          },
+          {
+            "menuId": "212",
+            "name": "数据清洗模板",
+            "url": "",
+            "parentId": "21",
+            "list": []
+          },
+          {
+            "menuId": "213",
+            "name": "数据清洗规则",
+            "url": "",
+            "parentId": "21",
+            "list": []
+          },
+          {
+            "menuId": "214",
+            "name": "数据清洗作业",
+            "url": "",
+            "parentId": "21",
+            "list": []
+          },
+          {
+            "menuId": "215",
+            "name": "数据清洗报告",
+            "url": "",
+            "parentId": "21",
+            "list": []
+          }
+        ]
+      },
+      {
+        "menuId": "22",
+        "name": "数据标注",
+        "url": "",
+        "parentId": "2",
+        "list": [
+          {
+            "menuId": "221",
+            "name": "标签类目管理",
+            "url": "",
+            "parentId": "22",
+            "list": []
+          },
+          {
+            "menuId": "222",
+            "name": "自动标注规则",
+            "url": "",
+            "parentId": "22",
+            "list": []
+          },
+          {
+            "menuId": "223",
+            "name": "数据表标注",
+            "url": "",
+            "parentId": "22",
+            "list": []
+          },
+          {
+            "menuId": "224",
+            "name": "数据字段标注",
+            "url": "",
+            "parentId": "22",
+            "list": []
+          }
+        ]
+      },
+      {
+        "menuId": "23",
+        "name": "数据存储",
+        "url": "",
+        "parentId": "2",
+        "list": [
+          {
+            "menuId": "231",
+            "name": "数据检索",
+            "url": "",
+            "parentId": "23",
+            "list": []
+          },
+          {
+            "menuId": "232",
+            "name": "数据脱敏",
+            "url": "",
+            "parentId": "23",
+            "list": []
+          },
+          {
+            "menuId": "233",
+            "name": "数据报告",
+            "url": "",
+            "parentId": "23",
+            "list": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "rootMenuId": "3",
+    "rootMenuName": "数据管理",
+    "outLink": "Y",
+    "menuUrl": "http://www.baidu.com",
+    "children": [
+      {
+        "menuId": "",
+        "name": "",
+        "url": "",
+        "parentId": "",
+        "list": []
+      }
+    ]
+  },
+  {
+    "rootMenuId": "4",
+    "rootMenuName": "数据处理",
+    "outLink": "Y",
+    "menuUrl": "http://www.baidu.com",
+    "children": []
+  },
+  {
+    "rootMenuId": "5",
+    "rootMenuName": "数据分析",
+    "outLink": "Y",
+    "menuUrl": "http://www.baidu.com",
+    "children": []
+  },
+  {
+    "rootMenuId": "6",
+    "rootMenuName": "数据可视化",
+    "outLink": "Y",
+    "menuUrl": "http://www.baidu.com",
+    "children": []
+  }
+]
