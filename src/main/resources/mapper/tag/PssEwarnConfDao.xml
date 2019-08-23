@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.dfjinxin.modules.price.dao.PssEwarnConfDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.dfjinxin.modules.price.entiry.PssEwarnConfEntity" id="pssEwarnConfMap">
+        <result property="ewarnId" column="ewarn_id"/>
+        <result property="ewarnName" column="ewarn_name"/>
+        <result property="ewarnTypeId" column="ewarn_type_id"/>
+        <result property="ewarnLevelId" column="ewarn_level_id"/>
+        <result property="redEwarnUlmt" column="red_ewarn_ulmt"/>
+        <result property="redEwarnLlmt" column="red_ewarn_llmt"/>
+        <result property="ewarnTerm" column="ewarn_term"/>
+        <result property="ewarnDays" column="ewarn_days"/>
+        <result property="beginDate" column="begin_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="crteDate" column="crte_date"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="crteName" column="crte_name"/>
+        <result property="remarks" column="remarks"/>
+    </resultMap>
+
+    <select id="queryPageListCount" resultType="java.lang.Integer">
+        select count(*) from pss_ewarn_conf pec
+        where pec.del_flag =1
+        <if test="param.ewarnName != null ">
+            and pec.ewarn_name=#{param.ewarnName}
+        </if>
+        <if test="param.ewarnTypeId != null ">
+            and pec.ewarn_type_id=#{param.ewarnTypeId}
+        </if>
+    </select>
+
+    <select id="queryPageList" resultMap="pssEwarnConfMap">
+        select pec.* from pss_ewarn_conf pec
+        where pec.del_flag =1
+        <if test="param.ewarnName != null ">
+            and pec.ewarn_name=#{param.ewarnName}
+        </if>
+        <if test="param.ewarnTypeId != null ">
+            and pec.ewarn_type_id=#{param.ewarnTypeId}
+        </if>
+        LIMIT #{param.start}, #{param.pageSize}
+    </select>
+</mapper>
