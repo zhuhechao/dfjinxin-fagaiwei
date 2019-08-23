@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.dfjinxin.modules.price.dao.PssCommTotalDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.dfjinxin.modules.price.entity.PssCommTotalEntity" id="pssCommTotalMap">
+        <result property="commId" column="comm_id"/>
+        <result property="commName" column="comm_name"/>
+        <result property="commAbb" column="comm_abb"/>
+        <result property="parentCode" column="parent_code"/>
+        <result property="levelCode" column="level_code"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createName" column="create_name"/>
+        <result property="dataFlag" column="data_flag"/>
+    </resultMap>
+
+
+</mapper>

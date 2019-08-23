@@ -7,13 +7,12 @@ import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
 import io.dfjinxin.modules.price.dao.PssEwarnConfDao;
 import io.dfjinxin.modules.price.dto.PageListDto;
-import io.dfjinxin.modules.price.entiry.PssEwarnConfEntity;
+import io.dfjinxin.modules.price.entity.PssEwarnConfEntity;
 import io.dfjinxin.modules.price.service.PssEwarnConfService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.management.AttributeList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

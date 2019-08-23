@@ -3,7 +3,7 @@ package io.dfjinxin.modules.price.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.modules.price.dto.PageListDto;
-import io.dfjinxin.modules.price.entiry.PssEwarnConfEntity;
+import io.dfjinxin.modules.price.entity.PssEwarnConfEntity;
 
 import java.util.Map;
 

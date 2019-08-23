@@ -1,4 +1,4 @@
-package io.dfjinxin.modules.price.entiry;
+package io.dfjinxin.modules.price.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

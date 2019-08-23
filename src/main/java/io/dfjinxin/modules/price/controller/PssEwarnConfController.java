@@ -1,11 +1,10 @@
 package io.dfjinxin.modules.price.controller;
 
-import io.dfjinxin.common.annotation.RequiresPermissions;
 import io.dfjinxin.common.utils.FKConstant;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.price.dto.PageListDto;
-import io.dfjinxin.modules.price.entiry.PssEwarnConfEntity;
+import io.dfjinxin.modules.price.entity.PssEwarnConfEntity;
 import io.dfjinxin.modules.price.service.PssEwarnConfService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

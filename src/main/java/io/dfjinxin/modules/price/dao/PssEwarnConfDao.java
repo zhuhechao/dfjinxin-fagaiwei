@@ -2,7 +2,7 @@ package io.dfjinxin.modules.price.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.dfjinxin.modules.price.dto.PageListDto;
-import io.dfjinxin.modules.price.entiry.PssEwarnConfEntity;
+import io.dfjinxin.modules.price.entity.PssEwarnConfEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

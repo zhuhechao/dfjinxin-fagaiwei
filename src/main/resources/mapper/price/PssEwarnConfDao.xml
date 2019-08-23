@@ -4,7 +4,7 @@
 <mapper namespace="io.dfjinxin.modules.price.dao.PssEwarnConfDao">
 
     <!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="io.dfjinxin.modules.price.entiry.PssEwarnConfEntity" id="pssEwarnConfMap">
+    <resultMap type="io.dfjinxin.modules.price.entity.PssEwarnConfEntity" id="pssEwarnConfMap">
         <result property="ewarnId" column="ewarn_id"/>
         <result property="ewarnName" column="ewarn_name"/>
         <result property="ewarnTypeId" column="ewarn_type_id"/>
