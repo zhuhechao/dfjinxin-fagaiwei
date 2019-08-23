@@ -13,7 +13,9 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.management.AttributeList;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +60,17 @@ public class PssEwarnConfServiceImpl extends ServiceImpl<PssEwarnConfDao, PssEwa
 //        0：删除  1：正常
         queryWrapper.eq("del_flag", "1");
         return baseMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public Integer queryLastEwarnId() {
+        List<PssEwarnConfEntity> ewarnIdList = pssEwarnConfDao.queryLastEwarnId();
+        List<Integer> idList = new ArrayList<>();
+        for (PssEwarnConfEntity entity : ewarnIdList) {
+            String[] strArrs = entity.getEwarnId().split("_");
+            idList.add(Integer.valueOf(strArrs[1]));
+        }
+        return Collections.max(idList);
     }
 
 }

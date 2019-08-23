@@ -23,4 +23,6 @@ public interface PssEwarnConfDao extends BaseMapper<PssEwarnConfEntity> {
     Integer queryPageListCount(@Param("param") PageListDto pageListDto);
 
     List<PssEwarnConfEntity> queryPageList(@Param("param") PageListDto pageListDto);
+
+    List<PssEwarnConfEntity> queryLastEwarnId();
 }

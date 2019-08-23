@@ -21,4 +21,6 @@ public interface PssEwarnConfService extends IService<PssEwarnConfEntity> {
     PageUtils queryPageList(PageListDto pageListDto);
 
     PssEwarnConfEntity queryEntityByEwarnId(String ewarnId);
+
+    Integer queryLastEwarnId();
 }

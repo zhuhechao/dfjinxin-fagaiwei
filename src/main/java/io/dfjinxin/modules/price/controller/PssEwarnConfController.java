@@ -1,6 +1,7 @@
 package io.dfjinxin.modules.price.controller;
 
 import io.dfjinxin.common.annotation.RequiresPermissions;
+import io.dfjinxin.common.utils.FKConstant;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.price.dto.PageListDto;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/price/ewarn/conf")
-@Api(tags = "PssEwarnConfController", description = "价格监测子系统-价格预警")
+@Api(tags = "PssEwarnConfController", description = "价格监测子系统-预警配置")
 public class PssEwarnConfController {
 
     @Autowired
@@ -44,14 +45,14 @@ public class PssEwarnConfController {
 
     /**
      * 信息
-     */
+     *//*
     @PostMapping("/info/{ewarnId}")
     @ApiOperation("预警配置-查看")
     public R info(@PathVariable("ewarnId") Integer ewarnId) {
         PssEwarnConfEntity pssEwarnConf = pssEwarnConfService.getById(ewarnId);
 
         return R.ok().put("data", pssEwarnConf);
-    }
+    }*/
 
     /**
      * 保存
@@ -59,6 +60,9 @@ public class PssEwarnConfController {
     @PostMapping("/save")
     @ApiOperation("预警配置-新增")
     public R save(@RequestBody PssEwarnConfEntity pssEwarnConf) {
+        int maxId = pssEwarnConfService.queryLastEwarnId();
+        String earenId = FKConstant.EWARN + (maxId + 1);
+        pssEwarnConf.setEwarnId(earenId);
         pssEwarnConfService.save(pssEwarnConf);
 
         return R.ok();
