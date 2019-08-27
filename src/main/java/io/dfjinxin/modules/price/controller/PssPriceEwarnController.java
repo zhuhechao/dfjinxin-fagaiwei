@@ -1,21 +1,19 @@
 package io.dfjinxin.modules.price.controller;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import io.dfjinxin.common.annotation.RequiresPermissions;
+import io.dfjinxin.common.utils.R;
+import io.dfjinxin.modules.price.entity.PssPriceEwarnEntity;
+import io.dfjinxin.modules.price.service.PssPriceEwarnService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import io.dfjinxin.modules.price.entity.PssPriceEwarnEntity;
-import io.dfjinxin.modules.price.service.PssPriceEwarnService;
-import io.dfjinxin.common.utils.PageUtils;
-import io.dfjinxin.common.utils.R;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
