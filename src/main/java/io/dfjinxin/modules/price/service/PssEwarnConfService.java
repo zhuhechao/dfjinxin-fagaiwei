@@ -1,10 +1,11 @@
 package io.dfjinxin.modules.price.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import io.dfjinxin.common.dto.PssEwarnConfDto;
 import io.dfjinxin.common.utils.PageUtils;
-import io.dfjinxin.modules.price.dto.PageListDto;
 import io.dfjinxin.modules.price.entity.PssEwarnConfEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,9 +19,9 @@ public interface PssEwarnConfService extends IService<PssEwarnConfEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
-    PageUtils queryPageList(PageListDto pageListDto);
+    PageUtils queryPageList(PssEwarnConfDto pssEwarnConfDto);
 
     PssEwarnConfEntity queryEntityByEwarnId(String ewarnId);
 
-    Integer queryLastEwarnId();
+    List<PssEwarnConfEntity> getWarnTypeAndName(String ewarnTypeId);
 }

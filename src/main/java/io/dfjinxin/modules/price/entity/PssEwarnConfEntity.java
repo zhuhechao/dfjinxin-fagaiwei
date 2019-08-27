@@ -21,11 +21,8 @@ import lombok.Data;
 public class PssEwarnConfEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
-    @TableId(type = IdType.INPUT)
-    private String ewarnId;
+    @TableId
+    private Integer ewarnId;
     /**
      *
      */
@@ -37,15 +34,35 @@ public class PssEwarnConfEntity implements Serializable {
     /**
      *
      */
-    private String ewarnLevelId;
+    private BigDecimal ewarnUlmtRed;
     /**
      *
      */
-    private BigDecimal redEwarnUlmt;
+    private BigDecimal ewarnLlmtRed;
     /**
      *
      */
-    private BigDecimal redEwarnLlmt;
+    private BigDecimal ewarnUlmtOrange;
+    /**
+     *
+     */
+    private BigDecimal ewarnLlmtOrange;
+    /**
+     *
+     */
+    private BigDecimal ewarnUlmtYellow;
+    /**
+     *
+     */
+    private BigDecimal ewarnLlmtYellow;
+    /**
+     *
+     */
+    private BigDecimal ewarnUlmtGreen;
+    /**
+     *
+     */
+    private BigDecimal ewarnLlmtGreen;
     /**
      *
      */

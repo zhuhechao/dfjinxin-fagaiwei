@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.dfjinxin.modules.price.dao.WpAsciiInfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.dfjinxin.modules.price.entity.WpAsciiInfoEntity" id="wpAsciiInfoMap">
+        <result property="codeId" column="code_id"/>
+        <result property="codeName" column="code_name"/>
+        <result property="codeSimple" column="code_simple"/>
+        <result property="pCodeVal" column="p_code_val"/>
+        <result property="dataTime" column="data_time"/>
+        <result property="codeStatus" column="code_status"/>
+        <result property="crteName" column="crte_name"/>
+    </resultMap>
+
+
+</mapper>

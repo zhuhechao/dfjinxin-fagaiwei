@@ -1,19 +1,15 @@
-package io.dfjinxin.modules.price.dto;
+package io.dfjinxin.common.dto;
 
 import lombok.Data;
 
 /**
  * @Desc:
  * @Author: z.h.c
- * @Date: 2019/8/22 16:36
+ * @Date: 2019/8/26 11:32
  * @Version: 1.0
  */
-
 @Data
-public class PageListDto {
-
-    private String ewarnTypeId;// 预警类型id
-    private String ewarnName;// 预警名称
+public class QueryBaseDto {
 
     private int pageIndex;//当前页
     private int pageSize;//每页显示条数

@@ -3,20 +3,19 @@ package io.dfjinxin.modules.price.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.dfjinxin.common.dto.PssEwarnConfDto;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
 import io.dfjinxin.modules.price.dao.PssEwarnConfDao;
-import io.dfjinxin.modules.price.dto.PageListDto;
 import io.dfjinxin.modules.price.entity.PssEwarnConfEntity;
+import io.dfjinxin.modules.price.entity.WpAsciiInfoEntity;
 import io.dfjinxin.modules.price.service.PssEwarnConfService;
+import io.dfjinxin.modules.price.service.WpAsciiInfoService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Desc:
@@ -30,6 +29,10 @@ public class PssEwarnConfServiceImpl extends ServiceImpl<PssEwarnConfDao, PssEwa
     @Autowired
     private PssEwarnConfDao pssEwarnConfDao;
 
+    @Autowired
+    private WpAsciiInfoService wpAsciiInfoService;
+
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<PssEwarnConfEntity> page = this.page(
@@ -41,11 +44,11 @@ public class PssEwarnConfServiceImpl extends ServiceImpl<PssEwarnConfDao, PssEwa
     }
 
     @Override
-    public PageUtils queryPageList(PageListDto pageListDto) {
+    public PageUtils queryPageList(PssEwarnConfDto pssEwarnConfDto) {
 
-        int totalCount = pssEwarnConfDao.queryPageListCount(pageListDto);
-        List<PssEwarnConfEntity> returnList = pssEwarnConfDao.queryPageList(pageListDto);
-        return new PageUtils(returnList, totalCount, pageListDto.getPageSize(), pageListDto.getPageIndex());
+        int totalCount = pssEwarnConfDao.queryPageListCount(pssEwarnConfDto);
+        List<PssEwarnConfEntity> returnList = pssEwarnConfDao.queryPageList(pssEwarnConfDto);
+        return new PageUtils(returnList, totalCount, pssEwarnConfDto.getPageSize(), pssEwarnConfDto.getPageIndex());
     }
 
     @Override
@@ -61,15 +64,26 @@ public class PssEwarnConfServiceImpl extends ServiceImpl<PssEwarnConfDao, PssEwa
         return baseMapper.selectOne(queryWrapper);
     }
 
+
     @Override
-    public Integer queryLastEwarnId() {
-        List<PssEwarnConfEntity> ewarnIdList = pssEwarnConfDao.queryLastEwarnId();
-        List<Integer> idList = new ArrayList<>();
-        for (PssEwarnConfEntity entity : ewarnIdList) {
-            String[] strArrs = entity.getEwarnId().split("_");
-            idList.add(Integer.valueOf(strArrs[1]));
+    public List<PssEwarnConfEntity> getWarnTypeAndName(String codeSimple) {
+
+        if (StringUtils.isBlank(codeSimple)) {
+            return null;
         }
-        return Collections.max(idList);
+
+        List<WpAsciiInfoEntity> list = wpAsciiInfoService.getInfoByType(codeSimple);
+
+        List resultList = new ArrayList();
+        for (WpAsciiInfoEntity entity : list) {
+            QueryWrapper queryWrapper = new QueryWrapper();
+            queryWrapper.in("ewarn_type_id", entity.getCodeSimple());
+            queryWrapper.eq("del_flag", "1");
+            List<PssEwarnConfEntity> pssEwarnConfEntityList = pssEwarnConfDao.selectList(queryWrapper);
+            entity.setEwarnNamelist(pssEwarnConfEntityList);
+            resultList.add(entity);
+        }
+        return resultList;
     }
 
 }

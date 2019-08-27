@@ -8,9 +8,14 @@
         <result property="ewarnId" column="ewarn_id"/>
         <result property="ewarnName" column="ewarn_name"/>
         <result property="ewarnTypeId" column="ewarn_type_id"/>
-        <result property="ewarnLevelId" column="ewarn_level_id"/>
-        <result property="redEwarnUlmt" column="red_ewarn_ulmt"/>
-        <result property="redEwarnLlmt" column="red_ewarn_llmt"/>
+        <result property="ewarnUlmtRed" column="ewarn_ulmt_red"/>
+        <result property="ewarnLlmtRed" column="ewarn_llmt_red"/>
+        <result property="ewarnUlmtOrange" column="ewarn_ulmt_orange"/>
+        <result property="ewarnLlmtOrange" column="ewarn_llmt_orange"/>
+        <result property="ewarnUlmtYellow" column="ewarn_ulmt_yellow"/>
+        <result property="ewarnLlmtYellow" column="ewarn_llmt_yellow"/>
+        <result property="ewarnUlmtGreen" column="ewarn_ulmt_green"/>
+        <result property="ewarnLlmtGreen" column="ewarn_llmt_green"/>
         <result property="ewarnTerm" column="ewarn_term"/>
         <result property="ewarnDays" column="ewarn_days"/>
         <result property="beginDate" column="begin_date"/>
@@ -42,9 +47,5 @@
             and pec.ewarn_type_id=#{param.ewarnTypeId}
         </if>
         LIMIT #{param.start}, #{param.pageSize}
-    </select>
-
-    <select id="queryLastEwarnId" resultMap="pssEwarnConfMap">
-        select c.ewarn_id from pss_ewarn_conf c
     </select>
 </mapper>

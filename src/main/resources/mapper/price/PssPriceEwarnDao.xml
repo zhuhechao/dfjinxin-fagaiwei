@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.dfjinxin.modules.price.dao.PssPriceEwarnDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.dfjinxin.modules.price.entity.PssPriceEwarnEntity" id="pssPriceEwarnMap">
+        <result property="ewarnId" column="ewarn_id"/>
+        <result property="commId" column="comm_id"/>
+        <result property="ewarnDate" column="ewarn_date"/>
+        <result property="statAreaCode" column="stat_area_code"/>
+        <result property="pricTypeId" column="pric_type_id"/>
+        <result property="ewarnTypeId" column="ewarn_type_id"/>
+        <result property="ewarnLevel" column="ewarn_level"/>
+        <result property="priValue" column="pri_value"/>
+        <result property="priRange" column="pri_range"/>
+    </resultMap>
+
+    <select id="queryList" resultMap="pssPriceEwarnMap">
+        select ppe.*, pct.comm_name
+        from PSS_price_ewarn ppe
+        left join pss_comm_total pct on ppe.comm_id = pct.comm_id
+        where pct.comm_id in (select comm_id
+                      from pss_comm_total
+                      where parent_code in (
+                          select comm_id
+                          from pss_comm_total
+                          where parent_code =#{commId}
+                          and data_flag=0
+                      ))
+        and pct.level_code=2
+        and pct.data_flag=0
+        order by ppe.ewarn_level desc
+    </select>
+
+
+</mapper>

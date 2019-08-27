@@ -1,9 +1,9 @@
 package io.dfjinxin.modules.price.controller;
 
-import io.dfjinxin.common.utils.FKConstant;
+import io.dfjinxin.common.dto.PssEwarnConfDto;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
-import io.dfjinxin.modules.price.dto.PageListDto;
+import io.dfjinxin.common.validator.ValidatorUtils;
 import io.dfjinxin.modules.price.entity.PssEwarnConfEntity;
 import io.dfjinxin.modules.price.service.PssEwarnConfService;
 import io.swagger.annotations.Api;
@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 /**
@@ -29,9 +31,10 @@ public class PssEwarnConfController {
     @Autowired
     private PssEwarnConfService pssEwarnConfService;
 
+
     @PostMapping("/queryPageList")
     @ApiOperation("预警配置-查询")
-    public R list(@RequestBody PageListDto params) {
+    public R queryPageList(@RequestBody PssEwarnConfDto params) {
 
         if (params == null) {
             R.error("请求参数为空!");
@@ -43,15 +46,18 @@ public class PssEwarnConfController {
 
 
     /**
-     * 信息
-     *//*
-    @PostMapping("/info/{ewarnId}")
-    @ApiOperation("预警配置-查看")
-    public R info(@PathVariable("ewarnId") Integer ewarnId) {
-        PssEwarnConfEntity pssEwarnConf = pssEwarnConfService.getById(ewarnId);
+     * 根据代码简称查询代码类型
+     */
+    @GetMapping("/getEwarnBycodeSimple/{codeSimple}")
+    @ApiOperation("根据代码简称类型,查询预警类型&预警名称")
+    public R getEwarnBycodeSimple(@PathVariable("codeSimple") String codeSimple) {
 
-        return R.ok().put("data", pssEwarnConf);
-    }*/
+        if (StringUtils.isBlank(codeSimple)) {
+            R.error("请求参数为空!");
+        }
+        List<PssEwarnConfEntity> list = pssEwarnConfService.getWarnTypeAndName(codeSimple);
+        return R.ok().put("data", list);
+    }
 
     /**
      * 保存
@@ -59,9 +65,7 @@ public class PssEwarnConfController {
     @PostMapping("/save")
     @ApiOperation("预警配置-新增")
     public R save(@RequestBody PssEwarnConfEntity pssEwarnConf) {
-        int maxId = pssEwarnConfService.queryLastEwarnId();
-        String earenId = FKConstant.EWARN + (maxId + 1);
-        pssEwarnConf.setEwarnId(earenId);
+        ValidatorUtils.validateEntity(pssEwarnConf);
         pssEwarnConfService.save(pssEwarnConf);
 
         return R.ok();
@@ -85,5 +89,6 @@ public class PssEwarnConfController {
         pssEwarnConfService.updateById(pssEwarnConfEntity);
         return R.ok();
     }
+
 
 }

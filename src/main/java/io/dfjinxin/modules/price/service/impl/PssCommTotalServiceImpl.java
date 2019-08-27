@@ -1,5 +1,15 @@
 package io.dfjinxin.modules.price.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.dfjinxin.common.dto.PssCommTotalDto;
+import io.dfjinxin.common.utils.PageUtils;
+import io.dfjinxin.common.utils.Query;
+import io.dfjinxin.modules.price.dao.PssCommTotalDao;
+import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
+import io.dfjinxin.modules.price.entity.PssEwarnConfEntity;
+import io.dfjinxin.modules.price.service.PssCommTotalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,22 +18,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import io.dfjinxin.common.utils.PageUtils;
-import io.dfjinxin.common.utils.Query;
-
-import io.dfjinxin.modules.price.dao.PssCommTotalDao;
-import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
-import io.dfjinxin.modules.price.service.PssCommTotalService;
-
 
 @Service("pssCommTotalService")
 public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCommTotalEntity> implements PssCommTotalService {
 
-//    @Autowired
-//    private PssCommTotalDao pssCommTotalDao;
+    @Autowired
+    private PssCommTotalDao pssCommTotalDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -68,6 +68,13 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
         resultMap.put("commType2",commType2);
         resultMap.put("commType3",commType3);
         return resultMap;
+    }
+
+    @Override
+    public PageUtils queryPageList(PssCommTotalDto pssCommTotalDto) {
+        int totalCount = pssCommTotalDao.queryPageListCount(pssCommTotalDto);
+        List<PssEwarnConfEntity> returnList = pssCommTotalDao.queryPageList(pssCommTotalDto);
+        return new PageUtils(returnList, totalCount, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
     }
 
 }

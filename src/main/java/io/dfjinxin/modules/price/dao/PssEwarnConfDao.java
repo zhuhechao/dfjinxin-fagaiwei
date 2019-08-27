@@ -1,7 +1,7 @@
 package io.dfjinxin.modules.price.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import io.dfjinxin.modules.price.dto.PageListDto;
+import io.dfjinxin.common.dto.PssEwarnConfDto;
 import io.dfjinxin.modules.price.entity.PssEwarnConfEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -20,9 +20,8 @@ import java.util.List;
 @Repository
 public interface PssEwarnConfDao extends BaseMapper<PssEwarnConfEntity> {
 
-    Integer queryPageListCount(@Param("param") PageListDto pageListDto);
+    Integer queryPageListCount(@Param("param") PssEwarnConfDto pssEwarnConfDto);
 
-    List<PssEwarnConfEntity> queryPageList(@Param("param") PageListDto pageListDto);
+    List<PssEwarnConfEntity> queryPageList(@Param("param") PssEwarnConfDto pssEwarnConfDto);
 
-    List<PssEwarnConfEntity> queryLastEwarnId();
 }

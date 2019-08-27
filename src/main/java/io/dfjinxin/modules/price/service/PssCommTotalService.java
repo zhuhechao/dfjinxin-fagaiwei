@@ -1,6 +1,7 @@
 package io.dfjinxin.modules.price.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import io.dfjinxin.common.dto.PssCommTotalDto;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 
@@ -19,5 +20,7 @@ public interface PssCommTotalService extends IService<PssCommTotalEntity> {
     PageUtils queryPage(Map<String, Object> params);
 
     Map<String,List<PssCommTotalEntity>> queryCommType();
+
+    PageUtils queryPageList(PssCommTotalDto params);
 }
 

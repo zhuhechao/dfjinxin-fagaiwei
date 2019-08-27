@@ -3,7 +3,7 @@
 
 <mapper namespace="io.dfjinxin.modules.price.dao.PssCommTotalDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="io.dfjinxin.modules.price.entity.PssCommTotalEntity" id="pssCommTotalMap">
         <result property="commId" column="comm_id"/>
         <result property="commName" column="comm_name"/>
@@ -14,6 +14,51 @@
         <result property="createName" column="create_name"/>
         <result property="dataFlag" column="data_flag"/>
     </resultMap>
+
+    <select id="queryPageListCount" resultType="java.lang.Integer">
+        SELECT count(pct.comm_id)
+        FROM pss_comm_total pct
+        left join pss_comm_conf pcc on pct.comm_id=pcc.comm_id
+        left join pss_ewarn_conf pec on pcc.ewarn_id = pec.ewarn_id
+        where pct.data_flag=0 and pcc.del_flag=1 and pec.del_flag=1
+        <if test="param.commId1 != null and param.commId1 !=''">
+            and pct.comm_id=#{param.commId1}
+            and pct.level_code=0
+        </if>
+        <if test="param.commId2 != null and param.commId2 !=''">
+            and pct.comm_id=#{param.commId2}
+            and pct.level_code=1
+        </if>
+        <if test="param.commId3 != null and param.commId3 !=''">
+            and pct.comm_id=#{param.commId3}
+            and pct.level_code=2
+        </if>
+    </select>
+
+    <select id="queryPageList" resultMap="pssCommTotalMap">
+        SELECT pct.*,
+        pcc.ewarn_id,
+        pcc.remarks,
+        pec.ewarn_id,
+        pec.ewarn_name
+        FROM pss_comm_total pct
+        left join pss_comm_conf pcc on pct.comm_id=pcc.comm_id
+        left join pss_ewarn_conf pec on pcc.ewarn_id = pec.ewarn_id
+        where pct.data_flag=0 and pcc.del_flag=1 and pec.del_flag=1
+        <if test="param.commId1 != null and param.commId1 !=''">
+            and pct.comm_id=#{param.commId1}
+            and pct.level_code=0
+        </if>
+        <if test="param.commId2 != null and param.commId2 !=''">
+            and pct.comm_id=#{param.commId2}
+            and pct.level_code=1
+        </if>
+        <if test="param.commId3 != null and param.commId3 !=''">
+            and pct.comm_id=#{param.commId3}
+            and pct.level_code=2
+        </if>
+        LIMIT #{param.start}, #{param.pageSize}
+    </select>
 
 
 </mapper>
