@@ -3,16 +3,17 @@
 
 <mapper namespace="io.dfjinxin.modules.price.dao.WpCommPriDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="io.dfjinxin.modules.price.entity.WpCommPriEntity" id="wpCommPriMap">
-        <result property="id" column="id"/>
+        <result property="seqId" column="seq_id"/>
         <result property="commId" column="comm_id"/>
         <result property="commName" column="comm_name"/>
-        <result property="commAbb" column="comm_abb"/>
         <result property="areaName" column="area_name"/>
         <result property="areaId" column="area_id"/>
+        <result property="countryName" column="country_name"/>
+        <result property="countryId" column="country_id"/>
         <result property="statFreq" column="stat_freq"/>
-        <result property="codeId" column="code_id"/>
+        <result property="currency" column="currency"/>
         <result property="priType" column="pri_type"/>
         <result property="priToday" column="pri_today"/>
         <result property="priUnit" column="pri_unit"/>

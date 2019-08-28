@@ -20,6 +20,6 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
 
     List<PssPriceEwarnEntity> queryList();
 
-    List<PssPriceEwarnEntity> queryDetail(Integer commId,Integer ewarnTypeId);
+    List<Object> queryDetail(Integer commId,Integer ewarnTypeId);
 }
 

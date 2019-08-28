@@ -20,4 +20,9 @@ import java.util.List;
 public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
 
     List<PssPriceEwarnEntity> queryList(@Param("commId") Integer commId);
+
+    List<PssPriceEwarnEntity> queryEchartsData(@Param("commId")Integer commId,
+                                               @Param("ewarnTypeId")Integer ewarnTypeId,
+                                               @Param("startDateStr") String startDateStr,
+                                               @Param("endDateStr") String endDateStr);
 }

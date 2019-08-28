@@ -9,8 +9,8 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 
- * 
+ *
+ *
  * @author z.h.c
  * @email z.h.c@126.com
  * @date 2019-08-27 17:23:11
@@ -21,56 +21,60 @@ public class WpCommPriEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 *
 	 */
 	@TableId
-	private Integer id;
+	private Integer seqId;
 	/**
-	 * 
+	 *
 	 */
 	private Integer commId;
 	/**
-	 * 
+	 *
 	 */
 	private String commName;
 	/**
-	 * 
-	 */
-	private String commAbb;
-	/**
-	 * 
+	 *
 	 */
 	private String areaName;
 	/**
-	 * 
+	 *
 	 */
 	private Integer areaId;
 	/**
-	 * 
+	 *
+	 */
+	private String countryName;
+	/**
+	 *
+	 */
+	private Integer countryId;
+	/**
+	 *
 	 */
 	private String statFreq;
 	/**
-	 * 
+	 *
 	 */
-	private String codeId;
+	private String currency;
 	/**
-	 * 
+	 *
 	 */
 	private String priType;
 	/**
-	 * 
+	 *
 	 */
 	private BigDecimal priToday;
 	/**
-	 * 
+	 *
 	 */
 	private String priUnit;
 	/**
-	 * 
+	 *
 	 */
 	private Date dataTime;
 	/**
-	 * 
+	 *
 	 */
 	private String dataSource;
 

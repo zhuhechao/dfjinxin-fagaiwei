@@ -28,9 +28,20 @@
                           where parent_code =#{commId}
                           and data_flag=0
                       ))
-        and pct.level_code=2
+        and pct.level_code=3
         and pct.data_flag=0
         order by ppe.ewarn_level desc
+    </select>
+
+    <select id="queryEchartsData" resultMap="pssPriceEwarnMap">
+        select ppe.*
+        from pss_price_ewarn ppe
+        where ppe.comm_id in (
+            select wcp.comm_id FROM wp_comm_pri wcp
+            WHERE wcp.data_time between #{startDateStr} and #{endDateStr}
+            and wcp.comm_id = #{commId}
+         )
+        and ppe.ewarn_type_id = #{ewarnTypeId}
     </select>
 
 
