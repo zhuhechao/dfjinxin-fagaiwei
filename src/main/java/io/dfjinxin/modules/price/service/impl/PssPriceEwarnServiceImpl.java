@@ -62,9 +62,10 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     }
 
     @Override
-    public List<PssPriceEwarnEntity> queryDetail(Integer commId) {
+    public List<PssPriceEwarnEntity> queryDetail(Integer commId,Integer ewarnTypeId) {
         QueryWrapper where1 = new QueryWrapper();
         where1.in("comm_id", commId);
+        where1.eq("ewarn_type_id", ewarnTypeId);
         return baseMapper.selectList(where1);
     }
 

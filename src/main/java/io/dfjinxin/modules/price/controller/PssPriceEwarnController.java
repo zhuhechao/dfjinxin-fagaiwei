@@ -6,10 +6,7 @@ import io.dfjinxin.modules.price.service.PssPriceEwarnService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -46,8 +43,8 @@ public class PssPriceEwarnController {
      */
     @GetMapping("/detail/{commId}")
     @ApiOperation("价格预警详情")
-    public R detail(@PathVariable("commId") Integer commId) {
-        List<PssPriceEwarnEntity> list = pssPriceEwarnService.queryDetail(commId);
+    public R detail(@PathVariable("commId") Integer commId, @RequestParam Integer ewarnTypeId) {
+        List<PssPriceEwarnEntity> list = pssPriceEwarnService.queryDetail(commId,ewarnTypeId);
         List<BigDecimal> dataPoints = new ArrayList<>();
         for (PssPriceEwarnEntity entity : list) {
             dataPoints.add(entity.getPriValue());

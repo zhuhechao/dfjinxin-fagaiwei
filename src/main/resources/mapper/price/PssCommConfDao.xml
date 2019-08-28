@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.dfjinxin.modules.price.dao.PssCommConfDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.dfjinxin.modules.price.entity.PssCommConfEntity" id="pssCommConfMap">
+        <result property="commId" column="comm_id"/>
+        <result property="ewarnId" column="ewarn_id"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="crteDate" column="crte_date"/>
+        <result property="remarks" column="remarks"/>
+    </resultMap>
+
+    <insert id="saveCommConf">
+        insert into pss_comm_conf (comm_id,ewarn_id,del_flag,crte_date)
+        values
+        <foreach collection="ewarnIds" item="item" index="index" separator=",">
+            (
+            #{commId},
+            #{item},
+            1,
+            now()
+            )
+        </foreach>
+    </insert>
+
+
+</mapper>
