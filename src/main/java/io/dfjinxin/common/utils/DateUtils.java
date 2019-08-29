@@ -4,11 +4,17 @@
 
 package io.dfjinxin.common.utils;
 
+import antlr.PythonCharFormatter;
+import antlr.PythonCodeGenerator;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.python.util.PythonInterpreter;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.Rserve.RConnection;
+import org.rosuda.REngine.Rserve.RserveException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -300,24 +306,46 @@ public class DateUtils {
     public static void main(String[] args) {
 //        System.out.println(DateUtils.getYearFirstDayStr());
 //        System.out.println(DateUtils.getMonthDiffDay());
-        System.out.println(DateUtils.getYearDiffDay());
-//        System.out.println(DateUtils.getYearFirstDayStr());
+//        System.out.println(DateUtils.getYearDiffDay());
+//        PythonInterpreter interpreter = new PythonInterpreter();
+//        interpreter.exec("a=[5,2,3,9,4,0]; ");
+//        interpreter.exec("print(sorted(a));");  //此处python语句是3.x版本的语法
 
-        //设置转换的日期格式
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//        //开始时间
-//        Date startDate = null;
-//        Date endDate = null;
-//        try {
-//            startDate = sdf.parse(DateUtils.getYearFirstDayStr());
-//            endDate = sdf.parse(DateUtils.getCurrentDayStr());
-//        } catch (Exception e) {
-//
-//        }
-//        //得到相差的天数 betweenDate
-//        long betweenDate = (endDate.getTime() - startDate.getTime()) / (60 * 60 * 24 * 1000);
-//
-//        //打印控制台相差的天数
-//        System.out.println(betweenDate);
+        RConnection connection = null;
+        System.out.println("平均值");
+        try {
+            //创建对象
+            connection = new RConnection();
+            String vetor = "c(1,2,3,4)";
+            connection.eval("meanVal<-mean(" + vetor + ")");
+
+            //System.out.println("the mean of given vector is="+mean);
+            double mean = 0;
+            try {
+                mean = connection.eval("meanVal").asDouble();
+            } catch (REXPMismatchException e) {
+                e.printStackTrace();
+            }
+            System.out.println("the mean of given vector is=" + mean);
+            //connection.eval(arg0)
+
+        } catch (RserveException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println("执行脚本");
+        try {
+            connection.eval("source('D:/myAdd.R')");//此处路径也可以这样写D:\\\\myAdd.R
+            int num1 = 20;
+            int num2 = 10;
+            int sum = connection.eval("myAdd(" + num1 + "," + num2 + ")").asInteger();
+            System.out.println("the sum=" + sum);
+        } catch (RserveException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (REXPMismatchException e) {
+            e.printStackTrace();
+        }
+        connection.close();
     }
 }

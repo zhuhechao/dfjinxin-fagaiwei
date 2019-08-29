@@ -13,6 +13,6 @@ import lombok.Data;
 public class PssEwarnConfDto extends QueryBaseDto {
 
     private String ewarnTypeId;// 预警类型id
-    private String ewarnName;// 预警名称
+    private Integer ewarnId;// 预警ID
 
 }

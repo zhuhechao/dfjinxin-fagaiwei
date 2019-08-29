@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -26,6 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/price/ewarn/conf")
 @Api(tags = "PssEwarnConfController", description = "价格监测子系统-预警配置")
+//@Api(tags={"用户操作接口"})
 public class PssEwarnConfController {
 
     @Autowired
@@ -66,6 +68,8 @@ public class PssEwarnConfController {
     @ApiOperation("预警配置-新增")
     public R save(@RequestBody PssEwarnConfEntity pssEwarnConf) {
         ValidatorUtils.validateEntity(pssEwarnConf);
+        pssEwarnConf.setDelFlag("1");
+        pssEwarnConf.setCrteDate(new Date());
         pssEwarnConfService.save(pssEwarnConf);
 
         return R.ok();

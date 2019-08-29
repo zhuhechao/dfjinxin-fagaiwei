@@ -73,11 +73,10 @@ public class PssEwarnConfServiceImpl extends ServiceImpl<PssEwarnConfDao, PssEwa
         }
 
         List<WpAsciiInfoEntity> list = wpAsciiInfoService.getInfoByType(codeSimple);
-
         List resultList = new ArrayList();
         for (WpAsciiInfoEntity entity : list) {
             QueryWrapper queryWrapper = new QueryWrapper();
-            queryWrapper.in("ewarn_type_id", entity.getCodeSimple());
+            queryWrapper.in("ewarn_type_id", entity.getCodeId());
             queryWrapper.eq("del_flag", "1");
             List<PssEwarnConfEntity> pssEwarnConfEntityList = pssEwarnConfDao.selectList(queryWrapper);
             entity.setEwarnNamelist(pssEwarnConfEntityList);
