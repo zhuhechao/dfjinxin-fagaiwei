@@ -1,15 +1,13 @@
 package io.dfjinxin.modules.price.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
-
-import javax.jdo.annotations.Column;
+import java.util.List;
 
 /**
  *
@@ -65,5 +63,8 @@ public class PssCommTotalEntity implements Serializable {
 
 	@TableField(exist = false)
 	private String ewarnName;
+
+	@TableField(exist = false)
+	private List<PssCommTotalEntity> subCommList;
 
 }

@@ -23,5 +23,17 @@ public interface PssCommTotalDao extends BaseMapper<PssCommTotalEntity> {
 
     int queryPageListCount(@Param("param") PssCommTotalDto pssCommTotalDto);
 
-    List<PssEwarnConfEntity> queryPageList(@Param("param") PssCommTotalDto pssCommTotalDto);
+    List<PssCommTotalEntity> queryPageList(@Param("param") PssCommTotalDto pssCommTotalDto);
+
+    int queryPageListCountByLevelCode0(@Param("param") PssCommTotalDto pssCommTotalDto);
+
+    List<PssCommTotalEntity> queryPageLisByLevelCode0(@Param("param") PssCommTotalDto pssCommTotalDto);
+
+    int queryPageListCountByLevelCode1(@Param("param") PssCommTotalDto pssCommTotalDto);
+
+    List<PssCommTotalEntity> queryPageLisByLevelCode1(@Param("param") PssCommTotalDto pssCommTotalDto);
+
+    int queryPageListCountByLevelCode2(PssCommTotalDto pssCommTotalDto);
+
+    List<PssCommTotalEntity> queryPageLisByLevelCode2(PssCommTotalDto pssCommTotalDto);
 }

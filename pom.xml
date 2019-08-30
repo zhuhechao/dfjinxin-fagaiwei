@@ -263,11 +263,11 @@
 			<artifactId>ehcache</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.python</groupId>
-			<artifactId>jython-standalone</artifactId>
-			<version>2.7.1</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.python</groupId>-->
+<!--			<artifactId>jython-standalone</artifactId>-->
+<!--			<version>2.7.1</version>-->
+<!--		</dependency>-->
 
 		<dependency>
 			<groupId>org.rosuda.REngine</groupId>
