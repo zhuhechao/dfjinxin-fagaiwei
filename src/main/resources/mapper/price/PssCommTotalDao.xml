@@ -113,11 +113,7 @@
 
     <!-- 商品类型-0类 不为空，商品大类-1类 不为空，查询指定1类-->
     <select id="queryPageListCountByLevelCode1" resultType="java.lang.Integer">
-        SELECT c2.*,
-        pcc.ewarn_id,
-        pcc.remarks,
-        pec.ewarn_id,
-        pec.ewarn_name
+        select count(c2.comm_id)
         FROM pss_comm_total c2
         left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
         left join pss_ewarn_conf pec
@@ -135,7 +131,11 @@
     </select>
 
     <select id="queryPageLisByLevelCode1" resultMap="pssCommTotalMap">
-        select count(c2.comm_id)
+        SELECT c2.*,
+        pcc.ewarn_id,
+        pcc.remarks,
+        pec.ewarn_id,
+        pec.ewarn_name
         FROM pss_comm_total c2
         left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
         left join pss_ewarn_conf pec
@@ -208,6 +208,21 @@
         <if test="param.commLevelCode_2 != null and param.commLevelCode_2 !=''">
             and c2.comm_id=#{param.commLevelCode_2} and c2.data_flag=0
         </if>
+        LIMIT #{param.start}, #{param.pageSize}
+    </select>
+
+    <select id="selectSubCommByLevelCode2" resultMap="pssCommTotalMap">
+        SELECT c2.*,
+        pcc.ewarn_id,
+        pcc.remarks,
+        pec.ewarn_id,
+        pec.ewarn_name
+        FROM pss_comm_total c2
+        left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
+        left join pss_ewarn_conf pec on pcc.ewarn_id = pec.ewarn_id
+        where pcc.del_flag=1 and pec.del_flag=1
+        and c2.parent_code = #{parentCode}
+        and c2.data_flag=0
         LIMIT #{param.start}, #{param.pageSize}
     </select>
 

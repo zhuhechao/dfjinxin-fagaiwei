@@ -11,8 +11,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- *
- *
  * @author z.h.c
  * @email z.h.c@126.com
  * @date 2019-08-23 15:38:58
@@ -33,7 +31,9 @@ public interface PssCommTotalDao extends BaseMapper<PssCommTotalEntity> {
 
     List<PssCommTotalEntity> queryPageLisByLevelCode1(@Param("param") PssCommTotalDto pssCommTotalDto);
 
-    int queryPageListCountByLevelCode2(PssCommTotalDto pssCommTotalDto);
+    int queryPageListCountByLevelCode2(@Param("param") PssCommTotalDto pssCommTotalDto);
 
-    List<PssCommTotalEntity> queryPageLisByLevelCode2(PssCommTotalDto pssCommTotalDto);
+    List<PssCommTotalEntity> queryPageLisByLevelCode2(@Param("param") PssCommTotalDto pssCommTotalDto);
+
+    List<PssCommTotalEntity> selectSubCommByLevelCode2(@Param("parentCode") Integer parentCode, @Param("param") PssCommTotalDto dto);
 }

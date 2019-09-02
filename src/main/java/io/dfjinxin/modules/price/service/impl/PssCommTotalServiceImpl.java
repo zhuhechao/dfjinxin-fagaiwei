@@ -13,10 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service("pssCommTotalService")
@@ -86,15 +83,21 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
             where1.eq("data_flag", "0");
             List<PssCommTotalEntity> commType0 = baseMapper.selectList(where1);
 
-            List resultList = new ArrayList();
-            Map<String, List<PssCommTotalEntity>> map = new HashMap<>();
+            List<Map<String, PssCommTotalEntity>> resultList = new ArrayList();
+            Map<String, PssCommTotalEntity> map = new HashMap<>();
+            Integer totalCount = 0;
             for (PssCommTotalEntity entity : commType0) {
-                //TODO
-                List<PssCommTotalEntity> commType0List = selectSubCommByLevelCode0(entity.getCommId());
-                map.put(entity.getCommAbb(), commType0List);
+                Map<String, Object> temp = selectSubCommByLevelCode0(entity, pssCommTotalDto);
+                PssCommTotalEntity result = (PssCommTotalEntity) temp.get("result");
+                totalCount = (Integer) temp.get("totalCount");
+                if ("BC".equals(entity.getCommAbb())) {
+                    map.put("dazong", result);
+                } else {
+                    map.put("minsheng", result);
+                }
             }
             resultList.add(map);
-            return new PageUtils(resultList, 0, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
+            return new PageUtils(resultList, totalCount, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
 
         }
         //商品类型-0类 不为空，商品大类-1类 为空，查询指定0类
@@ -135,18 +138,36 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
         return null;
     }
 
-    private List<PssCommTotalEntity> selectSubCommByLevelCode0(Integer commId) {
-        if (commId == null) {
+    private Map<String, Object> selectSubCommByLevelCode0(PssCommTotalEntity levelCode0, PssCommTotalDto dto) {
+        if (levelCode0 == null || levelCode0.getCommId() == null) {
             return null;
         }
-//        Map<String, List<PssCommTotalEntity>>
+        //根据0类查询1类
         QueryWrapper where2 = new QueryWrapper();
-        where2.in("parent_code", commId);
+        where2.in("parent_code", levelCode0.getCommId());
         where2.eq("data_flag", "0");
         where2.eq("level_code", "1");
         // 获取一类商品
         List<PssCommTotalEntity> commLevelCode1 = baseMapper.selectList(where2);
-        return null;
+//        Set<Integer> levelCode1Ids = new HashSet<>();
+        for (PssCommTotalEntity entity1 : commLevelCode1) {
+//            levelCode1Ids.add(entity1.getCommId());
+            List<PssCommTotalEntity> commLevelCode2 = pssCommTotalDao.selectSubCommByLevelCode2(entity1.getCommId(), dto);
+            entity1.setSubCommList(commLevelCode2);
+        }
+        levelCode0.setSubCommList(commLevelCode1);
+
+        //查询所有levelCode2的总数
+        QueryWrapper where3 = new QueryWrapper();
+//        where3.in("parent_code", levelCode1Ids);
+        where3.eq("data_flag", "0");
+        where3.eq("level_code", "2");
+        int totalCount = baseMapper.selectCount(where3);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("result", levelCode0);
+        map.put("totalCount", totalCount);
+        return map;
     }
 
     private PssCommTotalEntity selectCommByLevelCode0(Integer commId) {
