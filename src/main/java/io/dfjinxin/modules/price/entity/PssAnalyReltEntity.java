@@ -48,6 +48,10 @@ public class PssAnalyReltEntity implements Serializable {
 	 * 
 	 */
 	private String tarVar;
+
+	private Date runTime;
+
+	private Integer runStatus;
 	/**
 	 * 
 	 */

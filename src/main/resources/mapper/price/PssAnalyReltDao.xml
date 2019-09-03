@@ -12,6 +12,8 @@
         <result property="analyWay" column="analy_way"/>
         <result property="basVar" column="bas_var"/>
         <result property="tarVar" column="tar_var"/>
+        <result property="runTime" column="run_time"/>
+        <result property="runStatus" column="run_status"/>
         <result property="analyCoe" column="analy_coe"/>
         <result property="pvalue" column="pvalue"/>
     </resultMap>
