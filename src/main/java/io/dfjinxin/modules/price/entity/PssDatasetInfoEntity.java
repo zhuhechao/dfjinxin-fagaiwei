@@ -2,7 +2,9 @@ package io.dfjinxin.modules.price.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.dfjinxin.modules.price.dto.PssDatasetInfoDto;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -41,4 +43,22 @@ public class PssDatasetInfoEntity implements Serializable {
 	 */
 	private Date crteTime;
 
+
+	public static PssDatasetInfoEntity toEntity(PssDatasetInfoDto from) {
+		if (null == from) {
+			return null;
+		}
+		PssDatasetInfoEntity to = new PssDatasetInfoEntity();
+		BeanUtils.copyProperties(from, to);
+		return to;
+	}
+
+	public static PssDatasetInfoDto toData(PssDatasetInfoEntity from){
+		if(null == from){
+			return null;
+		}
+		PssDatasetInfoDto to = new PssDatasetInfoDto();
+		BeanUtils.copyProperties(from, to);
+		return to;
+	}
 }
