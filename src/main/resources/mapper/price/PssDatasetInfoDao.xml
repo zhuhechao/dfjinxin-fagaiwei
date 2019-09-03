@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.dfjinxin.modules.price.dao.PssDatasetInfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.dfjinxin.modules.price.entity.PssDatasetInfoEntity" id="pssDatasetInfoMap">
+        <result property="dataSetId" column="data_set_id"/>
+        <result property="dataSetName" column="data_set_name"/>
+        <result property="dataSetType" column="data_set_type"/>
+        <result property="realSql" column="real_sql"/>
+        <result property="crteTime" column="crte_time"/>
+    </resultMap>
+
+
+</mapper>
