@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.dfjinxin.modules.price.dao.PssAnalyReltDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.dfjinxin.modules.price.entity.PssAnalyReltEntity" id="pssAnalyReltMap">
+        <result property="reltId" column="relt_id"/>
+        <result property="analyId" column="analy_id"/>
+        <result property="analyTime" column="analy_time"/>
+        <result property="reltName" column="relt_name"/>
+        <result property="analyWay" column="analy_way"/>
+        <result property="basVar" column="bas_var"/>
+        <result property="tarVar" column="tar_var"/>
+        <result property="analyCoe" column="analy_coe"/>
+        <result property="pvalue" column="pvalue"/>
+    </resultMap>
+
+    <select id="queryPage" resultMap="pssAnalyReltMap">
+        SELECT *
+        FROM pss_analy_relt par
+        LEFT JOIN pss_analy_info pai ON pai.analy_id = par.analy_id
+        LEFT JOIN pss_dataset_info pdi ON pdi.data_set_id = pai.data_set_id
+        WHERE 1 = 1
+        <if test="param.analyWay != null">
+            AND par.analy_way = #{param.analyWay}
+        </if>
+        <if test="param.datasetId != null">
+            AND pdi.data_set_id = datasetId
+        </if>
+        <if test="param.analyName != null and param.analyName.trim() != ''">
+            AND pai.analy_name LIKE concat('%', #{param.analyName}, '%')
+        </if>
+        LIMIT #{param.start}, #{param.pageSize}
+    </select>
+</mapper>
