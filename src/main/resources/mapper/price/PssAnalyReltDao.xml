@@ -33,6 +33,5 @@
         <if test="param.analyName != null and param.analyName.trim() != ''">
             AND pai.analy_name LIKE concat('%', #{param.analyName}, '%')
         </if>
-        LIMIT #{param.start}, #{param.pageSize}
     </select>
 </mapper>
