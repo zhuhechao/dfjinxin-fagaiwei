@@ -5,6 +5,8 @@ import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.price.entity.PssAnalyReltEntity;
 import io.dfjinxin.modules.price.service.PssAnalyReltService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,13 @@ public class PssAnalyReltController {
     @GetMapping("/list")
     @RequiresPermissions("price:pssanalyrelt:list")
     @ApiOperation("查询分析结果")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "analyName", value = "分析名", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "analyWay", value = "分析类型", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "datasetId", value = "数据集id", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "pageIndex", value = "页码", required = false, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "返回数据量", required = false, dataType = "Int", paramType = "query")
+    })
     public R query(@RequestParam(value = "analyName", required = false) String analyName,
                    @RequestParam(value = "analyWay", required = false) Integer analyWay,
                    @RequestParam(value = "datasetId", required = false) Integer datasetId,
