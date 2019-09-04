@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.dfjinxin.modules.price.dao.PssIndexReltDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.dfjinxin.modules.price.entity.PssIndexReltEntity" id="pssIndexReltMap">
+        <result property="indexId" column="index_id"/>
+        <result property="modId" column="mod_id"/>
+        <result property="indexName" column="index_name"/>
+        <result property="dataDate" column="data_date"/>
+        <result property="modType" column="mod_type"/>
+        <result property="foreIndex" column="fore_index"/>
+        <result property="foreTime" column="fore_time"/>
+    </resultMap>
+
+
+</mapper>
