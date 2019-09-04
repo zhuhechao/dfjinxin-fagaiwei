@@ -1,8 +1,12 @@
 package io.dfjinxin.modules.price.dao;
 
-import io.dfjinxin.modules.price.entity.PssPriceReltEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.dfjinxin.modules.price.entity.PssPriceReltEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -13,5 +17,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface PssPriceReltDao extends BaseMapper<PssPriceReltEntity> {
-	
+
+    List<PssPriceReltEntity> queryPage(@Param("param") Map map);
 }

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.dfjinxin.modules.price.dao.PssPriceReltDao">
+
+  <!-- 可根据自己的需求，是否要使用 -->
+  <resultMap type="io.dfjinxin.modules.price.entity.PssPriceReltEntity" id="pssPriceReltMap">
+    <result property="commId" column="comm_id"/>
+    <result property="modId" column="mod_id"/>
+    <result property="dataSetId" column="data_set_id"/>
+    <result property="dataDate" column="data_date"/>
+    <result property="modType" column="mod_type"/>
+    <result property="forePrice" column="fore_price"/>
+    <result property="foreTime" column="fore_time"/>
+    <result property="reviPrice" column="revi_price"/>
+    <result property="reviTime" column="revi_time"/>
+  </resultMap>
+
+  <resultMap type="io.dfjinxin.modules.price.dto.PssPriceReltDto" id="pssPriceReltDtoMap">
+    <result property="commId" column="comm_id"/>
+    <result property="modId" column="mod_id"/>
+    <result property="dataSetId" column="data_set_id"/>
+    <result property="dataDate" column="data_date"/>
+    <result property="modType" column="mod_type"/>
+    <result property="forePrice" column="fore_price"/>
+    <result property="foreTime" column="fore_time"/>
+    <result property="reviPrice" column="revi_price"/>
+    <result property="reviTime" column="revi_time"/>
+
+    <result property="commName" column="comm_name"/>
+    <result property="modName" column="mod_name"/>
+    <result property="mape" column="MAPE"/>
+
+
+  </resultMap>
+
+  <select id="queryPage" resultMap="pssPriceReltDtoMap">
+    SELECT ppr.*, pct.comm_name, pfmr.mod_name, pfmr.MAPE
+    FROM pss_price_relt ppr
+    LEFT JOIN pss_comm_total pct ON ppr.comm_id = pct.comm_id
+    LEFT JOIN pss_dataset_info pdi ON ppr.data_set_id = pdi.data_set_id
+    LEFT JOIN pss_fore_mod_result pfmr ON ppr.mod_id = pfmr.mod_id
+    WHERE 1 = 1
+    <if test="param.parentCode != null">
+      AND ppr.parentCode = #{param.parentCode}
+    </if>
+    <if test="param.levelCode != null">
+      AND ppr.levelCode = #{param.levelCode}
+    </if>
+    <if test="param.modType != null"><!-- 预测类型 -->
+      AND ppr.mod_type = modType
+    </if>
+    <if test="param.commName != null and param.commName.trim() != ''"><!-- 过滤商品名 -->
+      AND pct.commName LIKE concat('%', #{param.commName}, '%')
+    </if>
+    LIMIT #{param.start}, #{param.pageSize}
+  </select>
+</mapper>

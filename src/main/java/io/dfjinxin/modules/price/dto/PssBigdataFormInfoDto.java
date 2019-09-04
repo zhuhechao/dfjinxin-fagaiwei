@@ -9,6 +9,13 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *
+ *
+ * @author bourne
+ * @email kuibobo@gmail.com
+ * @date 2019-09-03 16:47:42
+ */
 @Data
 @Accessors(chain = true)
 public class PssBigdataFormInfoDto implements Serializable {

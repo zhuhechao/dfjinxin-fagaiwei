@@ -32,10 +32,10 @@ public class PssAnalyReltController {
     private PssAnalyReltService pssAnalyReltService;
 
     /**
-     * 列表
+     * 查询分析结果
      */
-    @GetMapping("/list")
-    @RequiresPermissions("price:pssanalyrelt:list")
+    @GetMapping("/query")
+    @RequiresPermissions("price:pssanalyrelt:query")
     @ApiOperation("查询分析结果")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "analyName", value = "分析名", required = false, dataType = "String", paramType = "query"),
