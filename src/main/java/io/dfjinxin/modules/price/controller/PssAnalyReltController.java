@@ -26,7 +26,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("price/pssanalyrelt")
-@Api(tags = "PssAnalyReltController", description = "分析结果")
+@Api(tags = "分析结果")
 public class PssAnalyReltController {
     @Autowired
     private PssAnalyReltService pssAnalyReltService;

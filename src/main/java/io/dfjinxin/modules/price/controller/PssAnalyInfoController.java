@@ -27,7 +27,7 @@ import io.dfjinxin.common.utils.R;
  */
 @RestController
 @RequestMapping("price/pssanalyinfo")
-@Api(tags = "PssAnalyInfoController", description = "分析信息")
+@Api(tags = "分析信息")
 public class PssAnalyInfoController {
     @Autowired
     private PssAnalyInfoService pssAnalyInfoService;

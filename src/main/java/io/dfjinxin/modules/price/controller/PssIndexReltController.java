@@ -5,13 +5,16 @@ import io.dfjinxin.common.utils.R;
 import io.dfjinxin.common.validator.ValidatorUtils;
 import io.dfjinxin.modules.price.entity.PssIndexReltEntity;
 import io.dfjinxin.modules.price.service.PssIndexReltService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Map;
 
 
 
@@ -24,6 +27,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("price/pssindexrelt")
+@Api(tags = "指数预测结果")
 public class PssIndexReltController {
     @Autowired
     private PssIndexReltService pssIndexReltService;
@@ -33,6 +37,12 @@ public class PssIndexReltController {
      */
     @GetMapping("/list")
     @RequiresPermissions("price:pssindexrelt:list")
+    @ApiOperation("列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "indexName", value = "指数名称", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "dateFrom", value = "开始时间", required = false, dataType = "Date", paramType = "query"),
+            @ApiImplicitParam(name = "dateTo", value = "结束时间", required = false, dataType = "Date", paramType = "query")
+    })
     public R list(@RequestParam(name = "indexName") String indexName,
                   @RequestParam(name = "dateFrom") Date dateFrom,
                   @RequestParam(name = "dateTo") Date dateTo){
@@ -40,51 +50,4 @@ public class PssIndexReltController {
 
         return R.ok().put("page", page);
     }
-
-
-    /**
-     * 信息
-     */
-    @GetMapping("/info/{indexId}")
-    @RequiresPermissions("price:pssindexrelt:info")
-    public R info(@PathVariable("indexId") String indexId){
-        PssIndexReltEntity pssIndexRelt = pssIndexReltService.getById(indexId);
-
-        return R.ok().put("pssIndexRelt", pssIndexRelt);
-    }
-
-    /**
-     * 保存
-     */
-    @GetMapping("/save")
-    @RequiresPermissions("price:pssindexrelt:save")
-    public R save(@RequestBody PssIndexReltEntity pssIndexRelt){
-        pssIndexReltService.save(pssIndexRelt);
-
-        return R.ok();
-    }
-
-    /**
-     * 修改
-     */
-    @GetMapping("/update")
-    @RequiresPermissions("price:pssindexrelt:update")
-    public R update(@RequestBody PssIndexReltEntity pssIndexRelt){
-        ValidatorUtils.validateEntity(pssIndexRelt);
-        pssIndexReltService.updateById(pssIndexRelt);
-        
-        return R.ok();
-    }
-
-    /**
-     * 删除
-     */
-    @GetMapping("/delete")
-    @RequiresPermissions("price:pssindexrelt:delete")
-    public R delete(@RequestBody String[] indexIds){
-        pssIndexReltService.removeByIds(Arrays.asList(indexIds));
-
-        return R.ok();
-    }
-
 }
