@@ -9,7 +9,7 @@
     <result property="modId" column="mod_id"/>
     <result property="dataSetId" column="data_set_id"/>
     <result property="dataDate" column="data_date"/>
-    <result property="modType" column="mod_type"/>
+    <result property="foreType" column="fore_type"/>
     <result property="forePrice" column="fore_price"/>
     <result property="foreTime" column="fore_time"/>
     <result property="reviPrice" column="revi_price"/>
@@ -21,7 +21,7 @@
     <result property="modId" column="mod_id"/>
     <result property="dataSetId" column="data_set_id"/>
     <result property="dataDate" column="data_date"/>
-    <result property="modType" column="mod_type"/>
+    <result property="foreType" column="fore_type"/>
     <result property="forePrice" column="fore_price"/>
     <result property="foreTime" column="fore_time"/>
     <result property="reviPrice" column="revi_price"/>
@@ -30,12 +30,14 @@
     <result property="commName" column="comm_name"/>
     <result property="modName" column="mod_name"/>
     <result property="mape" column="MAPE"/>
+    <result property="algoName" column="algo_name" />
+    <result property="priUnit" column="pri_unit" />
 
 
   </resultMap>
 
   <select id="queryPage" resultMap="pssPriceReltDtoMap">
-    SELECT ppr.*, pct.comm_name, pfmr.mod_name, pfmr.MAPE
+    SELECT ppr.*, pct.comm_name, pfmr.mod_name, pfmr.MAPE, pfmr.algo_name
     FROM pss_price_relt ppr
     LEFT JOIN pss_comm_total pct ON ppr.comm_id = pct.comm_id
     LEFT JOIN pss_dataset_info pdi ON ppr.data_set_id = pdi.data_set_id
@@ -47,12 +49,23 @@
     <if test="param.levelCode != null">
       AND ppr.levelCode = #{param.levelCode}
     </if>
-    <if test="param.modType != null"><!-- 预测类型 -->
-      AND ppr.mod_type = modType
+    <if test="param.foreType != null"><!-- 预测类型 -->
+      AND ppr.fore_type = #{param.foreType}
     </if>
     <if test="param.commName != null and param.commName.trim() != ''"><!-- 过滤商品名 -->
       AND pct.commName LIKE concat('%', #{param.commName}, '%')
     </if>
-    LIMIT #{param.start}, #{param.pageSize}
+
+
+    <if test="param.commId != null">
+      AND ppr.comm_id = #{param.commId}
+    </if>
+    <if test="param.dateFrom != null and param.dateFrom.trim() != ''">
+      AND ppr.fore_time gte #{param.modType}
+    </if>
+    <if test="param.dateTo != null and param.dateTo.trim() != ''">
+      AND ppr.fore_time lte #{param.dateTo}
+    </if>
+    and ppr.data_set_id = 2
   </select>
 </mapper>

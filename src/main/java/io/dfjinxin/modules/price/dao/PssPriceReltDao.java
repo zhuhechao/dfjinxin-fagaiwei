@@ -1,6 +1,8 @@
 package io.dfjinxin.modules.price.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.dfjinxin.modules.price.entity.PssPriceReltEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -18,5 +20,5 @@ import java.util.Map;
 @Mapper
 public interface PssPriceReltDao extends BaseMapper<PssPriceReltEntity> {
 
-    List<PssPriceReltEntity> queryPage(@Param("param") Map map);
+    IPage<PssPriceReltEntity> queryPage(Page page, @Param("param") Map map);
 }

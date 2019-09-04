@@ -24,14 +24,34 @@ public class PssPriceReltDto implements Serializable {
      */
     private Integer commId;
 
+    /**
+     * 商品名称
+     */
     private String commName;
     /**
      *
      */
     private Integer modId;
+
+    /**
+     * 模型名称
+     */
     private String modName;
 
+    /**
+     * 平均绝对百分比误差
+     */
     private String mape;
+
+    /**
+     * 算法名称
+     */
+    private String algoName;
+
+    /**
+     * 价格单位
+     */
+    private String priUnit;
     /**
      *
      */
@@ -43,7 +63,7 @@ public class PssPriceReltDto implements Serializable {
     /**
      *
      */
-    private String modType;
+    private String foreType;
     /**
      *
      */

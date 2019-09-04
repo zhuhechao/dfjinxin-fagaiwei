@@ -40,7 +40,7 @@ public class PssPriceReltEntity implements Serializable {
     /**
      *
      */
-    private String modType;
+    private String foreType;
     /**
      *
      */

@@ -1,9 +1,8 @@
 package io.dfjinxin.modules.price.service.impl;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.dfjinxin.common.utils.PageUtils;
-import io.dfjinxin.common.utils.Query;
 import io.dfjinxin.modules.price.dao.PssAnalyReltDao;
 import io.dfjinxin.modules.price.entity.PssAnalyReltEntity;
 import io.dfjinxin.modules.price.service.PssAnalyReltService;
@@ -17,10 +16,8 @@ public class PssAnalyReltServiceImpl extends ServiceImpl<PssAnalyReltDao, PssAna
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<PssAnalyReltEntity> page = this.page(
-                new Query<PssAnalyReltEntity>().getPage(params)
-        );
-        page.setRecords(this.baseMapper.queryPage(params));
+        Page page = new Page((Integer) params.get("pageIndex"), (Integer) params.get("pageSize"));
+        page = (Page) super.baseMapper.queryPage(page, params);
         return new PageUtils(page);
     }
 
