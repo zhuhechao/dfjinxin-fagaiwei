@@ -3,16 +3,24 @@
 
 <mapper namespace="io.dfjinxin.modules.price.dao.PssIndexReltDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="io.dfjinxin.modules.price.entity.PssIndexReltEntity" id="pssIndexReltMap">
-        <result property="indexId" column="index_id"/>
-        <result property="modId" column="mod_id"/>
-        <result property="indexName" column="index_name"/>
-        <result property="dataDate" column="data_date"/>
-        <result property="modType" column="mod_type"/>
-        <result property="foreIndex" column="fore_index"/>
-        <result property="foreTime" column="fore_time"/>
-    </resultMap>
+  <!-- 可根据自己的需求，是否要使用 -->
+  <resultMap type="io.dfjinxin.modules.price.entity.PssIndexReltEntity" id="pssIndexReltMap">
+    <result property="indexId" column="index_id"/>
+    <result property="modId" column="mod_id"/>
+    <result property="indexName" column="index_name"/>
+    <result property="dataDate" column="data_date"/>
+    <result property="modType" column="mod_type"/>
+    <result property="foreIndex" column="fore_index"/>
+    <result property="foreTime" column="fore_time"/>
+  </resultMap>
 
-
+  <select id="list" resultMap="pssIndexReltMap">
+    SELECT pir.*
+    FROM pss_index_relt pir
+    LEFT JOIN wp_mcro_index_val wmiv ON pir.index_id = wmiv.index_id
+    WHERE
+    pir.index_name  = #{indexName}
+    AND pir.data_date &gt;= #{dateFrom}
+    AND pir.data_date &lt;= #{dateTo}
+  </select>
 </mapper>

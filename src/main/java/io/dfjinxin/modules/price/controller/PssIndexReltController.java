@@ -13,9 +13,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.Date;
-
+import java.util.*;
 
 
 /**
@@ -46,8 +44,7 @@ public class PssIndexReltController {
     public R list(@RequestParam(name = "indexName") String indexName,
                   @RequestParam(name = "dateFrom") Date dateFrom,
                   @RequestParam(name = "dateTo") Date dateTo){
-        PageUtils page = pssIndexReltService.queryPage(null);
-
-        return R.ok().put("page", page);
+        List list = pssIndexReltService.list(indexName, dateFrom, dateTo);
+        return R.ok().put("list", list);
     }
 }

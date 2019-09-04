@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.modules.price.entity.PssIndexReltEntity;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,6 +17,6 @@ import java.util.Map;
  */
 public interface PssIndexReltService extends IService<PssIndexReltEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    List<PssIndexReltEntity> list(String indexName, Date dateFrom, Date dateTo);
 }
 
