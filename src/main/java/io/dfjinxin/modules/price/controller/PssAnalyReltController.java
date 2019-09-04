@@ -53,7 +53,7 @@ public class PssAnalyReltController {
             put("analyName", analyName);
             put("analyWay", analyWay);
             put("datasetId", datasetId);
-            put("start", (pageIndex - 1) * pageSize);
+            put("pageIndex", pageIndex);
             put("pageSize", pageSize);
         }};
         PageUtils page = pssAnalyReltService.queryPage(params);
