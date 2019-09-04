@@ -61,10 +61,10 @@
       AND ppr.comm_id = #{param.commId}
     </if>
     <if test="param.dateFrom != null and param.dateFrom.trim() != ''">
-      AND ppr.fore_time gte #{param.modType}
+      AND ppr.data_date gte #{param.dateFrom}
     </if>
     <if test="param.dateTo != null and param.dateTo.trim() != ''">
-      AND ppr.fore_time lte #{param.dateTo}
+      AND ppr.data_date lte #{param.dateTo}
     </if>
     and ppr.data_set_id = 2
   </select>
