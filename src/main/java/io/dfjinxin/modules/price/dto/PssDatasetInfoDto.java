@@ -1,6 +1,6 @@
 package io.dfjinxin.modules.price.dto;
 
-import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -17,9 +17,15 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class PssDatasetInfoDto implements Serializable {
 
-    /**
-     *
-     */
-    @TableId
-    private String dataSetId;
+    @ApiModelProperty(value = "数据集id", name = "dataSetId", required = true)
+    private Integer dataSetId;
+
+    @ApiModelProperty(value = "数据集名称", name = "dataSetName", required = true)
+    private String dataSetName;
+
+    @ApiModelProperty(value = "关联sql", name = "realSql", required = true)
+    private String realSql;
+
+    @ApiModelProperty(value = "自变量", name = "indeVar", required = true)
+    private String[] indeVar;
 }

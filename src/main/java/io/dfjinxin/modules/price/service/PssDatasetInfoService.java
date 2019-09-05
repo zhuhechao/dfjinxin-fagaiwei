@@ -19,6 +19,6 @@ public interface PssDatasetInfoService extends IService<PssDatasetInfoEntity> {
 
     PssDatasetInfoDto saveOrUpdate(PssDatasetInfoDto dto);
 
-    List<PssDatasetInfoEntity> listAll();
+    List<PssDatasetInfoDto> listAll();
 }
 

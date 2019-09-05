@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.dfjinxin.modules.price.dto.PssDatasetInfoDto;
 import lombok.Data;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
@@ -25,21 +26,20 @@ public class PssDatasetInfoEntity implements Serializable {
 	 * 
 	 */
 	@TableId
-	private String dataSetId;
+	private Integer dataSetId;
 	/**
 	 * 
 	 */
 	private String dataSetName;
-	/**
-	 * 
-	 */
-	private String dataSetType;
+
 	/**
 	 * 
 	 */
 	private String realSql;
+
+	private String indeVar;
 	/**
-	 * 
+	 *
 	 */
 	private Date crteTime;
 
@@ -50,6 +50,9 @@ public class PssDatasetInfoEntity implements Serializable {
 		}
 		PssDatasetInfoEntity to = new PssDatasetInfoEntity();
 		BeanUtils.copyProperties(from, to);
+
+		to.crteTime = new Date();
+		to.indeVar = StringUtils.join(from.getIndeVar(), ",");
 		return to;
 	}
 
@@ -59,6 +62,7 @@ public class PssDatasetInfoEntity implements Serializable {
 		}
 		PssDatasetInfoDto to = new PssDatasetInfoDto();
 		BeanUtils.copyProperties(from, to);
+		to.setIndeVar(from.indeVar.split(","));
 		return to;
 	}
 }

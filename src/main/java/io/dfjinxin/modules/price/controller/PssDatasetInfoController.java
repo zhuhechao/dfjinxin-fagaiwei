@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.dfjinxin.common.validator.ValidatorUtils;
+import io.dfjinxin.modules.price.dto.PssDatasetInfoDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -27,7 +28,7 @@ import io.dfjinxin.common.utils.R;
  */
 @RestController
 @RequestMapping("price/pssdatasetinfo")
-@Api(tags = "PssDatasetInfoController", description = "数据集信息")
+@Api(tags = "数据集信息")
 public class PssDatasetInfoController {
     @Autowired
     private PssDatasetInfoService pssDatasetInfoService;
@@ -39,8 +40,19 @@ public class PssDatasetInfoController {
     @RequiresPermissions("price:pssdatasetinfo:list")
     @ApiOperation("返回所有数据集")
     public R listAll(){
-        List<PssDatasetInfoEntity> list = pssDatasetInfoService.listAll();
+        List<PssDatasetInfoDto> list = pssDatasetInfoService.listAll();
 
         return R.ok().put("list", list);
+    }
+
+    /**
+     * 列表
+     */
+    @PostMapping("/save")
+    @RequiresPermissions("price:pssdatasetinfo:list")
+    @ApiOperation("保存")
+    public R save(@RequestBody PssDatasetInfoDto dto) {
+        pssDatasetInfoService.saveOrUpdate(dto);
+        return R.ok();
     }
 }

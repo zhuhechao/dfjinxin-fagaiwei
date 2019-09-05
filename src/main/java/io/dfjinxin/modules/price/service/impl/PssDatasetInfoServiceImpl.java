@@ -4,6 +4,7 @@ import io.dfjinxin.modules.price.dto.PssDatasetInfoDto;
 import io.dfjinxin.modules.price.entity.PssAnalyInfoEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -30,7 +31,13 @@ public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, Ps
     }
 
     @Override
-    public List<PssDatasetInfoEntity> listAll() {
-        return super.list();
+    public List<PssDatasetInfoDto> listAll() {
+        List<PssDatasetInfoDto> dtos = new ArrayList();
+        List<PssDatasetInfoEntity> list = super.list();
+
+        for(PssDatasetInfoEntity entity:list) {
+            dtos.add(PssDatasetInfoEntity.toData(entity));
+        }
+        return dtos;
     }
 }
