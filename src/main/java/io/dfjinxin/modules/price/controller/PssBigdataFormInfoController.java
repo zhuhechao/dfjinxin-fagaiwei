@@ -29,7 +29,7 @@ public class PssBigdataFormInfoController {
     /**
      * 列表
      */
-    @GetMapping("/listlistAll")
+    @GetMapping("/listAll")
     @RequiresPermissions("price:pssbigdataforminfo:listall")
     @ApiOperation("返回所有表")
     public R listAll() {
