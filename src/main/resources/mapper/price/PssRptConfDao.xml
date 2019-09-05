@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.dfjinxin.modules.price.dao.PssRptConfDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.dfjinxin.modules.price.entity.PssRptConfEntity" id="pssRptConfMap">
+        <result property="commId" column="comm_id"/>
+        <result property="rschId" column="rsch_id"/>
+        <result property="rptId" column="rpt_id"/>
+        <result property="rptName" column="rpt_name"/>
+        <result property="crteDate" column="crte_date"/>
+        <result property="crteName" column="crte_name"/>
+        <result property="rptRemarks" column="rpt_remarks"/>
+        <result property="rvewName" column="rvew_name"/>
+        <result property="rvewRemarks" column="rvew_remarks"/>
+        <result property="rptStatus" column="rpt_status"/>
+    </resultMap>
+
+
+</mapper>
