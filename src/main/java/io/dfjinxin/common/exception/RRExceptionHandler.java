@@ -70,7 +70,7 @@ public class RRExceptionHandler {
 	public R handleException(Exception e, HttpServletRequest request){
 		logger.error("url: {}, message: {}, e: {}", request.getRequestURL(), e.getMessage(), e);
 		logger.error(e.getMessage(), e);
-		return R.error();
+		return R.error(e.getMessage());
 	}
 
 	/**
