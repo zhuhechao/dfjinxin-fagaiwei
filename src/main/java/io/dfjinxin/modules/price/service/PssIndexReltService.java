@@ -2,6 +2,7 @@ package io.dfjinxin.modules.price.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.common.utils.PageUtils;
+import io.dfjinxin.modules.price.dto.PssIndexReltDto;
 import io.dfjinxin.modules.price.entity.PssIndexReltEntity;
 
 import java.util.Date;
@@ -17,6 +18,6 @@ import java.util.Map;
  */
 public interface PssIndexReltService extends IService<PssIndexReltEntity> {
 
-    List<PssIndexReltEntity> list(String indexName, Date dateFrom, Date dateTo);
+    List<PssIndexReltDto> list(String indexName, Date dateFrom, Date dateTo);
 }
 

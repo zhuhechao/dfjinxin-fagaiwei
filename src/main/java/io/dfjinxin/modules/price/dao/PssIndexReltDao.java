@@ -1,5 +1,6 @@
 package io.dfjinxin.modules.price.dao;
 
+import io.dfjinxin.modules.price.dto.PssIndexReltDto;
 import io.dfjinxin.modules.price.entity.PssIndexReltEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -18,5 +19,5 @@ import java.util.List;
 @Mapper
 public interface PssIndexReltDao extends BaseMapper<PssIndexReltEntity> {
 
-    List list(@Param("indexName") String indexName, @Param("dateFrom") Date dateFrom, @Param("dateTo") Date dateTo);
+    List<PssIndexReltDto> list(@Param("indexName") String indexName, @Param("dateFrom") Date dateFrom, @Param("dateTo") Date dateTo);
 }
