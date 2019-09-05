@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.dfjinxin.modules.price.dao.PssRptInfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.dfjinxin.modules.price.entity.PssRptInfoEntity" id="pssRptInfoMap">
+        <result property="rptId" column="rpt_id"/>
+        <result property="rptName" column="rpt_name"/>
+        <result property="commId" column="comm_id"/>
+        <result property="areaCode" column="area_code"/>
+        <result property="rptStartDate" column="rpt_start_date"/>
+        <result property="rptEndDate" column="rpt_end_date"/>
+        <result property="crteTime" column="crte_time"/>
+        <result property="rvewName" column="rvew_name"/>
+        <result property="rvewDate" column="rvew_date"/>
+        <result property="rvewRemarks" column="rvew_remarks"/>
+        <result property="rvewStatus" column="rvew_status"/>
+        <result property="rptCrtWay" column="rpt_crt_way"/>
+        <result property="rptStatus" column="rpt_status"/>
+        <result property="rptFile" column="rpt_file"/>
+        <result property="delTime" column="del_time"/>
+    </resultMap>
+
+
+</mapper>
