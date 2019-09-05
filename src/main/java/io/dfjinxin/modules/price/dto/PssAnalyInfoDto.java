@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  *
@@ -30,6 +29,9 @@ public class PssAnalyInfoDto implements Serializable {
     @ApiModelProperty(value = "分析描述", name = "remarks", required = true)
     private String remarks;
 
+    @ApiModelProperty(value = "分析类型", name = "analyWay", required = true, example = "一般相关性分析")
+    private String analyWay;
+
     @ApiModelProperty(value = "变量", name = "vars", required = true)
-    private List<String> vars;
+    private String[] indeVar;
 }

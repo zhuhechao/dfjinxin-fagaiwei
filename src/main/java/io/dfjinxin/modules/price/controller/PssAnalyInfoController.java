@@ -6,7 +6,9 @@ import java.util.Map;
 import io.dfjinxin.common.validator.ValidatorUtils;
 import io.dfjinxin.modules.price.dto.PssAnalyInfoDto;
 import io.dfjinxin.modules.price.dto.PssDatasetInfoDto;
+import io.dfjinxin.modules.price.entity.PssAnalyReltEntity;
 import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
+import io.dfjinxin.modules.price.service.PssAnalyReltService;
 import io.dfjinxin.modules.price.service.PssDatasetInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,7 +35,7 @@ public class PssAnalyInfoController {
     private PssAnalyInfoService pssAnalyInfoService;
 
     @Autowired
-    private PssDatasetInfoService pssDatasetInfoService;
+    private PssAnalyReltService pssAnalyReltService;
 
     /**
      * 列表
@@ -65,10 +67,10 @@ public class PssAnalyInfoController {
     @RequiresPermissions("price:pssanalyinfo:run")
     @ApiOperation("运行")
     public R run(@RequestBody PssAnalyInfoDto dto) {
-        PssDatasetInfoDto dataset = null;
-        dto = pssAnalyInfoService.saveOrUpdate(dto);
+        pssAnalyInfoService.saveOrUpdate(dto);
 
-        pssDatasetInfoService.saveOrUpdate(dataset);
+        PssAnalyReltEntity relt = new PssAnalyReltEntity();
+        pssAnalyReltService.saveOrUpdate(null);
         return R.ok();
     }
 
