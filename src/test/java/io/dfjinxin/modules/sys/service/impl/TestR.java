@@ -75,7 +75,7 @@ public class TestR {
     }
 
     /**
-     * Rserve onnection.eval不支持中文
+     * Rserve onnection.eval不支持中文 调用一般相关性分析.R 
      * @throws IOException
      * @throws REXPMismatchException
      */
