@@ -5,6 +5,8 @@
 ~ library(Rserve)
 ~ Rserve()
 - 然后就可以在 java 中调用R语言了，java test： TestR 有3个例子
+- install.packages 安装项目依赖  lavaan semPlot OpenMx GGally corrplot, 然后 library
+ 
 
 **项目结构** 
 ```

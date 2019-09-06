@@ -1,8 +1,8 @@
 package io.dfjinxin.modules.sys.service.impl;
 
+import io.dfjinxin.common.utils.FileUtil;
 import org.junit.Test;
-import org.rosuda.REngine.REXP;
-import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.*;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 
@@ -73,4 +73,35 @@ public class TestR {
             if (connection != null) connection.close();
         }
     }
+
+    /**
+     * Rserve onnection.eval不支持中文
+     * @throws IOException
+     * @throws REXPMismatchException
+     */
+    @Test
+    public void demo3() throws IOException, REXPMismatchException {
+        String file = new File("").getCanonicalPath() + "\\r\\demo3.R";
+        String cvsFile = new File("").getCanonicalPath() + "\\r\\cor-data.csv";
+        RConnection connection = null;
+        RList rList = null;
+
+        file = file.replace("\\", "/");
+        cvsFile = cvsFile.replace("\\", "/");
+        try {
+            connection = new RConnection();
+            connection.eval("source('" + file + "')");
+            rList = connection.eval("fun('" + cvsFile +"')").asList();
+            REXPString pfile = (REXPString) rList.get(0);
+            REXPString rfile = (REXPString) rList.get(1);
+
+            System.out.println(FileUtil.getFileContent(pfile.asString(), "gbk"));
+            System.out.println(FileUtil.getFileContent(rfile.asString(), "gbk"));
+        } catch (REngineException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) connection.close();
+        }
+    }
+
 }
