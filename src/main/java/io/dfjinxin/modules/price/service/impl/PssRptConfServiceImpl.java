@@ -23,31 +23,12 @@ import io.dfjinxin.modules.price.service.PssRptConfService;
 
 @Service("pssRptConfService")
 public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConfEntity> implements PssRptConfService {
-
-    @Autowired
-    private PssRptInfoService pssRptInfoService;
-
+    
     @Override
     public PssRptConfDto saveOrUpdate(PssRptConfDto dto) {
         PssRptConfEntity entity = PssRptConfEntity.toEntity(dto);
 
         super.saveOrUpdate(entity);
-
-        PssRptInfoDto infoDto = new PssRptInfoDto()
-                .setCommId(entity.getCommId())
-                .setRptId(entity.getRptId())
-                .setRptFile(null)
-                .setRptFreq(entity.getRptFreq())
-                .setRptName(entity.getRptName())
-                .setRptType(entity.getRptType())
-                .setRptDate(new Date())
-                .setRptPath(entity.getRptPath())
-                .setCrteTime(new Date())
-                .setStatCode(entity.getStatCode())
-                .setDelTime(null);
-
-        pssRptInfoService.saveOrUpdate(infoDto);
-
         return PssRptConfEntity.toData(entity);
     }
 
