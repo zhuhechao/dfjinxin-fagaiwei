@@ -24,6 +24,8 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpCommIndexValDao, Wp
 
     @Autowired
     private PssCommTotalDao pssCommTotalDao;
+    @Autowired
+    private WpCommIndexValDao wpCommIndexValDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -67,6 +69,11 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpCommIndexValDao, Wp
         //where1.eq()
 
         return null;
+    }
+
+    @Override
+    public List<Map<String, Object>> queryIndexTypeByCommId(Integer commId) {
+        return wpCommIndexValDao.queryIndexTypeByCommId(commId);
     }
 
     private Map<String, Object> queryCommByLevelCode0(PssCommTotalEntity levelCode0) {

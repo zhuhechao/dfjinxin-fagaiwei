@@ -1,8 +1,15 @@
 package io.dfjinxin.modules.analyse.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.dfjinxin.common.dto.PssCommTotalDto;
 import io.dfjinxin.modules.analyse.entity.WpCommIndexValEntity;
+import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -12,6 +19,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @date 2019-09-02 15:38:19
  */
 @Mapper
+@Repository
 public interface WpCommIndexValDao extends BaseMapper<WpCommIndexValEntity> {
-
+    List<Map<String, Object>> queryIndexTypeByCommId(@Param("commId") Integer commId);
 }

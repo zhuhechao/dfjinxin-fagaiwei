@@ -22,5 +22,7 @@ public interface WpCommIndexValService extends IService<WpCommIndexValEntity> {
     List<Map<String, PssCommTotalEntity>> queryList();
 
     Map<String, Object> queryDetailByCommId(Integer commId);
+
+    List<Map<String, Object>> queryIndexTypeByCommId(Integer commId);
 }
 

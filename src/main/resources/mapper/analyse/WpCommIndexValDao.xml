@@ -18,5 +18,10 @@
         <result property="dataSource" column="data_source"/>
     </resultMap>
 
-
+    <select id="queryIndexTypeByCommId" resultType="java.util.HashMap">
+        SELECT t1.index_type from wp_comm_index_val t1
+        where t1.comm_id=#{commId}
+        group by t1.index_type
+        order by t1.index_type
+    </select>
 </mapper>
