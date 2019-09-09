@@ -11,6 +11,7 @@ package io.dfjinxin.common.utils;
 import io.dfjinxin.common.exception.RRException;
 import io.dfjinxin.modules.sys.entity.SysUserEntity;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 
@@ -20,6 +21,8 @@ import org.apache.shiro.subject.Subject;
  * @author Mark sunlightcs@gmail.com
  */
 public class ShiroUtils {
+
+	public final static String MD5 = "MD5";
 
 	public static Session getSession() {
 		return SecurityUtils.getSubject().getSession();
@@ -47,6 +50,10 @@ public class ShiroUtils {
 
 	public static boolean isLogin() {
 		return SecurityUtils.getSubject().getPrincipal() != null;
+	}
+
+	public static String md5(String password) {
+		return new SimpleHash(MD5, password, "", 1).toString();
 	}
 
 	public static String getKaptcha(String key) {

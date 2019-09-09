@@ -1,11 +1,27 @@
 package io.dfjinxin.common.utils;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
+/**
+ * File工具类
+ *
+ * @author bourne kuibobo@gmail.com
+ */
 public class FileUtil {
+
+    public static void transferTo(MultipartFile file, Path path) throws IOException {
+        Files.createDirectories(path.getParent());
+        Files.createFile(path);
+
+        file.transferTo(path);
+    }
 
     public static String getFileContent(String path) throws IOException {
         return getFileContent(path, "utf-8");
