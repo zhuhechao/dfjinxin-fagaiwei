@@ -4,21 +4,40 @@
 <mapper namespace="io.dfjinxin.modules.price.dao.PssRptConfDao">
 
 	<!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="io.dfjinxin.modules.price.entity.PssRptConfEntity" id="pssRptConfMap">
+    <resultMap type="io.dfjinxin.modules.price.dto.PssRptConfDto" id="pssRptConfDtoMap">
         <result property="rptId" column="rpt_id"/>
         <result property="commId" column="comm_id"/>
         <result property="rptType" column="rpt_type"/>
         <result property="rptFreq" column="rpt_freq"/>
-        <result property="rschId" column="rsch_id"/>
-        <result property="rptDate" column="rpt_date"/>
+
         <result property="rptName" column="rpt_name"/>
-        <result property="statCode" column="stat_code"/>
+
         <result property="rptPath" column="rpt_path"/>
-        <result property="crteDate" column="crte_date"/>
+
         <result property="crteName" column="crte_name"/>
         <result property="rptStatus" column="rpt_status"/>
         <result property="rptRemarks" column="rpt_remarks"/>
     </resultMap>
 
+    <select id="list" resultMap="pssRptConfDtoMap">
+        select *
+        from pss_rpt_conf prc
+        where 1
+        <if test="param.rptType != null">
+            and prc.rpt_type = #{param.rptType}
+        </if>
+        <if test="param.rptFreq != null">
+            and prc.rpt_freq = #{param.rptFreq}
+        </if>
+        <if test="param.rptDate != null and param.rptDate.trim() != ''">
+            and prc.rpt_date = #{param.rptDate}
+        </if>
+        <if test="param.templateName != null and param.templateName.trim() != ''">
+            and prc.rpt_path LIKE concat('%', #{param.templateName})
+        </if>
 
+    </select>
+    <select id="listTemplate" resultType="string">
+        select rpt_path from pss_rpt_conf group by rpt_path
+    </select>
 </mapper>
