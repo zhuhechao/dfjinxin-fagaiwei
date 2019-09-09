@@ -7,6 +7,8 @@ import io.dfjinxin.common.utils.ShiroUtils;
 import io.dfjinxin.config.propertie.AppProperties;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,21 +43,23 @@ public class FileController {
     @PostMapping("/upload")
     @ResponseBody
     @ApiOperation("上传")
-    public R upload(@RequestParam("file") MultipartFile file) throws IOException {
+    public R upload(@RequestParam("file") MultipartFile file,
+                    @RequestParam(value = "saveOriName", defaultValue = "false") Boolean saveOriName,
+                    @RequestParam(value = "saveSubPath", defaultValue = "false") Boolean saveSubPath) throws IOException {
         if (file.isEmpty()) {
             return R.error("上传失败，请选择文件");
         }
 
         // Build directory
-        Integer year = DateTime.now().getYear();
-        Integer month = DateTime.now().getMonth() + 1;
-        String subPath = null;
-        subPath = new StringBuilder(32).append("/").append(year).append('/').append(month).append('/').toString();
+        String subPath = saveSubPath ? new StringBuilder(32).append("/")
+                                        .append(DateTime.now().getYear()).append('/')
+                                        .append(DateTime.now().getMonth() + 1)
+                                        .append('/').toString() : "";
 
         String originalBasename = file.getOriginalFilename();
 
         // Get basename
-        String basename = ShiroUtils.md5(originalBasename + System.currentTimeMillis());
+        String basename = saveOriName ? originalBasename.substring(0, originalBasename.lastIndexOf(".")) : ShiroUtils.md5(originalBasename + System.currentTimeMillis());
 
         // Get extension
         String extension = originalBasename.substring(originalBasename.lastIndexOf(".") + 1);
@@ -67,6 +71,9 @@ public class FileController {
 
         // Get upload path
         Path uploadPath = Paths.get(appProperties.getPath().getWorkDir(), appProperties.getPath().getUpload(), subFilePath);
+        if (saveOriName == true && saveSubPath == false && FileUtil.exists(uploadPath.toString()))
+            return R.error("文件已存在");
+
         logger.debug("Uploading to directory: [{}]", uploadPath.toString());
         FileUtil.transferTo(file, uploadPath);
 

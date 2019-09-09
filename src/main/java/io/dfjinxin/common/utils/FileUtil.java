@@ -16,6 +16,14 @@ import java.nio.file.Path;
  */
 public class FileUtil {
 
+    public static boolean exists(String filePath) {
+        return isEmpty(new File(filePath));
+    }
+
+    public static boolean isEmpty(File file) {
+        return null != file && file.exists();
+    }
+
     public static void transferTo(MultipartFile file, Path path) throws IOException {
         Files.createDirectories(path.getParent());
         Files.createFile(path);
