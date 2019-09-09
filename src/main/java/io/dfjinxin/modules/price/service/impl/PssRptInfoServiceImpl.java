@@ -1,5 +1,7 @@
 package io.dfjinxin.modules.price.service.impl;
 
+import io.dfjinxin.modules.price.dto.PssRptInfoDto;
+import io.dfjinxin.modules.price.entity.PssRptInfoEntity;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -15,6 +17,15 @@ import io.dfjinxin.modules.price.service.PssRptInfoService;
 
 @Service("pssRptInfoService")
 public class PssRptInfoServiceImpl extends ServiceImpl<PssRptInfoDao, PssRptInfoEntity> implements PssRptInfoService {
+
+
+    @Override
+    public PssRptInfoDto saveOrUpdate(PssRptInfoDto dto) {
+        PssRptInfoEntity entity = PssRptInfoEntity.toEntity(dto);
+
+        super.saveOrUpdate(entity);
+        return PssRptInfoEntity.toData(entity);
+    }
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {

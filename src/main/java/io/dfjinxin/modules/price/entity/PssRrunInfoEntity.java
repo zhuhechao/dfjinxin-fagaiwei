@@ -23,7 +23,7 @@ public class PssRrunInfoEntity implements Serializable {
 	 * 
 	 */
 	@TableId
-	private String rptId;
+	private Integer rptId;
 	/**
 	 * 
 	 */

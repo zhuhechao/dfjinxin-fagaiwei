@@ -1,8 +1,12 @@
 package io.dfjinxin.modules.price.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.dfjinxin.modules.price.dto.PssRptConfDto;
 import lombok.Data;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -12,7 +16,7 @@ import java.util.Date;
  * 
  * @author bourne
  * @email kuibobo@gmail.com
- * @date 2019-09-05 17:13:08
+ * @date 2019-09-09 14:56:17
  */
 @Data
 @TableName("pss_rpt_conf")
@@ -22,8 +26,20 @@ public class PssRptConfEntity implements Serializable {
 	/**
 	 * 
 	 */
-	@TableId
-	private String commId;
+	@TableId(type = IdType.AUTO)
+	private Integer rptId;
+	/**
+	 * 
+	 */
+	private Integer commId;
+	/**
+	 * 
+	 */
+	private Integer rptType;
+	/**
+	 * 
+	 */
+	private Integer rptFreq;
 	/**
 	 * 
 	 */
@@ -31,11 +47,19 @@ public class PssRptConfEntity implements Serializable {
 	/**
 	 * 
 	 */
-	private String rptId;
+	private Date rptDate;
 	/**
 	 * 
 	 */
 	private String rptName;
+	/**
+	 * 
+	 */
+	private Integer statCode;
+	/**
+	 * 
+	 */
+	private String rptPath;
 	/**
 	 * 
 	 */
@@ -47,18 +71,29 @@ public class PssRptConfEntity implements Serializable {
 	/**
 	 * 
 	 */
+	private Integer rptStatus;
+	/**
+	 * 
+	 */
 	private String rptRemarks;
-	/**
-	 * 
-	 */
-	private String rvewName;
-	/**
-	 * 
-	 */
-	private String rvewRemarks;
-	/**
-	 * 
-	 */
-	private String rptStatus;
 
+	public static PssRptConfEntity toEntity(PssRptConfDto from) {
+		if (null == from) {
+			return null;
+		}
+		PssRptConfEntity to = new PssRptConfEntity();
+		BeanUtils.copyProperties(from, to);
+        to.rptDate = new Date();
+        to.crteDate = new Date();
+		return to;
+	}
+
+	public static PssRptConfDto toData(PssRptConfEntity from){
+		if(null == from){
+			return null;
+		}
+		PssRptConfDto to = new PssRptConfDto();
+		BeanUtils.copyProperties(from, to);
+		return to;
+	}
 }
