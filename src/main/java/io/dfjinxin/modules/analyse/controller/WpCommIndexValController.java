@@ -42,6 +42,13 @@ public class WpCommIndexValController {
     }
 
 
+    @GetMapping("/detail/queryIndexType/{commId}")
+    @ApiOperation("趋势分析详情页-根据 商品id 获取相应 指标类型")
+    public R queryIndexTypeByCommId(@PathVariable("commId") Integer commId) {
+
+        List<Map<String, Object>> map  = wpCommIndexValService.queryIndexTypeByCommId(commId);
+        return R.ok().put("data", map);
+    }
     /**
      * commId 二级商品id
      */
