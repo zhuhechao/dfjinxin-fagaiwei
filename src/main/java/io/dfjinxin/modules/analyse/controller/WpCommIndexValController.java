@@ -7,6 +7,8 @@ import io.dfjinxin.modules.analyse.entity.WpCommIndexValEntity;
 import io.dfjinxin.modules.analyse.service.WpCommIndexValService;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,8 +59,15 @@ public class WpCommIndexValController {
     /**
      * 显示统计详情
      */
-    @PostMapping("/detail/")
+    @GetMapping("/detail/")
+
     @ApiOperation("趋势分析详情页 根据  指标类型，商品id，日期（默认最近一个月）  获取相应统计详情 ")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "commId", value = "商品id", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "indexType", value = "指标类型", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "dateFrom", value = "查询日期起", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "dateTo", value = "查询日期至", required = false, dataType = "String", paramType = "query")
+    })
     public R queryDetailByCondition(@RequestParam(value = "commId", required = false) Integer commId,
                                  @RequestParam(value = "indexType", required = true) String indexType,
                                  @RequestParam(value = "dateFrom", required = false) String dateFrom,
