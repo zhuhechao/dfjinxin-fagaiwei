@@ -1,8 +1,6 @@
 package io.dfjinxin.modules.price.controller;
 
-import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
-import io.dfjinxin.common.validator.ValidatorUtils;
 import io.dfjinxin.modules.price.dto.PssRschConfDto;
 import io.dfjinxin.modules.price.entity.PssRschConfEntity;
 import io.dfjinxin.modules.price.service.PssRschConfService;
@@ -13,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.Map;
+import java.util.List;
 
 
 
@@ -34,12 +32,13 @@ public class PssRschConfController {
     /**
      * 列表
      */
-    @GetMapping("/list")
-    @RequiresPermissions("price:pssrschconf:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = pssRschConfService.queryPage(params);
+    @GetMapping("/list/all")
+    @RequiresPermissions("price:pssrschconf:listall")
+    @ApiOperation("列出所有调度配置")
+    public R listAll(){
+        List list = pssRschConfService.list();
 
-        return R.ok().put("page", page);
+        return R.ok().put("list", list);
     }
 
 
