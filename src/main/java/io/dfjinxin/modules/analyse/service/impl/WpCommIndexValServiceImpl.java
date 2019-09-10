@@ -3,18 +3,20 @@ package io.dfjinxin.modules.analyse.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.dfjinxin.common.dto.KpiInfoDto;
+import io.dfjinxin.common.utils.KpiTypeEnum;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
+import io.dfjinxin.modules.analyse.dao.WpBaseIndexInfoDao;
 import io.dfjinxin.modules.analyse.dao.WpCommIndexValDao;
+import io.dfjinxin.modules.analyse.entity.WpBaseIndexInfoEntity;
 import io.dfjinxin.modules.analyse.entity.WpCommIndexValEntity;
 import io.dfjinxin.modules.analyse.service.WpCommIndexValService;
 import io.dfjinxin.modules.price.dao.PssCommTotalDao;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +30,8 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpCommIndexValDao, Wp
     private PssCommTotalDao pssCommTotalDao;
     @Autowired
     private WpCommIndexValDao wpCommIndexValDao;
+    @Autowired
+    private WpBaseIndexInfoDao wpBaseIndexInfoDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -64,9 +68,9 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpCommIndexValDao, Wp
     }
 
     @Override
-    public List<Map<String, Object>> queryDetailByCommId(Map<String,Object> condition) {
-        if (condition.get("indexType").equals("价格")){
-            return  wpCommIndexValDao.queryIndexTypePrice(condition);
+    public List<Map<String, Object>> queryDetailByCommId(Map<String, Object> condition) {
+        if (condition.get("indexType").equals("价格")) {
+            return wpCommIndexValDao.queryIndexTypePrice(condition);
         }
         return wpCommIndexValDao.queryIndexTypeByCondition(condition);
     }
@@ -74,6 +78,71 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpCommIndexValDao, Wp
     @Override
     public List<Map<String, Object>> queryIndexTypeByCommId(Integer commId) {
         return wpCommIndexValDao.queryIndexTypeByCommId(commId);
+    }
+
+    @Override
+    public List<Map<String, Object>> queryLevel4CommInfo(Integer commId) {
+
+        //根据3类商品查询该类下所有子商品(4级)
+        List resultList = new ArrayList();
+        QueryWrapper where2 = new QueryWrapper();
+        where2.eq("parent_code", commId);
+        where2.eq("level_code", 3);
+        where2.eq("data_flag", 0);
+        List<PssCommTotalEntity> levelCode_4 = pssCommTotalDao.selectList(where2);
+        for (PssCommTotalEntity commTotalEntity : levelCode_4) {
+            Map kpiMap = doIndexInfo(commTotalEntity.getCommName(), getWpBaseIndexInfo(commTotalEntity.getCommId()));
+            resultList.add(kpiMap);
+        }
+
+        return resultList;
+    }
+
+    private Map<String, Object> doIndexInfo(String commName, List<WpBaseIndexInfoEntity> indexInfolist) {
+
+//        List resultList = new ArrayList();
+
+        for (WpBaseIndexInfoEntity indexInfoEntity : indexInfolist) {
+            QueryWrapper where2 = new QueryWrapper();
+            where2.eq("comm_id", indexInfoEntity.getCommId());
+            where2.eq("index_i", indexInfoEntity.getIndexId());
+            where2.orderByDesc("data_time");
+            List<WpCommIndexValEntity> indexValEntityList = wpCommIndexValDao.selectList(where2);
+            WpCommIndexValEntity wpCommIndexValEntity = indexValEntityList.get(0);
+
+            Map<String, Object> cclMap = new HashMap<>();
+            List<KpiInfoDto> cclList = new ArrayList<>();
+            StringBuffer sb = new StringBuffer(commName);
+            sb.append("-");
+            sb.append(wpCommIndexValEntity.getIndexName());
+            sb.append("-");
+            sb.append(wpCommIndexValEntity.getIndexType());
+            KpiInfoDto dto = new KpiInfoDto();
+            dto.setIndexName(sb.toString());
+            dto.setIndexVal(wpCommIndexValEntity.getIndexVal().toString());
+            dto.setIndexUnit(wpCommIndexValEntity.getIndexUnit());
+            dto.setDataTime(wpCommIndexValEntity.getDataTime().toString());
+            dto.setCommId(wpCommIndexValEntity.getCommId());
+            KpiTypeEnum typeEnum = KpiTypeEnum.getbyType(indexInfoEntity.getIndexType());
+            switch (typeEnum) {
+                //价格指标
+                case Pri:
+                case Ccl:
+                    cclList.add(dto);
+                    cclMap.put(typeEnum.getVal(), cclList);
+                    return cclMap;
+                case Csp:
+                case Cst:
+            }
+        }
+        return null;
+    }
+
+    private List<WpBaseIndexInfoEntity> getWpBaseIndexInfo(int commId) {
+        QueryWrapper where2 = new QueryWrapper();
+        where2.eq("comm_id", commId);
+        where2.eq("index_flag", 0);
+        return wpBaseIndexInfoDao.selectList(where2);
     }
 
     private Map<String, Object> queryCommByLevelCode0(PssCommTotalEntity levelCode0) {

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.dfjinxin.modules.analyse.dao.WpMcroIndexInfoDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.dfjinxin.modules.analyse.entity.WpMcroIndexInfoEntity" id="wpMcroIndexInfoMap">
+        <result property="indexId" column="index_id"/>
+        <result property="indexName" column="index_name"/>
+        <result property="indexType" column="index_type"/>
+        <result property="indexFlag" column="index_flag"/>
+        <result property="indexDescribe" column="index_describe"/>
+        <result property="dataTime" column="data_time"/>
+    </resultMap>
+
+    <select id="selectIndexName" resultMap="wpMcroIndexInfoMap">
+        select wmii.*
+            from wp_mcro_index_info wmii
+                     left join wp_ascii_info wai
+                               on wmii.index_flag = wai.code_simple
+            where wai.p_code_val in (
+                select code_id
+                from wp_ascii_info
+                where code_simple = 'Kpi_Sign'
+                  and code_status = 0
+            )
+              and wai.code_simple = 2
+    </select>
+
+
+</mapper>

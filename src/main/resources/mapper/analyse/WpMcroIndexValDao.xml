@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.dfjinxin.modules.analyse.dao.WpMcroIndexValDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.dfjinxin.modules.analyse.entity.WpMcroIndexValEntity" id="wpMcroIndexValMap">
+        <result property="seqId" column="seq_id"/>
+        <result property="indexId" column="index_id"/>
+        <result property="indexName" column="index_name"/>
+        <result property="indexType" column="index_type"/>
+        <result property="statAreaId" column="stat_area_id"/>
+        <result property="statAreaName" column="stat_area_name"/>
+        <result property="statFrequency" column="stat_frequency"/>
+        <result property="indexVal" column="index_val"/>
+        <result property="indexUnit" column="index_unit"/>
+        <result property="dataTime" column="data_time"/>
+        <result property="dataSource" column="data_source"/>
+    </resultMap>
+
+
+</mapper>
