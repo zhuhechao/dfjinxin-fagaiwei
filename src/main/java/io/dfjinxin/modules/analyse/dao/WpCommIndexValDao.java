@@ -24,4 +24,6 @@ public interface WpCommIndexValDao extends BaseMapper<WpCommIndexValEntity> {
     List<Map<String, Object>> queryIndexTypeByCommId(@Param("commId") Integer commId);
 
     List<Map<String, Object>> queryIndexTypeByCondition(@Param("condition") Map<String, Object> condition);
+
+    List<Map<String, Object>> queryIndexTypePrice(@Param("condition") Map<String, Object> condition);
 }
