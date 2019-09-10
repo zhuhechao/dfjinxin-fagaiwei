@@ -2,7 +2,10 @@ package io.dfjinxin.modules.price.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.dfjinxin.modules.price.dto.PssRschConfDto;
 import lombok.Data;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -23,7 +26,7 @@ public class PssRschConfEntity implements Serializable {
 	 * 
 	 */
 	@TableId
-	private String rschId;
+	private Integer rschId;
 	/**
 	 * 
 	 */
@@ -31,19 +34,21 @@ public class PssRschConfEntity implements Serializable {
 	/**
 	 * 
 	 */
-	private String rschType;
+	private Integer rschType;
 	/**
 	 * 
 	 */
-	private String rschFreq;
+	private Integer rschFreq;
 	/**
 	 * 
 	 */
-	private String execType;
+	private char execType;
 	/**
 	 * 
 	 */
 	private Date execTime;
+
+	private Date startTime;
 	/**
 	 * 
 	 */
@@ -61,4 +66,23 @@ public class PssRschConfEntity implements Serializable {
 	 */
 	private Date crteTime;
 
+	public static PssRschConfEntity toEntity(PssRschConfDto from) {
+		if (null == from) {
+			return null;
+		}
+		PssRschConfEntity to = new PssRschConfEntity();
+		BeanUtils.copyProperties(from, to);
+
+		return to;
+	}
+
+	public static PssRschConfDto toData(PssRschConfEntity from){
+		if(null == from){
+			return null;
+		}
+		PssRschConfDto to = new PssRschConfDto();
+		BeanUtils.copyProperties(from, to);
+
+		return to;
+	}
 }
