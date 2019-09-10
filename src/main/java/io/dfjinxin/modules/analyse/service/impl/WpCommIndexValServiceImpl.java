@@ -10,9 +10,11 @@ import io.dfjinxin.modules.analyse.entity.WpCommIndexValEntity;
 import io.dfjinxin.modules.analyse.service.WpCommIndexValService;
 import io.dfjinxin.modules.price.dao.PssCommTotalDao;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,13 +64,9 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpCommIndexValDao, Wp
     }
 
     @Override
-    public Map<String, Object> queryDetailByCommId(Integer commId) {
+    public List<Map<String, Object>> queryDetailByCommId(Map<String,Object> condition) {
 
-        QueryWrapper where1 = new QueryWrapper();
-        where1.eq("comm_id",commId);
-        //where1.eq()
-
-        return null;
+        return wpCommIndexValDao.queryIndexTypeByCondition(condition);
     }
 
     @Override

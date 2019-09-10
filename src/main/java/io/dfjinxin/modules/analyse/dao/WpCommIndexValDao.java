@@ -22,4 +22,6 @@ import java.util.Map;
 @Repository
 public interface WpCommIndexValDao extends BaseMapper<WpCommIndexValEntity> {
     List<Map<String, Object>> queryIndexTypeByCommId(@Param("commId") Integer commId);
+
+    List<Map<String, Object>> queryIndexTypeByCondition(@Param("condition") Map<String, Object> condition);
 }

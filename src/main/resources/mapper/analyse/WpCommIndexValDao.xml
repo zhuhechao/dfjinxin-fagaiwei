@@ -24,4 +24,18 @@
         group by t1.index_type
         order by t1.index_type
     </select>
+
+    <select id="queryIndexTypeByCondition" parameterType="java.util.Map" resultType="java.util.HashMap">
+        SELECT t2.comm_name, t1.index_name,sum(t1.index_val) index_val ,t1.index_unit
+        from wp_comm_index_val t1
+        left join pss_comm_total  t2 on t1.comm_id=t2.comm_id
+        where t1.comm_id=#{condition.commId}
+        and t1.index_type=#{condition.indexType}
+        <if test="condition.dateFrom!=''">
+            and t1.data_time &gt;= DATE_FORMAT(#{condition.dateFrom},'%Y-%m-%d %H-%i-%s')
+        </if>
+        and t1.data_time &lt;= DATE_FORMAT(#{condition.dateTo},'%Y-%m-%d %H-%i-%s')
+        group by t1.index_name ,t1.index_unit
+        order by t1.index_name
+    </select>
 </mapper>
