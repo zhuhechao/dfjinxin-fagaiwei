@@ -1,5 +1,7 @@
 package io.dfjinxin.modules.price.service.impl;
 
+import io.dfjinxin.modules.price.dto.PssRschConfDto;
+import io.dfjinxin.modules.price.entity.PssAnalyInfoEntity;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -15,6 +17,15 @@ import io.dfjinxin.modules.price.service.PssRschConfService;
 
 @Service("pssRschConfService")
 public class PssRschConfServiceImpl extends ServiceImpl<PssRschConfDao, PssRschConfEntity> implements PssRschConfService {
+
+
+    @Override
+    public PssRschConfDto saveOrUpdate(PssRschConfDto dto) {
+        PssRschConfEntity entity = PssRschConfEntity.toEntity(dto);
+
+        super.saveOrUpdate(entity);
+        return PssRschConfEntity.toData(entity);
+    }
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {

@@ -75,8 +75,8 @@ public class WpCommIndexValController {
                                  ) {
         if(StringUtils.isBlank(dateFrom)){
             if( StringUtils.isBlank(dateTo)){
-                dateFrom=new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateMonths(new Date(),-1));
-                dateTo=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                dateFrom=DateUtils.format(DateUtils.addDateMonths(new Date(),-1));
+                dateTo=DateUtils.format(new Date());
             }else{
                 dateFrom="";
             }

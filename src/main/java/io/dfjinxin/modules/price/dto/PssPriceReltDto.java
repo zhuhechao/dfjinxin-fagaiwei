@@ -1,6 +1,5 @@
 package io.dfjinxin.modules.price.dto;
 
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

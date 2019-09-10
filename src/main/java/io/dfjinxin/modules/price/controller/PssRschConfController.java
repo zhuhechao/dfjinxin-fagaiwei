@@ -1,16 +1,17 @@
 package io.dfjinxin.modules.price.controller;
 
-import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
-import io.dfjinxin.common.validator.ValidatorUtils;
+import io.dfjinxin.modules.price.dto.PssRschConfDto;
 import io.dfjinxin.modules.price.entity.PssRschConfEntity;
 import io.dfjinxin.modules.price.service.PssRschConfService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.Map;
+import java.util.List;
 
 
 
@@ -23,6 +24,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("price/pssrschconf")
+@Api(tags = "调度配置")
 public class PssRschConfController {
     @Autowired
     private PssRschConfService pssRschConfService;
@@ -30,12 +32,13 @@ public class PssRschConfController {
     /**
      * 列表
      */
-    @GetMapping("/list")
-    @RequiresPermissions("price:pssrschconf:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = pssRschConfService.queryPage(params);
+    @GetMapping("/list/all")
+    @RequiresPermissions("price:pssrschconf:listall")
+    @ApiOperation("列出所有调度配置")
+    public R listAll(){
+        List list = pssRschConfService.list();
 
-        return R.ok().put("page", page);
+        return R.ok().put("list", list);
     }
 
 
@@ -55,23 +58,13 @@ public class PssRschConfController {
      */
     @PostMapping("/save")
     @RequiresPermissions("price:pssrschconf:save")
-    public R save(@RequestBody PssRschConfEntity pssRschConf){
-        pssRschConfService.save(pssRschConf);
+    @ApiOperation("保存")
+    public R save(@RequestBody PssRschConfDto dto){
+        dto = pssRschConfService.saveOrUpdate(dto);
 
-        return R.ok();
+        return R.ok().put("data", dto);
     }
 
-    /**
-     * 修改
-     */
-    @PostMapping("/update")
-    @RequiresPermissions("price:pssrschconf:update")
-    public R update(@RequestBody PssRschConfEntity pssRschConf){
-        ValidatorUtils.validateEntity(pssRschConf);
-        pssRschConfService.updateById(pssRschConf);
-        
-        return R.ok();
-    }
 
     /**
      * 删除

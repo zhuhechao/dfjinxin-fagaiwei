@@ -65,7 +65,9 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpCommIndexValDao, Wp
 
     @Override
     public List<Map<String, Object>> queryDetailByCommId(Map<String,Object> condition) {
-
+        if (condition.get("indexType").equals("价格")){
+            return  wpCommIndexValDao.queryIndexTypePrice(condition);
+        }
         return wpCommIndexValDao.queryIndexTypeByCondition(condition);
     }
 

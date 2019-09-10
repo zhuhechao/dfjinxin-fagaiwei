@@ -17,7 +17,6 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-@TableName("pss_rpt_info")
 public class PssRptInfoDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
