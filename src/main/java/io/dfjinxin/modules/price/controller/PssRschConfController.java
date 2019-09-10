@@ -1,17 +1,16 @@
 package io.dfjinxin.modules.price.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
+import io.dfjinxin.common.utils.PageUtils;
+import io.dfjinxin.common.utils.R;
 import io.dfjinxin.common.validator.ValidatorUtils;
+import io.dfjinxin.modules.price.entity.PssRschConfEntity;
+import io.dfjinxin.modules.price.service.PssRschConfService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import io.dfjinxin.modules.price.entity.PssRschConfEntity;
-import io.dfjinxin.modules.price.service.PssRschConfService;
-import io.dfjinxin.common.utils.PageUtils;
-import io.dfjinxin.common.utils.R;
+import java.util.Arrays;
+import java.util.Map;
 
 
 
@@ -20,7 +19,7 @@ import io.dfjinxin.common.utils.R;
  *
  * @author bourne
  * @email kuibobo@gmail.com
- * @date 2019-09-05 17:18:41
+ * @date 2019-09-10 09:22:42
  */
 @RestController
 @RequestMapping("price/pssrschconf")
@@ -54,7 +53,7 @@ public class PssRschConfController {
     /**
      * 保存
      */
-    @GetMapping("/save")
+    @PostMapping("/save")
     @RequiresPermissions("price:pssrschconf:save")
     public R save(@RequestBody PssRschConfEntity pssRschConf){
         pssRschConfService.save(pssRschConf);
@@ -65,7 +64,7 @@ public class PssRschConfController {
     /**
      * 修改
      */
-    @GetMapping("/update")
+    @PostMapping("/update")
     @RequiresPermissions("price:pssrschconf:update")
     public R update(@RequestBody PssRschConfEntity pssRschConf){
         ValidatorUtils.validateEntity(pssRschConf);

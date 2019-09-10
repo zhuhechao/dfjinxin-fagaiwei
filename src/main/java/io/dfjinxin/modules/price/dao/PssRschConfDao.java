@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 
  * @author bourne
  * @email kuibobo@gmail.com
- * @date 2019-09-05 17:18:41
+ * @date 2019-09-10 09:22:42
  */
 @Mapper
 public interface PssRschConfDao extends BaseMapper<PssRschConfEntity> {
