@@ -29,7 +29,7 @@
         <if test="param.rptFreq != null">
             and prc.rpt_freq = #{param.rptFreq}
         </if>
-        <if test="param.rptDate != null and param.rptDate.trim() != ''">
+        <if test="param.rptDate != null">
             and prc.rpt_date = #{param.rptDate}
         </if>
         <if test="param.templateName != null and param.templateName.trim() != ''">
