@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  *
@@ -23,9 +24,9 @@ public class PssDatasetInfoDto implements Serializable {
     @ApiModelProperty(value = "数据集名称", name = "dataSetName", required = true)
     private String dataSetName;
 
-    @ApiModelProperty(value = "关联sql", name = "realSql", required = true)
-    private String realSql;
+    @ApiModelProperty(value = "关联sql", name = "tabName", required = true)
+    private String tabName;
 
-    @ApiModelProperty(value = "自变量", name = "indeVar", required = true)
-    private String[] indeVar;
+    @ApiModelProperty(value = "字段取值", name = "columnVal", required = true)
+    private Map<String, Object> columnVal;
 }

@@ -1,5 +1,8 @@
 package io.dfjinxin.modules.price.entity;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.dfjinxin.modules.price.dto.PssDatasetInfoDto;
@@ -9,6 +12,7 @@ import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * 
@@ -35,9 +39,9 @@ public class PssDatasetInfoEntity implements Serializable {
 	/**
 	 * 
 	 */
-	private String realSql;
+	private String tabName;
 
-	private String indeVar;
+	private String columnVal;
 	/**
 	 *
 	 */
@@ -52,7 +56,7 @@ public class PssDatasetInfoEntity implements Serializable {
 		BeanUtils.copyProperties(from, to);
 
 		to.crteTime = new Date();
-		to.indeVar = StringUtils.join(from.getIndeVar(), ",");
+		to.columnVal = JSON.toJSONString(from.getColumnVal());
 		return to;
 	}
 
@@ -62,7 +66,7 @@ public class PssDatasetInfoEntity implements Serializable {
 		}
 		PssDatasetInfoDto to = new PssDatasetInfoDto();
 		BeanUtils.copyProperties(from, to);
-		to.setIndeVar(from.indeVar.split(","));
+		to.setColumnVal(JSONObject.parseObject(from.columnVal, new TypeReference<Map<String, Object>>(){}));
 		return to;
 	}
 }
