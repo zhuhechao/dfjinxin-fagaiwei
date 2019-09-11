@@ -58,6 +58,9 @@ dfjinxin-fast
 - Eclipse、IDEA运行dfjinxinApplication.java，则可启动项目
 - Swagger路径：http://localhost:8080/fagaiwei/swagger-ui.html
 
+- 测试环境：打包test，生成war，然后上传到172.20.10.13 /home/dfjx/apache-tomcat-fagaiwei_api/webapps/
+然后到 /home/dfjx/apache-tomcat-fagaiwei_api/bin 执行 shutdown.sh 在执行 start.sh
+接着登录119.3.247.102 打开地址访问 http://172.20.10.13:8081/fagaiwei_api/swagger-ui.html
 <br> 
 
  **前端部署**
