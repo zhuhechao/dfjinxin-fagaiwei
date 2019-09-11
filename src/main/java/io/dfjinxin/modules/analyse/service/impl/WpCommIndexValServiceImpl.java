@@ -17,10 +17,7 @@ import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service("wpCommIndexValService")
@@ -83,59 +80,130 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpCommIndexValDao, Wp
     @Override
     public List<Map<String, Object>> queryLevel4CommInfo(Integer commId) {
 
-        //根据3类商品查询该类下所有子商品(4级)
+        QueryWrapper where = new QueryWrapper();
+        where.eq("data_flag", 0);
+        where.eq("comm_id", commId);
+        PssCommTotalEntity commLevel2 = pssCommTotalDao.selectOne(where);
+        if (commLevel2 == null) {
+            return null;
+        }
+        QueryWrapper where1 = new QueryWrapper();
+        where1.eq("data_flag", 0);
+        where1.eq("parent_code", commId);
+        List<PssCommTotalEntity> commLevel3 = pssCommTotalDao.selectList(where1);
+        if (commLevel3 == null) {
+            return null;
+        }
         List resultList = new ArrayList();
+        //查询4类商品所有指标类型
+        String sql = "select pss_comm_total.comm_id from pss_comm_total where data_flag=0 and parent_code=" + commId;
         QueryWrapper where2 = new QueryWrapper();
-        where2.eq("parent_code", commId);
-        where2.eq("level_code", 3);
-        where2.eq("data_flag", 0);
-        List<PssCommTotalEntity> levelCode_4 = pssCommTotalDao.selectList(where2);
-        for (PssCommTotalEntity commTotalEntity : levelCode_4) {
-            Map kpiMap = doIndexInfo(commTotalEntity.getCommName(), getWpBaseIndexInfo(commTotalEntity.getCommId()));
-            resultList.add(kpiMap);
+        where2.eq("index_flag", 0);
+        where2.inSql("comm_id", sql);
+        where2.groupBy("index_type");
+        List<WpBaseIndexInfoEntity> baseIndexInfoEntityList = wpBaseIndexInfoDao.selectList(where2);
+
+        Set<String> indexTypeList = new HashSet<>();
+        for (WpBaseIndexInfoEntity entity : baseIndexInfoEntityList) {
+            indexTypeList.add(entity.getIndexType());
         }
 
+        for (String type : indexTypeList) {
+            QueryWrapper where3 = new QueryWrapper();
+            where3.eq("index_flag", 0);
+            where3.inSql("comm_id", sql);
+            where3.eq("index_type", type);
+            List<WpBaseIndexInfoEntity> baseIndexInfoEntities = wpBaseIndexInfoDao.selectList(where3);
+            KpiTypeEnum typeEnum = KpiTypeEnum.getbyType(type);
+            switch (typeEnum) {
+                //价格指标
+                case Pri:
+                    List<WpCommIndexValEntity> priList = null;
+                    for (PssCommTotalEntity entity : commLevel3) {
+                        if (commLevel2.getCommName().equals(entity.getCommName())) {
+                            priList = doIndexPriceInfo(baseIndexInfoEntities, entity.getCommId(), type);
+
+                        }
+                    }
+                    Map priMap = new HashMap();
+                    priMap.put(type, priList);
+                    resultList.add(priMap);
+                    continue;
+                case Ccl:
+                    List<KpiInfoDto> cclList = doIndexInfo(baseIndexInfoEntities);
+                    Map cclMap = new HashMap();
+                    cclMap.put(type, cclList);
+                    resultList.add(cclMap);
+                    continue;
+                case Csp:
+                    List<KpiInfoDto> cspList = doIndexInfo(baseIndexInfoEntities);
+                    Map cspMap = new HashMap();
+                    cspMap.put(type, cspList);
+                    resultList.add(cspMap);
+                    continue;
+                case Cst:
+                    List<KpiInfoDto> cstList = doIndexInfo(baseIndexInfoEntities);
+                    Map cstMap = new HashMap();
+                    cstMap.put(type, cstList);
+                    resultList.add(cstMap);
+                    continue;
+                case Prd:
+                    List<KpiInfoDto> prdList = doIndexInfo(baseIndexInfoEntities);
+                    Map<String, List<KpiInfoDto>> prdMap = new HashMap();
+                    prdMap.put(type, prdList);
+                    resultList.add(prdMap);
+                    continue;
+                default:
+            }
+        }
         return resultList;
     }
 
-    private Map<String, Object> doIndexInfo(String commName, List<WpBaseIndexInfoEntity> indexInfolist) {
+    private List doIndexPriceInfo(List<WpBaseIndexInfoEntity> list, int commId, String indexType) {
 
-//        List resultList = new ArrayList();
+        for (WpBaseIndexInfoEntity indexInfoEntity : list) {
+            if (indexInfoEntity.getCommId() == commId) {
+                QueryWrapper where2 = new QueryWrapper();
+                where2.eq("comm_id", commId);
+                where2.eq("index_type", indexType);
+                where2.eq("index_i", indexInfoEntity.getIndexId());
+                where2.isNotNull("data_time");
+                where2.groupBy("stat_area_id");
+                List valList = wpCommIndexValDao.selectList(where2);
+                return valList;
+            }
+        }
+        return null;
+    }
 
+    private List doIndexInfo(List<WpBaseIndexInfoEntity> indexInfolist) {
+
+        List<KpiInfoDto> list = new ArrayList<>();
         for (WpBaseIndexInfoEntity indexInfoEntity : indexInfolist) {
             QueryWrapper where2 = new QueryWrapper();
             where2.eq("comm_id", indexInfoEntity.getCommId());
             where2.eq("index_i", indexInfoEntity.getIndexId());
+            where2.isNotNull("data_time");
             where2.orderByDesc("data_time");
             List<WpCommIndexValEntity> indexValEntityList = wpCommIndexValDao.selectList(where2);
-            WpCommIndexValEntity wpCommIndexValEntity = indexValEntityList.get(0);
-
-            Map<String, Object> cclMap = new HashMap<>();
-            List<KpiInfoDto> cclList = new ArrayList<>();
-            StringBuffer sb = new StringBuffer(commName);
-            sb.append("-");
-            sb.append(wpCommIndexValEntity.getIndexName());
-            sb.append("-");
-            sb.append(wpCommIndexValEntity.getIndexType());
-            KpiInfoDto dto = new KpiInfoDto();
-            dto.setIndexName(sb.toString());
-            dto.setIndexVal(wpCommIndexValEntity.getIndexVal().toString());
-            dto.setIndexUnit(wpCommIndexValEntity.getIndexUnit());
-            dto.setDataTime(wpCommIndexValEntity.getDataTime().toString());
-            dto.setCommId(wpCommIndexValEntity.getCommId());
-            KpiTypeEnum typeEnum = KpiTypeEnum.getbyType(indexInfoEntity.getIndexType());
-            switch (typeEnum) {
-                //价格指标
-                case Pri:
-                case Ccl:
-                    cclList.add(dto);
-                    cclMap.put(typeEnum.getVal(), cclList);
-                    return cclMap;
-                case Csp:
-                case Cst:
+            if (null != indexValEntityList && indexValEntityList.size() > 0) {
+                WpCommIndexValEntity wpCommIndexValEntity = indexValEntityList.get(0);
+                PssCommTotalEntity commTotalEntity = pssCommTotalDao.selectById(indexInfoEntity.getCommId());
+                StringBuffer sb = new StringBuffer(commTotalEntity.getCommName());
+                sb.append("-");
+                sb.append(wpCommIndexValEntity.getIndexName());
+                sb.append("-");
+                sb.append(wpCommIndexValEntity.getIndexType());
+                KpiInfoDto dto = new KpiInfoDto();
+                dto.setIndexName(sb.toString());
+                dto.setIndexVal(wpCommIndexValEntity.getIndexVal().toString());
+                dto.setIndexUnit(wpCommIndexValEntity.getIndexUnit());
+                dto.setDataTime(wpCommIndexValEntity.getDataTime().toString());
+                dto.setCommId(wpCommIndexValEntity.getCommId());
+                list.add(dto);
             }
         }
-        return null;
+        return list;
     }
 
     private List<WpBaseIndexInfoEntity> getWpBaseIndexInfo(int commId) {

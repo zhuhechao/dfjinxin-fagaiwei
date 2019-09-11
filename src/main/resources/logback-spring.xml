@@ -2,14 +2,14 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml" />
 
-    <springProfile name="dev,test">
+    <springProfile name="dev,test,prod">
         <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
         <property name="LOG_HOME" value="./fagaiwei_logs"/>
     </springProfile>
-    <springProfile name="prod">
-        <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
+    <!--<springProfile name="prod">
+        &lt;!&ndash;定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径&ndash;&gt;
         <property name="LOG_HOME" value="./logs"/>
-    </springProfile>
+    </springProfile>-->
 
     <!-- 将日志输出到控制台 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
