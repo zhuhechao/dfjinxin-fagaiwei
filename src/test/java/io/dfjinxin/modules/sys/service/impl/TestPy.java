@@ -25,12 +25,12 @@ public class TestPy {
         String[] args = new String[]{"python", file, String.valueOf(a), String.valueOf(b)};
         Process proc = Runtime.getRuntime().exec(args);// 执行py文件
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        String line = null;
-        while ((line = in.readLine()) != null) {
-            System.out.println(line);
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream(), "gbk"))) {
+            String line = null;
+            while ((line = in.readLine()) != null) {
+                System.out.println(line);
+            }
         }
-        in.close();
         proc.waitFor();
     }
 
@@ -41,12 +41,12 @@ public class TestPy {
         String[] args = new String[]{"python", file};
         Process proc = Runtime.getRuntime().exec(args);// 执行py文件
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream(),  "gbk"));
-        String line = null;
-        while ((line = in.readLine()) != null) {
-            System.out.println(line);
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream(), "gbk"))) {
+            String line = null;
+            while ((line = in.readLine()) != null) {
+                System.out.println(line);
+            }
         }
-        in.close();
         proc.waitFor();
     }
 }
