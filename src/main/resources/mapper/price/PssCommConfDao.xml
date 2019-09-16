@@ -19,7 +19,7 @@
             (
             #{commId},
             #{item},
-            1,
+            0,
             now()
             )
         </foreach>
