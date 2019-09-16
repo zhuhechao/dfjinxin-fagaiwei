@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
 import io.dfjinxin.modules.price.dao.PssCommConfDao;
+import io.dfjinxin.modules.price.dao.PssCommTotalDao;
 import io.dfjinxin.modules.price.entity.PssCommConfEntity;
+import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import io.dfjinxin.modules.price.service.PssCommConfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,9 @@ public class PssCommConfServiceImpl extends ServiceImpl<PssCommConfDao, PssCommC
     @Autowired
     private PssCommConfDao pssCommConfDao;
 
+    @Autowired
+    private PssCommTotalDao pssCommTotalDao;
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<PssCommConfEntity> page = this.page(
@@ -34,14 +39,17 @@ public class PssCommConfServiceImpl extends ServiceImpl<PssCommConfDao, PssCommC
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveCommConf(Map<String, List<Integer>> params) {
-        if (params.containsKey("commIds") && params.containsKey("ewarnIds")) {
-            List<Integer> commIds = params.get("commIds");
-            List<Integer> ewarnIds = params.get("ewarnIds");
-            for (Integer commId : commIds) {
-                pssCommConfDao.saveCommConf(commId, ewarnIds);
-            }
+    public void saveCommConf(Integer levelCode2Id, List<Integer> ewarnIds) {
+        if (levelCode2Id == null || ewarnIds == null) {
+            return;
+        }
+        QueryWrapper where = new QueryWrapper();
+        where.eq("parent_code", levelCode2Id);
+        where.eq("level_code", 3);
+        where.eq("data_flag", 0);
+        List<PssCommTotalEntity> levelCode3Ids = pssCommTotalDao.selectList(where);
+        for (PssCommTotalEntity entity : levelCode3Ids) {
+            pssCommConfDao.saveCommConf(entity.getCommId(), ewarnIds);
         }
     }
-
 }

@@ -18,6 +18,6 @@ public interface PssCommConfService extends IService<PssCommConfEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
-    void saveCommConf(Map<String, List<Integer>> params);
+    void saveCommConf(Integer commId,List<Integer> ewarnIds);
 }
 
