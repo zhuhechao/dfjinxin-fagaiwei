@@ -18,8 +18,8 @@ public interface WpMcroIndexInfoService extends IService<WpMcroIndexInfoEntity> 
 
     PageUtils queryPage(Map<String, Object> params);
 
-    WpMcroIndexInfoEntity getType();
-
     List<WpMcroIndexInfoEntity> getName();
+
+    PageUtils queryByPage(String indexName, String dateFrom, String dateTo, String areaCodes);
 }
 

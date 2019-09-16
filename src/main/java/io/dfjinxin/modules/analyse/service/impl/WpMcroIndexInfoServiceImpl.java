@@ -1,5 +1,8 @@
 package io.dfjinxin.modules.analyse.service.impl;
 
+import io.dfjinxin.modules.analyse.dao.WpMcroIndexValDao;
+import io.dfjinxin.modules.analyse.entity.WpMcroIndexValEntity;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,9 @@ public class WpMcroIndexInfoServiceImpl extends ServiceImpl<WpMcroIndexInfoDao, 
     @Autowired
     private WpMcroIndexInfoDao wpMcroIndexInfoDao;
 
+    @Autowired
+    private WpMcroIndexValDao wpMcroIndexValDao;
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<WpMcroIndexInfoEntity> page = this.page(
@@ -32,15 +38,25 @@ public class WpMcroIndexInfoServiceImpl extends ServiceImpl<WpMcroIndexInfoDao, 
         return new PageUtils(page);
     }
 
-//    TODO
-    @Override
-    public WpMcroIndexInfoEntity getType() {
-        return null;
-    }
-
     @Override
     public List<WpMcroIndexInfoEntity> getName() {
         return wpMcroIndexInfoDao.selectIndexName();
+    }
+
+    @Override
+    public PageUtils queryByPage(String indexId, String dateFrom, String dateTo, String areaCodes) {
+        QueryWrapper where = new QueryWrapper();
+        where.eq("index_id",indexId);
+        if(StringUtils.isNotBlank(dateFrom)&& StringUtils.isNotBlank(dateTo)){
+            where.between("data_time",dateFrom,dateTo);
+        }else {
+            where.between("data_time",dateFrom,dateTo);
+        }
+        if(StringUtils.isNotBlank(areaCodes)){
+            where.between("stat_area_id",dateFrom,dateTo);
+        }
+        List<WpMcroIndexValEntity> list = wpMcroIndexValDao.selectList(where);
+        return null;
     }
 
 }

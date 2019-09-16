@@ -68,7 +68,7 @@ public class PssEwarnConfController {
     @ApiOperation("预警配置-新增")
     public R save(@RequestBody PssEwarnConfEntity pssEwarnConf) {
         ValidatorUtils.validateEntity(pssEwarnConf);
-        pssEwarnConf.setDelFlag("1");
+        pssEwarnConf.setDelFlag("0");
         pssEwarnConf.setCrteDate(new Date());
         pssEwarnConfService.save(pssEwarnConf);
 

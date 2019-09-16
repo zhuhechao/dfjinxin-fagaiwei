@@ -77,7 +77,7 @@ public class PssEwarnConfServiceImpl extends ServiceImpl<PssEwarnConfDao, PssEwa
         for (WpAsciiInfoEntity entity : list) {
             QueryWrapper queryWrapper = new QueryWrapper();
             queryWrapper.in("ewarn_type_id", entity.getCodeId());
-            queryWrapper.eq("del_flag", "1");
+            queryWrapper.eq("del_flag", 0);
             List<PssEwarnConfEntity> pssEwarnConfEntityList = pssEwarnConfDao.selectList(queryWrapper);
             entity.setEwarnNamelist(pssEwarnConfEntityList);
             resultList.add(entity);

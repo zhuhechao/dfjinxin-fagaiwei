@@ -1,6 +1,5 @@
 package io.dfjinxin.modules.analyse.controller;
 
-import io.dfjinxin.common.annotation.RequiresPermissions;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.analyse.entity.WpMcroIndexInfoEntity;
@@ -10,10 +9,11 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 
@@ -47,18 +47,10 @@ public class WpMcroIndexInfoController {
                    @RequestParam(name = "dateTo", required = false) String dateTo,
                    @RequestParam(name = "areaCodes", required = false) String areaCodes
     ) {
-        PageUtils page = null;// wpMcroIndexInfoService.queryPage();
-        System.out.println(areaCodes);
-
-        return R.ok().put("tableData", page).put("echartsData", page);
+        PageUtils page = wpMcroIndexInfoService.queryByPage(indexName,dateFrom,dateTo,areaCodes);
+//        return R.ok().put("tableData", page).put("echartsData", page);
+        return R.ok().put("data", page);
     }
-
-//    @GetMapping("getType")
-//    @ApiOperation("宏观分析-获取经济数据类型")
-//    public R getType() {
-//        WpMcroIndexInfoEntity wpMcroIndexInfo = wpMcroIndexInfoService.getType();
-//        return R.ok().put("wpMcroIndexInfo", wpMcroIndexInfo);
-//    }
 
     @GetMapping("getName")
     @ApiOperation("宏观分析-获取指标名称")

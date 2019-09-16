@@ -28,7 +28,7 @@
 
     <select id="queryPageListCount" resultType="java.lang.Integer">
         select count(*) from pss_ewarn_conf pec
-        where pec.del_flag =1
+        where pec.del_flag =0
         <if test="param.ewarnId != null and param.ewarnId !=''">
             and pec.ewarn_id=#{param.ewarnId}
         </if>
@@ -39,7 +39,7 @@
 
     <select id="queryPageList" resultMap="pssEwarnConfMap">
         select pec.* from pss_ewarn_conf pec
-        where pec.del_flag =1
+        where pec.del_flag =0
         <if test="param.ewarnId != null and param.ewarnId !=''">
             and pec.ewarn_id=#{param.ewarnId}
         </if>
