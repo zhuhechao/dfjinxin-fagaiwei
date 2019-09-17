@@ -51,4 +51,14 @@
         and t1.data_time &lt;= DATE_FORMAT(#{condition.dateTo},'%Y-%m-%d %H-%i-%s')
         order by t1.index_name,data_time
     </select>
+
+    <select id="selectListBystatAreaId" resultMap="wpCommIndexValMap">
+        SELECT max(data_time) as data_time,stat_area_name,stat_area_id,stat_frequency,index_val,index_unit
+        from wp_comm_index_val val
+        WHERE comm_id = 172
+        AND index_type = '价格'
+        AND index_i = 39
+        AND data_time IS NOT NULL
+        GROUP BY stat_area_id;
+    </select>
 </mapper>

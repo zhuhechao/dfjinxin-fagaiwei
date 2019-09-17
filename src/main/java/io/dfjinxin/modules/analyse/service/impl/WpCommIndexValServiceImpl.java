@@ -163,13 +163,15 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpCommIndexValDao, Wp
 
         for (WpBaseIndexInfoEntity indexInfoEntity : list) {
             if (indexInfoEntity.getCommId() == commId) {
-                QueryWrapper where2 = new QueryWrapper();
-                where2.eq("comm_id", commId);
-                where2.eq("index_type", indexType);
-                where2.eq("index_i", indexInfoEntity.getIndexId());
-                where2.isNotNull("data_time");
-                where2.groupBy("stat_area_id");
-                List valList = wpCommIndexValDao.selectList(where2);
+//                QueryWrapper where2 = new QueryWrapper();
+//                where2.eq("comm_id", commId);
+//                where2.eq("index_type", indexType);
+//                where2.eq("index_i", indexInfoEntity.getIndexId());
+//                where2.isNotNull("data_time");
+//                where2.groupBy("stat_area_id");
+//                List valList = wpCommIndexValDao.selectList(where2);
+                List valList = wpCommIndexValDao.selectListBystatAreaId(commId,indexType,indexInfoEntity.getIndexId());
+
                 return valList;
             }
         }

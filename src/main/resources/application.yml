@@ -28,3 +28,7 @@ app:
     work-dir: ${user.home}/fagaiwei
     temp: /temp
     upload: /upload
+
+#启用CA登录配置
+ca:
+  valid: true
