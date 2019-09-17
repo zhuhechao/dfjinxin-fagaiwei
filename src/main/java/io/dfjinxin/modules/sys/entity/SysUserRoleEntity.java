@@ -24,17 +24,17 @@ import java.io.Serializable;
 public class SysUserRoleEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@TableId
-	private Long id;
+	private int id;
 
 	/**
 	 * 用户ID
 	 */
-	private Long userId;
+	private String userId;
 
 	/**
 	 * 角色ID
 	 */
-	private Long roleId;
+	private int roleId;
 
 	
 }

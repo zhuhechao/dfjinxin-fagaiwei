@@ -12,11 +12,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.dfjinxin.modules.sys.dao.SysRoleMenuDao;
 import io.dfjinxin.modules.sys.entity.SysRoleMenuEntity;
 import io.dfjinxin.modules.sys.service.SysRoleMenuService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
+import java.util.Map;
 
 
 /**
@@ -26,19 +27,21 @@ import java.util.List;
  */
 @Service("sysRoleMenuService")
 public class SysRoleMenuServiceImpl extends ServiceImpl<SysRoleMenuDao, SysRoleMenuEntity> implements SysRoleMenuService {
+    @Autowired
+	private SysRoleMenuDao sysRoleMenuDao;
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public void saveOrUpdate(Long roleId, List<Long> menuIdList) {
+	public void saveOrUpdate(int roleId, List<Integer> menuIdList) {
 		//先删除角色与菜单关系
-		deleteBatch(new Long[]{roleId});
+		deleteBatch(new int[]{roleId});
 
 		if(menuIdList.size() == 0){
 			return ;
 		}
 
 		//保存角色与菜单关系
-		for(Long menuId : menuIdList){
+		for(int menuId : menuIdList){
 			SysRoleMenuEntity sysRoleMenuEntity = new SysRoleMenuEntity();
 			sysRoleMenuEntity.setMenuId(menuId);
 			sysRoleMenuEntity.setRoleId(roleId);
@@ -48,13 +51,18 @@ public class SysRoleMenuServiceImpl extends ServiceImpl<SysRoleMenuDao, SysRoleM
 	}
 
 	@Override
-	public List<Long> queryMenuIdList(Long roleId) {
-		return baseMapper.queryMenuIdList(roleId);
+	public List<Map<String,Object>> queryMenuList(Map<String,Object> roleId) {
+		return   baseMapper.queryMenuList(roleId);
 	}
 
 	@Override
-	public int deleteBatch(Long[] roleIds){
+	public int deleteBatch(int[] roleIds){
 		return baseMapper.deleteBatch(roleIds);
+	}
+
+	@Override
+	public List<Map<String, Object>> select(Map<String, Object> map) {
+		return sysRoleMenuDao.select(map);
 	}
 
 }

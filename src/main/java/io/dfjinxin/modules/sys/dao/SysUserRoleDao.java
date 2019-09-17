@@ -9,10 +9,12 @@
 package io.dfjinxin.modules.sys.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.dfjinxin.modules.sys.entity.SysRoleEntity;
 import io.dfjinxin.modules.sys.entity.SysUserRoleEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,15 +25,16 @@ import java.util.List;
 @Repository
 @Mapper
 public interface SysUserRoleDao extends BaseMapper<SysUserRoleEntity> {
-	
+
+
 	/**
 	 * 根据用户ID，获取角色ID列表
 	 */
-	List<Long> queryRoleIdList(Long userId);
+	List<Integer> queryRoleIdList(String userId);
 
 
 	/**
-	 * 根据角色ID数组，批量删除
+	 * 根据用户ID 删除用户的角色关系
 	 */
-	int deleteBatch(Long[] roleIds);
+	void deleteUerRole(String userId);
 }

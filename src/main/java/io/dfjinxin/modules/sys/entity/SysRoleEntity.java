@@ -15,6 +15,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -24,7 +25,7 @@ import java.util.List;
  * @author Mark sunlightcs@gmail.com
  */
 @Data
-@TableName("sys_role")
+@TableName("pss_user_role_info")
 public class SysRoleEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -32,7 +33,7 @@ public class SysRoleEntity implements Serializable {
 	 * 角色ID
 	 */
 	@TableId
-	private Long roleId;
+	private int roleId;
 
 	/**
 	 * 角色名称
@@ -43,20 +44,24 @@ public class SysRoleEntity implements Serializable {
 	/**
 	 * 备注
 	 */
-	private String remark;
+	private String remarks;
 	
 	/**
 	 * 创建者ID
 	 */
-	private Long createUserId;
+	private int roleState;
 
-	@TableField(exist=false)
-	private List<Long> menuIdList;
 	
 	/**
 	 * 创建时间
 	 */
-	private Date createTime;
+	private Timestamp creDate;
 
-	
+	/**
+	 * 更新时间
+	 */
+	private Timestamp updDate;
+
+	@TableField(exist = false)
+	List<Integer> menuIdList;
 }

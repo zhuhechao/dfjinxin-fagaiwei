@@ -14,6 +14,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 角色与菜单对应关系
@@ -23,14 +24,19 @@ import java.util.List;
 @Repository
 @Mapper
 public interface SysRoleMenuDao extends BaseMapper<SysRoleMenuEntity> {
-	
+
 	/**
 	 * 根据角色ID，获取菜单ID列表
 	 */
-	List<Long> queryMenuIdList(Long roleId);
+	List<Map<String,Object>> queryMenuList(Map<String,Object> roleId);
 
 	/**
 	 * 根据角色ID数组，批量删除
 	 */
-	int deleteBatch(Long[] roleIds);
+	int deleteBatch(int[] roleIds);
+
+	/**
+	 * 查询菜单信息
+	 */
+	List<Map<String,Object>> select(Map<String,Object> map);
 }

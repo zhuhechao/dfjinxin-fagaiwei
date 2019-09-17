@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ import java.util.List;
  * @author Mark sunlightcs@gmail.com
  */
 @Data
-@TableName("sys_menu")
+@TableName("pss_menu_info")
 public class SysMenuEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -30,56 +31,57 @@ public class SysMenuEntity implements Serializable {
 	 * 菜单ID
 	 */
 	@TableId
-	private Long menuId;
+	private int menuId;
 
 	/**
 	 * 父菜单ID，一级菜单为0
 	 */
-	private Long parentId;
-	
-	/**
-	 * 父菜单名称
-	 */
-	@TableField(exist=false)
-	private String parentName;
+	private int pareMenuId;
+
 
 	/**
 	 * 菜单名称
 	 */
-	private String name;
-
-	/**
-	 * 菜单URL
-	 */
-	private String url;
+	private String menuName;
 
 	/**
 	 * 授权(多个用逗号分隔，如：user:list,user:create)
 	 */
-	private String perms;
+	private String menuPerm;
 
 	/**
 	 * 类型     0：目录   1：菜单   2：按钮
 	 */
-	private Integer type;
+	private Integer menuType;
+
+	/**
+	 * 菜单URL
+	 */
+	private String  menuUrl;
+
 
 	/**
 	 * 菜单图标
 	 */
-	private String icon;
+	private String menuIconUrl;
 
 	/**
-	 * 排序
+	 * 创建时间
 	 */
-	private Integer orderNum;
-	
-	/**
-	 * ztree属性
-	 */
-	@TableField(exist=false)
-	private Boolean open;
+	private Date creDate;
 
-	@TableField(exist=false)
-	private List<?> list;
+	/**
+	 * 更新时间
+	 */
+	private Date  updDate;
+
+	/**
+	 * 菜单状态
+	 */
+	private int menuState;
+
+	@TableField(exist = false)
+	private List<SysMenuEntity> list;
+
 
 }

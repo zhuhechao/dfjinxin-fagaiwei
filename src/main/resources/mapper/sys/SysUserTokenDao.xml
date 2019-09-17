@@ -4,6 +4,10 @@
 <mapper namespace="io.dfjinxin.modules.sys.dao.SysUserTokenDao">
 
 	<select id="queryByToken" resultType="io.dfjinxin.modules.sys.entity.SysUserTokenEntity">
-		select * from sys_user_token where token = #{value}
+		select * from pss_user_token where token = #{value}
+	</select>
+
+	<select id="selectById" resultType="io.dfjinxin.modules.sys.entity.SysUserTokenEntity">
+		select * from pss_user_token where user_id = #{value}
 	</select>
 </mapper>

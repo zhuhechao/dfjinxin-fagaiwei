@@ -237,22 +237,21 @@
 			</exclusions>
 		</dependency>
 
-		<!--&lt;!&ndash;太极单点登陆验证jar add by SongChaoqun 2019-07-03&ndash;&gt;
+		<!--发改单点登陆验证jar-->
 		<dependency>
-			<groupId>com.bjgov.ca</groupId>
-			<artifactId>sso</artifactId>
-			<version>P12</version>
+			<groupId>com.fg.price</groupId>
+			<artifactId>dingdang</artifactId>
+			<version>1.0</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/bjcalibs/bjcaticketsso_For_P12.jar</systemPath>
+			<systemPath>${project.basedir}/fglib/JWT-SDK-1.0.jar</systemPath>
 		</dependency>
 
 		<dependency>
-			<groupId>com.bjgov.ca</groupId>
-			<artifactId>security</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/bjcalibs/SecEngineDeal.jar</systemPath>
-		</dependency>-->
+			<groupId>org.bitbucket.b_c</groupId>
+			<artifactId>jose4j</artifactId>
+			<version>0.6.3</version>
+		</dependency>
+		
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

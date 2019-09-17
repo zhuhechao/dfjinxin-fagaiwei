@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.modules.sys.entity.SysRoleMenuEntity;
 
 import java.util.List;
-
+import java.util.Map;
 
 
 /**
@@ -22,16 +22,21 @@ import java.util.List;
  */
 public interface SysRoleMenuService extends IService<SysRoleMenuEntity> {
 	
-	void saveOrUpdate(Long roleId, List<Long> menuIdList);
+	void saveOrUpdate(int roleId, List<Integer> menuIdList);
 	
 	/**
 	 * 根据角色ID，获取菜单ID列表
 	 */
-	List<Long> queryMenuIdList(Long roleId);
+	List<Map<String,Object>> queryMenuList(Map<String,Object> roleId);
 
 	/**
 	 * 根据角色ID数组，批量删除
 	 */
-	int deleteBatch(Long[] roleIds);
+	int deleteBatch(int[] roleIds);
+
+	/**
+	 * 根据查询菜单信息
+	 */
+	List<Map<String,Object>> select(Map<String,Object> map);
 	
 }

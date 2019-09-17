@@ -46,7 +46,7 @@ public class OAuth2Realm extends AuthorizingRealm {
     }
 
     /**
-     * 授权(验证权限时调用)
+     * 授权(验证权限时调用)角色的权限信息
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
@@ -63,7 +63,7 @@ public class OAuth2Realm extends AuthorizingRealm {
     }
 
     /**
-     * 认证(登录时调用)
+     * 认证(登录时调用)用户角色信息
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {

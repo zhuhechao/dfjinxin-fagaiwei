@@ -2,16 +2,57 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="io.dfjinxin.modules.sys.dao.SysRoleMenuDao">
+
+	<sql id="where">
+		1=1
+		<if test="menu_id != null  and menu_id != '' and menu_id != 'null'"><![CDATA[
+	       and m.menu_id = #{menu_id}
+	    ]]></if>
+		<if test="pare_menu_id != null and pare_menu_id != ''  and pare_menu_id != 'null'"><![CDATA[
+	       and pare_menu_id = #{pare_menu_id}
+	    ]]></if>
+		<if test="menu_name != null and menu_name != '' and menu_name != 'null'"><![CDATA[
+	       and menu_name = '${menu_name}'
+	    ]]></if>
+		<if test="menu_state != null and menu_state != ''"><![CDATA[
+	       and menu_state = #{menu_state}
+	    ]]></if>
+		<if test="role_id != null and role_id != ''"><![CDATA[
+	       and role_id = #{role_id}
+	    ]]></if>
+		<if test="cre_time != null and cre_time != ''"><![CDATA[
+	       and cre_time >= #{cre_time}
+	    ]]></if>
+		<if test="upd_time != null and upd_time != ''"><![CDATA[
+	       and upd_time >= #{upd_time}
+	    ]]></if>
+		<if test="_sql_where != null and _sql_where != ''"> <![CDATA[
+            and ${_sql_where}
+        ]]> </if>
+	</sql>
 	
-	<select id="queryMenuIdList" resultType="long">
-		select menu_id from sys_role_menu where role_id = #{value}
+	<select id="queryMenuList" parameterType="map" resultType="map">
+		select m.*
+		,p.role_id
+		from (select * from pss_menu_info where menu_state = 1 ) m
+		join pss_role_perm_info p on m.menu_id = p.menu_id
 	</select>
 
 	<delete id="deleteBatch">
-		delete from sys_role_menu where role_id in
+		delete from pss_role_perm_info where role_id in
 		<foreach item="roleId" collection="array" open="(" separator="," close=")">
 			#{roleId}
 		</foreach>
 	</delete>
+
+	<select id="select" parameterType="map" resultType="map">
+		select * from (select * from pss_menu_info where menu_state = 1 ) m
+		<where>
+			<include refid="where" />
+		</where>
+		<if test="_sql_order != null and _sql_order != ''">
+			order by ${_sql_order}
+		</if>
+	</select>
 
 </mapper>

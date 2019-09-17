@@ -3,14 +3,12 @@
 
 <mapper namespace="io.dfjinxin.modules.sys.dao.SysUserRoleDao">
 
-	<delete id="deleteBatch">
-		delete from sys_user_role where role_id in
-		<foreach item="roleId" collection="array" open="(" separator="," close=")">
-			#{roleId}
-		</foreach>
-	</delete>
 
-	<select id="queryRoleIdList" resultType="long">
-		select role_id from sys_user_role where user_id = #{value}
+	<select id="queryRoleIdList" resultType="int">
+		select role_id from pss_user_role_rela where user_id = #{value}
+	</select>
+
+	<select id="deleteUerRole" >
+		DELETE FROM pss_user_role_rela where user_id = #{value}
 	</select>
 </mapper>

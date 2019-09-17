@@ -10,6 +10,7 @@ package io.dfjinxin.modules.sys.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.common.utils.PageUtils;
+import io.dfjinxin.modules.sys.entity.SysMenuEntity;
 import io.dfjinxin.modules.sys.entity.SysRoleEntity;
 
 import java.util.List;
@@ -25,15 +26,17 @@ public interface SysRoleService extends IService<SysRoleEntity> {
 
 	PageUtils queryPage(Map<String, Object> params);
 
-	void saveRole(SysRoleEntity role);
 
-	void update(SysRoleEntity role);
+	void addOrUpdate(SysRoleEntity role);
 
-	void deleteBatch(Long[] roleIds);
+	void deleteBatch(int[] roleIds);
 
-	
-	/**
-	 * 查询用户创建的角色ID列表
-	 */
-	List<Long> queryRoleIdList(Long createUserId);
+	//角色功能权限
+	public List<Map<String,Object>> rolePerm(String roleId);
+
+	//新增角色
+	void addRole(SysRoleEntity role);
+
+
+
 }

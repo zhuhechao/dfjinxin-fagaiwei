@@ -4,7 +4,15 @@
 <mapper namespace="io.dfjinxin.modules.sys.dao.SysRoleDao">
 	
 	<!-- 查询用户创建的角色ID列表 -->
-	<select id="queryRoleIdList" resultType="long">
-		select role_id from sys_role where create_user_id = #{createUserId} 
-	</select> 
+	<select id="queryRoleIdList" resultType="io.dfjinxin.modules.sys.entity.SysRoleEntity">
+		select * from pss_user_role_info where user_id = #{createUserId}
+	</select>
+
+    <!--批量删除角色-->
+	<delete id="deleteBatch">
+		delete from pss_user_role_info where role_id in
+		<foreach item="roleId" collection="array" open="(" separator="," close=")">
+			#{roleId}
+		</foreach>
+	</delete>
 </mapper>

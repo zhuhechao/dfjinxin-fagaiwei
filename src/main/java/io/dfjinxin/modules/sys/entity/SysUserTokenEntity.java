@@ -23,7 +23,7 @@ import java.util.Date;
  * @author Mark sunlightcs@gmail.com
  */
 @Data
-@TableName("sys_user_token")
+@TableName("pss_user_token")
 public class SysUserTokenEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 	

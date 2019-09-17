@@ -23,5 +23,7 @@ import org.springframework.stereotype.Repository;
 public interface SysUserTokenDao extends BaseMapper<SysUserTokenEntity> {
 
     SysUserTokenEntity queryByToken(String token);
+
+    SysUserTokenEntity selectById(String token);
 	
 }

@@ -18,6 +18,8 @@ import lombok.Data;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,7 +29,7 @@ import java.util.List;
  * @author Mark sunlightcs@gmail.com
  */
 @Data
-@TableName("sys_user")
+@TableName("pss_user_info")
 public class SysUserEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -37,31 +39,31 @@ public class SysUserEntity implements Serializable {
 	@TableId
 	private String userId;
 
-	private String govUserId;
+	private String userName;
+	/**
+	 * 用户密码
+	 */
+	private  String userPass;
 
 	/**
-	 * 用户名
+	 * 用户真实名称
 	 */
-	private Long tenantId;
-
-	@TableField(exist=false)
-	private String tenantName;//租户名称不能为空
+	private String userRealName;
 
 	/**
-	 * 用户名
+	 * 手机号
 	 */
-	@NotBlank(message="用户名不能为空", groups = {AddGroup.class, UpdateGroup.class})
-	private String username;
+	private String mblPhoneNo;
 
 	/**
-	 * 密码
+	 * 座机号
 	 */
-	@NotBlank(message="密码不能为空", groups = AddGroup.class)
-	private String password;
+	private String fixTphoneNo;
 
 	/**
 	 * 盐
 	 */
+	@TableField(exist = false)
 	private String salt;
 
 	/**
@@ -71,30 +73,43 @@ public class SysUserEntity implements Serializable {
 	@Email(message="邮箱格式不正确", groups = {AddGroup.class, UpdateGroup.class})
 	private String email;
 
-	/**
-	 * 手机号
-	 */
-	private String mobile;
 
 	/**
 	 * 状态  0：禁用   1：正常
 	 */
-	private Integer status;
+	private Integer userStatus;
+
+
 
 	/**
-	 * 角色ID列表
+	 * 注册时间
 	 */
-	@TableField(exist=false)
-	private List<Long> roleIdList;
+	private Timestamp crteDate;
 
 	/**
-	 * 创建者ID
+	 * 更新时间
 	 */
-	private Long createUserId;
+	private Timestamp updDate;
 
 	/**
-	 * 创建时间
+	 * 用户和角色关系
+	 *
 	 */
-	private Date createTime;
+	@TableField(exist = false)
+	private ArrayList<Integer> roles;
+
+	/**
+	 * 用户和部门
+	 *
+	 */
+    @TableField(exist = false)
+	private  String depId;
+
+	/**
+	 * 角色类型
+	 */
+	@TableField(exist = false)
+    private int  roleTypeId;
+
 
 }

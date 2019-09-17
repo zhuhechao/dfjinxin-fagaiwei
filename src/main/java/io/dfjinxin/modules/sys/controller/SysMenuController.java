@@ -43,16 +43,9 @@ public class SysMenuController {
 	 */
 	@GetMapping("/nav")
 	public R nav(){
-		List<SysMenuEntity> menuList = sysMenuService.getUserMenuList(1L);
+		List<SysMenuEntity> menuList = sysMenuService.getUserMenuList(1);
 		Set<String> permissions = shiroService.getUserPermissions("1");
 		return R.ok().put("menuList", menuList).put("permissions", permissions);
-	}
-
-	@GetMapping("/authMenus")
-	@ApiOperation("从太极获取菜单列表")
-	public R authMenus(){
-		List<GovRootMenuEntity> menuList = sysMenuService.getMenuFromGovAuth((long)1111);
-		return R.ok().put("menuList", menuList);
 	}
 
 	/**
@@ -62,12 +55,13 @@ public class SysMenuController {
 	@RequiresPermissions("sys:menu:list")
 	public R list(){
 		List<SysMenuEntity> menuList = sysMenuService.list();
-		for(SysMenuEntity sysMenuEntity : menuList){
-			SysMenuEntity parentMenuEntity = sysMenuService.getById(sysMenuEntity.getParentId());
-			if(parentMenuEntity != null){
-				sysMenuEntity.setParentName(parentMenuEntity.getName());
-			}
-		}
+//		for(SysMenuEntity sysMenuEntity : menuList){
+//			SysMenuEntity parentMenuEntity = sysMenuService.getById(sysMenuEntity.getParentId());
+//			if(parentMenuEntity != null){
+//				sysMenuEntity.setParentName(parentMenuEntity.getName());
+//			}
+//		}
+
 		return R.ok().put("data", menuList);
 	}
 
@@ -82,10 +76,10 @@ public class SysMenuController {
 
 		//添加顶级菜单
 		SysMenuEntity root = new SysMenuEntity();
-		root.setMenuId(0L);
-		root.setName("一级菜单");
-		root.setParentId(-1L);
-		root.setOpen(true);
+		root.setMenuId(0);
+		root.setMenuName("一级菜单");
+		root.setPareMenuId(-1);
+		root.setMenuState(1);
 		menuList.add(root);
 
 		return R.ok().put("menuList", menuList);
@@ -137,7 +131,7 @@ public class SysMenuController {
 	@SysLog("删除菜单")
 	@PostMapping("/delete/{menuId}")
 	@RequiresPermissions("sys:menu:delete")
-	public R delete(@PathVariable("menuId") long menuId){
+	public R delete(@PathVariable("menuId") int menuId){
 		if(menuId <= 31){
 			return R.error("系统菜单，不能删除");
 		}
@@ -157,31 +151,31 @@ public class SysMenuController {
 	 * 验证参数是否正确
 	 */
 	private void verifyForm(SysMenuEntity menu){
-		if(StringUtils.isBlank(menu.getName())){
+		if(StringUtils.isBlank(menu.getMenuName())){
 			throw new RRException("菜单名称不能为空");
 		}
 
-		if(menu.getParentId() == null){
+		if(menu.getPareMenuId() ==0){
 			throw new RRException("上级菜单不能为空");
 		}
 
 		//菜单
-		if(menu.getType() == Constant.MenuType.MENU.getValue()){
-			if(StringUtils.isBlank(menu.getUrl())){
+		if(menu.getMenuType() == Constant.MenuType.MENU.getValue()){
+			if(StringUtils.isBlank(menu.getMenuUrl())){
 				throw new RRException("菜单URL不能为空");
 			}
 		}
 
 		//上级菜单类型
 		int parentType = Constant.MenuType.CATALOG.getValue();
-		if(menu.getParentId() != 0){
-			SysMenuEntity parentMenu = sysMenuService.getById(menu.getParentId());
-			parentType = parentMenu.getType();
+		if(menu.getPareMenuId() != 0){
+			SysMenuEntity parentMenu = sysMenuService.getById(menu.getPareMenuId());
+			parentType = parentMenu.getMenuType();
 		}
 
 		//目录、菜单
-		if(menu.getType() == Constant.MenuType.CATALOG.getValue() ||
-				menu.getType() == Constant.MenuType.MENU.getValue()){
+		if(menu.getMenuType() == Constant.MenuType.CATALOG.getValue() ||
+				menu.getMenuType() == Constant.MenuType.MENU.getValue()){
 			if(parentType != Constant.MenuType.CATALOG.getValue()){
 				throw new RRException("上级菜单只能为目录类型");
 			}
@@ -189,7 +183,7 @@ public class SysMenuController {
 		}
 
 		//按钮
-		if(menu.getType() == Constant.MenuType.BUTTON.getValue()){
+		if(menu.getMenuType() == Constant.MenuType.BUTTON.getValue()){
 			if(parentType != Constant.MenuType.MENU.getValue()){
 				throw new RRException("上级菜单只能为菜单类型");
 			}

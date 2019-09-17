@@ -52,34 +52,6 @@ public abstract class AbstractController {
 			return UserId;
 		}
 	}
-	protected Long getTenantId(){
-		if(caVaid){
-			SysUserEntity userEntityFromShiro = ShiroUtils.getUserEntity();
-			Long TenementId = userEntityFromShiro.getTenantId();
-			logger.info("当前用户TenementId:{}",TenementId);
-			if(TenementId==null){
-				throw new LoginException("租户id为空，请重新登录");
-			}
-			return TenementId;
-		}else{
-			HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
-			String TenementId = (String)request.getSession().getAttribute("TenementId");
-			System.out.println("当前用户TenementId: " + TenementId);
-			if(StringUtils.isBlank(TenementId)){
-				throw new LoginException("租户id为空，请重新登录");
-			}
-			return Long.parseLong(TenementId);
-		}
-	}
 
-	/**
-	 * 添加租户，用户信息用于过滤
-	 * @param params
-	 */
-	protected void appendAuthFilter(Map<String, Object> params){
-		//租户
-		params.put("tenantId", getTenantId());
-		params.put("userId", getUserId());
-	}
 
 }

@@ -20,21 +20,21 @@ import java.io.Serializable;
  * @author Mark sunlightcs@gmail.com
  */
 @Data
-@TableName("sys_role_menu")
+@TableName("pss_role_perm_info")
 public class SysRoleMenuEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@TableId
-	private Long id;
+	private int permId;
 
 	/**
 	 * 角色ID
 	 */
-	private Long roleId;
+	private int roleId;
 
 	/**
 	 * 菜单ID
 	 */
-	private Long menuId;
+	private int menuId;
 	
 }

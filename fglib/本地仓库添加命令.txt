@@ -1,0 +1,1 @@
+mvn install:install-file -Dfile=F:/fgtb/fgtb/dfjinxin-fagaiwei/fglib/JWT-SDK-1.0.jar -DgroupId=com.fg.price -DartifactId=dingdang -Dversion=1.0 -Dpackaging=jar

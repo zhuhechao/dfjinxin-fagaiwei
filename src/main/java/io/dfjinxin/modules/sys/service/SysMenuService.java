@@ -14,6 +14,7 @@ import io.dfjinxin.modules.sys.entity.GovRootMenuEntity;
 import io.dfjinxin.modules.sys.entity.SysMenuEntity;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -28,35 +29,37 @@ public interface SysMenuService extends IService<SysMenuEntity> {
 	 * @param parentId 父菜单ID
 	 * @param menuIdList  用户菜单ID
 	 */
-	List<SysMenuEntity> queryListParentId(Long parentId, List<Long> menuIdList);
+	List<SysMenuEntity> queryListParentId(int parentId, List<Integer> menuIdList);
 
 	/**
 	 * 根据父菜单，查询子菜单
 	 * @param parentId 父菜单ID
 	 */
-	List<SysMenuEntity> queryListParentId(Long parentId);
+	List<SysMenuEntity> queryListParentId(int parentId);
 	
 	/**
 	 * 获取不包含按钮的菜单列表
 	 */
 	List<SysMenuEntity> queryNotButtonList();
+
+
 	
 	/**
 	 * 获取用户菜单列表
 	 */
-	List<SysMenuEntity> getUserMenuList(Long userId);
+	List<SysMenuEntity> getUserMenuList(int userId);
 
 	/**
 	 * 删除
 	 */
-	void delete(Long menuId);
+	void delete(int menuId);
 
 	/**
 	 * 从太极获取用户菜单
 	 * @param userId
 	 * @return
 	 */
-	List<GovRootMenuEntity> getMenuFromGovAuth(Long userId);
+	//List<GovRootMenuEntity> getMenuFromGovAuth(Long userId);
 
-	List<Long> queryAllMenuId(Long userId);
+	//List<Long> queryAllMenuId(int userId);
 }
