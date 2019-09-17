@@ -39,7 +39,7 @@
 		<lombok.version>1.18.4</lombok.version>
 		<jsch.version>0.1.54</jsch.version>
 		<spring-cloud.version>Greenwich.SR1</spring-cloud.version>
-
+		<quartz.version>2.3.0</quartz.version>
 		<!--打包时跳过测试-->
 		<!--<skipTests>true</skipTests>-->
 		<!--打包名称-->
@@ -205,6 +205,19 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.17</version>
 		</dependency>
+		<!-- 定时任务 -->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>${quartz.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.mchange</groupId>
+					<artifactId>c3p0</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.apache.hive</groupId>
