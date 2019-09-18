@@ -3,6 +3,7 @@ package io.dfjinxin.modules.analyse.controller;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.analyse.entity.WpMcroIndexInfoEntity;
+import io.dfjinxin.modules.analyse.entity.WpMcroIndexValEntity;
 import io.dfjinxin.modules.analyse.service.WpMcroIndexInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -35,28 +37,30 @@ public class WpMcroIndexInfoController {
      * 列表
      */
     @GetMapping("/query")
-    @ApiOperation("宏观分析-查询")
+    @ApiOperation(value = "宏观分析-查询",notes = "areaCode:0-国内，1-国外")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "indexName", value = "指标名称", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "indexId", value = "指标id", required = true, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "areaName", value = "国家名称或国内的省份名称", required = true, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "dateFrom", value = "开始时间", required = false, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "dateTo", value = "结束时间", required = false, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "areaCodes", value = "统计区域集合,分割", required = false, dataType = "String", paramType = "query")
+            @ApiImplicitParam(name = "dateTo", value = "结束时间", required = false, dataType = "String", paramType = "query")
     })
-    public R query(@RequestParam(name = "indexName", required = false) String indexName,
+    public R query(@RequestParam(name = "indexId", required = true) String indexId,
+                   @RequestParam(name = "areaName", required = true) String areaName,
                    @RequestParam(name = "dateFrom", required = false) String dateFrom,
-                   @RequestParam(name = "dateTo", required = false) String dateTo,
-                   @RequestParam(name = "areaCodes", required = false) String areaCodes
+                   @RequestParam(name = "dateTo", required = false) String dateTo
     ) {
-        PageUtils page = wpMcroIndexInfoService.queryByPage(indexName,dateFrom,dateTo,areaCodes);
-//        return R.ok().put("tableData", page).put("echartsData", page);
-        return R.ok().put("data", page);
+        List<WpMcroIndexValEntity> data = wpMcroIndexInfoService.queryIndexVals(areaName,indexId,dateFrom,dateTo);
+        return R.ok().put("data", data);
     }
 
-    @GetMapping("getName")
-    @ApiOperation("宏观分析-获取指标名称")
-    public R getName() {
-        List<WpMcroIndexInfoEntity> wpMcroIndexInfos = wpMcroIndexInfoService.getName();
+
+    @GetMapping("getIndexName")
+    @ApiOperation(value = "宏观分析-获取指标名称")
+    public R getAreaName() {
+        List<Map<String, Object>> wpMcroIndexInfos = wpMcroIndexInfoService.getAreaName();
         return R.ok().put("data", wpMcroIndexInfos);
     }
+
+
 
 }
