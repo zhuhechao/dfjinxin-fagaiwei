@@ -8,6 +8,7 @@ import org.rosuda.REngine.Rserve.RserveException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * 测试R语言
@@ -20,6 +21,7 @@ public class TestR {
 
     /**
      * 简单获取 R 语言版本
+     *
      * @throws RserveException
      * @throws REXPMismatchException
      */
@@ -34,6 +36,7 @@ public class TestR {
 
     /**
      * 执行简单的函数
+     *
      * @throws RserveException
      * @throws REXPMismatchException
      */
@@ -51,6 +54,7 @@ public class TestR {
 
     /**
      * 执行来自R脚本的简单函数
+     *
      * @throws IOException
      * @throws REXPMismatchException
      */
@@ -76,6 +80,7 @@ public class TestR {
 
     /**
      * Rserve onnection.eval不支持中文 调用一般相关性分析.R
+     *
      * @throws IOException
      * @throws REXPMismatchException
      */
@@ -91,12 +96,59 @@ public class TestR {
         try {
             connection = new RConnection();
             connection.eval("source('" + file + "')");
-            rList = connection.eval("fun('" + cvsFile +"')").asList();
+            rList = connection.eval("fun5('" + cvsFile + "')").asList();
             REXPString pfile = (REXPString) rList.get(0);
             REXPString rfile = (REXPString) rList.get(1);
 
             System.out.println(FileUtil.getFileContent(pfile.asString(), "gbk"));
             System.out.println(FileUtil.getFileContent(rfile.asString(), "gbk"));
+        } catch (REngineException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) connection.close();
+        }
+    }
+
+    @Test
+    public void demo4() throws IOException, REXPMismatchException {
+        String file = new File("").getCanonicalPath() + "\\r\\Rdemo0918.R";
+//        String cvsFile = new File("").getCanonicalPath() + "\\r\\cor-data.csv";
+        RConnection connection = null;
+
+//        RList rList = null;
+        int commId = 1;
+
+        file = file.replace("\\", "/");
+//        cvsFile = cvsFile.replace("\\", "/");
+        try {
+            connection = new RConnection();
+            connection.eval("source('" + file + "')");
+//            "myAdd(" + num1 + "," + num2 + ")"
+            connection.eval("period(" + new Date() + "," + new Date() + "," + commId + ")");
+//            REXPString pfile = (REXPString) rList.get(0);
+//            REXPString rfile = (REXPString) rList.get(1);
+
+//            System.out.println(FileUtil.getFileContent(pfile.asString(), "gbk"));
+//            System.out.println(FileUtil.getFileContent(rfile.asString(), "gbk"));
+        } catch (REngineException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) connection.close();
+        }
+    }
+
+    @Test
+    public void demo5() throws IOException, REXPMismatchException {
+        String file = new File("").getCanonicalPath() + "\\r\\demo3.R";
+        RConnection connection = null;
+        int a =1;
+
+        file = file.replace("\\", "/");
+        try {
+            connection = new RConnection();
+            connection.eval("source('" + file + "')");
+            int retu = connection.eval("fun3(" + a + ")").asInteger();
+            System.out.println("the call R return: "+retu);
         } catch (REngineException e) {
             e.printStackTrace();
         } finally {
