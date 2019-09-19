@@ -283,7 +283,7 @@ public class DateUtils {
      */
     public static long getYearDiffDay() {
         //设置转换的日期格式
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
         //开始时间
         Date startDate = null;
         Date endDate = null;
@@ -298,16 +298,31 @@ public class DateUtils {
         return betweenDate;
     }
 
+    /**
+     * 获取当前系统时间前指定年的时间
+     *
+     * @return
+     */
+    public static String getLastYearByVal(int val) {
+        SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.YEAR, -val);
+        date = calendar.getTime();
+        return format.format(date);
+    }
+
 
     public static void main(String[] args) {
-//        System.out.println(DateUtils.getYearFirstDayStr());
-//        System.out.println(DateUtils.getMonthDiffDay());
+        System.out.println(DateUtils.getLastYearByVal(3));
+        System.out.println(DateUtils.getCurrentDayStr());
 //        System.out.println(DateUtils.getYearDiffDay());
 //        PythonInterpreter interpreter = new PythonInterpreter();
 //        interpreter.exec("a=[5,2,3,9,4,0]; ");
 //        interpreter.exec("print(sorted(a));");  //此处python语句是3.x版本的语法
 
-        RConnection connection = null;
+        /*RConnection connection = null;
         System.out.println("平均值");
         try {
             //创建对象
@@ -342,6 +357,6 @@ public class DateUtils {
         } catch (REXPMismatchException e) {
             e.printStackTrace();
         }
-        connection.close();
+        connection.close();*/
     }
 }

@@ -1,8 +1,8 @@
 package io.dfjinxin.modules.analyse.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.modules.analyse.entity.WpMcroIndexInfoEntity;
+import io.dfjinxin.modules.analyse.entity.WpMcroIndexValEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -16,10 +16,8 @@ import java.util.Map;
  */
 public interface WpMcroIndexInfoService extends IService<WpMcroIndexInfoEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    List<Map<String, Object>> getAreaName();
 
-    List<WpMcroIndexInfoEntity> getName();
-
-    PageUtils queryByPage(String indexName, String dateFrom, String dateTo, String areaCodes);
+    List<WpMcroIndexValEntity> queryIndexVals(String areaName,String indexId, String dateFrom, String dateTo);
 }
 
