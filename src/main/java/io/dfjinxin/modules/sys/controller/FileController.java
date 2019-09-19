@@ -43,9 +43,15 @@ public class FileController {
     @PostMapping("/upload")
     @ResponseBody
     @ApiOperation("上传")
+    /**
+     * @param moduleName 0 分析报告 report
+     */
     public R upload(@RequestParam("file") MultipartFile file,
                     @RequestParam(value = "saveOriName", defaultValue = "false") Boolean saveOriName,
-                    @RequestParam(value = "saveSubPath", defaultValue = "false") Boolean saveSubPath) throws IOException {
+                    @RequestParam(value = "saveSubPath", defaultValue = "true") Boolean saveSubPath,
+                    @RequestParam(value = "moduleName", defaultValue = "") String moduleName
+
+                    ) throws IOException {
         if (file.isEmpty()) {
             return R.error("上传失败，请选择文件");
         }
@@ -69,15 +75,18 @@ public class FileController {
         // Build sub file path
         String subFilePath = subPath + basename + '.' + extension;
 
-        // Get upload path
-        Path uploadPath = Paths.get(appProperties.getPath().getWorkDir(), appProperties.getPath().getUpload(), subFilePath);
+        // Get upload path 根据module判断
+        String modulePath=appProperties.getPath().getUpload();
+        if(moduleName.equals("0"))
+          modulePath=appProperties.getPath().getModule().getReport();
+        Path uploadPath = Paths.get(appProperties.getPath().getWorkDir(),modulePath , subFilePath);
         if (saveOriName == true && saveSubPath == false && FileUtil.exists(uploadPath.toString()))
             return R.error("文件已存在");
 
         logger.debug("Uploading to directory: [{}]", uploadPath.toString());
         FileUtil.transferTo(file, uploadPath);
 
-        Path absPath = Paths.get(appProperties.getPath().getUpload(), subFilePath);
-        return R.ok().put("path", absPath.toString());
+        Path absPath = Paths.get(modulePath, subFilePath);
+        return R.ok().put("path", absPath.toString()).put("originalName",originalBasename);
     }
 }
