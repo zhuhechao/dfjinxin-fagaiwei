@@ -3,9 +3,9 @@ spring:
         include: db
 
 mysql:
-      url: jdbc:mysql://192.168.21.180:3306/zhjg?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&zeroDateTimeBehavior=convertToNull
+      url: jdbc:mysql://localhost:3306/zhjg_0829?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&zeroDateTimeBehavior=convertToNull
       username: root
-      password: root123
+      password: root
 #     url: jdbc:mysql://10.1.2.33:3306/cleanse_db?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
 #     username: cleanse_sys
 #     password: cleanse_sys
