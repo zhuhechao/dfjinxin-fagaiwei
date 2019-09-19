@@ -19,7 +19,10 @@ import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 
 
+
 /**
+ * 
+ *
  * @author mxq
  * @email 397968061@qq.com
  * @date 2019-09-14 16:04:09
@@ -37,9 +40,10 @@ public class PssRschConfController {
      */
     @GetMapping("/list")
     @ApiOperation("条件查询")
-    @ApiImplicitParam(name = "params", value = "map参数", required = false, dataType = "String", paramType = "query")
+    @ApiImplicitParams({@ApiImplicitParam(name = "params", value = "map参数", required = false, dataType = "String", paramType = "query")
+    })
     //@RequiresPermissions("job:pssrschconf:list")
-    public R list(@RequestParam Map<String, Object> params) {
+    public R list(@RequestParam Map<String, Object> params){
         PageUtils page = pssRschConfService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -51,10 +55,11 @@ public class PssRschConfController {
      */
     @GetMapping("/info/{rschId}")
     @ApiOperation("单信息查询")
-    @ApiImplicitParam(name = "rschId", value = "主键id", required = false, dataType = "Long", paramType = "query")
+    @ApiImplicitParams({@ApiImplicitParam(name = "rschId", value = "主键id", required = false, dataType = "Long", paramType = "query")
+    })
     @RequiresPermissions("job:pssrschconf:info")
-    public R info(@PathVariable("rschId") Long rschId) {
-        PssRschConfEntity pssRschConf = pssRschConfService.getById(rschId);
+    public R info(@PathVariable("rschId") Long rschId){
+		PssRschConfEntity pssRschConf = pssRschConfService.getById(rschId);
 
         return R.ok().put("pssRschConf", pssRschConf);
     }
@@ -64,12 +69,13 @@ public class PssRschConfController {
      */
     @PostMapping("/save")
     @ApiOperation("保存")
-    @ApiImplicitParam(name = "pssRschConf", value = "详细信息", required = true, dataType = "PssRschConfEntity", paramType = "query")
+    @ApiImplicitParams({@ApiImplicitParam(name = "pssRschConf", value = "详细信息", required = true, dataType = "PssRschConfEntity", paramType = "query")
+    })
     @RequiresPermissions("job:pssrschconf:save")
-    public R save(@RequestBody PssRschConfEntity pssRschConf) {
+    public R save(@RequestBody PssRschConfEntity pssRschConf){
         pssRschConf.setDel_flag("0");
         pssRschConf.setCreateTime(new Date());
-        pssRschConfService.save(pssRschConf);
+		pssRschConfService.save(pssRschConf);
 
         return R.ok();
     }
@@ -79,9 +85,10 @@ public class PssRschConfController {
      */
     @PostMapping("/update")
     @ApiOperation("修改")
-    @ApiImplicitParam(name = "pssRschConf", value = "详细信息", required = true, dataType = "PssRschConfEntity", paramType = "query")
+    @ApiImplicitParams({ @ApiImplicitParam(name = "pssRschConf", value = "详细信息", required = true, dataType = "PssRschConfEntity", paramType = "query")
+    })
     @RequiresPermissions("job:pssrschconf:update")
-    public R update(@RequestBody PssRschConfEntity pssRschConf) {
+    public R update(@RequestBody PssRschConfEntity pssRschConf){
         pssRschConfService.updateById(pssRschConf);
         return R.ok();
     }
@@ -91,12 +98,13 @@ public class PssRschConfController {
      */
     @PostMapping("/delete")
     @ApiOperation("修改")
-    @ApiImplicitParam(name = "pssRschConf", value = "主键id数组", required = true, dataType = "long[]", paramType = "query")
+    @ApiImplicitParams({ @ApiImplicitParam(name = "pssRschConf", value = "主键id数组", required = true, dataType = "long[]", paramType = "query")
+    })
     @RequiresPermissions("job:pssrschconf:delete")
-    public R delete(@RequestBody Long[] rschIds) {
-        List rschids = Arrays.asList(rschIds);
-        for (int i = 0; i < rschids.size(); i++) {
-            PssRschConfEntity pc = pssRschConfService.getById(rschids.get(i) + "");
+    public R delete(@RequestBody Long[] rschIds){
+        List rschids=Arrays.asList(rschIds);
+        for (int i=0;i<rschids.size();i++){
+            PssRschConfEntity pc=pssRschConfService.getById(rschids.get(i)+"");
             pc.setDel_flag("1");
             pssRschConfService.updateById(pc);
         }

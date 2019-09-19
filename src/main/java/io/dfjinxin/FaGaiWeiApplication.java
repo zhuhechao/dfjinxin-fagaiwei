@@ -10,6 +10,7 @@ package io.dfjinxin;
 
 import io.dfjinxin.config.propertie.AppPathProperties;
 import io.dfjinxin.config.propertie.AppProperties;
+import io.dfjinxin.config.propertie.ModulePathProperties;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,7 +23,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @MapperScan(value = "io.dfjinxin.**.dao")
 @EnableTransactionManagement
 @EnableCaching
-@EnableConfigurationProperties({AppProperties.class, AppPathProperties.class})
+@EnableConfigurationProperties({AppProperties.class, AppPathProperties.class, ModulePathProperties.class})
 public class FaGaiWeiApplication {
 
 	public static void main(String[] args) {

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.dfjinxin.modules.report.dao.PssRptConfDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.dfjinxin.modules.report.entity.PssRptConfEntity" id="pssRptConfMap">
+        <result property="rptId" column="rpt_id"/>
+        <result property="commId" column="comm_id"/>
+        <result property="rptType" column="rpt_type"/>
+        <result property="rptFreq" column="rpt_freq"/>
+        <result property="rschId" column="rsch_id"/>
+        <result property="rptDate" column="rpt_date"/>
+        <result property="rptName" column="rpt_name"/>
+        <result property="statCode" column="stat_code"/>
+        <result property="rptPath" column="rpt_path"/>
+        <result property="crteDate" column="crte_date"/>
+        <result property="crteName" column="crte_name"/>
+        <result property="rptStatus" column="rpt_status"/>
+        <result property="rvewRemarks" column="rvew_remarks"/>
+        <result property="rptAttachmentPath" column="rpt_attachment_path"/>
+        <result property="revStatus" column="rev_status"/>
+        <result property="rptTemplateName" column="rpt_template_name"/>
+        <result property="rptAttachmentName" column="rpt_attachment_name"/>
+    </resultMap>
+
+
+</mapper>

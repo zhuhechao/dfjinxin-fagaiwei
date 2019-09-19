@@ -12,7 +12,7 @@ server:
 spring:
   # 环境 dev|test|prod
   profiles:
-    active: @profileActive@
+    active: dev
   # jackson时间格式化
   jackson:
     time-zone: GMT+8
@@ -26,6 +26,9 @@ spring:
 app:
   path:
     work-dir: ${user.home}/fagaiwei
+    userDir: ${user.dir}/fagaiwei
+    module:
+      report: /report
     temp: /temp
     upload: /upload
 
