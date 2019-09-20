@@ -2,7 +2,6 @@ package io.dfjinxin.modules.report.controller;
 
 import java.util.*;
 
-import io.dfjinxin.modules.price.dto.PssRptInfoDto;
 import io.dfjinxin.modules.report.dto.PssRptConfDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
