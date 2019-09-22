@@ -131,20 +131,6 @@ public class ScheduleUtils {
             }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             
             //暂停任务
             if(scheduleJob.getStatus() == Constant.ScheduleStatus.PAUSE.getValue()){

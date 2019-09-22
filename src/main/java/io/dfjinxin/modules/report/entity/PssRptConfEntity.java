@@ -100,7 +100,6 @@ public class PssRptConfEntity implements Serializable {
 		}
 		PssRptConfEntity to = new PssRptConfEntity();
 		BeanUtils.copyProperties(from, to);
-		to.rptDate = new Date();
 		to.crteDate = new Date();
 		return to;
 	}
