@@ -11,5 +11,6 @@ public class AppPathProperties {
     private String temp;
     private String upload;
     private String workDir;
+    private ModulePathProperties module;
 
 }
