@@ -15,8 +15,8 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * 
- * 
+ *
+ *
  * @author bourne
  * @email kuibobo@gmail.com
  * @date 2019-09-02 17:05:57
@@ -27,21 +27,23 @@ public class PssDatasetInfoEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 *
 	 */
 	@TableId
 	private Integer dataSetId;
+
+	private Integer dataSetType;
 	/**
-	 * 
+	 *
 	 */
 	private String dataSetName;
 
 	/**
-	 * 
+	 *
 	 */
 	private String tabName;
 
-	private String columnVal;
+	private String indeVal;
 	/**
 	 *
 	 */
@@ -56,7 +58,7 @@ public class PssDatasetInfoEntity implements Serializable {
 		BeanUtils.copyProperties(from, to);
 
 		to.crteTime = new Date();
-		to.columnVal = JSON.toJSONString(from.getColumnVal());
+		to.indeVal = JSON.toJSONString(from.getColumnVal());
 		return to;
 	}
 
@@ -66,7 +68,7 @@ public class PssDatasetInfoEntity implements Serializable {
 		}
 		PssDatasetInfoDto to = new PssDatasetInfoDto();
 		BeanUtils.copyProperties(from, to);
-		to.setColumnVal(JSONObject.parseObject(from.columnVal, new TypeReference<Map<String, Object>>(){}));
+		to.setColumnVal(JSONObject.parseObject(from.indeVal, new TypeReference<Map<String, Object>>(){}));
 		return to;
 	}
 }

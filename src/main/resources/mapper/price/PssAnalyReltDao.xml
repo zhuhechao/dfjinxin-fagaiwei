@@ -28,7 +28,7 @@
             AND par.analy_way = #{param.analyWay}
         </if>
         <if test="param.datasetId != null">
-            AND pdi.data_set_id = datasetId
+            AND pdi.data_set_id = #{param.datasetId}
         </if>
         <if test="param.analyName != null and param.analyName.trim() != ''">
             AND pai.analy_name LIKE concat('%', #{param.analyName}, '%')

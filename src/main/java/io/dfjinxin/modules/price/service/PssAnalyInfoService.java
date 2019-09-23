@@ -4,11 +4,14 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.modules.price.dto.PssAnalyInfoDto;
 import io.dfjinxin.modules.price.entity.PssAnalyInfoEntity;
+import io.dfjinxin.modules.price.entity.PssAnalyReltEntity;
+import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
- * 
+ *
  *
  * @author bourne
  * @email kuibobo@gmail.com
@@ -19,5 +22,9 @@ public interface PssAnalyInfoService extends IService<PssAnalyInfoEntity> {
     PssAnalyInfoDto saveOrUpdate(PssAnalyInfoDto dto);
 
     PageUtils queryPage(Map<String, Object> params);
+
+    List<PssAnalyReltEntity> getAnalyWayByBussType(Integer bussType);
+
+    List<PssDatasetInfoEntity> getDataSetByAnalyWay(String analyWay);
 }
 

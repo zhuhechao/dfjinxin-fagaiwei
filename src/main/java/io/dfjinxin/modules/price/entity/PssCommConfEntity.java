@@ -8,8 +8,8 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 
- * 
+ *
+ *
  * @author z.h.c
  * @email z.h.c@126.com
  * @date 2019-08-27 19:33:54
@@ -20,25 +20,27 @@ public class PssCommConfEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 *
 	 */
 	@TableId
 	private Integer commId;
 	/**
-	 * 
+	 *
 	 */
 	private Integer ewarnId;
 	/**
-	 * 
+	 *
 	 */
 	private Integer delFlag;
 	/**
-	 * 
+	 *
 	 */
 	private Date crteDate;
 	/**
-	 * 
+	 *
 	 */
 	private String remarks;
+
+	private Integer indexId;
 
 }

@@ -7,10 +7,18 @@
     <resultMap type="io.dfjinxin.modules.price.entity.PssDatasetInfoEntity" id="pssDatasetInfoMap">
         <result property="dataSetId" column="data_set_id"/>
         <result property="dataSetName" column="data_set_name"/>
-        <result property="realSql" column="real_sql"/>
-        <result property="indeVar" column="inde_var" />
+        <result property="indeVal" column="inde_var" />
         <result property="crteTime" column="crte_time"/>
+        <result property="dataSetType" column="data_set_type"/>
     </resultMap>
+
+    <select id="getDataSetByAnalyWay" resultMap="pssDatasetInfoMap">
+        SELECT pdi.*
+        from pss_analy_info pai
+        LEFT JOIN pss_dataset_info pdi
+        ON pdi.data_set_id = pai.data_set_id
+        WHERE pai.analy_way =#{analyWay}
+    </select>
 
 
 </mapper>
