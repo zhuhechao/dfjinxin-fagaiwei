@@ -5,6 +5,7 @@ import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.price.dto.PssAnalyInfoDto;
 import io.dfjinxin.modules.price.entity.PssAnalyInfoEntity;
 import io.dfjinxin.modules.price.entity.PssAnalyReltEntity;
+import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
 import io.dfjinxin.modules.price.service.PssAnalyInfoService;
 import io.dfjinxin.modules.price.service.PssAnalyReltService;
 import io.swagger.annotations.Api;
@@ -79,8 +80,8 @@ public class PssAnalyInfoController {
     @GetMapping("/analyWay/{AnalyWay}")
     @ApiOperation(value = "根据分析类型查询该类型的结果集")
     public R getDataSetByAnalyWay(@PathVariable("AnalyWay") String AnalyWay) {
-        List<PssAnalyReltEntity> analyWayList = pssAnalyInfoService.getDataSetByAnalyWay(AnalyWay);
-        return R.ok().put("data", analyWayList);
+        List<PssDatasetInfoEntity> dataSetList = pssAnalyInfoService.getDataSetByAnalyWay(AnalyWay);
+        return R.ok().put("data", dataSetList);
     }
 
 }
