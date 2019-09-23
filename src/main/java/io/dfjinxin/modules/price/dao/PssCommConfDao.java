@@ -19,5 +19,7 @@ import java.util.List;
 @Repository
 public interface PssCommConfDao extends BaseMapper<PssCommConfEntity> {
 
-    void saveCommConf(@Param("commId") Integer commId, @Param("ewarnIds") List<Integer> ewarnIds);
+    void saveCommConf(@Param("commId") Integer commId,
+                      @Param("indexId") Integer indexId,
+                      @Param("ewarnIds") List<Integer> ewarnIds);
 }

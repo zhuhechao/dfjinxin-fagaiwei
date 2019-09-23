@@ -13,14 +13,15 @@
     </resultMap>
 
     <insert id="saveCommConf">
-        insert into pss_comm_conf (comm_id,ewarn_id,del_flag,crte_date)
+        insert into pss_comm_conf (comm_id,ewarn_id,del_flag,crte_date,index_id)
         values
         <foreach collection="ewarnIds" item="item" index="index" separator=",">
             (
             #{commId},
             #{item},
             0,
-            now()
+            now(),
+            #{indexId}
             )
         </foreach>
     </insert>

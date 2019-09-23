@@ -39,17 +39,17 @@ public class PssCommConfServiceImpl extends ServiceImpl<PssCommConfDao, PssCommC
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveCommConf(Integer levelCode2Id, List<Integer> ewarnIds) {
-        if (levelCode2Id == null || ewarnIds == null) {
+    public void saveCommConf(Integer levelCode3Id, List<Integer> ewarnIds,List<Integer> indexIds) {
+        if (levelCode3Id == null || ewarnIds == null || indexIds ==null) {
             return;
         }
-        QueryWrapper where = new QueryWrapper();
-        where.eq("parent_code", levelCode2Id);
-        where.eq("level_code", 3);
-        where.eq("data_flag", 0);
-        List<PssCommTotalEntity> levelCode3Ids = pssCommTotalDao.selectList(where);
-        for (PssCommTotalEntity entity : levelCode3Ids) {
-            pssCommConfDao.saveCommConf(entity.getCommId(), ewarnIds);
+//        QueryWrapper where = new QueryWrapper();
+//        where.eq("parent_code", levelCode2Id);
+//        where.eq("level_code", 3);
+//        where.eq("data_flag", 0);
+//        List<PssCommTotalEntity> levelCode3Ids = pssCommTotalDao.selectList(where);
+        for (Integer indexId : indexIds) {
+            pssCommConfDao.saveCommConf(levelCode3Id,indexId, ewarnIds);
         }
     }
 }

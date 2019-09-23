@@ -56,16 +56,15 @@ public class PssCommTotalController {
      * 保存
      */
     @PostMapping("/save")
-    @ApiOperation(value = "商品配置-保存配置", notes = "commId:三级商品id,ewarnIds:预警id列表 .eg:{\"commId\":29,\n" +
-            "\"ewarnIds\":[3,8]\n" +
-            "}")
+    @ApiOperation(value = "商品配置-保存配置", notes = "commId:4类商品id,ewarnIds:预警id列表 .eg:{\"commId\":172, \"ewarnIds\":[3,8],\"indexIds\":[39,40,41] } ")
     public R save(@RequestBody Map<String, Object> params) {
         if (params.isEmpty() || params.size() == 0) {
             R.error("请求参数为空!");
         }
         Integer commId = (Integer) params.get("commId");
         List<Integer> ewarnIds = (List<Integer>) params.get("ewarnIds");
-        pssCommConfService.saveCommConf(commId, ewarnIds);
+        List<Integer> indexIds = (List<Integer>) params.get("indexIds");
+        pssCommConfService.saveCommConf(commId, ewarnIds,indexIds);
         return R.ok();
     }
 

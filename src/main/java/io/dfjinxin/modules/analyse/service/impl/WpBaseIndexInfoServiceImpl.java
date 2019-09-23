@@ -10,6 +10,7 @@ import io.dfjinxin.modules.analyse.entity.WpBaseIndexInfoEntity;
 import io.dfjinxin.modules.analyse.service.WpBaseIndexInfoService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -24,6 +25,20 @@ public class WpBaseIndexInfoServiceImpl extends ServiceImpl<WpBaseIndexInfoDao, 
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<WpBaseIndexInfoEntity> getIndexNameByType(Integer commId) {
+
+        if (commId == null) {
+            return null;
+        }
+
+        QueryWrapper<WpBaseIndexInfoEntity> where = new QueryWrapper<>();
+        where.eq("comm_id", commId);
+        where.eq("index_flag", 0);
+        where.eq("index_type", "价格");
+        return baseMapper.selectList(where);
     }
 
 }
