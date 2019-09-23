@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.dfjinxin.modules.price.dao.PssDataSourcesDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.dfjinxin.modules.price.entity.PssDataSourcesEntity" id="dataSourcesMap">
+        <result property="dataId" column="data_id"/>
+        <result property="dataName" column="data_name"/>
+        <result property="dataType" column="data_type"/>
+        <result property="exampleName" column="example_name"/>
+        <result property="userName" column="user_name"/>
+        <result property="password" column="password"/>
+        <result property="dataAddress" column="data_address"/>
+        <result property="dataPort" column="data_port"/>
+    </resultMap>
+
+
+    <!--列表展示-->
+    <select id="queryPage" resultMap="dataSourcesMap">
+        SELECT
+        data_id,
+        data_name,
+        data_type,
+        example_name
+        FROM
+        data_sources_access
+        <include refid="dataSourcesWhere"></include>
+    </select>
+
+
+
+    <!-- 条件查询 -->
+    <sql id="dataSourcesWhere">
+        <where>
+            <if test="param.dataName!= null and param.dataName!= '' ">
+                data_name like CONCAT('%',#{param.dataName},'%')
+            </if>
+            <if test="param.dataType!= null and param.dataType!= '' ">
+                AND data_type = #{param.dataType}
+            </if>
+        </where>
+
+    </sql>
+
+</mapper>
