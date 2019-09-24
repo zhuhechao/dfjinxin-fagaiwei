@@ -2,10 +2,7 @@ package io.dfjinxin.modules.sys.service.impl;
 
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 /**
  * 测试Python语言
@@ -22,7 +19,8 @@ public class TestPy {
 
         int a = 3;
         int b = 5;
-        String[] args = new String[]{"python", file, String.valueOf(a), String.valueOf(b)};
+        String c = "6,7,8";
+        String[] args = new String[]{"python", file, String.valueOf(a), String.valueOf(b),c};
         Process proc = Runtime.getRuntime().exec(args);// 执行py文件
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream(), "gbk"))) {
@@ -36,17 +34,23 @@ public class TestPy {
 
     @Test
     public void demo2() throws IOException, InterruptedException {
-        String file = new File("").getCanonicalPath() + "\\py\\groupdata.py";
+        try {
+            String file = new File("").getCanonicalPath() + "\\py\\groupdata.py";
 
-        String[] args = new String[]{"python", file};
-        Process proc = Runtime.getRuntime().exec(args);// 执行py文件
+            String[] args = new String[]{"python", file};
+            Process proc = Runtime.getRuntime().exec(args);// 执行py文件
 
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream(), "gbk"))) {
-            String line = null;
+            BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            String line;
             while ((line = in.readLine()) != null) {
                 System.out.println(line);
             }
+            in.close();
+            proc.waitFor();
+            System.out.println("end");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        proc.waitFor();
     }
 }
+
