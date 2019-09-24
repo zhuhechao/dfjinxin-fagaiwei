@@ -41,9 +41,9 @@ public class PssDatasetInfoEntity implements Serializable {
 	/**
 	 *
 	 */
-	private String tabName;
+//	private String tabName;
 
-	private String indeVal;
+	private String indeVar;
 	/**
 	 *
 	 */
@@ -58,7 +58,7 @@ public class PssDatasetInfoEntity implements Serializable {
 		BeanUtils.copyProperties(from, to);
 
 		to.crteTime = new Date();
-		to.indeVal = JSON.toJSONString(from.getColumnVal());
+		to.indeVar = JSON.toJSONString(from.getIndeVar());
 		return to;
 	}
 
@@ -68,7 +68,7 @@ public class PssDatasetInfoEntity implements Serializable {
 		}
 		PssDatasetInfoDto to = new PssDatasetInfoDto();
 		BeanUtils.copyProperties(from, to);
-		to.setColumnVal(JSONObject.parseObject(from.indeVal, new TypeReference<Map<String, Object>>(){}));
+		to.setIndeVar(JSONObject.parseObject(from.indeVar, new TypeReference<Map<String, Object>>(){}));
 		return to;
 	}
 }

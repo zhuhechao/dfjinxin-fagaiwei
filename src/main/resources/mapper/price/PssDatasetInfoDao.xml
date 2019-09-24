@@ -7,7 +7,7 @@
     <resultMap type="io.dfjinxin.modules.price.entity.PssDatasetInfoEntity" id="pssDatasetInfoMap">
         <result property="dataSetId" column="data_set_id"/>
         <result property="dataSetName" column="data_set_name"/>
-        <result property="indeVal" column="inde_var" />
+        <result property="indeVar" column="inde_var" />
         <result property="crteTime" column="crte_time"/>
         <result property="dataSetType" column="data_set_type"/>
     </resultMap>

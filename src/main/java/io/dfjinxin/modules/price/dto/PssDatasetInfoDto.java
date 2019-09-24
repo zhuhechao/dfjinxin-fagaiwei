@@ -21,12 +21,15 @@ public class PssDatasetInfoDto implements Serializable {
     @ApiModelProperty(value = "数据集id", name = "dataSetId", required = true)
     private Integer dataSetId;
 
+    @ApiModelProperty(value = "数据集类型", name = "dataSetType", required = true)
+    private Integer dataSetType;
+
     @ApiModelProperty(value = "数据集名称", name = "dataSetName", required = true)
     private String dataSetName;
 
-    @ApiModelProperty(value = "关联sql", name = "tabName", required = true)
-    private String tabName;
+//    @ApiModelProperty(value = "关联sql", name = "tabName", required = true)
+//    private String tabName;
 
-    @ApiModelProperty(value = "字段取值", name = "columnVal", required = true)
-    private Map<String, Object> columnVal;
+    @ApiModelProperty(value = "字段取值", name = "indeVar", required = true)
+    private Map<String, Object> indeVar;
 }

@@ -25,6 +25,7 @@ public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, Ps
     @Override
     public PssDatasetInfoDto saveOrUpdate(PssDatasetInfoDto dto) {
         PssDatasetInfoEntity entity = PssDatasetInfoEntity.toEntity(dto);
+        //TODO 调用python返回成功则入库存
 
         super.saveOrUpdate(entity);
         return PssDatasetInfoEntity.toData(entity);
@@ -35,9 +36,11 @@ public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, Ps
         List<PssDatasetInfoDto> dtos = new ArrayList();
         List<PssDatasetInfoEntity> list = super.list();
 
-        for(PssDatasetInfoEntity entity:list) {
+        PssDatasetInfoEntity entity = list.get(list.size()-1);
+
+//        for(PssDatasetInfoEntity entity:list) {
             dtos.add(PssDatasetInfoEntity.toData(entity));
-        }
+//        }
         return dtos;
     }
 }

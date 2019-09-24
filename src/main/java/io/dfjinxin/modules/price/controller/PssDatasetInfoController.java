@@ -1,26 +1,22 @@
 package io.dfjinxin.modules.price.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import io.dfjinxin.common.validator.ValidatorUtils;
+import io.dfjinxin.common.utils.R;
+import io.dfjinxin.modules.hive.service.HiveService;
 import io.dfjinxin.modules.price.dto.PssDatasetInfoDto;
+import io.dfjinxin.modules.price.service.PssDatasetInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
-import io.dfjinxin.modules.price.service.PssDatasetInfoService;
-import io.dfjinxin.common.utils.PageUtils;
-import io.dfjinxin.common.utils.R;
-
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
- * 
+ *
  *
  * @author bourne
  * @email kuibobo@gmail.com
@@ -32,6 +28,26 @@ import io.dfjinxin.common.utils.R;
 public class PssDatasetInfoController {
     @Autowired
     private PssDatasetInfoService pssDatasetInfoService;
+
+    @Autowired
+    private HiveService hiveService;
+
+    @GetMapping("/getHiveTables")
+    @ApiOperation("获取hive表数据")
+    public R getHiveTables() {
+        String sql = "show tables";
+        List<Map<String, Object>> tableList = hiveService.selectData(sql);
+        Map<String, Object> map = new HashMap<>();
+        for (Map<String, Object> obj : tableList) {
+            for (Map.Entry<String, Object> entry : obj.entrySet()) {
+                Object tableName = entry.getValue();
+                String sql2 = "select * from " + tableName;
+                List<Map<String, Object>> list = hiveService.selectData(sql2);
+                map.put(tableName.toString(), list);
+            }
+        }
+        return R.ok().put("data", map);
+    }
 
     /**
      * 列表
