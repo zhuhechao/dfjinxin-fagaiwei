@@ -37,10 +37,10 @@ public class PssDataSourcesController {
     @GetMapping("/queryDataSourcesList")
     @ApiOperation(value = "数据源管理-查询")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pageIndex", value = "页码", required = true, dataType = "int", paramType = "query"),
-            @ApiImplicitParam(name = "pageSize", value = "返回数据集", required = true, dataType = "int", paramType = "query"),
-            @ApiImplicitParam(name = "dataName", value = "数据源名称", required = true, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "dataType", value = "数据源类型", required = true, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "pageIndex", value = "页码", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "返回数据集", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "dataName", value = "数据源名称", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "dataType", value = "数据源类型", required = false, dataType = "String", paramType = "query"),
     })
     public R queryDataSourcesList(
             @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,

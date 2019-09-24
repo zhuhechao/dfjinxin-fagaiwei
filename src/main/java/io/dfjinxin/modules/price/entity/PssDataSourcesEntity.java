@@ -11,7 +11,7 @@ import lombok.Data;
  * 修改备注：
  */
 @Data
-@TableName("data_sources_access")
+@TableName("pss_data_sources_access")
 public class PssDataSourcesEntity {
 
     //数据源id
@@ -38,6 +38,12 @@ public class PssDataSourcesEntity {
 
     //数据源端口
     private String dataPort;
+
+    //数据源描述
+    private String dataRemark;
+
+    //数据源接入状态
+    private Integer accessState;
 
 
 

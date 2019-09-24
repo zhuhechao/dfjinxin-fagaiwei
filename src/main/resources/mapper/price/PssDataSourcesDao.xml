@@ -13,6 +13,8 @@
         <result property="password" column="password"/>
         <result property="dataAddress" column="data_address"/>
         <result property="dataPort" column="data_port"/>
+        <result property="dataRemark" column="data_remark"/>
+        <result property="accessState" column="access_state"/>
     </resultMap>
 
 
@@ -22,9 +24,11 @@
         data_id,
         data_name,
         data_type,
-        example_name
+        example_name,
+        data_remark,
+        access_state
         FROM
-        data_sources_access
+        pss_data_sources_access
         <include refid="dataSourcesWhere"></include>
     </select>
 
