@@ -11,6 +11,8 @@ import io.dfjinxin.modules.price.service.PssAnalyReltService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +33,9 @@ import java.util.Map;
 @RequestMapping("price/pssanalyinfo")
 @Api(tags = "分析信息")
 public class PssAnalyInfoController {
+
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private PssAnalyInfoService pssAnalyInfoService;
 
@@ -75,20 +80,28 @@ public class PssAnalyInfoController {
 
     @PostMapping("/testPy")
     @ApiOperation("测试调用python")
-    public R testCallPy() throws IOException, InterruptedException {
-        String file = new File("").getCanonicalPath() + "/zhjg/pyjiaoben/corr_ana.py";
-        System.out.println("load corr_ana.py 成功");
+    public R testCallPy() {
+        logger.debug("调用 python start");
+        String file = "/zhjg/pyjiaoben/corr_ana.py";
+        logger.debug("file path:" + file);
         String[] args = new String[]{"python", file, "/zhjg/", "猪生产价格指数&粮食产量&粮食价格指数&人均纯收入&人均猪肉消费量&存栏数&猪肉产量"};
-        Process proc = Runtime.getRuntime().exec(args);// 执行py文件
-        BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        String line;
-        while ((line = in.readLine()) != null) {
-            System.out.println("***");
-            System.out.println("call result the result:" + line);
+        for (String str : args) {
+            logger.debug("call py arg:" + str);
         }
-        in.close();
-        proc.waitFor();
-        System.out.println("end");
+        try {
+            Process proc = Runtime.getRuntime().exec(args);// 执行py文件
+            BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            String line;
+            while ((line = in.readLine()) != null) {
+                logger.debug("call result the result:" + line);
+            }
+            in.close();
+            proc.waitFor();
+            logger.debug("调用 end");
+        } catch (Exception e1) {
+            logger.debug("调用 py异常");
+            logger.debug(e1.getMessage());
+        }
         return null;
     }
 

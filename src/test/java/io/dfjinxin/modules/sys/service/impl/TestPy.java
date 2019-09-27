@@ -52,5 +52,12 @@ public class TestPy {
             e.printStackTrace();
         }
     }
+    @Test
+    public void demo3(){
+        String[] a = {"a,","b"};
+        for(String str :a){
+            System.out.println(str);
+        }
+    }
 }
 
