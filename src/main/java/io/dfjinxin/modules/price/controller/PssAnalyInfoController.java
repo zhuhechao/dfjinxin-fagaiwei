@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -81,6 +82,7 @@ public class PssAnalyInfoController {
     @PostMapping("/testPy")
     @ApiOperation("测试调用python")
     public R testCallPy() {
+        List<String> list = new ArrayList();
         logger.debug("调用 python start");
         String file = "/zhjg/pyjiaoben/corr_ana.py";
         logger.debug("file path:" + file);
@@ -94,6 +96,7 @@ public class PssAnalyInfoController {
             String line;
             while ((line = in.readLine()) != null) {
                 logger.debug("call result the result:" + line);
+                list.add(line);
             }
             in.close();
             proc.waitFor();
@@ -102,7 +105,7 @@ public class PssAnalyInfoController {
             logger.debug("调用 py异常");
             logger.debug(e1.getMessage());
         }
-        return null;
+        return R.ok().put("data", list);
     }
 
 
