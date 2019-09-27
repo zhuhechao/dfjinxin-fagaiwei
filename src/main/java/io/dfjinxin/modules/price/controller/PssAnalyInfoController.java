@@ -14,6 +14,10 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 
@@ -69,9 +73,28 @@ public class PssAnalyInfoController {
         return R.ok();
     }
 
+    @PostMapping("/testPy")
+    @ApiOperation("测试调用python")
+    public R testCallPy() throws IOException, InterruptedException {
+        String file = new File("").getCanonicalPath() + "/zhjg/pyjiaoben/corr_ana.py";
+        System.out.println("load corr_ana.py 成功");
+        String[] args = new String[]{"python", file, "/zhjg/", "猪生产价格指数&粮食产量&粮食价格指数&人均纯收入&人均猪肉消费量&存栏数&猪肉产量"};
+        Process proc = Runtime.getRuntime().exec(args);// 执行py文件
+        BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        String line;
+        while ((line = in.readLine()) != null) {
+            System.out.println("***");
+            System.out.println("call result the result:" + line);
+        }
+        in.close();
+        proc.waitFor();
+        System.out.println("end");
+        return null;
+    }
+
 
     @GetMapping("/bussType/{bussType}")
-    @ApiOperation(value = "根据业务类型查询分析类型",notes = "1:相关性分析;2:因果分析")
+    @ApiOperation(value = "根据业务类型查询分析类型", notes = "1:相关性分析;2:因果分析")
     public R getAnalyWayByBussType(@PathVariable("bussType") Integer bussType) {
         List<PssAnalyReltEntity> analyWayList = pssAnalyInfoService.getAnalyWayByBussType(bussType);
         return R.ok().put("data", analyWayList);

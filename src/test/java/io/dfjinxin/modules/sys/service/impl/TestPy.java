@@ -19,17 +19,17 @@ public class TestPy {
 
         int a = 3;
         int b = 5;
-        String c = "6,7,8";
-        String[] args = new String[]{"python", file, String.valueOf(a), String.valueOf(b),c};
+        String[] args = new String[]{"python", file, String.valueOf(a), String.valueOf(b)};
         Process proc = Runtime.getRuntime().exec(args);// 执行py文件
-
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream(), "gbk"))) {
-            String line = null;
-            while ((line = in.readLine()) != null) {
-                System.out.println(line);
-            }
+        BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        String line;
+        while ((line = in.readLine()) != null) {
+            System.out.println("***");
+            System.out.println("the result:"+line);
         }
+        in.close();
         proc.waitFor();
+        System.out.println("end");
     }
 
     @Test

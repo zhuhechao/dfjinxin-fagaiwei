@@ -3,9 +3,24 @@ spring:
         include: db
 
 mysql:
-    url: jdbc:mysql://10.1.0.151:3306/zhjg?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://10.1.0.139:3306/zhjg?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: root
     password: 123456
 
-
-#logPath: E:/0729/demo_logs
+hive:
+    #  公司测试环境
+    user: hdfs
+    password:
+    url: jdbc:hive2://10.1.3.10:10000/zhjg
+    driver-class-name: org.apache.hive.jdbc.HiveDriver
+    filters: stat
+    initialSize: 2
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: false
+    maxPoolPreparedStatementPerConnectionSize: 500
