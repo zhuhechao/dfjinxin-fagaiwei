@@ -32,7 +32,7 @@ public class PssRptConfEntity implements Serializable {
 	 */
 	private String commId;
 	/**
-	 * 报告频度 0 自动 1 手工 
+	 * 报告类型 0 自动 1 手工
 	 */
 	private String rptType;
 	/**

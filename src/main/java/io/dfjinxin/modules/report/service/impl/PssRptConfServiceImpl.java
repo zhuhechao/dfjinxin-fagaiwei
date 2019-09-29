@@ -14,6 +14,7 @@ import io.dfjinxin.modules.report.entity.PssRptConfEntity;
 import io.dfjinxin.modules.report.service.PssRptConfService;
 import io.dfjinxin.modules.sys.entity.PssRschConfEntity;
 import io.dfjinxin.modules.sys.service.PssRschConfService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,12 +31,25 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        QueryWrapper qr=new QueryWrapper<PssRptConfEntity>();
+        addQueryCondition(params,"rptType","rpt_type",qr);
+        addQueryCondition(params,"rptFreq","rpt_Freq",qr);
+        addQueryCondition(params,"rcshId","rcsh_id",qr);
+        qr.orderByDesc("crte_date");
+
         IPage<PssRptConfEntity> page = this.page(
                 new Query<PssRptConfEntity>().getPage(params),
-                new QueryWrapper<PssRptConfEntity>()
+                qr
         );
 
         return new PageUtils(page);
+    }
+
+    private void addQueryCondition(Map<String, Object> params,String con,String con_cloum ,QueryWrapper qr){
+        Object o=params.get(con);
+        if(o!=null&& StringUtils.isNotBlank(o.toString())){
+            qr.eq(con_cloum,o.toString());
+        }
     }
 
 
