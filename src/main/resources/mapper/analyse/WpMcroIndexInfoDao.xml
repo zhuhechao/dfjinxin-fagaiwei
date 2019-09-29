@@ -17,14 +17,14 @@
         select wmii.*
             from wp_mcro_index_info wmii
                      left join wp_ascii_info wai
-                               on wmii.index_flag = wai.code_simple
+                               on wmii.index_flag = wai.code_id
             where wai.p_code_val in (
                 select code_id
                 from wp_ascii_info
-                where code_simple = 'Kpi_Sign'
+                where code_id = 'Kpi_Sign'
                   and code_status = 0
             )
-              and wai.code_simple = 2
+              and wai.code_id = 2
     </select>
 
 

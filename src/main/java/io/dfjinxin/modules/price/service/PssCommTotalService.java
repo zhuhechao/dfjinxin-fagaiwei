@@ -22,5 +22,7 @@ public interface PssCommTotalService extends IService<PssCommTotalEntity> {
     Map<String,List<PssCommTotalEntity>> queryCommType();
 
     PageUtils queryPageList(PssCommTotalDto params);
+
+    List<PssCommTotalEntity> getAll();
 }
 

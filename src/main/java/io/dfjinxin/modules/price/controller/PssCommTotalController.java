@@ -42,11 +42,11 @@ public class PssCommTotalController {
 
     @PostMapping("/queryPageList")
     @ApiOperation("商品配置-查询")
-    public R queryPageList(@RequestBody PssCommTotalDto params) {
+    public R queryPageList(@RequestBody(required = false) PssCommTotalDto params) {
 
-        if (params == null) {
-            R.error("请求参数为空!");
-        }
+//        if (params == null) {
+//            R.error("请求参数为空!");
+//        }
         params.startNumber();
         PageUtils page = pssCommTotalService.queryPageList(params);
         return R.ok().put("data", page);
@@ -66,6 +66,13 @@ public class PssCommTotalController {
         List<Integer> indexIds = (List<Integer>) params.get("indexIds");
         pssCommConfService.saveCommConf(commId, ewarnIds,indexIds);
         return R.ok();
+    }
+
+    @PostMapping("/queryAll")
+    @ApiOperation("商品配置-查询所有商品")
+    public R queryPageList() {
+        List<PssCommTotalEntity> list = pssCommTotalService.getAll();
+        return R.ok().put("data",list);
     }
 
 }

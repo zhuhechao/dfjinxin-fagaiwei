@@ -54,7 +54,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpCommIndexValDao, Wp
         for (PssCommTotalEntity entity : commType0) {
             Map<String, Object> temp = queryCommByLevelCode0(entity);
             PssCommTotalEntity result = (PssCommTotalEntity) temp.get("result");
-            if ("BC".equals(entity.getCommAbb())) {
+            if (1 == entity.getCommId()) {
                 tempMap.put("dazong", result);
             } else {
                 tempMap.put("minsheng", result);

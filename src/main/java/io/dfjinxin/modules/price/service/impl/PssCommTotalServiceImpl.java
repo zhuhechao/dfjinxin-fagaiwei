@@ -42,6 +42,7 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
         List<PssCommTotalEntity> commType1 = baseMapper.selectList(where1);
         List<PssCommTotalEntity> commType2 = new ArrayList<>();
         List<PssCommTotalEntity> commType3 = new ArrayList<>();
+        List<PssCommTotalEntity> commType4 = new ArrayList<>();
         Map<String, List<PssCommTotalEntity>> resultMap = new HashMap<>();
         for (PssCommTotalEntity entity : commType1) {
             QueryWrapper where2 = new QueryWrapper();
@@ -61,12 +62,22 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
             commType3.addAll(subType3);
         }
 
+        for (PssCommTotalEntity entity : commType3) {
+            QueryWrapper where4 = new QueryWrapper();
+            where4.in("parent_code", entity.getCommId());
+            where4.eq("data_flag", "0");
+            where4.eq("level_code", "3");
+            List<PssCommTotalEntity> subType4 = baseMapper.selectList(where4);
+            commType4.addAll(subType4);
+        }
+
         //商品类型-0类 大宗，民生
         resultMap.put("commLevelCode_0", commType1);
         //商品大类-1类
         resultMap.put("commLevelCode_1", commType2);
         //商品名称-2类
         resultMap.put("commLevelCode_2", commType3);
+        resultMap.put("commLevelCode_3", commType4);
         return resultMap;
     }
 
@@ -90,7 +101,7 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
                 Map<String, Object> temp = selectSubCommByLevelCode0(entity, pssCommTotalDto);
                 PssCommTotalEntity result = (PssCommTotalEntity) temp.get("result");
                 totalCount = (Integer) temp.get("totalCount");
-                if ("BC".equals(entity.getCommAbb())) {
+                if (1 == entity.getCommId()) {
                     map.put("dazong", result);
                 } else {
                     map.put("minsheng", result);
@@ -138,6 +149,13 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
         return null;
     }
 
+    @Override
+    public List<PssCommTotalEntity> getAll() {
+        QueryWrapper where2 = new QueryWrapper();
+        where2.eq("data_flag", "0");
+        return baseMapper.selectList(where2);
+    }
+
     private Map<String, Object> selectSubCommByLevelCode0(PssCommTotalEntity levelCode0, PssCommTotalDto dto) {
         if (levelCode0 == null || levelCode0.getCommId() == null) {
             return null;
@@ -149,9 +167,7 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
         where2.eq("level_code", "1");
         // 获取一类商品
         List<PssCommTotalEntity> commLevelCode1 = baseMapper.selectList(where2);
-//        Set<Integer> levelCode1Ids = new HashSet<>();
         for (PssCommTotalEntity entity1 : commLevelCode1) {
-//            levelCode1Ids.add(entity1.getCommId());
             List<PssCommTotalEntity> commLevelCode2 = pssCommTotalDao.selectSubCommByLevelCode2(entity1.getCommId(), dto);
             entity1.setSubCommList(commLevelCode2);
         }

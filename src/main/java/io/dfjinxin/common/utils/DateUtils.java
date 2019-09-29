@@ -313,50 +313,24 @@ public class DateUtils {
         return format.format(date);
     }
 
+    /**
+     * 获取当前系统时间前指定年的时间
+     *
+     * @return
+     */
+    public static String getLastMonthByVal(int val) {
+        SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MONTH, -val);
+        date = calendar.getTime();
+        return format.format(date);
+    }
+
 
     public static void main(String[] args) {
-        System.out.println(DateUtils.getLastYearByVal(3));
-        System.out.println(DateUtils.getCurrentDayStr());
-//        System.out.println(DateUtils.getYearDiffDay());
-//        PythonInterpreter interpreter = new PythonInterpreter();
-//        interpreter.exec("a=[5,2,3,9,4,0]; ");
-//        interpreter.exec("print(sorted(a));");  //此处python语句是3.x版本的语法
-
-        RConnection connection = null;
-        System.out.println("平均值");
-        try {
-            //创建对象
-            connection = new RConnection();
-            String vetor = "c(1,2,3,4)";
-            connection.eval("meanVal<-mean(" + vetor + ")");
-
-            //System.out.println("the mean of given vector is="+mean);
-            double mean = 0;
-            try {
-                mean = connection.eval("meanVal").asDouble();
-            } catch (REXPMismatchException e) {
-                e.printStackTrace();
-            }
-            System.out.println("the mean of given vector is=" + mean);
-            //connection.eval(arg0)
-
-        } catch (RserveException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        System.out.println("执行脚本");
-        try {
-            connection.eval("source('D:/myAdd.R')");//此处路径也可以这样写D:\\\\myAdd.R
-            int num1 = 20;
-            int num2 = 10;
-            int sum = connection.eval("myAdd(" + num1 + "," + num2 + ")").asInteger();
-            System.out.println("the sum=" + sum);
-        } catch (RserveException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (REXPMismatchException e) {
-            e.printStackTrace();
-        }
-        connection.close();
+        System.out.println(DateUtils.getLastMonthByVal(1));
+//        System.out.println(DateUtils.getCurrentDayStr());
     }
 }

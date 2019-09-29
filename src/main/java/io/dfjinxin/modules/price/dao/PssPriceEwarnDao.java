@@ -25,4 +25,8 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
                                                @Param("ewarnTypeId")Integer ewarnTypeId,
                                                @Param("startDateStr") String startDateStr,
                                                @Param("endDateStr") String endDateStr);
+
+    List queryType3Warn();
+
+    List<PssPriceEwarnEntity> queryEwarnlevel();
 }

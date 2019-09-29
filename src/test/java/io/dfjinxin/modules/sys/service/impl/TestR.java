@@ -1,6 +1,7 @@
 package io.dfjinxin.modules.sys.service.impl;
 
 import io.dfjinxin.common.utils.FileUtil;
+import io.dfjinxin.modules.price.entity.PssPriceEwarnEntity;
 import org.junit.Test;
 import org.rosuda.REngine.*;
 import org.rosuda.REngine.Rserve.RConnection;
@@ -8,7 +9,9 @@ import org.rosuda.REngine.Rserve.RserveException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
 
 /**
  * 测试R语言
@@ -154,6 +157,28 @@ public class TestR {
         } finally {
             if (connection != null) connection.close();
         }
+    }
+
+    @Test
+    public void contionRateVal() {
+
+        int num1 = 4;
+
+        int num2 = 6;
+
+        // 创建一个数值格式化对象
+
+        NumberFormat numberFormat = NumberFormat.getInstance();
+        // 设置精确到小数点后2位
+        numberFormat.setMaximumFractionDigits(2);
+
+        String result = numberFormat.format((float) num1 / (float) num2 * 100);
+
+        System.out.println("num1和num2的百分比为:" + result + "%");
+
+        DecimalFormat df = new DecimalFormat("#.00");
+        System.out.println("占比是" + df.format(Float.valueOf((num1/num2))*100)+"%");
+
     }
 
 }

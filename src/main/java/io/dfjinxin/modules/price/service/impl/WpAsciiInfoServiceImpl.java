@@ -36,7 +36,7 @@ public class WpAsciiInfoServiceImpl extends ServiceImpl<WpAsciiInfoDao, WpAsciiI
         if (StringUtils.isBlank(params)) {
             return null;
         }
-        StringBuffer sql = new StringBuffer("select code_id from wp_ascii_info where code_simple = '");
+        StringBuffer sql = new StringBuffer("select code_id from wp_ascii_info where code_id = '");
         sql.append(params);
         sql.append("'");
         QueryWrapper queryWrapper = new QueryWrapper();

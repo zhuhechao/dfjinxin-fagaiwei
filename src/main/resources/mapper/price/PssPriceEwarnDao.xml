@@ -44,5 +44,23 @@
         and ppe.ewarn_type_id = #{ewarnTypeId}
     </select>
 
+    <select id="queryType3Warn" resultMap="pssPriceEwarnMap">
+        select
+        max(ppe.ewarn_date) as ewarn_date,
+       pct.parent_code,
+       pct.comm_name,
+       ppe.comm_id,
+       ppe.pri_range,
+       ppe.pri_value,
+       ppe.ewarn_level
+        from pss_price_ewarn ppe left join pss_comm_total pct
+        on ppe.comm_id=pct.comm_id
+        group by pct.parent_code
+    </select>
+
+    <select id="queryEwarnlevel" resultType="io.dfjinxin.modules.price.entity.PssPriceEwarnEntity">
+        select count(comm_id) as total,ewarn_level elevel from pss_price_ewarn group by ewarn_level
+    </select>
+
 
 </mapper>

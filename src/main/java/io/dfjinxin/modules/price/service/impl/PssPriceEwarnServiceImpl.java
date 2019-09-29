@@ -8,20 +8,23 @@ import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
 import io.dfjinxin.modules.price.dao.PssCommTotalDao;
 import io.dfjinxin.modules.price.dao.PssPriceEwarnDao;
+import io.dfjinxin.modules.price.dao.WpAsciiInfoDao;
 import io.dfjinxin.modules.price.dao.WpCommPriDao;
+import io.dfjinxin.modules.price.dto.RateValDto;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import io.dfjinxin.modules.price.entity.PssPriceEwarnEntity;
+import io.dfjinxin.modules.price.entity.WpAsciiInfoEntity;
 import io.dfjinxin.modules.price.entity.WpCommPriEntity;
+import io.dfjinxin.modules.price.service.PssCommTotalService;
 import io.dfjinxin.modules.price.service.PssPriceEwarnService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
 
 
 @Service("pssPriceEwarnService")
@@ -33,6 +36,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     PssCommTotalDao pssCommTotalDao;
     @Autowired
     WpCommPriDao wpCommPriDao;
+
+    @Autowired
+    WpAsciiInfoDao wpAsciiInfoDao;
+
+    @Autowired
+    PssCommTotalService pssCommTotalService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -57,7 +66,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         for (PssCommTotalEntity entity : pssCommTotalEntities) {
             List<PssPriceEwarnEntity> queryList = pssPriceEwarnDao.queryList(entity.getCommId());
             map = new HashMap<>();
-            if ("BC".equals(entity.getCommAbb())) {
+            if (1 == entity.getCommId()) {
                 map.put("dazong", queryList);
             } else {
                 map.put("minsheng", queryList);
@@ -117,6 +126,82 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         List<Object> resultList = new ArrayList<>();
         resultList.add(map);
         return resultList;
+    }
+
+    @Override
+    public Map<String, Object> queryType3Warn() {
+        List<Map<String, Object>> list = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        List todayUp = new ArrayList();
+        List todayDown = new ArrayList();
+        List<PssPriceEwarnEntity> pssPriceEwarnEntityList = pssPriceEwarnDao.queryType3Warn();
+        List<RateValDto> rateValDtos = new ArrayList<>();
+        for (PssPriceEwarnEntity entity : pssPriceEwarnEntityList) {
+            WpAsciiInfoEntity asciiInfoEntity = wpAsciiInfoDao.selectById(entity.getEwarnLevel());
+            entity.setEwarnLevel(asciiInfoEntity.getCodeName());
+            //统计实时总揽
+            if (entity.getPriRange().compareTo(BigDecimal.ZERO) == 1) {
+                todayUp.add(entity);
+            }
+            if (entity.getPriRange().compareTo(BigDecimal.ZERO) == -1) {
+                todayDown.add(entity);
+            }
+
+            RateValDto rateValDto = new RateValDto();
+            rateValDto.setEwanName(asciiInfoEntity.getCodeName());
+            rateValDto.setEwarnLevel(entity.getEwarnLevel());
+            rateValDtos.add(rateValDto);
+
+        }
+        //商品预警详情
+        map.put("ewanInfo", pssPriceEwarnEntityList);
+        QueryWrapper where = new QueryWrapper();
+        where.eq("data_flag", 0);
+        int commTotal = pssCommTotalDao.selectCount(where);
+        //商品总数量
+        map.put("commTotal", commTotal);
+        //今日上涨数量
+        map.put("totalUp", todayUp.size());
+        //今日下跌数量
+        map.put("totalDown", todayDown.size());
+        //商品预警类型占比
+//        contionRateVal(rateValDtos);
+        map.put("rateVel", contionRateVal(rateValDtos));
+
+        //商品最近一个月涨跌值
+        QueryWrapper where2 = new QueryWrapper();
+        where2.between("Date(ewarn_date)", DateUtils.getLastMonthByVal(1), DateUtils.getCurrentDayStr());
+        List<PssPriceEwarnEntity> priValList = pssPriceEwarnDao.selectList(where2);
+        map.put("priVal", priValList);
+        return map;
+    }
+
+    //计算商品预警类型占比
+    private Map<String, Object> contionRateVal(List<RateValDto> list) {
+        Map<String, Integer> map = new HashMap<>();
+        for (RateValDto entity : list) {
+            if (map.containsKey(entity.getEwarnLevel())) {
+                map.put(entity.getEwarnLevel(), map.get(entity.getEwarnLevel()).intValue() + 1);
+            } else {
+                map.put(entity.getEwarnLevel(), new Integer(1));
+            }
+        }
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Iterator<String> iter = map.keySet().iterator();
+        int num2 = list.size();
+        while (iter.hasNext()) {
+            String key = iter.next();
+            int num1 = map.get(key);
+//            System.out.println(key + "有:" + num1 + " 个");
+            NumberFormat numberFormat = NumberFormat.getInstance();
+            // 设置精确到小数点后2位
+            numberFormat.setMaximumFractionDigits(2);
+            String result = numberFormat.format((float) num1 / (float) num2 * 100);
+//            System.out.println(key + "," + result + "%");
+            resultMap.put(key, result + "%");
+        }
+        return resultMap;
     }
 
 }

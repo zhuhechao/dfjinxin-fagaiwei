@@ -7,7 +7,6 @@
     <resultMap type="io.dfjinxin.modules.price.entity.PssCommTotalEntity" id="pssCommTotalMap">
         <result property="commId" column="comm_id"/>
         <result property="commName" column="comm_name"/>
-        <result property="commAbb" column="comm_abb"/>
         <result property="parentCode" column="parent_code"/>
         <result property="levelCode" column="level_code"/>
         <result property="createTime" column="create_time"/>
@@ -21,7 +20,7 @@
         left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
         left join pss_ewarn_conf pec
         on pcc.ewarn_id = pec.ewarn_id
-        where pcc.del_flag=1 and pec.del_flag=1
+        where pcc.del_flag=0 and pec.del_flag=0
         and c2.parent_code in (
         select comm_id
         from pss_comm_total c1
@@ -51,7 +50,7 @@
         FROM pss_comm_total c2
         left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
         left join pss_ewarn_conf pec on pcc.ewarn_id = pec.ewarn_id
-        where pcc.del_flag=1 and pec.del_flag=1
+        where pcc.del_flag=0 and pec.del_flag=0
         and c2.parent_code in (
         select comm_id
         from pss_comm_total c1
@@ -80,7 +79,7 @@
         left join pss_comm_conf pcc on c0.comm_id=pcc.comm_id
         left join pss_ewarn_conf pec
         on pcc.ewarn_id = pec.ewarn_id
-        where  pcc.del_flag=1 and pec.del_flag=1
+        where  pcc.del_flag=0 and pec.del_flag=0
         and c0.parent_code in
         (
             select comm_id from pss_comm_total temp
@@ -100,7 +99,7 @@
         left join pss_comm_conf pcc on c0.comm_id=pcc.comm_id
         left join pss_ewarn_conf pec
         on pcc.ewarn_id = pec.ewarn_id
-        where  pcc.del_flag=1 and pec.del_flag=1
+        where  pcc.del_flag=0 and pec.del_flag=0
         and c0.parent_code in
         (
             select comm_id from pss_comm_total temp
@@ -118,7 +117,7 @@
         left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
         left join pss_ewarn_conf pec
         on pcc.ewarn_id = pec.ewarn_id
-        where pcc.del_flag=1 and pec.del_flag=1
+        where pcc.del_flag=0 and pec.del_flag=0
         and c2.parent_code in (
             select c1.comm_id
             from pss_comm_total c1
@@ -140,7 +139,7 @@
         left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
         left join pss_ewarn_conf pec
         on pcc.ewarn_id = pec.ewarn_id
-        where  pcc.del_flag=1 and pec.del_flag=1
+        where  pcc.del_flag=0 and pec.del_flag=0
         and c2.parent_code in (
             select c1.comm_id
             from pss_comm_total c1
@@ -158,7 +157,7 @@
         left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
         left join pss_ewarn_conf pec
         on pcc.ewarn_id = pec.ewarn_id
-        where pcc.del_flag=1 and pec.del_flag=1
+        where pcc.del_flag=0 and pec.del_flag=0
         and c2.parent_code in (
         select comm_id
         from pss_comm_total c1
@@ -189,7 +188,7 @@
         FROM pss_comm_total c2
         left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
         left join pss_ewarn_conf pec on pcc.ewarn_id = pec.ewarn_id
-        where pcc.del_flag=1 and pec.del_flag=1
+        where pcc.del_flag=0 and pec.del_flag=0
         and c2.parent_code in (
         select comm_id
         from pss_comm_total c1
@@ -220,7 +219,7 @@
         FROM pss_comm_total c2
         left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
         left join pss_ewarn_conf pec on pcc.ewarn_id = pec.ewarn_id
-        where pcc.del_flag=1 and pec.del_flag=1
+        where pcc.del_flag=0 and pec.del_flag=0
         and c2.parent_code = #{parentCode}
         and c2.data_flag=0
         LIMIT #{param.start}, #{param.pageSize}

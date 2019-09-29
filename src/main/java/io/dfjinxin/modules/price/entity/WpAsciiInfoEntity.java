@@ -34,7 +34,7 @@ public class WpAsciiInfoEntity implements Serializable {
 	/**
 	 *
 	 */
-	private String codeSimple;
+//	private String codeSimple;
 	/**
 	 *
 	 */

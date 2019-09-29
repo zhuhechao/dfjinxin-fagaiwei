@@ -7,7 +7,6 @@
     <resultMap type="io.dfjinxin.modules.price.entity.WpAsciiInfoEntity" id="wpAsciiInfoMap">
         <result property="codeId" column="code_id"/>
         <result property="codeName" column="code_name"/>
-        <result property="codeSimple" column="code_simple"/>
         <result property="pCodeVal" column="p_code_val"/>
         <result property="dataTime" column="data_time"/>
         <result property="codeStatus" column="code_status"/>

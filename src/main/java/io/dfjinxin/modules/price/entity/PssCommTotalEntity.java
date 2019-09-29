@@ -33,7 +33,7 @@ public class PssCommTotalEntity implements Serializable {
 	/**
 	 *
 	 */
-	private String commAbb;
+//	private String commAbb;
 	/**
 	 *
 	 */
