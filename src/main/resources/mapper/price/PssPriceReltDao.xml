@@ -44,16 +44,16 @@
     LEFT JOIN pss_fore_mod_result pfmr ON ppr.mod_id = pfmr.mod_id
     WHERE 1 = 1
     <if test="param.parentCode != null">
-      AND ppr.parentCode = #{param.parentCode}
+      AND pct.parent_code = #{param.parentCode}
     </if>
     <if test="param.levelCode != null">
-      AND ppr.levelCode = #{param.levelCode}
+      AND pct.level_code = #{param.levelCode}
     </if>
     <if test="param.foreType != null"><!-- 预测类型 -->
       AND ppr.fore_type = #{param.foreType}
     </if>
     <if test="param.commName != null and param.commName.trim() != ''"><!-- 过滤商品名 -->
-      AND pct.comm_Name LIKE concat('%', #{param.commName}, '%')
+      AND pct.comm_name LIKE concat('%', #{param.commName}, '%')
     </if>
 
 
