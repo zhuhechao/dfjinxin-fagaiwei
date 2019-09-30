@@ -60,12 +60,12 @@
     <if test="param.commId != null">
       AND ppr.comm_id = #{param.commId}
     </if>
-    <if test="param.dateFrom != null and param.dateFrom.trim() != ''">
-      AND ppr.data_date gte #{param.dateFrom}
+    <if test="param.dateFrom != null ">
+      AND ppr.data_date &gt;= #{param.dateFrom}
     </if>
-    <if test="param.dateTo != null and param.dateTo.trim() != ''">
-      AND ppr.data_date lte #{param.dateTo}
+    <if test="param.dateTo != null ">
+      AND ppr.data_date &lt;= #{param.dateTo}
     </if>
-    and ppr.data_set_id = 2
+    and pdi.data_set_type = 2
   </select>
 </mapper>
