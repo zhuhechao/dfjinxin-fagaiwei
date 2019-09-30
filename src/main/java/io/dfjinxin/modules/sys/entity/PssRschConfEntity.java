@@ -60,10 +60,7 @@ public class PssRschConfEntity implements Serializable {
 	 * spring bean名称
 	 */
 	private String beanName;
-	/**
-	 * cron表达式
-	 */
-	private String cronExpression;
+
 	/**
 	 * 删除标记  0：正常  1：删除
 	 */
