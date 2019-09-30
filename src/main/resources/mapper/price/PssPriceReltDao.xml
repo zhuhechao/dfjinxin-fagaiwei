@@ -53,7 +53,7 @@
       AND ppr.fore_type = #{param.foreType}
     </if>
     <if test="param.commName != null and param.commName.trim() != ''"><!-- 过滤商品名 -->
-      AND pct.commName LIKE concat('%', #{param.commName}, '%')
+      AND pct.comm_Name LIKE concat('%', #{param.commName}, '%')
     </if>
 
 
