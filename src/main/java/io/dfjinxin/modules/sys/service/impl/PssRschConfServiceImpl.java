@@ -1,6 +1,7 @@
 package io.dfjinxin.modules.sys.service.impl;
 
 import io.dfjinxin.common.utils.QuartzUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -19,12 +20,30 @@ public class PssRschConfServiceImpl extends ServiceImpl<PssRschConfDao, PssRschC
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        QueryWrapper qr=new QueryWrapper<PssRschConfEntity>();
+        addQueryCondition(params,"rschName","rsch_name","like",qr);
+        addQueryCondition(params,"rschFreq","rsch_Freq","eq",qr);
+        //addQueryCondition(params,"rcshId","rcsh_id",qr);
+        qr.orderByDesc("create_time");
+
         IPage<PssRschConfEntity> page = this.page(
                 new Query<PssRschConfEntity>().getPage(params),
-                new QueryWrapper<PssRschConfEntity>().ne("del_flag","1").orderByDesc("create_time")
+                qr
         );
 
         return new PageUtils(page);
+    }
+
+    private void addQueryCondition(Map<String, Object> params,String con,String con_cloum ,String queryType,QueryWrapper qr){
+        Object o=params.get(con);
+        if(o!=null&& StringUtils.isNotBlank(o.toString())){
+            if ("like".equals(queryType)){
+                qr.like(con_cloum,o.toString());
+            }
+            if ("eq".equals(queryType)){
+                qr.eq(con_cloum,o.toString());
+            }
+        }
     }
 
 
