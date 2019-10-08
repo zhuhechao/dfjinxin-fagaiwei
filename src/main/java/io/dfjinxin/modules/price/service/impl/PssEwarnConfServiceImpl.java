@@ -59,7 +59,7 @@ public class PssEwarnConfServiceImpl extends ServiceImpl<PssEwarnConfDao, PssEwa
         }
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("ewarn_id", ewarnId);
-//        0：删除  1：正常
+//        1：删除  0：正常
         queryWrapper.eq("del_flag", "0");
         return baseMapper.selectOne(queryWrapper);
     }

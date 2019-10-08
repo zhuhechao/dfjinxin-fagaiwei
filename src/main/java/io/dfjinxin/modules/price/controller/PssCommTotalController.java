@@ -41,7 +41,7 @@ public class PssCommTotalController {
     }
 
     @PostMapping("/queryPageList")
-    @ApiOperation("商品配置-查询")
+    @ApiOperation("商品预警配置-查询")
     public R queryPageList(@RequestBody(required = false) PssCommTotalDto params) {
 
 //        if (params == null) {
@@ -49,6 +49,15 @@ public class PssCommTotalController {
 //        }
         params.startNumber();
         PageUtils page = pssCommTotalService.queryPageList(params);
+        return R.ok().put("data", page);
+    }
+
+    @PostMapping("/queryCommInfoPageList")
+    @ApiOperation("商品信息-查询")
+    public R queryCommInfoPageList(@RequestBody(required = false) PssCommTotalDto params) {
+
+        params.startNumber();
+        PageUtils page = pssCommTotalService.queryCommInfoPageList(params);
         return R.ok().put("data", page);
     }
 

@@ -193,12 +193,10 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         while (iter.hasNext()) {
             String key = iter.next();
             int num1 = map.get(key);
-//            System.out.println(key + "有:" + num1 + " 个");
             NumberFormat numberFormat = NumberFormat.getInstance();
             // 设置精确到小数点后2位
             numberFormat.setMaximumFractionDigits(2);
             String result = numberFormat.format((float) num1 / (float) num2 * 100);
-//            System.out.println(key + "," + result + "%");
             resultMap.put(key, result + "%");
         }
         return resultMap;

@@ -225,5 +225,51 @@
         LIMIT #{param.start}, #{param.pageSize}
     </select>
 
+    <select id="queryCommInfoCountLevelCode2" resultType="java.lang.Integer">
+        select count(c2.comm_id)
+        FROM pss_comm_total c2
+        where c2.parent_code in (
+        select comm_id
+        from pss_comm_total c1
+        where c1.parent_code in (
+        select comm_id
+        from pss_comm_total c0
+        where 1=1
+        <if test="param.commLevelCode_0 != null and param.commLevelCode_0 !=''">
+            and c0.comm_id = #{param.commLevelCode_0} and c0.data_flag=0
+        </if>
+        )
+        <if test="param.commLevelCode_1 != null and param.commLevelCode_1 !=''">
+            and c1.comm_id=#{param.commLevelCode_1} and c1.data_flag=0
+        </if>
+        )
+        <if test="param.commLevelCode_2 != null and param.commLevelCode_2 !=''">
+            and c2.comm_id=#{param.commLevelCode_2} and c2.data_flag=0
+        </if>
+    </select>
+    <select id="queryCommInfoLevelCode2" resultType="io.dfjinxin.modules.price.entity.PssCommTotalEntity">
+        select c2.*
+        FROM pss_comm_total c2
+        where c2.parent_code in (
+        select comm_id
+        from pss_comm_total c1
+        where c1.parent_code in (
+        select comm_id
+        from pss_comm_total c0
+        where 1=1
+        <if test="param.commLevelCode_0 != null and param.commLevelCode_0 !=''">
+            and c0.comm_id = #{param.commLevelCode_0} and c0.data_flag=0
+        </if>
+        )
+        <if test="param.commLevelCode_1 != null and param.commLevelCode_1 !=''">
+            and c1.comm_id=#{param.commLevelCode_1} and c1.data_flag=0
+        </if>
+        )
+        <if test="param.commLevelCode_2 != null and param.commLevelCode_2 !=''">
+            and c2.comm_id=#{param.commLevelCode_2} and c2.data_flag=0
+        </if>
+        LIMIT #{param.start}, #{param.pageSize}
+    </select>
+
 
 </mapper>

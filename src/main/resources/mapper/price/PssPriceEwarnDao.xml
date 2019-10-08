@@ -55,6 +55,7 @@
        ppe.ewarn_level
         from pss_price_ewarn ppe left join pss_comm_total pct
         on ppe.comm_id=pct.comm_id
+        where pct.level_code=2
         group by pct.parent_code
     </select>
 

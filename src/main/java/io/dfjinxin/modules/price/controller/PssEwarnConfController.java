@@ -89,10 +89,8 @@ public class PssEwarnConfController {
         if (pssEwarnConfEntity == null) {
             return R.error("预警ID:" + ewarnId + ",不存在！");
         }
-        pssEwarnConfEntity.setDelFlag("0");
+        pssEwarnConfEntity.setDelFlag("1");
         pssEwarnConfService.updateById(pssEwarnConfEntity);
         return R.ok();
     }
-
-
 }

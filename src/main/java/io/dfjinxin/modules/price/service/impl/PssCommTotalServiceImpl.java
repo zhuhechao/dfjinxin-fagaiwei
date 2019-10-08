@@ -156,6 +156,75 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
         return baseMapper.selectList(where2);
     }
 
+    @Override
+    public PageUtils queryCommInfoPageList(PssCommTotalDto params) {
+        String levelCode_0 = params.getCommLevelCode_0();
+        String levelCode_1 = params.getCommLevelCode_1();
+        String levelCode_2 = params.getCommLevelCode_2();
+        //商品类型-0类 为空 查询所有
+        if (StringUtils.isBlank(levelCode_0)) {
+            QueryWrapper where1 = new QueryWrapper();
+            where1.eq("level_code", "0");
+            where1.eq("data_flag", "0");
+            List<PssCommTotalEntity> commType0 = baseMapper.selectList(where1);
+
+            List<Map<String, PssCommTotalEntity>> resultList = new ArrayList();
+            Map<String, PssCommTotalEntity> map = new HashMap<>();
+            Integer totalCount = 0;
+            for (PssCommTotalEntity entity : commType0) {
+                Map<String, Object> temp = selectSubCommByLevelCode0(entity, params);
+                PssCommTotalEntity result = (PssCommTotalEntity) temp.get("result");
+                totalCount = (Integer) temp.get("totalCount");
+                if (1 == entity.getCommId()) {
+                    map.put("dazong", result);
+                } else {
+                    map.put("minsheng", result);
+                }
+            }
+            resultList.add(map);
+            return new PageUtils(resultList, totalCount, params.getPageSize(), params.getPageIndex());
+
+        }
+        //商品类型-0类 不为空，商品大类-1类 为空，查询指定0类
+        if (StringUtils.isNotBlank(levelCode_0) && StringUtils.isBlank(levelCode_1)) {
+            PssCommTotalEntity commType0 = selectCommByLevelCode0(Integer.valueOf(levelCode_0));
+            int countLevelCode0 = pssCommTotalDao.queryPageListCountByLevelCode0(params);
+            List<PssCommTotalEntity> listLevelCode0 = pssCommTotalDao.queryPageLisByLevelCode0(params);
+            commType0.setSubCommList(listLevelCode0);
+            List<PssCommTotalEntity> returnList0 = new ArrayList<>();
+            returnList0.add(commType0);
+            return new PageUtils(returnList0, countLevelCode0, params.getPageSize(), params.getPageIndex());
+        }
+
+        //商品类型-0类 不为空，商品大类-1类 不为空，商品名称为空，查询指定1类
+        if (StringUtils.isNotBlank(levelCode_0) && StringUtils.isNotBlank(levelCode_1)
+                && StringUtils.isBlank(levelCode_2)) {
+            PssCommTotalEntity commType0 = selectCommByLevelCode0(Integer.valueOf(levelCode_0));
+            int countLevelCode1 = pssCommTotalDao.queryPageListCountByLevelCode1(params);
+            List<PssCommTotalEntity> listLevelCode1 = pssCommTotalDao.queryPageLisByLevelCode1(params);
+            commType0.setSubCommList(listLevelCode1);
+            List<PssCommTotalEntity> returnList1 = new ArrayList<>();
+            returnList1.add(commType0);
+            return new PageUtils(returnList1, countLevelCode1, params.getPageSize(), params.getPageIndex());
+        }
+
+        //商品类型-0类 不为空，商品大类-1类 不为空，商品名称-2类 不为空，查询指定2类
+        if (StringUtils.isNotBlank(levelCode_0) && StringUtils.isNotBlank(levelCode_1)
+                && StringUtils.isNotBlank(levelCode_2)) {
+            PssCommTotalEntity commType0 = selectCommByLevelCode0(Integer.valueOf(levelCode_0));
+//            int countLevelCode2 = pssCommTotalDao.queryPageListCountByLevelCode2(params);
+            int countLevelCode2 = pssCommTotalDao.queryCommInfoCountLevelCode2(params);
+//            List<PssCommTotalEntity> listLevelCode2 = pssCommTotalDao.queryPageLisByLevelCode2(params);
+            List<PssCommTotalEntity> listLevelCode2 = pssCommTotalDao.queryCommInfoLevelCode2(params);
+            commType0.setSubCommList(listLevelCode2);
+            List<PssCommTotalEntity> returnList2 = new ArrayList<>();
+            returnList2.add(commType0);
+            return new PageUtils(returnList2, countLevelCode2, params.getPageSize(), params.getPageIndex());
+        }
+
+        return null;
+    }
+
     private Map<String, Object> selectSubCommByLevelCode0(PssCommTotalEntity levelCode0, PssCommTotalDto dto) {
         if (levelCode0 == null || levelCode0.getCommId() == null) {
             return null;
