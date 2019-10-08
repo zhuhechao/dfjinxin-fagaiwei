@@ -96,9 +96,9 @@ public class OAuth2Realm extends AuthorizingRealm {
         if(userTmp==null){
             logger.info("Shiro 缓存、Session、login中未找到用户信息，从数据库中获取");
             userTmp = shiroService.queryUserByName(tokenEntity.getUserId());
-            userTmp.setUserId(userTmp.getSalt());
-            userTmp.setSalt(null);
-            shiroService.removeUserDBCache(tokenEntity.getUserId());
+//            userTmp.setUserId(userTmp.getSalt());
+//            userTmp.setSalt(null);
+       //     shiroService.removeUserDBCache(tokenEntity.getUserId());
         }
 
         logger.info("get sessoin information {}",new Gson().toJson(userTmp));

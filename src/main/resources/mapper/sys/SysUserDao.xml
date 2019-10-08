@@ -9,8 +9,8 @@
 			LEFT JOIN pss_menu_info m on rm.menu_id = m.menu_id
 		where ur.user_id = #{userId}
 	</select>
-	
-	<!-- 查询用户的所有菜单ID --> 
+
+	<!-- 查询用户的所有菜单ID -->
 	<select id="queryAllMenuId" resultType="long">
 		select distinct rm.menu_id from pss_user_role_info ur
 			LEFT JOIN pss_role_perm_info rm on ur.role_id = rm.role_id
@@ -19,7 +19,7 @@
 
 	<!--根据用户名称查询用户信息-->
 	<select id="queryByUserName" resultType="io.dfjinxin.modules.sys.entity.SysUserEntity">
-		select * from pss_user_info where user_name = #{username}
+		select * from pss_user_info where user_id = #{username}
 	</select>
 
 	<!--根据用户ID查询用户信息-->
