@@ -44,7 +44,7 @@
         and ppe.ewarn_type_id = #{ewarnTypeId}
     </select>
 
-    <select id="queryType3Warn" resultMap="pssPriceEwarnMap">
+   <!-- <select id="queryType3Warn" resultMap="pssPriceEwarnMap">
         select
         max(ppe.ewarn_date) as ewarn_date,
        pct.parent_code,
@@ -57,10 +57,26 @@
         on ppe.comm_id=pct.comm_id
         where pct.level_code=2
         group by pct.parent_code
+    </select>-->
+
+    <select id="queryType3Warn" resultMap="pssPriceEwarnMap">
+        select max(ppe.ewarn_date) as ewarn_date,ppe.*
+        from pss_price_ewarn ppe group by ppe.comm_id
     </select>
+
 
     <select id="queryEwarnlevel" resultType="io.dfjinxin.modules.price.entity.PssPriceEwarnEntity">
         select count(comm_id) as total,ewarn_level elevel from pss_price_ewarn group by ewarn_level
+    </select>
+
+    <select id="selectMaxRange" resultType="io.dfjinxin.modules.price.entity.PssPriceEwarnEntity">
+        select max(ppe.pri_range) as pri_range,ppe.comm_id from pss_price_ewarn ppe
+        where comm_id in (select comm_id from pss_comm_total where parent_code=#{commId})
+    </select>
+
+    <select id="selectMaxDateTimeEntiey" resultType="io.dfjinxin.modules.price.entity.PssPriceEwarnEntity">
+       select max(ppe.ewarn_date) as ewarn_date,ppe.pri_value,ppe.comm_id
+        FROM pss_price_ewarn ppe where comm_id =#{commId}
     </select>
 
 

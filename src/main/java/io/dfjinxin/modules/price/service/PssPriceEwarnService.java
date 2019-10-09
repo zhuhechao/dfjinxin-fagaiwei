@@ -23,5 +23,7 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
     List<Object> queryDetail(Integer commId,Integer ewarnTypeId);
 
     Map<String,Object> queryType3Warn();
+
+    Map<String, Object> converZF(Integer commId);
 }
 

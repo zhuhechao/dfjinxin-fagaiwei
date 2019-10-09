@@ -153,6 +153,13 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpCommIndexValDao, Wp
                     prdMap.put(type, prdList);
                     resultList.add(prdMap);
                     continue;
+                    //贸易
+                case Trd:
+                    List<KpiInfoDto> trdList = doIndexInfo(baseIndexInfoEntities);
+                    Map<String, List<KpiInfoDto>> trdMap = new HashMap();
+                    trdMap.put(type, trdList);
+                    resultList.add(trdMap);
+                    continue;
                 default:
             }
         }

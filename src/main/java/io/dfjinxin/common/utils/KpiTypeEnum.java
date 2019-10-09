@@ -12,9 +12,9 @@ public enum KpiTypeEnum {
     Ccl("Ccl", "流通"),
     Pri("Pri", "价格"),
     Csp("Csp", "消费"),
+    Cst("Cst", "成本"),
     Trd("Trd", "贸易"),
     Pop("Pop", "舆情"),
-    Cst("Cst", "成本"),
     Mtl("Mtl", "气象"),
     Rpt("Rpt", "报告"),
     Dsc("Dsc", "会商");

@@ -23,6 +23,8 @@ public class PssEwarnConfEntity implements Serializable {
 
     @TableId
     private Integer ewarnId;
+
+    private Integer rschId;
     /**
      *
      */

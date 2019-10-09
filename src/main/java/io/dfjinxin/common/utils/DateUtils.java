@@ -58,6 +58,14 @@ public class DateUtils {
         return null;
     }
 
+    public static String dateToStr(Date date) {
+        if (date != null) {
+            SimpleDateFormat df = new SimpleDateFormat(DATE_PATTERN);
+            return df.format(date);
+        }
+        return null;
+    }
+
     /**
      * 字符串转换成日期
      *
@@ -331,6 +339,8 @@ public class DateUtils {
 
     public static void main(String[] args) {
         System.out.println(DateUtils.getLastMonthByVal(1));
+        System.out.println(DateUtils.getLastYearByVal(1));
+        System.out.println(DateUtils.dateToStr(DateUtils.addDateDays(new Date(),-1)));
 //        System.out.println(DateUtils.getCurrentDayStr());
     }
 }
