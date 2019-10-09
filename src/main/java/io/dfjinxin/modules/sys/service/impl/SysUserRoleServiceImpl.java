@@ -16,6 +16,7 @@ import io.dfjinxin.modules.sys.entity.SysUserRoleEntity;
 import io.dfjinxin.modules.sys.service.SysUserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ import java.util.List;
  * @author Mark sunlightcs@gmail.com
  */
 @Service("sysUserRoleService")
+@Transactional(rollbackFor = Exception.class)
 public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleDao, SysUserRoleEntity> implements SysUserRoleService {
     @Autowired
 	private SysUserRoleDao sysUserRoleDao;
@@ -53,6 +55,11 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleDao, SysUserR
 	@Override
 	public void deleteUserRole(String userId) {
 		sysUserRoleDao.deleteUerRole(userId);
+	}
+
+	@Override
+	public List<SysUserRoleEntity> listByIds(List<Integer> roleid) {
+		return baseMapper.listByIds(roleid);
 	}
 
 

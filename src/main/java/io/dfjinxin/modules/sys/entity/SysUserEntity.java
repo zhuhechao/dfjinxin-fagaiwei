@@ -11,6 +11,7 @@ package io.dfjinxin.modules.sys.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dfjinxin.common.validator.group.AddGroup;
 import io.dfjinxin.common.validator.group.UpdateGroup;
 import lombok.Data;
@@ -18,10 +19,8 @@ import lombok.Data;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 系统用户
@@ -75,21 +74,23 @@ public class SysUserEntity implements Serializable {
 
 
 	/**
-	 * 状态  0：禁用   1：正常
+	 * 状态  false：禁用   true：正常
 	 */
-	private Integer userStatus;
+	private int userStatus;
 
 
 
 	/**
 	 * 注册时间
 	 */
-	private Timestamp crteDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date crteDate;
 
 	/**
 	 * 更新时间
 	 */
-	private Timestamp updDate;
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date updDate;
 
 	/**
 	 * 用户和角色关系
@@ -111,5 +112,22 @@ public class SysUserEntity implements Serializable {
 	@TableField(exist = false)
     private int  roleTypeId;
 
+	/**
+	 * 前端角色类型判断标识
+	 */
+	@TableField(exist = false)
+	private Boolean status;
+
+	/**
+	 * 部门名称
+	 */
+	@TableField(exist = false)
+	private String depName;
+
+	/**
+	 * 角色名称
+	 */
+	@TableField(exist = false)
+	private String roleName;
 
 }

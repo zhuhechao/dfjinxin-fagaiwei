@@ -30,7 +30,7 @@ public interface ShiroService {
      * 根据用户ID，查询用户
      * @param userId
      */
-    SysUserTokenEntity queryUser(String userId);
+    SysUserEntity queryUser(String userId);
 
     SysUserEntity queryUserByName(String userName);
 

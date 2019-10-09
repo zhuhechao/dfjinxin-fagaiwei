@@ -341,6 +341,23 @@
 					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+                <configuration>
+				  <webResources>
+					  <resource>
+						  <directory>fglib</directory>
+					      <targetPath>WEB-INF/lib</targetPath>
+						  <includes>
+							  <include>**/*.jar</include>
+						  </includes>
+					  </resource>
+				  </webResources>
+
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

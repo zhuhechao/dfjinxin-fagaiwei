@@ -2,12 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="io.dfjinxin.modules.sys.dao.SysUserDao">
-	<!-- 查询用户的所有权限 -->
-	<select id="queryAllPerms" resultType="string">
-		select m.menu_perm from pss_user_role_info ur
-			LEFT JOIN pss_role_perm_info rm on ur.role_id = rm.role_id
-			LEFT JOIN pss_menu_info m on rm.menu_id = m.menu_id
-		where ur.user_id = #{userId}
+	<sql id="where">
+		1=1
+		<if test="m.userName != null and m.userName != '' and !'null'.equals(m.userName)"><![CDATA[
+	       and pui.user_name = #{m.userName}
+	    ]]></if>
+		<if test="m.userStatus != null and m.userStatus != '' and !'null'.equals(m.userStatus)"><![CDATA[
+	       and pui.user_status = #{m.userStatus}
+	    ]]></if>
+		<if test="m.depId!= null and m.depId != '' and !'null'.equals(m.depId)"><![CDATA[
+	       and ud.dep_id = #{m.depId}
+	    ]]></if>
+	</sql>
+
+    <!-- 查询用户的所有权限 -->
+    <select id="queryAllPerms" resultType="string">
+		SELECT pmi.menu_perm FROM pss_user_role_rela ur
+		JOIN pss_role_perm_info prpi ON ur.role_id = prpi.role_id
+		JOIN pss_menu_info pmi ON pmi.menu_id = prpi.menu_id
+		WHERE ur.user_id = #{userId}
 	</select>
 
 	<!-- 查询用户的所有菜单ID -->
@@ -17,18 +30,23 @@
 		where ur.user_id = #{userId}
 	</select>
 
-	<!--根据用户名称查询用户信息-->
-	<select id="queryByUserName" resultType="io.dfjinxin.modules.sys.entity.SysUserEntity">
-		select * from pss_user_info where user_id = #{username}
+    <!--根据用户名称查询用户信息-->
+    <select id="queryByUserName" resultType="io.dfjinxin.modules.sys.entity.SysUserEntity">
+		select * from pss_user_info where user_name = #{username}
 	</select>
 
-	<!--根据用户ID查询用户信息-->
-	<select id="" resultType="io.dfjinxin.modules.sys.entity.SysUserEntity">
+    <!--根据用户ID查询用户信息-->
+    <select id="queryUserList" parameterType="map" resultType="io.dfjinxin.modules.sys.entity.SysUserEntity">
+      SELECT pui.user_id,pui.user_name,pui.user_real_name,pui.user_status,pui.upd_date,pui.mbl_phone_no,pui.fix_tphone_no,pui.email,pui.crte_date,pui.upd_date,ud.dep_name,ur.role_name FROM pss_user_info pui LEFT JOIN (SELECT pudr.user_id,pudr.dep_id,pud.dep_name FROM pss_user_dep_rela pudr JOIN pss_user_dep pud ON pudr.dep_id = pud.dep_id) ud  ON pui.user_id = ud.user_id
+      LEFT JOIN (SELECT puri.role_id,puri.role_name,purr.user_id FROM pss_user_role_info puri JOIN pss_user_role_rela purr ON puri.role_id = purr.role_id) ur ON pui.user_id = ur.user_id
+    <where>
+		<include refid="where"/>
+	</where>
+    ORDER  BY  pui.user_status DESC
+    </select>
 
-	</select>
-
-	<!--新增 用户-->
-	<insert id="insertUserData" parameterType="io.dfjinxin.modules.sys.entity.SysUserEntity">
+    <!--新增 用户-->
+    <insert id="insertUserData" parameterType="io.dfjinxin.modules.sys.entity.SysUserEntity">
 		INSERT INTO pss_user_info(
 		  user_id,
 		  user_name,
@@ -54,8 +72,8 @@
       )
 	</insert>
 
-  <!--更新用户数据-->
-	<update id="updateUserData" parameterType="io.dfjinxin.modules.sys.entity.SysUserEntity">
+    <!--更新用户数据-->
+    <update id="updateUserData" parameterType="io.dfjinxin.modules.sys.entity.SysUserEntity">
 		UPDATE pss_user_info
 		SET (
 		 user_name = #{userName},
@@ -72,8 +90,21 @@
 	</update>
 
 
-	<delete id="deleteByUserName" >
+    <delete id="deleteByUserName">
 		delete from pss_user_info where user_name = #{username}
 	</delete>
 
+	<select id="queryByUserId" resultType="io.dfjinxin.modules.sys.entity.SysUserEntity">
+		SELECT pui.* FROM  pss_user_info pui  WHERE  user_id = #{userId}
+	</select>
+
+	<!--获取指定用户的可访问的菜单-->
+	<select id="getUserPerm" resultType="map">
+      SELECT m.menu_id,m.pare_menu_id ,m.menu_name,m.menu_url,m.menu_icon_url,m.menu_router,m.menu_type
+		FROM (SELECT * FROM pss_menu_info WHERE menu_state = 1 ) m
+		JOIN pss_role_perm_info p ON m.menu_id = p.menu_id
+		JOIN (SELECT pur.role_id  FROM pss_user_info pui JOIN pss_user_role_rela pur ON pui.user_id = pur.user_id WHERE pui.user_id = #{userId}) r ON p.role_id = r.role_id
+    </select>
+
 </mapper>
+

@@ -33,10 +33,9 @@ public class ShiroServiceImpl implements ShiroService {
 
     @Override
     public Set<String> getUserPermissions(String userId) {
-        List<String> permsList;
 
         //查询用户权限
-         permsList = sysUserDao.queryAllPerms(userId);
+        List<String>  permsList = sysUserDao.queryAllPerms(userId);
         //用户权限列表
         Set<String> permsSet = new HashSet<>();
         for(String perms : permsList){
@@ -54,9 +53,9 @@ public class ShiroServiceImpl implements ShiroService {
     }
 
     @Override
-    public SysUserTokenEntity queryUser(String userId) {
+    public SysUserEntity queryUser(String userId) {
 
-        return sysUserTokenDao.selectById(userId);
+        return sysUserDao.queryByUserId(userId);
     }
 
     @Override

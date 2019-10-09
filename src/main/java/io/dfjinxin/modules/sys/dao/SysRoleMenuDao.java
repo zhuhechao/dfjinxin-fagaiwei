@@ -11,6 +11,7 @@ package io.dfjinxin.modules.sys.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.dfjinxin.modules.sys.entity.SysRoleMenuEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -38,5 +39,5 @@ public interface SysRoleMenuDao extends BaseMapper<SysRoleMenuEntity> {
 	/**
 	 * 查询菜单信息
 	 */
-	List<Map<String,Object>> select(Map<String,Object> map);
+	List<Map<String,Object>> select(@Param(value = "m") Map<String,Object> m);
 }

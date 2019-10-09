@@ -2,6 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="io.dfjinxin.modules.sys.dao.SysRoleDao">
+
+	<sql id ='where'>
+		1=1
+		<if test="m.roleId != null and m.roleId != '' and !'null'.equals(m.roleId)"><![CDATA[
+	       and puri.role_id = #{m.roleId}
+	    ]]></if>
+		<if test="m.roleState != null and m.roleState != '' and !'null'.equals(m.roleState)"><![CDATA[
+	       and puri.role_state = #{m.roleState}
+	    ]]></if>
+	</sql>
 	
 	<!-- 查询用户创建的角色ID列表 -->
 	<select id="queryRoleIdList" resultType="io.dfjinxin.modules.sys.entity.SysRoleEntity">
@@ -15,4 +25,24 @@
 			#{roleId}
 		</foreach>
 	</delete>
+
+	<!--角色信息&#45;&#45;分页-->
+	<select id="queryRole" parameterType="map" resultType="io.dfjinxin.modules.sys.entity.SysRoleEntity">
+		SELECT puri.*,prt.role_type_name  FROM pss_user_role_info puri LEFT JOIN pss_role_type prt ON puri.role_type_id = prt.role_type_id
+		<where>
+			<include refid="where"/>
+		</where>
+		ORDER BY puri.role_state DESC
+   </select>
+
+	<select id="getRole" resultType="map">
+		SELECT puri.role_id `value`,puri.role_name label FROM  pss_user_role_info puri
+	</select>
+
+	<!--用户信息保存-->
+	<insert id="save" parameterType="io.dfjinxin.modules.sys.entity.SysRoleEntity" useGeneratedKeys="true" keyProperty="roleId">
+		INSERT INTO pss_user_role_info (role_state, role_name, remarks, cre_date, upd_date, role_type_id) VALUES (
+		#{roleState},#{roleName},#{remarks},CURRENT_TIMESTAMP ,CURRENT_TIMESTAMP ,#{roleTypeId}
+		)
+	</insert>
 </mapper>

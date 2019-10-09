@@ -9,6 +9,7 @@ import io.dfjinxin.common.validator.group.UpdateGroup;
 import io.dfjinxin.modules.sys.entity.SysDepEntity;
 import io.dfjinxin.modules.sys.entity.SysUserEntity;
 import io.dfjinxin.modules.sys.service.SysDepService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/sys/dep")
+@Api(tags = "SysDepController", description = "部门管理")
 public class SysDepController  extends AbstractController{
     @Autowired
     private SysDepService sysDepService;
@@ -33,9 +35,6 @@ public class SysDepController  extends AbstractController{
     public R list(@RequestParam Map<String, Object> params){
         //只有超级管理员，才能查看所有管理员列表
         PageUtils page = sysDepService.queryPage(params);
-        List<SysDepEntity> list = (List<SysDepEntity>)page.getList();
-        page.setList(list);
-
         return R.ok().put("page", page);
     }
 
@@ -48,6 +47,16 @@ public class SysDepController  extends AbstractController{
     @RequiresPermissions("sys:dep:info")
     public R info(@PathVariable("depId") String userId){
         SysDepEntity dep = sysDepService.getById(userId);
+        return R.ok().put("dep", dep);
+    }
+
+    /**
+     * 用户管理部门信息下拉框
+     */
+    @GetMapping("/userDepInfo")
+    @RequiresPermissions("sys:dep:userDepInfo")
+    public R userDepInfo( ){
+        List<Map<String,Object>> dep = sysDepService.serDepInfo();
         return R.ok().put("dep", dep);
     }
 

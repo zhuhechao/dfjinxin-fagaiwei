@@ -19,11 +19,16 @@ import io.dfjinxin.modules.sys.entity.SysUserEntity;
 import io.dfjinxin.modules.sys.service.SysUserRoleService;
 import io.dfjinxin.modules.sys.service.SysUserService;
 import io.dfjinxin.modules.sys.service.UserTenantService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.ArrayUtils;
 import io.dfjinxin.common.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +39,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/sys/user")
+@Api(tags = "SysUserController", description = "用户管理")
 public class SysUserController extends AbstractController {
 	@Autowired
 	private SysUserService sysUserService;
@@ -47,11 +53,10 @@ public class SysUserController extends AbstractController {
 	 */
 	@GetMapping("/list")
 	@RequiresPermissions("sys:user:list")
+	@ApiOperation("用户数据查询")
 	public R list(@RequestParam Map<String, Object> params){
 		//只有超级管理员，才能查看所有管理员列表
-		PageUtils page = sysUserService.queryPage(params);
-		List<SysUserEntity> list = (List<SysUserEntity>)page.getList();
-		page.setList(list);
+		PageUtils page = sysUserService.queryUserList(params);
 
 		return R.ok().put("page", page);
 	}

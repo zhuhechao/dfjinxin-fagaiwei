@@ -29,4 +29,9 @@ public interface SysUserRoleService extends IService<SysUserRoleEntity> {
 	 * 根据用户角色
 	 */
 	void deleteUserRole(String userId);
+
+	/**
+	 * 查询角色和用户
+	 */
+	List<SysUserRoleEntity> listByIds(List<Integer> roles);
 }

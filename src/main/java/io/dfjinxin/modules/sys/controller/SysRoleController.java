@@ -17,6 +17,8 @@ import io.dfjinxin.modules.sys.entity.SysRoleEntity;
 import io.dfjinxin.modules.sys.service.SysRoleMenuService;
 import io.dfjinxin.modules.sys.service.SysRoleService;
 import io.dfjinxin.common.annotation.RequiresPermissions;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +33,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/sys/role")
+@Api(tags = "SysRoleController", description = "角色管理")
 public class SysRoleController extends AbstractController {
 	@Autowired
 	private SysRoleService sysRoleService;
@@ -38,15 +41,14 @@ public class SysRoleController extends AbstractController {
 	private SysRoleMenuService sysRoleMenuService;
 
 	/**
-	 * 所有部门列表
+	 * 所有角色列表
 	 */
 	@GetMapping("/list")
 	@RequiresPermissions("sys:role:list")
+	@ApiOperation("获取角色信息")
 	public R list(@RequestParam Map<String, Object> params){
 		//只有超级管理员，才能查看所有管理员列表
 		PageUtils page = sysRoleService.queryPage(params);
-		List<SysRoleEntity> list = (List<SysRoleEntity>)page.getList();
-		page.setList(list);
 
 		return R.ok().put("page", page);
 	}
@@ -60,10 +62,21 @@ public class SysRoleController extends AbstractController {
 	@SysLog("删除角色")
 	@PostMapping("/delete")
 	@RequiresPermissions("sys:role:delete")
+	@ApiOperation("删除角色")
 	public R delete(@RequestBody int[] roleIds){
 		sysRoleService.deleteBatch(roleIds);
 
 		return R.ok();
+	}
+
+	/**
+	 * 角色下拉框
+	 */
+	@SysLog("获取角色下拉框信息")
+	@GetMapping("/getRole")
+	public R getRole(){
+		List<Map<String,Object>> role=	sysRoleService.getRole();
+		return R.ok().put("roles",role);
 	}
 
 	/**
@@ -80,11 +93,13 @@ public class SysRoleController extends AbstractController {
 	/**
 	 * 保存或更新
 	 */
-	@SysLog("获取角色的权限信息")
+	@SysLog("保存或者修改角色信息")
 	@PostMapping("/info")
 	@RequiresPermissions("sys:role:info")
-	public void addOrUpdate(@RequestBody SysRoleEntity role){
+	@ApiOperation("新增或者修改角色")
+	public R addOrUpdate(@RequestBody SysRoleEntity role){
 		sysRoleService.addOrUpdate(role);
+		return R.ok();
 	}
 
 }

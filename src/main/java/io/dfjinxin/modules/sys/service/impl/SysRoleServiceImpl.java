@@ -10,20 +10,24 @@ package io.dfjinxin.modules.sys.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.dfjinxin.common.exception.RRException;
 import io.dfjinxin.common.utils.Constant;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
 import io.dfjinxin.modules.sys.dao.SysRoleDao;
+import io.dfjinxin.modules.sys.entity.SysDepEntity;
 import io.dfjinxin.modules.sys.entity.SysMenuEntity;
 import io.dfjinxin.modules.sys.entity.SysRoleEntity;
+import io.dfjinxin.modules.sys.entity.SysUserRoleEntity;
 import io.dfjinxin.modules.sys.service.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -32,6 +36,7 @@ import java.util.*;
  * @author Mark sunlightcs@gmail.com
  */
 @Service("sysRoleService")
+@Transactional(rollbackFor = Exception.class)
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> implements SysRoleService {
 	@Autowired
 	private SysRoleMenuService sysRoleMenuService;
@@ -43,13 +48,18 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 
 	@Override
 	public PageUtils queryPage(Map<String, Object> params) {
-		String roleName = (String)params.get("roleName");
-
-		IPage<SysRoleEntity> page = this.page(
-			new Query<SysRoleEntity>().getPage(params),
-			new QueryWrapper<SysRoleEntity>()
-				.like(StringUtils.isNotBlank(roleName),"role_name", roleName)
-		);
+		long no = params.containsKey("page") ? Long.valueOf(params.get("page").toString()) : 1;
+		long limit = params.containsKey("limit") ? Long.valueOf(params.get("limit").toString()) : 10;
+		IPage<SysRoleEntity> page = baseMapper.queryRole(new Page<>(no, limit), params);
+		List<SysRoleEntity> list = page.getRecords();
+		for(SysRoleEntity map:list){
+			Integer st= map.getRoleState();
+			if(st == 1){
+				map.setStatus(true);
+			}else {
+				map.setStatus(false);
+			}
+		}
 
 		return new PageUtils(page);
 	}
@@ -60,14 +70,22 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
     @Transactional(rollbackFor = Exception.class)
     public void addOrUpdate(SysRoleEntity role) {
  		 int roleId = role.getRoleId();
-        if(roleId !=0){
-			this.updateById(role);
-		}else {
-        	this.save(role);
-		}
+        if(roleId ==0 ){
+        	veryRole(role,0);
+			baseMapper.save(role);
 
-		//更新角色与菜单关系
-        sysRoleMenuService.saveOrUpdate(role.getRoleId(), role.getMenuIdList());
+		}else {
+			veryRole(role,1);
+			Date date = new Date();
+			Timestamp timestamp = new Timestamp(date.getTime());
+			role.setUpdDate(timestamp);
+			this.updateById(role);
+			sysRoleMenuService.saveOrUpdate(role.getRoleId(),role.getMenuIdList());
+		}
+		List<Integer> menus= role.getMenuIdList();
+		if(menus != null){
+			sysRoleMenuService.saveOrUpdate(roleId,role.getMenuIdList());
+		}
     }
 
     @Override
@@ -78,10 +96,14 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 		for(int data:roleIds){
 			rids.add(data);
 		}
+		List<SysUserRoleEntity> list= sysUserRoleService.listByIds(rids);
+		if(list !=null && list.size()>0){
+			throw new RRException("当前指定的角色已经被使用，不能删除！");
+		}
         this.removeByIds(rids);
 
         //删除角色与菜单关联
-        sysRoleMenuService.deleteBatch(roleIds);
+       sysRoleMenuService.deleteBatch(roleIds);
 
     }
 
@@ -109,6 +131,34 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 
 	@Override
 	public void addRole(SysRoleEntity role) {
+
+	}
+
+	@Override
+	public List<Map<String, Object>> getRole() {
+		List<Map<String, Object>> roles=   sysRoleDao.getRole();
+		return roles;
+	}
+
+	/**
+	 * 检查角色
+	 */
+	private  void veryRole(SysRoleEntity r,int flag){
+			String  roleName= r.getRoleName();
+		    int rs = r.getRoleState();
+		    int rt = r.getRoleTypeId();
+			Map<String,Object> map = new HashMap<>();
+		    map.put("role_name",roleName);
+		    List<SysRoleEntity> re = re= baseMapper.selectByMap(map);;
+			if(flag == 0 && re.size()>0){
+				throw new RRException("角色名称重复");
+			}else if(flag == 1 && re.size()>1){
+				throw new RRException("角色名称已存在！");
+			}
+
+		    if(rt == 0){
+		    	throw new RRException("请指定角色类型！");
+		    }
 
 	}
 

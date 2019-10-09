@@ -5,6 +5,7 @@ import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.modules.sys.entity.SysDepEntity;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,5 +21,10 @@ public interface SysDepService extends IService<SysDepEntity> {
      * 查询部门信息
      */
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     *用户管理部门信息下拉框
+     */
+    List<Map<String,Object>> serDepInfo();
 
 }

@@ -26,15 +26,20 @@ public interface SysUserService extends IService<SysUserEntity> {
 	PageUtils queryPage(Map<String, Object> params);
 
 	/**
+	 * 查询用户数据
+	 */
+	PageUtils queryUserList(Map<String, Object> params);
+
+	/**
 	 * 查询用户的所有权限
 	 * @param userId  用户ID
 	 */
-	List<String> queryAllPerms(Long userId);
+	List<String> queryAllPerms(String userId);
 
 	/**
 	 * 查询用户的所有菜单ID
 	 */
-	List<Long> queryAllMenuId(Long userId);
+	List<Integer> queryAllMenuId(String userId);
 
 	/**
 	 * 根据用户名，查询系统用户
@@ -66,5 +71,10 @@ public interface SysUserService extends IService<SysUserEntity> {
 	 *
 	 */
 	SysUserEntity getUserById(String userId);
+
+	/**
+	 * 根据用户Id 获取可访问的菜单
+	 */
+	List<Map<String,Object>> getUserPerm(String userId);
 
 }
