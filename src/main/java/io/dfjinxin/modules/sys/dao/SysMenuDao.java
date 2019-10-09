@@ -9,8 +9,11 @@
 package io.dfjinxin.modules.sys.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.dfjinxin.modules.sys.entity.SysMenuEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -41,6 +44,20 @@ public interface SysMenuDao extends BaseMapper<SysMenuEntity> {
 	 */
 	List<Integer> queryAllMenuId(int userId);
 
+	/**
+	 * 查询菜单信息--分页
+	 */
+	IPage<SysMenuEntity> queryMenu(Page page, @Param("m") Map<String, Object> m);
+
+	/**
+	 * 菜单信息下拉框
+	 */
+	List<Map<String,Object>> searMenu();
+
+	/**
+	 * 获取指定Ip的菜单信息
+	 */
+	SysMenuEntity getMenuById(int menuId);
 
 
 }

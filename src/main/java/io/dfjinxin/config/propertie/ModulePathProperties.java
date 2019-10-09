@@ -8,6 +8,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("app.path.module")
 public class ModulePathProperties {
     private String report;
-
+    private String reportresult;
 
 }

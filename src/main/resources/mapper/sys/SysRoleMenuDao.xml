@@ -32,10 +32,11 @@
 	</sql>
 	
 	<select id="queryMenuList" parameterType="map" resultType="map">
-		select m.*
+		SELECT m.*
 		,p.role_id
-		from (select * from pss_menu_info where menu_state = 1 ) m
-		join pss_role_perm_info p on m.menu_id = p.menu_id
+		FROM (SELECT * FROM pss_menu_info WHERE menu_state = 1 ) m
+		JOIN pss_role_perm_info p ON m.menu_id = p.menu_id
+		WHERE  p.role_id = #{m.role_id}
 	</select>
 
 	<delete id="deleteBatch">

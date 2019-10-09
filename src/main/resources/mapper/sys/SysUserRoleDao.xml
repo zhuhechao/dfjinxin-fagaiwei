@@ -11,4 +11,11 @@
 	<select id="deleteUerRole" >
 		DELETE FROM pss_user_role_rela where user_id = #{value}
 	</select>
+
+	<select id="listByIds" resultType="io.dfjinxin.modules.sys.entity.SysUserRoleEntity">
+       SELECT purr.*  FROM  pss_user_role_rela purr WHERE purr.role_id IN
+		<foreach item="roleId" collection="list" open="(" separator="," close=")">
+			#{roleId}
+		</foreach>
+	</select>
 </mapper>

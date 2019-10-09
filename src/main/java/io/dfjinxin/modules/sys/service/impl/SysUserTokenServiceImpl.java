@@ -15,6 +15,7 @@ import io.dfjinxin.modules.sys.entity.SysUserTokenEntity;
 import io.dfjinxin.modules.sys.oauth2.TokenGenerator;
 import io.dfjinxin.modules.sys.service.SysUserTokenService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -22,6 +23,7 @@ import java.util.Date;
 
 
 @Service("sysUserTokenService")
+@Transactional(rollbackFor = Exception.class)
 public class SysUserTokenServiceImpl extends ServiceImpl<SysUserTokenDao, SysUserTokenEntity> implements SysUserTokenService {
 	//12小时后过期
 	private final static int EXPIRE = 3600 * 12;
@@ -36,7 +38,7 @@ public class SysUserTokenServiceImpl extends ServiceImpl<SysUserTokenDao, SysUse
 		Date now = new Date();
 		Timestamp tn = new Timestamp(now.getTime());
 		//过期时间
-		Timestamp expireTime = new Timestamp(now.getTime() + EXPIRE * 1000);
+		Timestamp expireTime = new Timestamp(now.getTime() + EXPIRE * 5000);
 
 		//判断是否生成过token
 		SysUserTokenEntity tokenEntity = this.getById(userId);

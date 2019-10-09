@@ -2,20 +2,51 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="io.dfjinxin.modules.sys.dao.SysMenuDao">
+	<sql id ='where'>
+		 pui.menu_type != 3
+		<if test="m.menuId != null and m.menuId != '' and !'null'.equals(m.menuId)"><![CDATA[
+	       and pui.menu_id = #{m.menuId}
+	    ]]></if>
+		<if test="m.menuState != null and m.menuState != '' and !'null'.equals(m.menuState)"><![CDATA[
+	       and pui.menu_state = #{m.menuState}
+	    ]]></if>
+	</sql>
 
 	<!-- 查询用户的所有菜单ID -->
 	<select id="queryAllMenuId" resultType="long">
-		select distinct rm.menu_id from sys_user_role ur
-			LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id
+		select distinct rm.menu_id from pss_user_info ur
+			LEFT JOIN pss_role_perm_info rm on ur.role_id = rm.role_id
 		where ur.user_id = #{userId}
 	</select>
 
 	<select id="queryListParentId" resultType="io.dfjinxin.modules.sys.entity.SysMenuEntity">
-		select * from sys_menu where parent_id = #{parentId} order by order_num asc
+		select * from pss_menu_info where pare_menu_id = #{parentId}
 	</select>
 
 	<select id="queryNotButtonList" resultType="io.dfjinxin.modules.sys.entity.SysMenuEntity">
-		select * from sys_menu where type != 2 order by order_num asc
+		select * from pss_menu_info where type != 3
+	</select>
+
+  <select id="queryMenu" resultType="io.dfjinxin.modules.sys.entity.SysMenuEntity">
+	 SELECT pui.menu_id,pui.pare_menu_id,pui.menu_name,pui.menu_router,pui.menu_type,pui.menu_url,pui.menu_icon_url,pui.menu_state,pui.cre_date,pui.upd_date,(CASE WHEN pui.menu_type = 1 THEN '目录' WHEN pui.menu_type = 2 THEN '菜单' ELSE '按钮' END ) menuTypeName,pmi.menu_name pareMenuName
+     FROM pss_menu_info pui
+     LEFT JOIN pss_menu_info pmi ON pui.pare_menu_id = pmi.menu_id
+	  <where>
+		  <include refid="where"/>
+	  </where>
+	  ORDER BY pui.menu_state DESC
+  </select>
+
+	<!--菜单信息下拉框-->
+  <select id="searMenu" resultType="map">
+	  SELECT  pmi.menu_id `value`,pmi.menu_name label  FROM  pss_menu_info pmi WHERE  pmi.menu_type != 3
+  </select>
+
+	<select id="getMenuById" resultType="io.dfjinxin.modules.sys.entity.SysMenuEntity">
+		SELECT pui.menu_id,pui.pare_menu_id,pui.menu_name,pui.menu_router,pui.menu_type,pui.menu_url,pui.menu_icon_url,pui.menu_state,pui.cre_date,pui.upd_date,(CASE WHEN pui.menu_type = 1 THEN '目录' WHEN pui.menu_type = 2 THEN '菜单' ELSE '按钮' END ) menuTypeName,pmi.menu_name pareMenuName
+		FROM pss_menu_info pui
+		LEFT JOIN pss_menu_info pmi ON pui.pare_menu_id = pmi.menu_id
+		WHERE pui.menu_id = #{menuId}
 	</select>
 
 </mapper>

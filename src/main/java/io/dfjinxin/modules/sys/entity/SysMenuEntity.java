@@ -38,6 +38,12 @@ public class SysMenuEntity implements Serializable {
 	 */
 	private int pareMenuId;
 
+	/**
+	 * 父级菜单名称
+	 */
+	@TableField(exist = false)
+	private String pareMenuName;
+
 
 	/**
 	 * 菜单名称
@@ -80,8 +86,25 @@ public class SysMenuEntity implements Serializable {
 	 */
 	private int menuState;
 
+	/**
+	 * 菜单路由
+	 */
+    private String menuRouter;
+
 	@TableField(exist = false)
 	private List<SysMenuEntity> list;
+
+	/**
+	 * 状态
+	 */
+	@TableField(exist = false)
+	private boolean status;
+
+	/**
+	 * 菜单类型名称
+	 */
+	@TableField(exist = false)
+	private String menuTypeName;
 
 
 }

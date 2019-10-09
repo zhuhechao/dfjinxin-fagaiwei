@@ -47,9 +47,14 @@ public class SysRoleEntity implements Serializable {
 	private String remarks;
 	
 	/**
-	 * 创建者ID
+	 * 角色状态
 	 */
 	private int roleState;
+
+	/**
+	 * 角色类型
+	 */
+	private int roleTypeId;
 
 	
 	/**
@@ -61,6 +66,12 @@ public class SysRoleEntity implements Serializable {
 	 * 更新时间
 	 */
 	private Timestamp updDate;
+
+	@TableField(exist = false)
+	private boolean status;
+
+	@TableField(exist = false)
+	private String roleTypeName;
 
 	@TableField(exist = false)
 	List<Integer> menuIdList;

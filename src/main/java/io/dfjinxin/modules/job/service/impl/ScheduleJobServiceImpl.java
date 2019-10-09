@@ -38,6 +38,7 @@ public class ScheduleJobServiceImpl extends ServiceImpl<ScheduleJobDao, Schedule
 	 * 项目启动时，初始化定时器
 	 */
 	@PostConstruct
+	@Transactional(rollbackFor = Exception.class)
 	public void init(){
 		List<ScheduleJobEntity> scheduleJobList = this.list();
 		for(ScheduleJobEntity scheduleJob : scheduleJobList){

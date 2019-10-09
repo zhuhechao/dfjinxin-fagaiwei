@@ -10,6 +10,7 @@ package io.dfjinxin.modules.sys.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.modules.sys.entity.GovRootMenuEntity;
 import io.dfjinxin.modules.sys.entity.SysMenuEntity;
 
@@ -23,6 +24,10 @@ import java.util.Map;
  * @author Mark sunlightcs@gmail.com
  */
 public interface SysMenuService extends IService<SysMenuEntity> {
+	/**
+	 * 查询菜单信息
+	 */
+	PageUtils queryPage(Map<String, Object> params);
 
 	/**
 	 * 根据父菜单，查询子菜单
@@ -55,11 +60,15 @@ public interface SysMenuService extends IService<SysMenuEntity> {
 	void delete(int menuId);
 
 	/**
-	 * 从太极获取用户菜单
-	 * @param userId
+	 * 菜单下拉框
+	 */
+	List<Map<String,Object>> serMenuInfo();
+
+	/**
+	 * 获取指定菜单的用户信息
+	 * @param menuId
 	 * @return
 	 */
-	//List<GovRootMenuEntity> getMenuFromGovAuth(Long userId);
+	SysMenuEntity getById(int menuId);
 
-	//List<Long> queryAllMenuId(int userId);
 }

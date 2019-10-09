@@ -37,4 +37,9 @@ public interface SysUserRoleDao extends BaseMapper<SysUserRoleEntity> {
 	 * 根据用户ID 删除用户的角色关系
 	 */
 	void deleteUerRole(String userId);
+
+	/**
+	 * 根据角色ID数组，获取对应用户角色信息
+	 */
+	List<SysUserRoleEntity> listByIds(List<Integer> roles);
 }

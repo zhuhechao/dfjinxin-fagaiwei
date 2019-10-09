@@ -7,6 +7,7 @@ import io.dfjinxin.modules.sys.entity.SysUserDepEntity;
 import io.dfjinxin.modules.sys.service.SysUserDepService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Map;
  * Created by GaoPh on 2019/9/4.
  */
 @Service("sysUserDepService")
+@Transactional(rollbackFor = Exception.class)
 public class SysUserDepImpl extends ServiceImpl<SysUserDepDao,SysUserDepEntity> implements SysUserDepService {
     @Autowired
     private SysUserDepDao sysUserDepDao;

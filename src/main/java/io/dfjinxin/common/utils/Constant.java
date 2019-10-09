@@ -47,15 +47,15 @@ public class Constant {
         /**
          * 目录
          */
-    	CATALOG(0),
+    	CATALOG(1),
         /**
          * 菜单
          */
-        MENU(1),
+        MENU(2),
         /**
          * 按钮
          */
-        BUTTON(2);
+        BUTTON(3);
 
         private int value;
 

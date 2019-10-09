@@ -1,5 +1,6 @@
 package io.dfjinxin.modules.sys.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -27,4 +28,11 @@ public class SysDepEntity implements Serializable {
     private Timestamp creDate;
 
     private Timestamp updDate;
+
+    @TableField(exist = false)
+    private boolean status;
+
+    @TableField(exist = false)
+    private String superDepName;
+
 }

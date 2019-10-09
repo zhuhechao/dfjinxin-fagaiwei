@@ -37,6 +37,8 @@ public interface SysRoleService extends IService<SysRoleEntity> {
 	//新增角色
 	void addRole(SysRoleEntity role);
 
+	//获取角色下拉框数据
+	List<Map<String,Object>> getRole();
 
 
 }

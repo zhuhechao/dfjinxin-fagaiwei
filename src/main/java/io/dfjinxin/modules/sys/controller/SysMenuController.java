@@ -11,11 +11,13 @@ package io.dfjinxin.modules.sys.controller;
 import io.dfjinxin.common.annotation.SysLog;
 import io.dfjinxin.common.exception.RRException;
 import io.dfjinxin.common.utils.Constant;
+import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.sys.entity.GovRootMenuEntity;
 import io.dfjinxin.modules.sys.entity.SysMenuEntity;
 import io.dfjinxin.modules.sys.service.ShiroService;
 import io.dfjinxin.modules.sys.service.SysMenuService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import io.dfjinxin.common.annotation.RequiresPermissions;
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -32,6 +35,7 @@ import java.util.Set;
  */
 @RestController
 @RequestMapping("/sys/menu")
+@Api(tags = "SysMenuController", description = "菜单管理")
 public class SysMenuController {
 	@Autowired
 	private SysMenuService sysMenuService;
@@ -53,16 +57,9 @@ public class SysMenuController {
 	 */
 	@GetMapping("/list")
 	@RequiresPermissions("sys:menu:list")
-	public R list(){
-		List<SysMenuEntity> menuList = sysMenuService.list();
-//		for(SysMenuEntity sysMenuEntity : menuList){
-//			SysMenuEntity parentMenuEntity = sysMenuService.getById(sysMenuEntity.getParentId());
-//			if(parentMenuEntity != null){
-//				sysMenuEntity.setParentName(parentMenuEntity.getName());
-//			}
-//		}
-
-		return R.ok().put("data", menuList);
+	public R list(@RequestParam Map<String, Object> params){
+		PageUtils page = sysMenuService.queryPage(params);
+		return R.ok().put("page", page);
 	}
 
 	/**
@@ -88,63 +85,60 @@ public class SysMenuController {
 	/**
 	 * 菜单信息
 	 */
-	@GetMapping("/info/{menuId}")
+	@GetMapping("/info")
 	@RequiresPermissions("sys:menu:info")
-	public R info(@PathVariable("menuId") Long menuId){
+	public R info(@RequestParam("menuId") int menuId){
 		SysMenuEntity menu = sysMenuService.getById(menuId);
 		return R.ok().put("menu", menu);
 	}
 
 	/**
-	 * 保存
+	 * 保存或修改菜单
 	 */
 	@SysLog("保存菜单")
-	@PostMapping("/save")
+	@PostMapping("/saveOrUpdate")
 	@RequiresPermissions("sys:menu:save")
 	public R save(@RequestBody SysMenuEntity menu){
 		//数据校验
 		verifyForm(menu);
-
-		sysMenuService.save(menu);
-
-		return R.ok();
-	}
-
-	/**
-	 * 修改
-	 */
-	@SysLog("修改菜单")
-	@PostMapping("/update")
-	@RequiresPermissions("sys:menu:update")
-	public R update(@RequestBody SysMenuEntity menu){
-		//数据校验
-		verifyForm(menu);
-
-		sysMenuService.updateById(menu);
+        if( menu.getMenuId() ==0){
+			sysMenuService.save(menu);
+		}else {
+			sysMenuService.updateById(menu);
+		}
 
 		return R.ok();
 	}
+
 
 	/**
 	 * 删除
 	 */
 	@SysLog("删除菜单")
-	@PostMapping("/delete/{menuId}")
+	@PostMapping("/delete")
 	@RequiresPermissions("sys:menu:delete")
-	public R delete(@PathVariable("menuId") int menuId){
-		if(menuId <= 31){
-			return R.error("系统菜单，不能删除");
-		}
+	@ApiOperation("删除菜单")
+	public R delete( @RequestParam(value = "mid[]") int[] menuId){
 
 		//判断是否有子菜单或按钮
-		List<SysMenuEntity> menuList = sysMenuService.queryListParentId(menuId);
-		if(menuList.size() > 0){
-			return R.error("请先删除子菜单或按钮");
+		for(int d : menuId){
+			List<SysMenuEntity> menuList = sysMenuService.queryListParentId(d);
+			if(menuList.size() > 0){
+				return R.error("请先删除子菜单");
+			}
+			sysMenuService.delete(d);
 		}
 
-		sysMenuService.delete(menuId);
-
 		return R.ok();
+	}
+
+	/**
+	 * 菜单下拉框
+	 */
+	@GetMapping("/userMenuInfo")
+	public R userMenuInfo( ){
+		List<Map<String,Object>> menu = sysMenuService.serMenuInfo();
+		return R.ok().put("menu", menu);
 	}
 
 	/**
@@ -155,14 +149,14 @@ public class SysMenuController {
 			throw new RRException("菜单名称不能为空");
 		}
 
-		if(menu.getPareMenuId() ==0){
+		if(menu.getMenuType()!=1 && menu.getPareMenuId() ==0){
 			throw new RRException("上级菜单不能为空");
 		}
 
 		//菜单
-		if(menu.getMenuType() == Constant.MenuType.MENU.getValue()){
-			if(StringUtils.isBlank(menu.getMenuUrl())){
-				throw new RRException("菜单URL不能为空");
+		if(menu.getMenuType() != Constant.MenuType.BUTTON.getValue()){
+			if(StringUtils.isBlank(menu.getMenuRouter())){
+				throw new RRException("菜单路由不能为空");
 			}
 		}
 
@@ -183,11 +177,6 @@ public class SysMenuController {
 		}
 
 		//按钮
-		if(menu.getMenuType() == Constant.MenuType.BUTTON.getValue()){
-			if(parentType != Constant.MenuType.MENU.getValue()){
-				throw new RRException("上级菜单只能为菜单类型");
-			}
-			return ;
-		}
+
 	}
 }

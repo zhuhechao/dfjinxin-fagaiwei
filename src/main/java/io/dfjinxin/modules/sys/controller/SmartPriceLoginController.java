@@ -30,6 +30,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -54,7 +55,7 @@ public class SmartPriceLoginController extends AbstractController {
     @GetMapping(value = {"/login", "/login/{userName}"})
     @ApiOperation("发改登陆接口")
     public R Login(@RequestParam(value = "id_token", required = false) String id_token, @PathVariable(value = "userName", required = false) String userName) {
-
+        System.out.println(id_token);
         if (Strings.isNullOrEmpty(id_token)) {
             SysUserEntity sysUserEntity = sysUserService.queryByUserName(userName);
             if (sysUserEntity == null) {
@@ -82,12 +83,14 @@ public class SmartPriceLoginController extends AbstractController {
             }
             //判断自己系统中是否存在该用户
             String uid = user.getSub();
+            System.out.println("获取发改用户信息"+uid+"+++++++++"+ user.getName()+"+++"+user.getUsername()+"++++++++");
             SysUserEntity sysUserEntity = sysUserService.queryByUserName(uid);
-            R createResult = null;
             if (sysUserEntity != null) {
-                createResult = sysUserTokenService.createToken(sysUserEntity.getUserId());
+           List<Map<String,Object>> menus= sysUserService.getUserPerm(sysUserEntity.getUserId());
+                R    createResult = sysUserTokenService.createToken(sysUserEntity.getUserId());
                 Object token = createResult.get("token");
                 SecurityUtils.getSubject().login(new OAuth2Token(String.valueOf(token), sysUserEntity));
+                createResult.put("menu",menus);
                 return createResult;
             } else {
                 logger.error("智慧价格系统不存在该用户:{}", retriever);
@@ -116,14 +119,15 @@ public class SmartPriceLoginController extends AbstractController {
 
     @GetMapping("/goToService")
     @ApiOperation("集成系统跳转")
-    public String goToService(@RequestParam(value = "urlParm") String urlParm,HttpServletRequest httpRequest) throws IOException {
+    public R goToService(@RequestParam(value = "urlParm") String urlParm,HttpServletRequest request,HttpServletResponse response) throws IOException {
         GenerateToken generateToken = new GenerateToken();
-        String user = httpRequest.getHeader("token");
+        String user = request.getHeader("token");
 
-        //如果header中不存在token，则从参数中获取token
+       // 如果header中不存在token，则从参数中获取token
         if(StringUtils.isBlank(user)){
-            user = httpRequest.getParameter("token");
+            user = request.getParameter("token");
         }
+       // String user= "79362e48e37283a7cdea0825e2614375";
         String token = null;
         String sep = null;
         if (!Strings.isNullOrEmpty(urlParm)) {
@@ -135,7 +139,8 @@ public class SmartPriceLoginController extends AbstractController {
             token = (String) generateToken.applyToken(user).get("jwt");
         }
 
-       return "redirect:".concat(urlParm.concat(sep + "very_token=" + token));
+        String url = urlParm.concat(sep + "very_token=" + token);
+        return R.ok().put("url",url);
 
     }
 

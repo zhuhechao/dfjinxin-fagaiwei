@@ -2,6 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="io.dfjinxin.modules.sys.dao.SysDepDao">
+      <sql id ='where'>
+          1=1
+          <if test="m.depId != null and m.depId != '' and !'null'.equals(m.depId)"><![CDATA[
+	       and pud.dep_id = #{m.depId}
+	    ]]></if>
+          <if test="m.depState != null and m.depState != '' and !'null'.equals(m.depState)"><![CDATA[
+	       and pud.dep_state = #{m.depState}
+	    ]]></if>
+      </sql>
+
     <insert id="addDeps" parameterType="java.util.List">
         INSERT INTO  pss_user_dep
         (
@@ -24,4 +34,16 @@
             )
         </foreach>
     </insert>
+
+    <select id="searchDepInfo" resultType="map">
+        SELECT  pud.dep_id AS `value`,pud.dep_name label FROM  pss_user_dep  pud
+    </select>
+
+    <select id="queryDep" parameterType="map" resultType="io.dfjinxin.modules.sys.entity.SysDepEntity" >
+    SELECT pud.*,pd.dep_name superDepName FROM pss_user_dep pud  LEFT JOIN  pss_user_dep pd ON pud.super_dep_id = pd.dep_id
+    <where>
+        <include refid="where"/>
+    </where>
+    ORDER BY pud.dep_state DESC
+    </select>
 </mapper>
