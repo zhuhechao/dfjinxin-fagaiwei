@@ -28,7 +28,8 @@ app:
     work-dir: ${user.home}/fagaiwei
     userDir: ${user.dir}/fagaiwei
     module:
-      report: /report
+      report: ${user.dir}/fagaiwei/report
+      reportResult: ${user.dir}/fagaiwei/reportResult
     temp: /temp
     upload: /upload
 

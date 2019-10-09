@@ -57,6 +57,9 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
     public PssRptConfDto saveOrUpdate(PssRptConfDto dto) {
         PssRptConfEntity entity = PssRptConfEntity.toEntity(dto);
         super.saveOrUpdate(entity);
+        if ("1".equals(entity.getRptType())) return PssRptConfEntity.toData(entity);
+
+
         //根据调度配置id获取配置信息
         PssRschConfEntity pe= pssRschConfService.getById(entity.getRschId());
 
@@ -90,6 +93,7 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
         sb.setRemark(pe.getRschRemark());
         sb.setCreateTime(new Date());
         sb.setParams(entity.getRptId()+"");
+        sb.setBeanName("testTask2");
         scheduleJobService.saveJob(sb);
 
         //保存完成后启动任务
