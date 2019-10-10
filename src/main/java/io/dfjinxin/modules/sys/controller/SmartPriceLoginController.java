@@ -55,7 +55,7 @@ public class SmartPriceLoginController extends AbstractController {
     @GetMapping(value = {"/login", "/login/{userName}"})
     @ApiOperation("发改登陆接口")
     public R Login(@RequestParam(value = "id_token", required = false) String id_token, @PathVariable(value = "userName", required = false) String userName) {
-        System.out.println(id_token);
+         System.out.println(id_token);
         if (Strings.isNullOrEmpty(id_token)) {
             SysUserEntity sysUserEntity = sysUserService.queryByUserName(userName);
             if (sysUserEntity == null) {
@@ -86,11 +86,11 @@ public class SmartPriceLoginController extends AbstractController {
             System.out.println("获取发改用户信息"+uid+"+++++++++"+ user.getName()+"+++"+user.getUsername()+"++++++++");
             SysUserEntity sysUserEntity = sysUserService.queryByUserName(uid);
             if (sysUserEntity != null) {
-           List<Map<String,Object>> menus= sysUserService.getUserPerm(sysUserEntity.getUserId());
-                R    createResult = sysUserTokenService.createToken(sysUserEntity.getUserId());
-                Object token = createResult.get("token");
-                SecurityUtils.getSubject().login(new OAuth2Token(String.valueOf(token), sysUserEntity));
-                createResult.put("menu",menus);
+             List<Map<String,Object>> menus= sysUserService.getUserPerm(sysUserEntity.getUserId());
+            R    createResult = sysUserTokenService.createToken(sysUserEntity.getUserId());
+               // Object token = createResult.get("token");
+              //  SecurityUtils.getSubject().login(new OAuth2Token(String.valueOf(token), sysUserEntity));
+              createResult.put("menu",menus);
                 return createResult;
             } else {
                 logger.error("智慧价格系统不存在该用户:{}", retriever);
@@ -119,15 +119,15 @@ public class SmartPriceLoginController extends AbstractController {
 
     @GetMapping("/goToService")
     @ApiOperation("集成系统跳转")
-    public R goToService(@RequestParam(value = "urlParm") String urlParm,HttpServletRequest request,HttpServletResponse response) throws IOException {
+    public R goToService(@RequestParam(value = "urlParm") String urlParm) throws IOException {
         GenerateToken generateToken = new GenerateToken();
-        String user = request.getHeader("token");
+        //String user = request.getHeader("token");
 
        // 如果header中不存在token，则从参数中获取token
-        if(StringUtils.isBlank(user)){
-            user = request.getParameter("token");
-        }
-       // String user= "79362e48e37283a7cdea0825e2614375";
+//        if(StringUtils.isBlank(user)){
+//            user = request.getParameter("token");
+//        }
+        String user= "79362e48e37283a7cdea0825e2614375";
         String token = null;
         String sep = null;
         if (!Strings.isNullOrEmpty(urlParm)) {

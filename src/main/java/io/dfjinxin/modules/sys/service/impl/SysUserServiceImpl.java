@@ -118,9 +118,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 
 	@Override
 	public SysUserEntity getUserById(String userId) {
-
-    return  null;
+		return baseMapper.queryByUserId(userId);
 	}
+
 
 	@Override
 	public List<Map<String, Object>> getUserPerm(String userId) {
@@ -187,7 +187,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 			int i= pr.lastIndexOf("/");
 			if(lt.size()==0 && flg==0){
 				Map<String, Object> map = new HashMap<>();
-				map.put("path",pr.substring(i));
+				map.put("path",pr.substring(i+1));
 				map.put("component","() => import('@/views"+pr.substring(0,i)+"')");
 				Map<String,Object> mt= (Map<String, Object>) dt.get("meta");
 				dt.remove("meta");
