@@ -53,7 +53,7 @@
     </select>
 
     <select id="selectListBystatAreaId" resultMap="wpCommIndexValMap">
-        SELECT max(data_time) as data_time,stat_area_name,stat_area_id,stat_frequency,index_val,index_unit
+        SELECT max(data_time) as data_time,index_name,stat_area_name,stat_area_id,stat_frequency,index_val,index_unit
         from wp_comm_index_val val
         WHERE comm_id = #{commId}
         AND index_type = #{indexType}
