@@ -98,4 +98,12 @@ public class PssEwarnConfEntity implements Serializable {
      */
     private String remarks;
 
+    private String colorValRed;
+
+    private String colorValOrange;
+
+    private String colorValYellow;
+
+    private String colorValGreen;
+
 }

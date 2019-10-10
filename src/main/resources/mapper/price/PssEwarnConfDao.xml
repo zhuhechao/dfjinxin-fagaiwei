@@ -6,6 +6,7 @@
     <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="io.dfjinxin.modules.price.entity.PssEwarnConfEntity" id="pssEwarnConfMap">
         <result property="ewarnId" column="ewarn_id"/>
+        <result property="rschId" column="rsch_id"/>
         <result property="ewarnName" column="ewarn_name"/>
         <result property="ewarnTypeId" column="ewarn_type_id"/>
         <result property="ewarnUlmtRed" column="ewarn_ulmt_red"/>
@@ -24,6 +25,10 @@
         <result property="delFlag" column="del_flag"/>
         <result property="crteName" column="crte_name"/>
         <result property="remarks" column="remarks"/>
+        <result property="colorValRed" column="color_val_red"/>
+        <result property="colorValOrange" column="color_val_orange"/>
+        <result property="colorValYellow" column="color_val_yellow"/>
+        <result property="colorValGreen" column="color_val_green"/>
     </resultMap>
 
     <select id="queryPageListCount" resultType="java.lang.Integer">
