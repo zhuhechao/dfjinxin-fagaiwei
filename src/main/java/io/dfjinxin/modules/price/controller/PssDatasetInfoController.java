@@ -14,14 +14,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
- *
- *
- * @author bourne
- * @email kuibobo@gmail.com
- * @date 2019-09-02 17:05:57
- */
+* @Desc:  从hive获取数据表，用户选择表中字段的值组合。
+ * 作为数据集落地到应用库
+ * 流程：
+ * step1,用户前端提交数据集组合，后台调python逻辑
+ * step2,根据python结果，成功数据集入应用库，失败不入库
+* @Param:
+* @Return:
+* @Author: z.h.c
+* @Date: 2019/10/11 10:47
+*/
 @RestController
 @RequestMapping("price/pssdatasetinfo")
 @Api(tags = "数据集信息")
@@ -32,6 +35,13 @@ public class PssDatasetInfoController {
     @Autowired
     private HiveService hiveService;
 
+    /**
+    * @Desc:  获取大数据平台hive数据表
+    * @Param:
+    * @Return: io.dfjinxin.common.utils.R
+    * @Author: z.h.c
+    * @Date: 2019/10/11 11:14
+    */
     @GetMapping("/getHiveTables")
     @ApiOperation("获取hive表数据")
     public R getHiveTables() {
@@ -41,7 +51,7 @@ public class PssDatasetInfoController {
         for (Map<String, Object> obj : tableList) {
             for (Map.Entry<String, Object> entry : obj.entrySet()) {
                 Object tableName = entry.getValue();
-                String sql2 = "select * from " + tableName;
+                String sql2 = "select * from " + tableName.toString();
                 List<Map<String, Object>> list = hiveService.selectData(sql2);
                 map.put(tableName.toString(), list);
             }
