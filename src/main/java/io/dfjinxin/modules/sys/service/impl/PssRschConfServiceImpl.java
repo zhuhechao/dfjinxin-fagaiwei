@@ -21,7 +21,7 @@ public class PssRschConfServiceImpl extends ServiceImpl<PssRschConfDao, PssRschC
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         QueryWrapper qr=new QueryWrapper<PssRschConfEntity>();
-        addQueryCondition(params,"rschName","rsch_name","like",qr);
+        addQueryCondition(params,"rptType","rpt_type","eq",qr);
         addQueryCondition(params,"rschFreq","rsch_Freq","eq",qr);
         //addQueryCondition(params,"rcshId","rcsh_id",qr);
         qr.orderByDesc("create_time");

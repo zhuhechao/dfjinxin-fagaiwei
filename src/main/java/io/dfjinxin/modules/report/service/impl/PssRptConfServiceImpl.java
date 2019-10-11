@@ -8,10 +8,15 @@ import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
 import io.dfjinxin.modules.job.entity.ScheduleJobEntity;
 import io.dfjinxin.modules.job.service.ScheduleJobService;
+import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
+import io.dfjinxin.modules.price.service.PssCommConfService;
+import io.dfjinxin.modules.price.service.PssCommTotalService;
 import io.dfjinxin.modules.report.dao.PssRptConfDao;
 import io.dfjinxin.modules.report.dto.PssRptConfDto;
 import io.dfjinxin.modules.report.entity.PssRptConfEntity;
+import io.dfjinxin.modules.report.entity.PssRptInfoEntity;
 import io.dfjinxin.modules.report.service.PssRptConfService;
+import io.dfjinxin.modules.report.service.PssRptInfoService;
 import io.dfjinxin.modules.sys.entity.PssRschConfEntity;
 import io.dfjinxin.modules.sys.service.PssRschConfService;
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +31,10 @@ import java.util.Map;
 public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConfEntity> implements PssRptConfService {
     @Autowired
     private PssRschConfService pssRschConfService;
+    @Autowired
+    private PssRptInfoService pssRptInfoService;
+    @Autowired
+    private PssCommTotalService pssCommTotalService;
     @Autowired
     private ScheduleJobService scheduleJobService;
 
@@ -57,7 +66,22 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
     public PssRptConfDto saveOrUpdate(PssRptConfDto dto) {
         PssRptConfEntity entity = PssRptConfEntity.toEntity(dto);
         super.saveOrUpdate(entity);
-        if ("1".equals(entity.getRptType())) return PssRptConfEntity.toData(entity);
+        if ("1".equals(entity.getRptType())) {
+            PssRptInfoEntity prie=new PssRptInfoEntity();
+            //保存商品信息
+            PssCommTotalEntity pte=pssCommTotalService.getById(entity.getCommId());
+            prie.setCommId(pte.getCommId()+"");
+            prie.setCommName(pte.getCommName());
+            prie.setRptType("1");
+            prie.setRptFreq(entity.getRptFreq());
+            prie.setCrteTime(entity.getCrteDate());
+            prie.setRptName(entity.getRptName());
+            prie.setRptPath(entity.getRptAttachmentPath());
+            prie.setRptStatus("1");
+            prie.setRptFile("");
+            pssRptInfoService.saveOrUpdate(prie);
+            return PssRptConfEntity.toData(entity);
+        }
 
 
         //根据调度配置id获取配置信息
