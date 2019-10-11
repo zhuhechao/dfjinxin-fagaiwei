@@ -80,7 +80,7 @@ public class FileController {
         String modulePath=appProperties.getPath().getUpload();
         if(moduleName.equals("0"))
           modulePath=appProperties.getPath().getModule().getReport();
-        Path uploadPath = Paths.get(appProperties.getPath().getUserDir(),modulePath , subFilePath);
+        Path uploadPath = Paths.get(modulePath , subFilePath);
         if (saveOriName == true && saveSubPath == false && FileUtil.exists(uploadPath.toString()))
             return R.error("文件已存在");
 
