@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,6 +130,8 @@ public class SmartPriceLoginController extends AbstractController {
 //            user = request.getParameter("token");
 //        }
         String user= "79362e48e37283a7cdea0825e2614375";
+        SysUserTokenEntity tokenEntity = shiroService.queryByToken(user);
+        Long dd= tokenEntity.getExpireTime().getTime()+10000;
         String token = null;
         String sep = null;
         if (!Strings.isNullOrEmpty(urlParm)) {
@@ -136,7 +140,7 @@ public class SmartPriceLoginController extends AbstractController {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-            token = (String) generateToken.applyToken(user).get("jwt");
+            token = (String) generateToken.applyToken(user,dd).get("jwt");
         }
 
         String url = urlParm.concat(sep + "very_token=" + token);
@@ -149,18 +153,15 @@ public class SmartPriceLoginController extends AbstractController {
     public R sysVerify(@RequestParam(value = "very_token") String very_token) {
 
         SubjectInfo subjectInfo = CryptoUtil.parseJwt(very_token);
-        if (subjectInfo == null || subjectInfo.getExpiration().getTime() < System.currentTimeMillis()) {
-            return R.error("认证失败！");
-        }
         String user = subjectInfo.getUserInfo();
-        SysUserTokenEntity sysUserEntity = shiroService.queryByToken(user);
+        SysUserTokenEntity tokenEntity = shiroService.queryByToken(user);
         Map map = new HashMap();
-        if (sysUserEntity == null) {
-            return R.error(1,"该用户不存在，认证失败！");
+        if(tokenEntity == null || tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()){
+            map.put("code", 1);
+        }else {
+            map.put("code", 0);
         }
-        map.put("code", 0);
         return R.ok(map);
-
     }
 
 

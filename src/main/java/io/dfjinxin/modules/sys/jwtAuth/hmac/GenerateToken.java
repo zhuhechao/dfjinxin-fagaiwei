@@ -28,8 +28,8 @@ public class GenerateToken {
     @Autowired
     private CryptoService cryptoService;
 
-    public Map<String, Object> applyToken(String client) {
-        String jwt = genJwt(UUID.randomUUID().toString(), client, "gold-price", ept);
+    public Map<String, Object> applyToken(String client,long expira) {
+        String jwt = genJwt(UUID.randomUUID().toString(), client, "gold-price", expira);
         Map<String, Object> res = new HashMap<>();
         res.put("jwt", jwt);
         return res;
@@ -43,7 +43,7 @@ public class GenerateToken {
      * @return json web token
      */
 
-    private String genJwt(String id, String subject, String iuser, Long pt) {
+    private String genJwt(String id, String subject, String iuser, long pt) {
         long currentTm = System.currentTimeMillis();
         SignatureAlgorithm algorithm = SignatureAlgorithm.HS256;
         byte[] secretKey = DatatypeConverter.parseBase64Binary(SECRET_KEY);
@@ -54,10 +54,8 @@ public class GenerateToken {
         if (Strings.isNotBlank(iuser)) jwt.setIssuer(iuser);
         jwt.setClaims(claims);
         jwt.setIssuedAt(new Date(currentTm));
-        if (null != pt) {
-            Date expira = new Date(currentTm + pt);
-            jwt.setExpiration(expira);
-        }
+        Date expira = new Date(pt);
+        jwt.setExpiration(expira);
         jwt.compressWith(CompressionCodecs.DEFLATE);
         jwt.signWith(algorithm, secretKey);
         return jwt.compact();
