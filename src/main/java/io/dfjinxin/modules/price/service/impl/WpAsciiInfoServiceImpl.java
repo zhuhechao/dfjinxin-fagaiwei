@@ -31,7 +31,7 @@ public class WpAsciiInfoServiceImpl extends ServiceImpl<WpAsciiInfoDao, WpAsciiI
     }
 
     @Override
-    public List<WpAsciiInfoEntity> getInfoByType(String params) {
+    public List<WpAsciiInfoEntity> getInfoByCodeId(String params) {
 
         if (StringUtils.isBlank(params)) {
             return null;
@@ -43,6 +43,11 @@ public class WpAsciiInfoServiceImpl extends ServiceImpl<WpAsciiInfoDao, WpAsciiI
         queryWrapper.eq("code_status", 0);
         queryWrapper.inSql("p_code_val", sql.toString());
         return baseMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<WpAsciiInfoEntity> getInfoAll() {
+        return baseMapper.selectList(new QueryWrapper<>());
     }
 
 }

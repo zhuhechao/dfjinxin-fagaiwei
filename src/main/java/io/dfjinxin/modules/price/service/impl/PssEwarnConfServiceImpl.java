@@ -72,7 +72,7 @@ public class PssEwarnConfServiceImpl extends ServiceImpl<PssEwarnConfDao, PssEwa
             return null;
         }
 
-        List<WpAsciiInfoEntity> list = wpAsciiInfoService.getInfoByType(codeSimple);
+        List<WpAsciiInfoEntity> list = wpAsciiInfoService.getInfoByCodeId(codeSimple);
         List resultList = new ArrayList();
         for (WpAsciiInfoEntity entity : list) {
             QueryWrapper queryWrapper = new QueryWrapper();

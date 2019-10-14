@@ -18,6 +18,8 @@ public interface WpAsciiInfoService extends IService<WpAsciiInfoEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
-    List<WpAsciiInfoEntity> getInfoByType(String codeSimple);
+    List<WpAsciiInfoEntity> getInfoByCodeId(String codeSimple);
+
+    List<WpAsciiInfoEntity> getInfoAll();
 }
 

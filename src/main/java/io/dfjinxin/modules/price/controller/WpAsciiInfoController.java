@@ -28,13 +28,24 @@ public class WpAsciiInfoController {
     private WpAsciiInfoService wpAsciiInfoService;
 
     /**
-     * 根据代码简称查询代码类型
+     * 根据代码查询代码类型
      */
-    @GetMapping("/getAsciiByType/{codeSimple}")
+    @GetMapping("/getAsciiByCode/{CodeId}")
     @ApiOperation("根据代码简称类型,查询类型信息")
-    public R getInfoByType(@PathVariable("codeSimple") String codeSimple) {
+    public R getInfoByCodeId(@PathVariable("CodeId") String CodeId) {
 
-        List<WpAsciiInfoEntity> list = wpAsciiInfoService.getInfoByType(codeSimple);
+        List<WpAsciiInfoEntity> list = wpAsciiInfoService.getInfoByCodeId(CodeId);
+        return R.ok().put("data", list);
+    }
+
+    /**
+     * 查询码表所有数据
+     */
+    @GetMapping("/getAsciiAll")
+    @ApiOperation("查询码表所有数据")
+    public R getAscii() {
+
+        List<WpAsciiInfoEntity> list = wpAsciiInfoService.getInfoAll();
         return R.ok().put("data", list);
     }
 
