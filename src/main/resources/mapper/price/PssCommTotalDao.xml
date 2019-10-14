@@ -270,6 +270,15 @@
         </if>
         LIMIT #{param.start}, #{param.pageSize}
     </select>
+    <select id="selectSubCommCountByLevelCode2" resultType="java.lang.Integer">
+        SELECT count(c2.comm_id)
+        FROM pss_comm_total c2
+        left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
+        left join pss_ewarn_conf pec on pcc.ewarn_id = pec.ewarn_id
+        where pcc.del_flag=0 and pec.del_flag=0
+        and c2.parent_code = #{parentCode}
+        and c2.data_flag=0
+    </select>
 
 
 </mapper>

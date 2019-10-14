@@ -8,6 +8,8 @@ import io.dfjinxin.modules.price.service.PssCommConfService;
 import io.dfjinxin.modules.price.service.PssCommTotalService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +29,8 @@ import java.util.Map;
 @Api(tags = "PssCommTotalController", description = "价格监测子系统-商品配置")
 public class PssCommTotalController {
 
+    private Logger LOG = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private PssCommTotalService pssCommTotalService;
 
@@ -43,10 +47,7 @@ public class PssCommTotalController {
     @PostMapping("/queryPageList")
     @ApiOperation("商品预警配置-查询")
     public R queryPageList(@RequestBody(required = false) PssCommTotalDto params) {
-
-//        if (params == null) {
-//            R.error("请求参数为空!");
-//        }
+        LOG.info("商品预警配置-查询,请求参数:{}", params);
         params.startNumber();
         PageUtils page = pssCommTotalService.queryPageList(params);
         return R.ok().put("data", page);
@@ -73,7 +74,7 @@ public class PssCommTotalController {
         Integer commId = (Integer) params.get("commId");
         List<Integer> ewarnIds = (List<Integer>) params.get("ewarnIds");
         List<Integer> indexIds = (List<Integer>) params.get("indexIds");
-        pssCommConfService.saveCommConf(commId, ewarnIds,indexIds);
+        pssCommConfService.saveCommConf(commId, ewarnIds, indexIds);
         return R.ok();
     }
 
@@ -81,7 +82,7 @@ public class PssCommTotalController {
     @ApiOperation("商品配置-查询所有商品")
     public R queryPageList() {
         List<PssCommTotalEntity> list = pssCommTotalService.getAll();
-        return R.ok().put("data",list);
+        return R.ok().put("data", list);
     }
 
 }
