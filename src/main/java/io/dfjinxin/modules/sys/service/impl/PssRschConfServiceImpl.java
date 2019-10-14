@@ -43,6 +43,7 @@ public class PssRschConfServiceImpl extends ServiceImpl<PssRschConfDao, PssRschC
             if ("eq".equals(queryType)){
                 qr.eq(con_cloum,o.toString());
             }
+                qr.eq("del_flag",0);
         }
     }
 
