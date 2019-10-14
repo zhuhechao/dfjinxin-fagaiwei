@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,7 @@ public class SecondPageViewController {
         //计算增副
         Map<String,Object> map = pssPriceEwarnService.converZF(commId);
         list.add(map);
+        Map<String,Object> reMap = new HashMap<>();
         return R.ok().put("data", list);
     }
 
