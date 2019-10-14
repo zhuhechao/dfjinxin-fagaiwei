@@ -19,7 +19,7 @@ import java.util.List;
 @Repository
 public interface PssCommTotalDao extends BaseMapper<PssCommTotalEntity> {
 
-    int queryPageListCount(@Param("param") PssCommTotalDto pssCommTotalDto);
+    /*int queryPageListCount(@Param("param") PssCommTotalDto pssCommTotalDto);
 
     List<PssCommTotalEntity> queryPageList(@Param("param") PssCommTotalDto pssCommTotalDto);
 
@@ -35,10 +35,17 @@ public interface PssCommTotalDao extends BaseMapper<PssCommTotalEntity> {
 
     List<PssCommTotalEntity> queryPageLisByLevelCode2(@Param("param") PssCommTotalDto pssCommTotalDto);
 
+    int queryCommInfoCountLevelCode2(@Param("param") PssCommTotalDto pssCommTotalDto);
+
+    List<PssCommTotalEntity> queryCommInfoLevelCode2(@Param("param") PssCommTotalDto params);*/
+
+
+
+
+
     List<PssCommTotalEntity> selectSubCommByLevelCode2(@Param("parentCode") Integer parentCode, @Param("param") PssCommTotalDto dto);
     int selectSubCommCountByLevelCode2(@Param("parentCode") Integer parentCode, @Param("param") PssCommTotalDto dto);
 
-    int queryCommInfoCountLevelCode2(@Param("param") PssCommTotalDto pssCommTotalDto);
-
-    List<PssCommTotalEntity> queryCommInfoLevelCode2(@Param("param") PssCommTotalDto params);
+    List<PssCommTotalEntity> findCommByLevelCode2(@Param("parentCode") Integer parentCode, @Param("param") PssCommTotalDto dto);
+    int findCommCountByLevelCode2(@Param("parentCode") Integer parentCode, @Param("param") PssCommTotalDto dto);
 }

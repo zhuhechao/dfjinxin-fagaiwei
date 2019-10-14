@@ -14,7 +14,7 @@
         <result property="dataFlag" column="data_flag"/>
     </resultMap>
 
-    <select id="queryPageListCount" resultType="java.lang.Integer">
+    <!--<select id="queryPageListCount" resultType="java.lang.Integer">
         select count(c2.comm_id)
         FROM pss_comm_total c2
         left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
@@ -39,9 +39,9 @@
         <if test="param.commLevelCode_2 != null and param.commLevelCode_2 !=''">
             and c2.comm_id=#{param.commLevelCode_2} and c2.data_flag=0
         </if>
-    </select>
+    </select>-->
 
-    <select id="queryPageList" resultMap="pssCommTotalMap">
+    <!--<select id="queryPageList" resultMap="pssCommTotalMap">
         SELECT c2.*,
         pcc.ewarn_id,
         pcc.remarks,
@@ -70,10 +70,10 @@
             and c2.comm_id=#{param.commLevelCode_2} and c2.data_flag=0
         </if>
         LIMIT #{param.start}, #{param.pageSize}
-    </select>
+    </select>-->
 
     <!-- 商品类型-0类 不为空，商品大类-1类 为空，查询指定0类-->
-    <select id="queryPageListCountByLevelCode0" resultType="java.lang.Integer">
+    <!--<select id="queryPageListCountByLevelCode0" resultType="java.lang.Integer">
         select count(c0.comm_id)
         FROM pss_comm_total c0
         left join pss_comm_conf pcc on c0.comm_id=pcc.comm_id
@@ -87,9 +87,9 @@
             and temp.data_flag=0
         )
         and c0.data_flag=0
-    </select>
+    </select>-->
 
-    <select id="queryPageLisByLevelCode0" resultMap="pssCommTotalMap">
+   <!-- <select id="queryPageLisByLevelCode0" resultMap="pssCommTotalMap">
         SELECT c0.*,
         pcc.ewarn_id,
         pcc.remarks,
@@ -108,10 +108,10 @@
         )
         and c0.data_flag=0
         LIMIT #{param.start}, #{param.pageSize}
-    </select>
+    </select>-->
 
     <!-- 商品类型-0类 不为空，商品大类-1类 不为空，查询指定1类-->
-    <select id="queryPageListCountByLevelCode1" resultType="java.lang.Integer">
+    <!--<select id="queryPageListCountByLevelCode1" resultType="java.lang.Integer">
         select count(c2.comm_id)
         FROM pss_comm_total c2
         left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
@@ -127,9 +127,9 @@
                 where c0.comm_id = #{param.commLevelCode_0}
             )and c1.comm_id = #{param.commLevelCode_1}
         )
-    </select>
+    </select>-->
 
-    <select id="queryPageLisByLevelCode1" resultMap="pssCommTotalMap">
+    <!--<select id="queryPageLisByLevelCode1" resultMap="pssCommTotalMap">
         SELECT c2.*,
         pcc.ewarn_id,
         pcc.remarks,
@@ -149,9 +149,9 @@
                 where c0.comm_id = #{param.commLevelCode_0}
             )and c1.comm_id = #{param.commLevelCode_1}
         )
-    </select>
+    </select>-->
 
-    <select id="queryPageListCountByLevelCode2" resultType="java.lang.Integer">
+    <!--<select id="queryPageListCountByLevelCode2" resultType="java.lang.Integer">
         select count(c2.comm_id)
         FROM pss_comm_total c2
         left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
@@ -176,10 +176,10 @@
         <if test="param.commLevelCode_2 != null and param.commLevelCode_2 !=''">
             and c2.comm_id=#{param.commLevelCode_2} and c2.data_flag=0
         </if>
-    </select>
+    </select>-->
 
     <!-- 商品类型-0类 不为空，商品大类-1类 不为空，商品名称-2类 不为空 查询指定2类-->
-    <select id="queryPageLisByLevelCode2" resultMap="pssCommTotalMap">
+    <!--<select id="queryPageLisByLevelCode2" resultMap="pssCommTotalMap">
         SELECT c2.*,
         pcc.ewarn_id,
         pcc.remarks,
@@ -208,24 +208,9 @@
             and c2.comm_id=#{param.commLevelCode_2} and c2.data_flag=0
         </if>
         LIMIT #{param.start}, #{param.pageSize}
-    </select>
+    </select>-->
 
-    <select id="selectSubCommByLevelCode2" resultMap="pssCommTotalMap">
-        SELECT c2.*,
-        pcc.ewarn_id,
-        pcc.remarks,
-        pec.ewarn_id,
-        pec.ewarn_name
-        FROM pss_comm_total c2
-        left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
-        left join pss_ewarn_conf pec on pcc.ewarn_id = pec.ewarn_id
-        where pcc.del_flag=0 and pec.del_flag=0
-        and c2.parent_code = #{parentCode}
-        and c2.data_flag=0
-        LIMIT #{param.start}, #{param.pageSize}
-    </select>
-
-    <select id="queryCommInfoCountLevelCode2" resultType="java.lang.Integer">
+    <!--<select id="queryCommInfoCountLevelCode2" resultType="java.lang.Integer">
         select count(c2.comm_id)
         FROM pss_comm_total c2
         where c2.parent_code in (
@@ -246,8 +231,8 @@
         <if test="param.commLevelCode_2 != null and param.commLevelCode_2 !=''">
             and c2.comm_id=#{param.commLevelCode_2} and c2.data_flag=0
         </if>
-    </select>
-    <select id="queryCommInfoLevelCode2" resultType="io.dfjinxin.modules.price.entity.PssCommTotalEntity">
+    </select>-->
+    <!--<select id="queryCommInfoLevelCode2" resultType="io.dfjinxin.modules.price.entity.PssCommTotalEntity">
         select c2.*
         FROM pss_comm_total c2
         where c2.parent_code in (
@@ -269,7 +254,23 @@
             and c2.comm_id=#{param.commLevelCode_2} and c2.data_flag=0
         </if>
         LIMIT #{param.start}, #{param.pageSize}
+    </select>-->
+
+    <select id="selectSubCommByLevelCode2" resultMap="pssCommTotalMap">
+        SELECT c2.*,
+        pcc.ewarn_id,
+        pcc.remarks,
+        pec.ewarn_id,
+        pec.ewarn_name
+        FROM pss_comm_total c2
+        left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
+        left join pss_ewarn_conf pec on pcc.ewarn_id = pec.ewarn_id
+        where pcc.del_flag=0 and pec.del_flag=0
+        and c2.parent_code = #{parentCode}
+        and c2.data_flag=0
+        LIMIT #{param.start}, #{param.pageSize}
     </select>
+
     <select id="selectSubCommCountByLevelCode2" resultType="java.lang.Integer">
         SELECT count(c2.comm_id)
         FROM pss_comm_total c2
@@ -277,6 +278,21 @@
         left join pss_ewarn_conf pec on pcc.ewarn_id = pec.ewarn_id
         where pcc.del_flag=0 and pec.del_flag=0
         and c2.parent_code = #{parentCode}
+        and c2.data_flag=0
+    </select>
+
+    <select id="findCommByLevelCode2" resultMap="pssCommTotalMap">
+        SELECT c2.*
+        FROM pss_comm_total c2
+        where c2.parent_code = #{parentCode}
+        and c2.data_flag=0
+        LIMIT #{param.start}, #{param.pageSize}
+    </select>
+
+    <select id="findCommCountByLevelCode2" resultType="java.lang.Integer">
+        SELECT count(c2.comm_id)
+        FROM pss_comm_total c2
+        where c2.parent_code = #{parentCode}
         and c2.data_flag=0
     </select>
 

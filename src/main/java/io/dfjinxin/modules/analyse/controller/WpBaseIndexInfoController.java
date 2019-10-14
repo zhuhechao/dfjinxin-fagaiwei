@@ -33,7 +33,7 @@ public class WpBaseIndexInfoController {
      * 根据商品id获取该商品指标类型为'价格'的指标名称
      */
     @GetMapping("/info/{commId}")
-    @ApiOperation("根据商品id获取该商品指标类型为'价格'的指标名称")
+    @ApiOperation("根据4类商品id获取该商品指标类型为'价格'的指标名称,eg:172,115,201")
     public R info(@PathVariable("commId") Integer commId){
 		List<WpBaseIndexInfoEntity> indexNameByList = wpBaseIndexInfoService.getIndexNameByType(commId);
 
