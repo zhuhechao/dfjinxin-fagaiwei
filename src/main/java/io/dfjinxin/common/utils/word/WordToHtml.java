@@ -32,11 +32,12 @@ import org.w3c.dom.Document;
  */
 public class WordToHtml {
 
-    public static String word2007ToHtml(String sourceFileName,String reportResultPath) throws Exception {
+    public static String word2007ToHtml(String sourceFileName,String reportResultPath,String rptId) throws Exception {
         //String filepath = "E:\\ideaWorkspace\\dfjinxin-fagaiwei\\fagaiwei\\2019\\9\\29\\";
         //String sourceFileName =filepath+"模板名称.docx";
+
         String targetFileName =sourceFileName.replace("docx","html");
-        String imagePathStr = reportResultPath+"/image/";
+        String imagePathStr = reportResultPath+"/image/"+rptId+"/" ;
         OutputStreamWriter outputStreamWriter = null;
         try {
           XWPFDocument document = new XWPFDocument(new FileInputStream(sourceFileName));
@@ -44,7 +45,7 @@ public class WordToHtml {
           // 存放图片的文件夹
           options.setExtractor(new FileImageExtractor(new File(imagePathStr)));
           // html中图片的路径
-          options.URIResolver(new BasicURIResolver("image"));
+          options.URIResolver(new BasicURIResolver("image/"+rptId));
           outputStreamWriter = new OutputStreamWriter(new FileOutputStream(targetFileName), "utf-8");
           XHTMLConverter xhtmlConverter = (XHTMLConverter) XHTMLConverter.getInstance();
           xhtmlConverter.convert(document, outputStreamWriter, options);

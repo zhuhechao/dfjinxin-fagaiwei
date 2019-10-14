@@ -18,8 +18,11 @@ import io.dfjinxin.common.utils.word.WordToHtml;
 import io.dfjinxin.common.utils.word.WordToPDF;
 import io.dfjinxin.common.utils.word.WordUtil;
 import io.dfjinxin.config.propertie.AppProperties;
+import io.dfjinxin.modules.price.service.PssCommTotalService;
 import io.dfjinxin.modules.report.entity.PssRptConfEntity;
+import io.dfjinxin.modules.report.entity.PssRptInfoEntity;
 import io.dfjinxin.modules.report.service.PssRptConfService;
+import io.dfjinxin.modules.report.service.PssRptInfoService;
 import org.apache.poi.xwpf.converter.pdf.PdfOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +48,10 @@ public class TestTask2 implements ITask {
 	@Autowired
 	private PssRptConfService pssRptConfService;
 	@Autowired
+	private PssRptInfoService pssRptInfoService;
+	@Autowired
+	private PssCommTotalService pssCommTotalService;
+	@Autowired
 	private AppProperties appProperties;
 	@Override
 	public void run(String params) throws Exception {
@@ -59,16 +67,40 @@ public class TestTask2 implements ITask {
 				.append(pe.getRptPath().substring(temPath.lastIndexOf("\\"),temPath.indexOf("."))).append("/")
 				.append(ymd)
 				.append("/").toString();
+		reportResultPath= Paths.get(reportResultPath)+"\\";
 		new File(reportResultPath).mkdirs();
+
+
 
 		//生成报告图片
 		String reportImagePath=generateReportImage(pe,reportResultPath);
 		//替换模板生成报告
 		String reportResult=generateReportDocx(pe,reportResultPath,reportImagePath,ymd);
+
+		String rptResultName=new StringBuilder()
+				.append(pe.getRptName()).append("-")
+				.append(ymd).append(".docx").toString();
+		//记录运行报告信息
+		PssRptInfoEntity prie=new PssRptInfoEntity();
+		prie.setRptName(rptResultName);
+		String commName=pssCommTotalService.getById(pe.getCommId()).getCommName();
+		prie.setCommId(pe.getCommId());
+		prie.setCommName(commName);
+		prie.setRptType("0");
+		prie.setRptFreq(pe.getRptFreq());
+		prie.setCrteTime(new Date());
+		prie.setRptFile("");
+		prie.setRptPath(reportResult.substring(reportResult.lastIndexOf("\\reportResult")));
+		prie.setRptStatus("1");
+		pssRptInfoService.saveOrUpdate(prie);
+
+
 		//doc转html生成报告
-		String reportResultHtml=WordToHtml.word2007ToHtml(reportResult,reportResultPath);
+		String reportResultHtml=WordToHtml.word2007ToHtml(reportResult,reportResultPath,prie.getRptId()+"");
         //doc转pdf生成报告
 		String reportResultPdf=generateReportPdf(reportResult);
+
+
 
 		logger.debug("TestTask定时任务正在执行，参数为：{}", params);
 	}
@@ -78,8 +110,6 @@ public class TestTask2 implements ITask {
 	//docx报告转为pdf文档
     private String generateReportPdf(String filepath){
         {
-            //String filepath = "E:\\ideaWorkspace\\dfjinxin-fagaiwei\\fagaiwei\\2019\\9\\29\\模板名称.docx";
-            //String outpath = "E:\\ideaWorkspace\\dfjinxin-fagaiwei\\fagaiwei\\2019\\9\\29\\模板名称.pdf";
             String outpath=filepath.replace("docx","pdf");
             InputStream source;
             OutputStream target;
