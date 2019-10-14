@@ -81,7 +81,6 @@ public class SysUserController extends AbstractController {
 	@PostMapping("/update")
 	@RequiresPermissions("sys:user:update")
 	public R update(@RequestBody SysUserEntity user){
-		ValidatorUtils.validateEntity(user, UpdateGroup.class);
 		sysUserService.update(user);
 		return R.ok();
 	}

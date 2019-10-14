@@ -38,19 +38,18 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleDao, SysUserR
 		//先删除用户与角色关系
 		this.removeByMap(new MapUtils().put("user_id", userId));
 
-		if (roleIdList == null || roleIdList.size() == 0) {
-			return;
-		}
+       if(roleIdList.size()>0) {
+		   //保存用户与角色关系
+		   for (int roleId : roleIdList) {
+			   SysUserRoleEntity sysUserRoleEntity = new SysUserRoleEntity();
+			   sysUserRoleEntity.setUserId(userId);
+			   sysUserRoleEntity.setRoleId(roleId);
 
-		//保存用户与角色关系
-		for (int roleId : roleIdList) {
-			SysUserRoleEntity sysUserRoleEntity = new SysUserRoleEntity();
-			sysUserRoleEntity.setUserId(userId);
-			sysUserRoleEntity.setRoleId(roleId);
-
-			this.save(sysUserRoleEntity);
-		}
+			   this.save(sysUserRoleEntity);
+		   }
+	   }
 	}
+
 
 	@Override
 	public void deleteUserRole(String userId) {

@@ -4,6 +4,9 @@
 <mapper namespace="io.dfjinxin.modules.sys.dao.SysUserDao">
 	<sql id="where">
 		1=1
+		<if test="m.userId != null and m.userId != '' and !'null'.equals(m.userId)"><![CDATA[
+	       and pui.user_id = #{m.userId}
+	    ]]></if>
 		<if test="m.userName != null and m.userName != '' and !'null'.equals(m.userName)"><![CDATA[
 	       and pui.user_name = #{m.userName}
 	    ]]></if>
@@ -37,12 +40,44 @@
 
     <!--根据用户ID查询用户信息-->
     <select id="queryUserList" parameterType="map" resultType="io.dfjinxin.modules.sys.entity.SysUserEntity">
-      SELECT pui.user_id,pui.user_name,pui.user_real_name,pui.user_status,pui.upd_date,pui.mbl_phone_no,pui.fix_tphone_no,pui.email,pui.crte_date,pui.upd_date,ud.dep_name,ur.role_name FROM pss_user_info pui LEFT JOIN (SELECT pudr.user_id,pudr.dep_id,pud.dep_name FROM pss_user_dep_rela pudr JOIN pss_user_dep pud ON pudr.dep_id = pud.dep_id) ud  ON pui.user_id = ud.user_id
-      LEFT JOIN (SELECT puri.role_id,puri.role_name,purr.user_id FROM pss_user_role_info puri JOIN pss_user_role_rela purr ON puri.role_id = purr.role_id) ur ON pui.user_id = ur.user_id
-    <where>
+		SELECT
+		pui.user_id,
+		pui.user_name,
+		pui.user_real_name,
+		pui.user_status,
+		pui.mbl_phone_no,
+		pui.fix_tphone_no,
+		pui.email,
+		pui.crte_date,
+		pui.upd_date,
+		ud.dep_name,
+		GROUP_CONCAT(ur.role_name) role_name,
+		GROUP_CONCAT(ur.role_id) role_id
+		FROM
+		pss_user_info pui
+		LEFT JOIN (
+		SELECT
+		pudr.user_id,
+		pudr.dep_id,
+		pud.dep_name
+		FROM
+		pss_user_dep_rela pudr
+		JOIN pss_user_dep pud ON pudr.dep_id = pud.dep_id
+		) ud ON pui.user_id = ud.user_id
+		LEFT JOIN (
+		SELECT
+		puri.role_id,
+		puri.role_name,
+		purr.user_id
+		FROM
+		pss_user_role_info puri
+		JOIN pss_user_role_rela purr ON puri.role_id = purr.role_id
+		) ur ON pui.user_id = ur.user_id
+		<where>
 		<include refid="where"/>
-	</where>
-    ORDER  BY  pui.user_status DESC
+	    </where>
+		GROUP BY pui.user_id
+        ORDER  BY  pui.user_status DESC
     </select>
 
     <!--新增 用户-->
@@ -103,7 +138,7 @@
       SELECT m.menu_id,m.pare_menu_id ,m.menu_name,m.menu_url,m.menu_icon_url,m.menu_router,m.menu_type
 		FROM (SELECT * FROM pss_menu_info WHERE menu_state = 1 ) m
 		JOIN pss_role_perm_info p ON m.menu_id = p.menu_id
-		JOIN (SELECT pur.role_id  FROM pss_user_info pui JOIN pss_user_role_rela pur ON pui.user_id = pur.user_id WHERE pui.user_id = #{userId}) r ON p.role_id = r.role_id
+		JOIN (SELECT pur.role_id  FROM pss_user_info pui JOIN pss_user_role_rela pur ON pui.user_id = pur.user_id WHERE pui.user_id = #{userId} AND pui.user_id != 1)  r ON p.role_id = r.role_id
     </select>
 
 </mapper>

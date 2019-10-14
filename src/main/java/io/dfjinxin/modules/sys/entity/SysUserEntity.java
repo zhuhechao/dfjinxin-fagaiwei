@@ -130,4 +130,10 @@ public class SysUserEntity implements Serializable {
 	@TableField(exist = false)
 	private String roleName;
 
+	/**
+	 * 角色名称
+	 */
+	@TableField(exist = false)
+	private String roleId;
+
 }

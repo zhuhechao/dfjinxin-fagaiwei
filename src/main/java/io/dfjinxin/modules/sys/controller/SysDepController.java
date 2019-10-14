@@ -2,6 +2,7 @@ package io.dfjinxin.modules.sys.controller;
 
 import io.dfjinxin.common.annotation.RequiresPermissions;
 import io.dfjinxin.common.annotation.SysLog;
+import io.dfjinxin.common.exception.RRException;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.common.validator.ValidatorUtils;
@@ -10,6 +11,7 @@ import io.dfjinxin.modules.sys.entity.SysDepEntity;
 import io.dfjinxin.modules.sys.entity.SysUserEntity;
 import io.dfjinxin.modules.sys.service.SysDepService;
 import io.swagger.annotations.Api;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,15 +40,26 @@ public class SysDepController  extends AbstractController{
         return R.ok().put("page", page);
     }
 
-
+    /**
+     * 部门信息保存
+     */
+    @PostMapping("/save")
+    @RequiresPermissions("sys:dep:save")
+    public R saveDep(@RequestBody SysDepEntity dep){
+        verifyForm(dep);
+        if(!dep.getDepId().equals("")|| dep.getDepId() != null){
+            sysDepService.updateById(dep);
+        }
+        return R.ok() ;
+    }
 
     /**
      * 部门信息
      */
-    @GetMapping("/info/{depId}")
+    @GetMapping("/info")
     @RequiresPermissions("sys:dep:info")
-    public R info(@PathVariable("depId") String userId){
-        SysDepEntity dep = sysDepService.getById(userId);
+    public R info(@RequestParam("depId") String depId){
+        SysDepEntity dep = sysDepService.getById(depId);
         return R.ok().put("dep", dep);
     }
 
@@ -61,17 +74,6 @@ public class SysDepController  extends AbstractController{
     }
 
 
-    /**
-     * 修改部门
-     */
-    @SysLog("修改部门")
-    @PostMapping("/update")
-    @RequiresPermissions("sys:dep:update")
-    public R update(@RequestBody SysDepEntity user){
-        ValidatorUtils.validateEntity(user, UpdateGroup.class);
-        sysDepService.updateById(user);
-        return R.ok();
-    }
 
     /**
      * 批量删除部门
@@ -91,6 +93,16 @@ public class SysDepController  extends AbstractController{
         sysDepService.removeByIds(list);
 
         return R.ok();
+    }
+
+    /**
+     * 验证参数是否正确
+     */
+    private void verifyForm(SysDepEntity dep) {
+        if (StringUtils.isBlank(dep.getDepName())) {
+            throw new RRException("菜单名称不能为空");
+        }
+
     }
 
 }

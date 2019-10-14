@@ -14,6 +14,7 @@ import io.dfjinxin.common.utils.Constant;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.sys.entity.GovRootMenuEntity;
+import io.dfjinxin.modules.sys.entity.MenuParams;
 import io.dfjinxin.modules.sys.entity.SysMenuEntity;
 import io.dfjinxin.modules.sys.service.ShiroService;
 import io.dfjinxin.modules.sys.service.SysMenuService;
@@ -24,6 +25,7 @@ import io.dfjinxin.common.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -118,15 +120,15 @@ public class SysMenuController {
 	@PostMapping("/delete")
 	@RequiresPermissions("sys:menu:delete")
 	@ApiOperation("删除菜单")
-	public R delete( @RequestParam(value = "mid[]") int[] menuId){
-
+	public R delete(@RequestBody MenuParams mid){
+     List<SysMenuEntity> mids=   mid.getIds();
 		//判断是否有子菜单或按钮
-		for(int d : menuId){
-			List<SysMenuEntity> menuList = sysMenuService.queryListParentId(d);
+		for(SysMenuEntity d : mids){
+			List<SysMenuEntity> menuList = sysMenuService.queryListParentId(d.getMenuId());
 			if(menuList.size() > 0){
-				return R.error("请先删除子菜单");
+				return  R.error(1,"需要删除的目录下包含子菜单");
 			}
-			sysMenuService.delete(d);
+		//	sysMenuService.delete(d);
 		}
 
 		return R.ok();
@@ -149,7 +151,7 @@ public class SysMenuController {
 			throw new RRException("菜单名称不能为空");
 		}
 
-		if(menu.getMenuType()!=1 && menu.getPareMenuId() ==0){
+		if(menu.getMenuId()!=1 && menu.getPareMenuId() ==0){
 			throw new RRException("上级菜单不能为空");
 		}
 

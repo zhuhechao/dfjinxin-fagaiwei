@@ -44,6 +44,8 @@ import java.util.*;
 public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> implements SysUserService {
     @Autowired
 	private SysUserDao sysUserDao;
+    @Autowired
+	private SysUserRoleService sysUserRoleService;
 
 	@Override
 	public PageUtils queryPage(Map<String, Object> params) {
@@ -62,6 +64,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		List<SysUserEntity> list = page.getRecords();
 		for(SysUserEntity map:list){
 		  Integer st= map.getUserStatus();
+		  String[] roleId = map.getRoleId().split(",");
+		  ArrayList<Integer> role = new ArrayList<>();
+		  for(String rid : roleId){
+		  	role.add(Integer.parseInt(rid));
+		  }
+		  map.setRoles(role);
 		  if(st == 1){
 		  	map.setStatus(true);
 		  }else {
@@ -102,7 +110,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 
 	@Override
 	public void update(SysUserEntity user) {
+		List<Integer> list = user.getRoles();
+		String userId = user.getUserId();
+		sysUserRoleService.saveOrUpdate(userId,list);
 		this.updateById(user);
+
 	}
 
 
@@ -129,7 +141,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		List<Map<String, Object>> m2 = new ArrayList<>();
 		List<Map<String, Object>> m3 = new ArrayList<>();
         for(Map<String, Object> data:list){
-			if((int)data.get("pare_menu_id") != 0 && (int)data.get("menu_type")==2) {
+			if((int)data.get("pare_menu_id") != 1 && (int)data.get("menu_type")==2) {
 				Map<String, Object> map = new HashMap<>();
 
 				String pr = (String) data.get("menu_router");
@@ -143,7 +155,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				map.put("pare_menu_id",data.get("pare_menu_id"));
 				map.put("menu_id",data.get("menu_id"));
 				m3.add(map);
-			}else if( (int)data.get("pare_menu_id") != 0 && (int)data.get("menu_type")==1){
+			}else if( (int)data.get("pare_menu_id") != 1 && (int)data.get("menu_type")==1){
 				List<Map<String, Object>> lt = new ArrayList<>();
 				Map<String, Object> map = new HashMap<>();
 				String pr = (String) data.get("menu_router");
