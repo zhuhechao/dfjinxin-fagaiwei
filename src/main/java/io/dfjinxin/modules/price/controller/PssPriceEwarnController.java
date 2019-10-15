@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -32,8 +33,8 @@ public class PssPriceEwarnController {
     @GetMapping("/queryList")
     @ApiOperation("价格预警结果")
     public R queryList() {
-        List<PssPriceEwarnEntity> list = pssPriceEwarnService.queryList();
-        return R.ok().put("data", list);
+        Map<String,Object> map = pssPriceEwarnService.queryList();
+        return R.ok().put("data", map);
     }
 
     /**

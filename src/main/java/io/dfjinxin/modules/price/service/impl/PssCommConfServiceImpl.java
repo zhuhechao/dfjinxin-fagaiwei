@@ -39,17 +39,25 @@ public class PssCommConfServiceImpl extends ServiceImpl<PssCommConfDao, PssCommC
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveCommConf(Integer levelCode3Id, List<Integer> ewarnIds,List<Integer> indexIds) {
-        if (levelCode3Id == null || ewarnIds == null || indexIds ==null) {
+    public void saveCommConf(Integer levelCode3Id, List<Integer> ewarnIds, List<Integer> indexIds) {
+        if (levelCode3Id == null || ewarnIds == null || indexIds == null) {
             return;
         }
-//        QueryWrapper where = new QueryWrapper();
-//        where.eq("parent_code", levelCode2Id);
-//        where.eq("level_code", 3);
-//        where.eq("data_flag", 0);
-//        List<PssCommTotalEntity> levelCode3Ids = pssCommTotalDao.selectList(where);
+
         for (Integer indexId : indexIds) {
-            pssCommConfDao.saveCommConf(levelCode3Id,indexId, ewarnIds);
+            pssCommConfDao.saveCommConf(levelCode3Id, indexId, ewarnIds);
         }
+    }
+
+    @Override
+    public List<PssCommConfEntity> getCommConfByParms(Integer commId, List<Integer> ewarnIds, List<Integer> indexIds) {
+        if (commId == null || ewarnIds == null || indexIds == null) {
+            return null;
+        }
+        QueryWrapper where = new QueryWrapper();
+        where.eq("comm_id", commId);
+        where.in("index_id", indexIds);
+        where.in("ewarn_id", ewarnIds);
+        return pssCommConfDao.selectList(where);
     }
 }

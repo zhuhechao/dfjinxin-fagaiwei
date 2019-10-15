@@ -47,7 +47,10 @@ public class WpAsciiInfoServiceImpl extends ServiceImpl<WpAsciiInfoDao, WpAsciiI
 
     @Override
     public List<WpAsciiInfoEntity> getInfoAll() {
-        return baseMapper.selectList(new QueryWrapper<>());
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("code_status", 0);
+        queryWrapper.eq("p_code_val", 0);
+        return baseMapper.selectList(queryWrapper);
     }
 
 }

@@ -18,7 +18,7 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
-    List<PssPriceEwarnEntity> queryList();
+    Map<String,Object> queryList();
 
     List<Object> queryDetail(Integer commId,Integer ewarnTypeId);
 
