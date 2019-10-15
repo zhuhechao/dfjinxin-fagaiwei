@@ -117,8 +117,11 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
                 resultList2.add(result);
                 totalCount += count;
             }
-            return new PageUtils(resultList2, totalCount, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
-
+            if (totalCount > 0) {
+                return new PageUtils(resultList2, totalCount, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
+            } else {
+                return new PageUtils(null, totalCount, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
+            }
         }
         //商品类型-0类 不为空，商品大类-1类 为空，查询指定0类
         if (StringUtils.isNotBlank(levelCode_0) && StringUtils.isBlank(levelCode_1)) {
@@ -131,7 +134,13 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
             List<PssCommTotalEntity> list = new ArrayList<>();
             list.add(result);
 
-            return new PageUtils(list, totalCount, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
+            if (totalCount > 0) {
+                return new PageUtils(list, totalCount, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
+            } else {
+                return new PageUtils(null, totalCount, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
+            }
+
+//            return new PageUtils(list, totalCount, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
         }
 
         //商品类型-0类 不为空，商品大类-1类 不为空，商品名称为空，查询指定1类
@@ -159,7 +168,13 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
             type2CommList.add(type2Comm);
             type1Comm.setSubCommList(type2CommList);
             type1CommList.add(type1Comm);
-            return new PageUtils(type1CommList, count, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
+
+            if (count > 0) {
+                return new PageUtils(type1CommList, count, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
+            } else {
+                return new PageUtils(null, count, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
+            }
+//            return new PageUtils(type1CommList, count, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
 
         }
 
@@ -188,7 +203,13 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
             type2CommList.add(type2Comm);
             type1Comm.setSubCommList(type2CommList);
             type1CommList.add(type1Comm);
-            return new PageUtils(type1CommList, count, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
+
+            if (count > 0) {
+                return new PageUtils(type1CommList, count, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
+            } else {
+                return new PageUtils(null, count, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
+            }
+//            return new PageUtils(type1CommList, count, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
         }
 
         return null;

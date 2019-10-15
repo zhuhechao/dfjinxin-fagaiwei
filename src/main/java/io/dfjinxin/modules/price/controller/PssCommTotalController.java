@@ -3,6 +3,7 @@ package io.dfjinxin.modules.price.controller;
 import io.dfjinxin.common.dto.PssCommTotalDto;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
+import io.dfjinxin.modules.price.entity.PssCommConfEntity;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import io.dfjinxin.modules.price.service.PssCommConfService;
 import io.dfjinxin.modules.price.service.PssCommTotalService;
@@ -66,7 +67,7 @@ public class PssCommTotalController {
      * 保存
      */
     @PostMapping("/save")
-    @ApiOperation(value = "商品配置-保存配置", notes = "commId:4类商品id,ewarnIds:预警id列表 .eg:{\"commId\":172, \"ewarnIds\":[3,8],\"indexIds\":[39,40,41] } ")
+    @ApiOperation(value = "商品配置-保存配置", notes = "commId:4类商品id,ewarnIds:预警id列表,indexIds:商品对应指标类型为价格的列表 .eg:{\"commId\":172, \"ewarnIds\":[3,8],\"indexIds\":[39,40,41] } ")
     public R save(@RequestBody Map<String, Object> params) {
         if (params.isEmpty() || params.size() == 0) {
             R.error("请求参数为空!");
@@ -74,6 +75,14 @@ public class PssCommTotalController {
         Integer commId = (Integer) params.get("commId");
         List<Integer> ewarnIds = (List<Integer>) params.get("ewarnIds");
         List<Integer> indexIds = (List<Integer>) params.get("indexIds");
+        if (commId == null || ewarnIds == null || indexIds == null) {
+            return R.error("请求参数为空!");
+        }
+
+        List<PssCommConfEntity> commConfEntityList = pssCommConfService.getCommConfByParms(commId, ewarnIds, indexIds);
+        if (commConfEntityList != null && commConfEntityList.size() > 0) {
+            return R.error("该商品已配置此种类型预警!");
+        }
         pssCommConfService.saveCommConf(commId, ewarnIds, indexIds);
         return R.ok();
     }
