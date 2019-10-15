@@ -296,5 +296,18 @@
         and c2.data_flag=0
     </select>
 
+    <select id="getType1CommBySubCommId" resultType="io.dfjinxin.modules.price.entity.PssCommTotalEntity">
+        select pct.*
+        from pss_comm_total pct
+        where comm_id in (
+            select parent_code
+            from pss_comm_total
+            where comm_id in (
+                select parent_code
+                from pss_comm_total
+                where comm_id = #{commId}))
+
+    </select>
+
 
 </mapper>

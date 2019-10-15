@@ -397,8 +397,8 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
             List<PssCommTotalEntity> type3CommList = baseMapper.selectList(where3);
             for (PssCommTotalEntity type3Comm : type3CommList) {
                 //根据3类商品查询该商品下所有4类商品信息
-                List<PssCommTotalEntity> type4CommEwarnList = pssCommTotalDao.findCommByLevelCode2(type3Comm.getCommId(), dto);
-                type3Comm.setSubCommList(type4CommEwarnList);
+                List<PssCommTotalEntity> type4CommList = pssCommTotalDao.findCommByLevelCode2(type3Comm.getCommId(), dto);
+                type3Comm.setSubCommList(type4CommList);
                 int count = pssCommTotalDao.findCommCountByLevelCode2(type3Comm.getCommId(), dto);
                 type4CommCount += count;
             }

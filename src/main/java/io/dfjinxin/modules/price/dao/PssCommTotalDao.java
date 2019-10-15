@@ -48,4 +48,6 @@ public interface PssCommTotalDao extends BaseMapper<PssCommTotalEntity> {
 
     List<PssCommTotalEntity> findCommByLevelCode2(@Param("parentCode") Integer parentCode, @Param("param") PssCommTotalDto dto);
     int findCommCountByLevelCode2(@Param("parentCode") Integer parentCode, @Param("param") PssCommTotalDto dto);
+
+    PssCommTotalEntity getType1CommBySubCommId(@Param("commId")Integer commId);
 }

@@ -3,6 +3,7 @@ package io.dfjinxin.modules.price.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.dfjinxin.common.dto.PssCommTotalDto;
 import io.dfjinxin.common.utils.DateUtils;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
@@ -53,14 +54,21 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         return new PageUtils(page);
     }
 
+    /**
+     * @Desc: 获取3类商品所有4类商品的价格预警
+     * 商品名称显示为3类，预警类型显示该4类下最高的那个
+     * @Param: []
+     * @Return: java.util.List<io.dfjinxin.modules.price.entity.PssPriceEwarnEntity>
+     * @Author: z.h.c
+     * @Date: 2019/10/15 11:18
+     */
     @Override
-    public List<PssPriceEwarnEntity> queryList() {
+    public Map<String, Object> queryList() {
 
-        QueryWrapper<PssCommTotalEntity> where1 = new QueryWrapper();
+        /*QueryWrapper<PssCommTotalEntity> where1 = new QueryWrapper();
         where1.eq("level_code", "0");
         where1.eq("data_flag", "0");
         List<PssCommTotalEntity> pssCommTotalEntities = pssCommTotalDao.selectList(where1);
-
         List list = new ArrayList<>();
         Map<String, List<PssPriceEwarnEntity>> map;
         for (PssCommTotalEntity entity : pssCommTotalEntities) {
@@ -73,8 +81,30 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             }
             list.add(map);
         }
+        return list;*/
 
-        return list;
+        Map<String, Object> map = queryType3Warn();
+        if (map == null || !map.containsKey("ewanInfo")) {
+            return null;
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        List<PssPriceEwarnEntity> priceEwarnEntityList = (List<PssPriceEwarnEntity>) map.get("ewanInfo");
+        List<PssPriceEwarnEntity> dazong = new ArrayList();
+        List<PssPriceEwarnEntity> minsheng = new ArrayList();
+        for (PssPriceEwarnEntity entity : priceEwarnEntityList) {
+            //取到的是3级商品的id，计算该3类商品属于哪一类商品
+            PssCommTotalEntity tyep1Comm = pssCommTotalDao.getType1CommBySubCommId(entity.getCommId());
+            //大宗商品
+            if (tyep1Comm != null && tyep1Comm.getCommId() == 1) {
+                dazong.add(entity);
+            } else {
+                minsheng.add(entity);
+            }
+        }
+        result.put("dazong", dazong);
+        result.put("minsheng", minsheng);
+        return result;
     }
 
     @Override
@@ -279,5 +309,53 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         }
         return resultMap;
     }
+
+    /**
+     * @Desc: 根据1类商品id, 查询4类商品信息，
+     * @Param:
+     * @Return: java.util.Map<java.lang.String, java.lang.Object>
+     * @Author: z.h.c
+     * @Date: 2019/10/14 16:13
+     */
+    /*private Map<String, Object> getCommInfoByType_1(PssCommTotalEntity levelCode0) {
+        if (levelCode0 == null || levelCode0.getCommId() == null) {
+            return null;
+        }
+        //根据1类查询2类
+        QueryWrapper where2 = new QueryWrapper();
+        where2.in("parent_code", levelCode0.getCommId());
+        where2.eq("data_flag", "0");
+        where2.eq("level_code", "1");
+        // 获取2类商品
+        List<PssCommTotalEntity> commLevelCode1 = baseMapper.selectList(where2);
+        int type4CommCount = 0;
+        for (PssCommTotalEntity entity1 : commLevelCode1) {
+            //根据2类查询3类商品
+            QueryWrapper where3 = new QueryWrapper();
+            where3.in("parent_code", entity1.getCommId());
+            where3.eq("data_flag", "0");
+            where3.eq("level_code", "2");
+            // 获取3类商品
+            List<PssCommTotalEntity> type3CommList = baseMapper.selectList(where3);
+            for (PssCommTotalEntity type3Comm : type3CommList) {
+                //根据3类商品查询该商品下所有4类商品信息
+                QueryWrapper where4 = new QueryWrapper();
+                where4.in("parent_code", type3Comm.getCommId());
+                where4.eq("data_flag", "0");
+                where4.eq("level_code", "3");
+                List<PssCommTotalEntity> type4CommList = pssCommTotalDao.selectList(where4);
+                type3Comm.setSubCommList(type4CommList);
+                //根据3类商品计算基4类商品的价格预警信息，返回此3类商品中涨幅最大的那个4类商品预警信息
+
+            }
+            entity1.setSubCommList(type3CommList);
+        }
+        levelCode0.setSubCommList(commLevelCode1);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("result", levelCode0);
+        map.put("totalCount", type4CommCount);
+        return map;
+    }*/
 
 }
