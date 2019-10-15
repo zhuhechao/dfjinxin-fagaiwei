@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,14 +35,12 @@ public class SecondPageViewController {
      * 列表
      */
     @GetMapping("/view/{commId}")
-    @ApiOperation(value = "二级页面-展示", notes = "根据3级商品id 获取相应该商品所有4级商品 指标信息")
+    @ApiOperation(value = "二级页面-展示", notes = "根据3级商品id 获取相应该商品所有4级商品 指标信息 eg:58")
     public R queryIndexTypeByCommId(@PathVariable("commId") Integer commId) {
-//        BigDecimal decimal = new BigDecimal(0);
         List<Map<String, Object>> list = wpCommIndexValService.queryLevel4CommInfo(commId);
         //计算增副
         Map<String,Object> map = pssPriceEwarnService.converZF(commId);
         list.add(map);
-        Map<String,Object> reMap = new HashMap<>();
         return R.ok().put("data", list);
     }
 

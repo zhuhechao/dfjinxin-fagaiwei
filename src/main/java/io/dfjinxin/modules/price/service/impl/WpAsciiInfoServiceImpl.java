@@ -50,7 +50,7 @@ public class WpAsciiInfoServiceImpl extends ServiceImpl<WpAsciiInfoDao, WpAsciiI
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("code_status", 0);
         queryWrapper.eq("p_code_val", 0);
-        return baseMapper.selectList(new QueryWrapper<>());
+        return baseMapper.selectList(queryWrapper);
     }
 
 }
