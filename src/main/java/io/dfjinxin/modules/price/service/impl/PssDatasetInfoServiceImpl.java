@@ -41,6 +41,6 @@ public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, Ps
 //        for(PssDatasetInfoEntity entity:list) {
             dtos.add(PssDatasetInfoEntity.toData(entity));
 //        }
-        return dtos;
+        return baseMapper.selectList(new QueryWrapper());
     }
 }
