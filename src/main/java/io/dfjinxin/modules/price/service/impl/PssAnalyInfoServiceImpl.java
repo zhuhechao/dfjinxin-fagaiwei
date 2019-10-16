@@ -1,5 +1,6 @@
 package io.dfjinxin.modules.price.service.impl;
 
+import com.aliyun.oss.common.utils.CaseInsensitiveMap;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -34,13 +35,29 @@ public class PssAnalyInfoServiceImpl extends ServiceImpl<PssAnalyInfoDao, PssAna
         return PssAnalyInfoEntity.toData(entity);
     }
 
+    static Map keyTransMap = new CaseInsensitiveMap<String>() {
+        {
+            put("analyName", "analy_Name");
+            put("analyId", "analy_Id");
+            put("bussType", "buss_Type");
+            put("dataSetId","data_Set_Id");
+            put("analyWay","analy_way");
+        }
+    };
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<PssAnalyInfoEntity> page = this.page(
-                new Query<PssAnalyInfoEntity>().getPage(params),
-                new QueryWrapper<PssAnalyInfoEntity>()
-        );
+        IPage<PssAnalyInfoEntity> page = null;
+// this.page(
+//                new Query<PssAnalyInfoEntity>().getPage(params),
+//                new QueryWrapper<PssAnalyInfoEntity>()
+//        );
+        QueryWrapper where = new QueryWrapper();
 
+        for(Map.Entry<String, Object> m:params.entrySet()){
+            where.eq(keyTransMap.get(m.getKey()), m.getValue());
+        }
+        page = this.page(new Query<PssAnalyInfoEntity>().getPage(params),where);
         return new PageUtils(page);
     }
 
