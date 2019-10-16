@@ -60,5 +60,40 @@
         AND index_i = #{indexId}
         AND data_time IS NOT NULL
         GROUP BY stat_area_id
+        ORDER BY data_time desc
     </select>
+
+    <select id="queryByIndexType" resultMap="wpCommIndexValMap">
+        select * from wp_comm_index_val wiv
+        where index_type = #{indexType}
+        and comm_id= #{commId}
+        and stat_area_name='全国'
+        order by data_time desc
+        limit 0,30
+    </select>
+
+    <select id="queryMapValByIndexType" resultMap="wpCommIndexValMap">
+        SELECT
+            max(data_time) as data_time,
+           comm_id,index_type,
+           index_type,
+           stat_area_id,
+           stat_area_name,
+           index_val,index_unit
+        FROM wp_comm_index_val
+        where index_type = '价格'
+        and comm_id= #{commId}
+        and stat_area_name !='全国'
+        GROUP BY stat_area_name
+        ORDER BY data_time desc
+    </select>
+    <select id="queryNoPriceByIndexType" resultMap="wpCommIndexValMap">
+        select * from wp_comm_index_val wiv
+        where index_type = #{indexType}
+        and comm_id= #{commId}
+        and stat_area_name='全国'
+        order by data_time desc
+        limit 0,2
+    </select>
+
 </mapper>

@@ -1,5 +1,6 @@
 package io.dfjinxin.modules.analyse.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -65,5 +66,10 @@ public class WpCommIndexValEntity implements Serializable {
 	 *
 	 */
 	private String dataSource;
+
+	@TableField(exist = false)
+	private String commName;
+	@TableField(exist = false)
+	private String tongBi;
 
 }

@@ -30,4 +30,10 @@ public interface WpCommIndexValDao extends BaseMapper<WpCommIndexValEntity> {
     List<WpCommIndexValEntity> selectListBystatAreaId(@Param("commId")int commId,
                                                       @Param("indexType")String indexType,
                                                       @Param("indexId")Integer indexId);
+
+    List<WpCommIndexValEntity> queryByIndexType(@Param("commId")Integer commId, @Param("indexType")String indexType);
+
+    List<WpCommIndexValEntity> queryMapValByIndexType(@Param("commId")Integer commId );
+
+    List<WpCommIndexValEntity> queryNoPriceByIndexType(@Param("commId")Integer commId, @Param("indexType")String indexType);
 }

@@ -17,6 +17,7 @@ import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 
@@ -165,6 +166,96 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpCommIndexValDao, Wp
         }
         return resultList;
     }
+
+    @Override
+    public Map<String, Object> analyseType4CommIndexs(Integer commId) {
+        //商品信息校验
+        QueryWrapper where = new QueryWrapper();
+        where.eq("data_flag", 0);
+        where.eq("comm_id", commId);
+        PssCommTotalEntity type3Comm = pssCommTotalDao.selectOne(where);
+        if (type3Comm == null) {
+            return null;
+        }
+        QueryWrapper where1 = new QueryWrapper();
+        where1.eq("data_flag", 0);
+        where1.eq("parent_code", commId);
+        List<PssCommTotalEntity> type4comms = pssCommTotalDao.selectList(where1);
+        if (type4comms == null) {
+            return null;
+        }
+
+        //统计该3类商品下所有4类商品的指标类型为价格的所有最新价格及上一天的价格作涨辐
+        Map<String, Object> resMap = new HashMap<>();
+        List<List<WpCommIndexValEntity>> priceList = new ArrayList<>();
+        List<List<WpCommIndexValEntity>> noPriceList = new ArrayList<>();
+        List<List<WpCommIndexValEntity>> mapValList = new ArrayList<>();
+        for (PssCommTotalEntity comm : type4comms) {
+            QueryWrapper where2 = new QueryWrapper();
+            where2.eq("comm_id", comm.getCommId());
+            where2.groupBy("index_type");
+            List<WpCommIndexValEntity> indexTypeList = wpCommIndexValDao.selectList(where2);
+            for (WpCommIndexValEntity type : indexTypeList) {
+                //计算价格指标类型
+                QueryWrapper where3 = new QueryWrapper();
+                where3.eq("data_flag", 0);
+                if (type.getIndexType().equals("价格")) {
+                    //统计价格类型的4类最瓣指标价格
+                    List<WpCommIndexValEntity> valList = wpCommIndexValDao.queryByIndexType(comm.getCommId(), "价格");
+                    where3.eq("comm_id", valList.get(0).getCommId());
+                    PssCommTotalEntity commTotalEntity = pssCommTotalDao.selectOne(where3);
+                    for (WpCommIndexValEntity entity : valList) {
+                        entity.setCommName(commTotalEntity.getCommName() + "_" + type.getIndexType());
+                    }
+                    //计算同比
+                    valList = converTongBi(valList);
+                    priceList.add(valList);
+                    //计算省份地图值
+                    List<WpCommIndexValEntity> mapValTempList = wpCommIndexValDao.queryMapValByIndexType(comm.getCommId());
+                    mapValList.add(mapValTempList);
+                } else {
+                    //计算非价格指标类型
+                    List<WpCommIndexValEntity> noPriceValList = wpCommIndexValDao.queryNoPriceByIndexType(comm.getCommId(), type.getIndexType());
+                    where3.eq("comm_id", noPriceValList.get(0).getCommId());
+                    PssCommTotalEntity commTotalEntity = pssCommTotalDao.selectOne(where3);
+                    for (WpCommIndexValEntity entity : noPriceValList) {
+                        entity.setCommName(commTotalEntity.getCommName() + "_" + type.getIndexType());
+                    }
+                    //计算非价格指标类型同比
+                    noPriceValList = converTongBi(noPriceValList);
+                    noPriceValList.remove(1);
+                    noPriceList.add(noPriceValList);
+                }
+            }
+        }
+
+        resMap.put("lineData", priceList);
+        resMap.put("mapData", mapValList);
+        resMap.put("noPriceList", noPriceList);
+
+        //计算当前最新价格和同比
+        List<WpCommIndexValEntity> currPriceList = new ArrayList<>();
+        for (int i = 0; i < priceList.size(); i++) {
+            WpCommIndexValEntity first = priceList.get(i).get(0);
+            currPriceList.add(first);
+        }
+        resMap.put("currPrice", currPriceList);
+
+        return resMap;
+    }
+
+    private List<WpCommIndexValEntity> converTongBi(List<WpCommIndexValEntity> valEntities) {
+        WpCommIndexValEntity first = valEntities.get(0);
+        WpCommIndexValEntity last = valEntities.get(1);
+        BigDecimal firstVal = first.getIndexVal();
+        BigDecimal lastVal = last.getIndexVal();
+        BigDecimal tempVal = firstVal.subtract(lastVal);
+        BigDecimal tongBi = tempVal.divide(lastVal, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
+        first.setTongBi(tongBi.toString() + "%");
+        valEntities.set(0, first);
+        return valEntities;
+    }
+
 
     private List doIndexPriceInfo(List<WpBaseIndexInfoEntity> list, int commId, String indexType) {
 
