@@ -38,6 +38,8 @@ public class WpBaseIndexInfoServiceImpl extends ServiceImpl<WpBaseIndexInfoDao, 
         where.eq("comm_id", commId);
         where.eq("index_flag", 0);
         where.eq("index_type", "价格");
+        //114码表中用途是预警的
+        where.eq("index_used", 114);
         return baseMapper.selectList(where);
     }
 
