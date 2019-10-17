@@ -323,6 +323,25 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
         return null;
     }
 
+    /**
+     * @Desc: 根据指定商品id查询该商品的下级商品
+     * @Param: [commId]
+     * @Return: java.util.List<io.dfjinxin.modules.price.entity.PssCommTotalEntity>
+     * @Author: z.h.c
+     * @Date: 2019/10/17 17:24
+     */
+    @Override
+    public List<PssCommTotalEntity> getSubCommByCommId(Integer commId) {
+
+        if (commId == null) {
+            return null;
+        }
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("parent_code", commId);
+        queryWrapper.eq("data_flag", 0);
+        return baseMapper.selectList(queryWrapper);
+    }
+
 
     /**
      * @Desc: 根据1类商品id, 查询4类商品预警配置，
