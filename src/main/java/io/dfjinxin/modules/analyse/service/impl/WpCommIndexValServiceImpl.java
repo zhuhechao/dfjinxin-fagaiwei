@@ -205,21 +205,23 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpCommIndexValDao, Wp
                     where3.eq("comm_id", valList.get(0).getCommId());
                     PssCommTotalEntity commTotalEntity = pssCommTotalDao.selectOne(where3);
                     for (WpCommIndexValEntity entity : valList) {
-                        entity.setCommName(commTotalEntity.getCommName() + "_" + type.getIndexType());
+                        entity.setCommName(commTotalEntity.getCommName() + "(" + type.getIndexType() + ")");
                     }
                     //计算同比
                     valList = converTongBi(valList);
                     priceList.add(valList);
                     //计算省份地图值
                     List<WpCommIndexValEntity> mapValTempList = wpCommIndexValDao.queryMapValByIndexType(comm.getCommId());
-                    mapValList.add(mapValTempList);
+                    if (mapValTempList != null && mapValTempList.size() > 1) {
+                        mapValList.add(mapValTempList);
+                    }
                 } else {
                     //计算非价格指标类型
                     List<WpCommIndexValEntity> noPriceValList = wpCommIndexValDao.queryNoPriceByIndexType(comm.getCommId(), type.getIndexType());
                     where3.eq("comm_id", noPriceValList.get(0).getCommId());
                     PssCommTotalEntity commTotalEntity = pssCommTotalDao.selectOne(where3);
                     for (WpCommIndexValEntity entity : noPriceValList) {
-                        entity.setCommName(commTotalEntity.getCommName() + "_" + type.getIndexType());
+                        entity.setCommName(commTotalEntity.getCommName() + "(" + type.getIndexType() + ")");
                     }
                     //计算非价格指标类型同比
                     noPriceValList = converTongBi(noPriceValList);
