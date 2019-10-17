@@ -34,8 +34,8 @@ public class YuQingTest {
          * dateType：日期类型 int类型 0：今天  1:7天内  2:30天内  这里填1即可
          */
 
-        String baseUrl = "https://jianguan.urlsec.qq.com/";
-        /*Long dateTime = new Date().getTime() / 1000;
+       /* String baseUrl = "https://jianguan.urlsec.qq.com/";
+        Long dateTime = new Date().getTime() / 1000;
         int unixTime = dateTime.intValue();
         String appid = "fagaiwei";
         String pwd = "fgwprice";
@@ -66,8 +66,10 @@ public class YuQingTest {
         params.put("userId", "1");
         params.put("dateType", 1);
         final String apiUrl = "analyze/getTopUrlInfo";
+//        https://jianguan.urlsec.qq.com/analyze/getTopUrlInfo
+        System.out.println("getTopUrlInfo url:" + PATH + apiUrl);
         String jsonStr = JSON.toJSONString(params);
-        logger.info("the getHeatTrend req params:{}", jsonStr);
+        logger.info("the getTopUrlInfo req params:{}", jsonStr);
         String res = null;
         try {
             res = HttpUtil.doPostJson(PATH + apiUrl, jsonStr);
@@ -78,6 +80,6 @@ public class YuQingTest {
         }
 //        Object result = converResult(res);
 //        logger.info("the result:{}", result);
-//        return R.ok().put("data", result);
+//        return R.ok().put("data", result);*/
     }
 }

@@ -26,7 +26,7 @@ import java.util.Map;
  */
 
 @RestController
-@RequestMapping("analyze/")
+@RequestMapping("tengxun/analyze/")
 @Api(tags = "TengXunYuQing", description = "腾讯-商品舆情Api")
 public class TengXunYuQing {
 
@@ -70,12 +70,14 @@ public class TengXunYuQing {
         params.put("programmeId", converCommId(commId));
         params.put("appType", 0);
         params.put("dateType", 1);
-        String apiUrl = "analyze/getHeatTrend";
         String jsonStr = JSON.toJSONString(params);
         logger.info("the getHeatTrend req params:{}", jsonStr);
+        String apiUrl = "analyze/getHeatTrend";
+        final String url = PATH + apiUrl;
+        logger.info("the request url: {}", url);
         String res = null;
         try {
-            res = HttpUtil.doPostJson(PATH + apiUrl, jsonStr);
+            res = HttpUtil.doPostJson(url, jsonStr);
         } catch (Exception e) {
             logger.error("call-商品舆情热度分布-异常:{}", e);
             return R.error("调用腾讯接口-getHeatTrend异常");
@@ -120,9 +122,11 @@ public class TengXunYuQing {
         final String apiUrl = "analyze/getHeatTop";
         String jsonStr = JSON.toJSONString(params);
         logger.info("the getHeatTrend req params:{}", jsonStr);
+        final String url = PATH + apiUrl;
+        logger.info("the request url: {}", url);
         String res = null;
         try {
-            res = HttpUtil.doPostJson(PATH + apiUrl, jsonStr);
+            res = HttpUtil.doPostJson(url, jsonStr);
         } catch (Exception e) {
             logger.error("call-商品热点舆情-异常:{}", e);
             return R.error("调用腾讯接口-getHeatTop异常");
@@ -172,9 +176,11 @@ public class TengXunYuQing {
         final String apiUrl = "yuqingcgi/queryStatisticsWarningContent";
         String jsonStr = JSON.toJSONString(params);
         logger.info("the getHeatTrend req params:{}", jsonStr);
+        final String url = PATH + apiUrl;
+        logger.info("the request url: {}", url);
         String res = null;
         try {
-            res = HttpUtil.doPostJson(PATH + apiUrl, jsonStr);
+            res = HttpUtil.doPostJson(url, jsonStr);
         } catch (Exception e) {
             logger.error("call-商品舆情预警-异常:{}", e);
             return R.error("调用腾讯接口-queryStatisticsWarningContent异常");
@@ -214,10 +220,12 @@ public class TengXunYuQing {
         params.put("dateType", 1);
         final String apiUrl = "analyze/getTopUrlInfo";
         String jsonStr = JSON.toJSONString(params);
-        logger.info("the getHeatTrend req params:{}", jsonStr);
+        logger.info("the getTopUrlInfo req params:{}", jsonStr);
+        final String url = PATH + apiUrl;
+        logger.info("the request url: {}", url);
         String res = null;
         try {
-            res = HttpUtil.doPostJson(PATH + apiUrl, jsonStr);
+            res = HttpUtil.doPostJson(url, jsonStr);
             logger.info("res:{}", res);
         } catch (Exception e) {
             logger.error("call-topurl信息-异常:{}", e);
