@@ -1,5 +1,8 @@
 package io.dfjinxin.modules.price.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.price.dto.PssAnalyInfoDto;
@@ -10,7 +13,9 @@ import io.dfjinxin.modules.price.service.PssAnalyInfoService;
 import io.dfjinxin.modules.price.service.PssAnalyReltService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.zookeeper.server.DataNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,22 +72,164 @@ public class PssAnalyInfoController {
     }
 
     /**
-     * 运行
+     * 运行一般相关性分析
      */
-    @PostMapping("/run")
+    @PostMapping("/runGeneral ")
     @ApiOperation("运行")
-    public R run(@RequestBody PssAnalyInfoDto dto) {
-        pssAnalyInfoService.saveOrUpdate(dto);
+    public R runGeneral (@RequestBody PssAnalyInfoDto dto) {
 
-        PssAnalyReltEntity relt = new PssAnalyReltEntity();
-        pssAnalyReltService.saveOrUpdate(null);
+//        R r = testCallPy();
+        R r = callRet();
+        JSONObject jsonObject = (JSONObject)r.get("data");
+        if(null!=r && r.get("code").toString().equals("0")){
+            pssAnalyInfoService.saveOrUpdate(dto);
+            PssAnalyReltEntity relt = new PssAnalyReltEntity();
+            relt.analyInfoToRelEnt(PssAnalyInfoEntity.toEntity(dto));
+            if(null!=jsonObject.get("pValue")){
+                JSONArray jsonArray = JSONArray.parseArray(jsonObject.get("pValue").toString());
+                relt.setPvalue(jsonArray.toJSONString());
+            }
+            if(null!=jsonObject.get("coe")) {
+                JSONArray jsonArray = JSONArray.parseArray(jsonObject.get("coe").toString());
+                relt.setAnalyCoe(jsonArray.toJSONString());
+            }
+            pssAnalyReltService.saveOrUpdate(relt);
+        }
+
         return R.ok();
+    }
+
+    public R callRet() {
+        String strRet= "{\n" +
+                "  \"msg\": \"success\",\n" +
+                "  \"code\": 0,\n" +
+                "  \"data\": [\n" +
+                "    \"[[1]]\",\n" +
+                "    \"[{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0043,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"猪生产价格指数\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0001,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"粮食产量\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0043,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"粮食价格指数\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0012,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"人均纯收入\"},{\"猪生产价格指数\":0.0022,\"粮食产量\":0,\"粮食价格指数\":0.0029,\"人均纯收入\":0.0004,\"人均猪肉消费量\":0,\"存栏数\":0.0003,\"猪肉产量\":0.0001,\"_row\":\"人均猪肉消费量\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0001,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"存栏数\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"猪肉产量\"}] \",\n" +
+                "    \"\",\n" +
+                "    \"[[2]]\",\n" +
+                "    \"[\",\n" +
+                "    \"  {\",\n" +
+                "    \"    \"猪生产价格指数\": 1,\",\n" +
+                "    \"    \"粮食产量\": 0.8805,\",\n" +
+                "    \"    \"粮食价格指数\": 0.9633,\",\n" +
+                "    \"    \"人均纯收入\": 0.8756,\",\n" +
+                "    \"    \"人均猪肉消费量\": 0.5379,\",\n" +
+                "    \"    \"存栏数\": 0.9057,\",\n" +
+                "    \"    \"猪肉产量\": 0.9156,\",\n" +
+                "    \"    \"_row\": \"猪生产价格指数\"\",\n" +
+                "    \"  },\",\n" +
+                "    \"  {\",\n" +
+                "    \"    \"猪生产价格指数\": 0.8805,\",\n" +
+                "    \"    \"粮食产量\": 1,\",\n" +
+                "    \"    \"粮食价格指数\": 0.8613,\",\n" +
+                "    \"    \"人均纯收入\": 0.7915,\",\n" +
+                "    \"    \"人均猪肉消费量\": 0.6921,\",\n" +
+                "    \"    \"存栏数\": 0.8642,\",\n" +
+                "    \"    \"猪肉产量\": 0.878,\",\n" +
+                "    \"    \"_row\": \"粮食产量\"\",\n" +
+                "    \"  },\",\n" +
+                "    \"  {\",\n" +
+                "    \"    \"猪生产价格指数\": 0.9633,\",\n" +
+                "    \"    \"粮食产量\": 0.8613,\",\n" +
+                "    \"    \"粮食价格指数\": 1,\",\n" +
+                "    \"    \"人均纯收入\": 0.939,\",\n" +
+                "    \"    \"人均猪肉消费量\": 0.5256,\",\n" +
+                "    \"    \"存栏数\": 0.8972,\",\n" +
+                "    \"    \"猪肉产量\": 0.9466,\",\n" +
+                "    \"    \"_row\": \"粮食价格指数\"\",\n" +
+                "    \"  },\",\n" +
+                "    \"  {\",\n" +
+                "    \"    \"猪生产价格指数\": 0.8756,\",\n" +
+                "    \"    \"粮食产量\": 0.7915,\",\n" +
+                "    \"    \"粮食价格指数\": 0.939,\",\n" +
+                "    \"    \"人均纯收入\": 1,\",\n" +
+                "    \"    \"人均猪肉消费量\": 0.6036,\",\n" +
+                "    \"    \"存栏数\": 0.8545,\",\n" +
+                "    \"    \"猪肉产量\": 0.9409,\",\n" +
+                "    \"    \"_row\": \"人均纯收入\"\",\n" +
+                "    \"  },\",\n" +
+                "    \"  {\",\n" +
+                "    \"    \"猪生产价格指数\": 0.5379,\",\n" +
+                "    \"    \"粮食产量\": 0.6921,\",\n" +
+                "    \"    \"粮食价格指数\": 0.5256,\",\n" +
+                "    \"    \"人均纯收入\": 0.6036,\",\n" +
+                "    \"    \"人均猪肉消费量\": 1,\",\n" +
+                "    \"    \"存栏数\": 0.6599,\",\n" +
+                "    \"    \"猪肉产量\": 0.7011,\",\n" +
+                "    \"    \"_row\": \"人均猪肉消费量\"\",\n" +
+                "    \"  },\",\n" +
+                "    \"  {\",\n" +
+                "    \"    \"猪生产价格指数\": 0.9057,\",\n" +
+                "    \"    \"粮食产量\": 0.8642,\",\n" +
+                "    \"    \"粮食价格指数\": 0.8972,\",\n" +
+                "    \"    \"人均纯收入\": 0.8545,\",\n" +
+                "    \"    \"人均猪肉消费量\": 0.6599,\",\n" +
+                "    \"    \"存栏数\": 1,\",\n" +
+                "    \"    \"猪肉产量\": 0.958,\",\n" +
+                "    \"    \"_row\": \"存栏数\"\",\n" +
+                "    \"  },\",\n" +
+                "    \"  {\",\n" +
+                "    \"    \"猪生产价格指数\": 0.9156,\",\n" +
+                "    \"    \"粮食产量\": 0.878,\",\n" +
+                "    \"    \"粮食价格指数\": 0.9466,\",\n" +
+                "    \"    \"人均纯收入\": 0.9409,\",\n" +
+                "    \"    \"人均猪肉消费量\": 0.7011,\",\n" +
+                "    \"    \"存栏数\": 0.958,\",\n" +
+                "    \"    \"猪肉产量\": 1,\",\n" +
+                "    \"    \"_row\": \"猪肉产量\"\",\n" +
+                "    \"  }\",\n" +
+                "    \"] \",\n" +
+                "    \"\",\n" +
+                "    \"\"\n" +
+                "  ]\n" +
+                "}";
+        strRet = testCallPy().get("data").toString();
+        JSONObject jsonObject = transStrToJsonObject(strRet);
+        return R.ok().put("data",jsonObject
+        );
+    }
+
+    private JSONObject transStrToJsonObject(String retStr){
+        if(StringUtils.isEmpty(retStr))
+            return null;
+        String str = retStr;
+        str = retStr.replace("\\","").replace("\"    \"","\"").replace(",\",",",").replace("\"\"","\"").replace("\"  {\",","{").replace("\"  }","}").replace("\n","").replace(",    }","}");
+        final  String dataOne = "[[1]]";
+        final  String dataSec = "[[2]]";
+        str = str.replace(" ","");
+        String header = str.substring(0,str.indexOf(",\"data\""))+"}";
+        JSONObject jsonObject = null;
+        try {
+            String data = str.substring(str.indexOf(dataOne) + dataOne.length() + 4, str.indexOf("}]") + 1);
+            str = str.substring(str.indexOf(dataSec) + dataSec.length() + 1);
+            str = str.substring(str.indexOf("\"[\",") + 4, str.indexOf(",\"]") - 1);
+            jsonObject = JSONObject.parseObject(header);
+            try {
+                JSONArray jsonArrayOne = JSON.parseArray("[" + data + "]");
+                jsonObject.put("pValue",jsonArrayOne);
+            }catch(Exception eo){
+
+            }
+            try {
+                JSONArray jsonArraySec = JSONArray.parseArray("[" + str + "]");
+                jsonObject.put("coe",jsonArraySec);
+            }catch(Exception es){
+
+            }
+
+
+        }catch (Exception e){
+
+        }
+        return jsonObject;
     }
 
     @PostMapping("/testPy")
     @ApiOperation("测试调用python")
     public R testCallPy() {
-        List<String> list = new ArrayList();
+//        List<String> list = new ArrayList();
+        StringBuffer stringBuffer = new StringBuffer();
         logger.debug("调用 python start");
         String file = "/zhjg/pyjiaoben/corr_ana.py";
         logger.debug("file path:" + file);
@@ -96,7 +243,8 @@ public class PssAnalyInfoController {
             String line;
             while ((line = in.readLine()) != null) {
                 logger.debug("call result the result:" + line);
-                list.add(line);
+//                list.add(line);
+                stringBuffer.append(line);
             }
             in.close();
             proc.waitFor();
@@ -105,7 +253,8 @@ public class PssAnalyInfoController {
             logger.debug("调用 py异常");
             logger.debug(e1.getMessage());
         }
-        return R.ok().put("data", list);
+//        return R.ok().put("data", list);
+        return R.ok().put("data",stringBuffer.toString());
     }
 
 

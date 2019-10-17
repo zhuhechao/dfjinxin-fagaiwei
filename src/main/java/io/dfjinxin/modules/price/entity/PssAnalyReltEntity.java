@@ -61,4 +61,19 @@ public class PssAnalyReltEntity implements Serializable {
 	 */
 	private String pvalue;
 
+	public void analyInfoToRelEnt(PssAnalyInfoEntity pssAnalyInfoEntity){
+		if(pssAnalyInfoEntity==null)
+			return;
+
+		this.setAnalyId(pssAnalyInfoEntity.getAnalyId().toString());
+		this.setAnalyWay(pssAnalyInfoEntity.getAnalyWay());
+		this.setAnalyTime(new Date());
+		this.setReltName(pssAnalyInfoEntity.getAnalyName());
+		this.setRunStatus(0);//只插入正常 -0：正常 1：失败
+		this.setBasVar(pssAnalyInfoEntity.getIndeVar());
+		this.setTarVar(pssAnalyInfoEntity.getDepeVar());
+		//		pssAnalyReltEntity.setAnalyCoe("1");//分析系数
+//		pssAnalyReltEntity.setPvalue("");// Pvalue
+	}
+
 }

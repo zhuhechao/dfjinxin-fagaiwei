@@ -75,9 +75,10 @@ public class PssAnalyInfoEntity implements Serializable {
         PssAnalyInfoEntity to = new PssAnalyInfoEntity();
         BeanUtils.copyProperties(from, to);
         to.indeVar = StringUtils.join(from.getIndeVar(), ",");
-        if ("一般相关性分析".equals(from.getAnalyWay())) {
-            to.depeVar = to.indeVar;
-        }
+//        if ("一般相关性分析".equals(from.getAnalyWay())) {
+//            to.depeVar = to.indeVar;
+//        }
+
         return to;
     }
 

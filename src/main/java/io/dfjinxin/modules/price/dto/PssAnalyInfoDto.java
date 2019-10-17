@@ -34,4 +34,7 @@ public class PssAnalyInfoDto implements Serializable {
 
     @ApiModelProperty(value = "变量", name = "vars", required = true)
     private String[] indeVar;
+
+    @ApiModelProperty(value="他变量" ,name="depeVar",required = false)
+    private String depeVar;
 }
