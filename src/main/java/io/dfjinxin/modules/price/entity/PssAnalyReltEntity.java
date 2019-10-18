@@ -64,8 +64,8 @@ public class PssAnalyReltEntity implements Serializable {
 	public void analyInfoToRelEnt(PssAnalyInfoEntity pssAnalyInfoEntity){
 		if(pssAnalyInfoEntity==null)
 			return;
-
-		this.setAnalyId(pssAnalyInfoEntity.getAnalyId().toString());
+		if(pssAnalyInfoEntity.getAnalyId()!=null)
+			this.setAnalyId(pssAnalyInfoEntity.getAnalyId().toString());
 		this.setAnalyWay(pssAnalyInfoEntity.getAnalyWay());
 		this.setAnalyTime(new Date());
 		this.setReltName(pssAnalyInfoEntity.getAnalyName());

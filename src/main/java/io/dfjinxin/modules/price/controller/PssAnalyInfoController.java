@@ -171,7 +171,7 @@ public class PssAnalyInfoController {
                 "    \"  {\",\n" +
                 "    \"    \"猪生产价格指数\": 0.5379,\",\n" +
                 "    \"    \"粮食产量\": 0.6921,\",\n" +
-                "    \"    \"粮食价格指数\": 0.5256,\",\n" +
+                "    \"    \"粮食价+格指数\": 0.5256,\",\n" +
                 "    \"    \"人均纯收入\": 0.6036,\",\n" +
                 "    \"    \"人均猪肉消费量\": 1,\",\n" +
                 "    \"    \"存栏数\": 0.6599,\",\n" +
@@ -193,7 +193,7 @@ public class PssAnalyInfoController {
                 "    \"    \"粮食产量\": 0.878,\",\n" +
                 "    \"    \"粮食价格指数\": 0.9466,\",\n" +
                 "    \"    \"人均纯收入\": 0.9409,\",\n" +
-                "    \"    \"人均猪肉消费量\": 0.7011,\",\n" +
+                "    \"    \"人均猪肉+消费量\": 0.7011,\",\n" +
                 "    \"    \"存栏数\": 0.958,\",\n" +
                 "    \"    \"猪肉产量\": 1,\",\n" +
                 "    \"    \"_row\": \"猪肉产+量\"\",\n" +
@@ -215,7 +215,7 @@ public class PssAnalyInfoController {
         if(StringUtils.isEmpty(retStr))
             return null;
         String str = retStr;
-        str = retStr.replace("\\","").replace("\"    \"","\"").replace(",\",",",").replace("\"\"","\"").replace("\"  {\",","{").replace("\"  }","}").replace("\n","").replace(",    }","}");
+        str = retStr.replace(" ","").replace("\n","").replace("\\","").replace("\"\"","\"").replace(",\",",",").replace(",\"}","}").replace("\"{\",","{");
         final  String dataOne = "[[1]]";
         final  String dataSec = "[[2]]";
         str = str.replace(" ","");
@@ -223,8 +223,7 @@ public class PssAnalyInfoController {
         JSONObject jsonObject = null;
         try {
             String data = str.substring(str.indexOf(dataOne) + dataOne.length() + 4, str.indexOf("}]") + 1);
-            str = str.substring(str.indexOf(dataSec) + dataSec.length() + 1);
-            str = str.substring(str.indexOf("\"[\",") + 4, str.indexOf(",\"]") - 1);
+
             jsonObject = JSONObject.parseObject(header);
             try {
                 JSONArray jsonArrayOne = JSON.parseArray("[" + data + "]");
@@ -233,6 +232,8 @@ public class PssAnalyInfoController {
 
             }
             try {
+                str = str.substring(str.indexOf(dataSec) + dataSec.length() + 1);
+                str = str.substring(str.indexOf("\"[\",") + 4, str.indexOf(",\"]") - 1);
                 JSONArray jsonArraySec = JSONArray.parseArray("[" + str + "]");
                 jsonObject.put("coe",jsonArraySec);
             }catch(Exception es){

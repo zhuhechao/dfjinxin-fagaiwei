@@ -23,6 +23,8 @@ public interface PssAnalyInfoService extends IService<PssAnalyInfoEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
+    List<PssAnalyInfoEntity> getAnalyInfo(Map<String, Object> params);
+
     List<PssAnalyReltEntity> getAnalyWayByBussType(Integer bussType);
 
     List<PssDatasetInfoEntity> getDataSetByAnalyWay(String analyWay);
