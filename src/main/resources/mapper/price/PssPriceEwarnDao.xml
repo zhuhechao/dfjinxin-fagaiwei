@@ -60,8 +60,17 @@
     </select>-->
 
     <select id="queryType3Warn" resultMap="pssPriceEwarnMap">
-        select max(ppe.ewarn_date) as ewarn_date,ppe.*
-        from pss_price_ewarn ppe group by ppe.comm_id
+        select ewarn_id,comm_id,
+           stat_area_code,
+           pric_type_id,
+           ewarn_type_id,
+           ewarn_level,
+           pri_value,
+           pri_range,
+           max(ppe.ewarn_date) as ewarn_date
+        from pss_price_ewarn ppe
+        group by ppe.comm_id
+        order by ewarn_date desc;
     </select>
 
 
