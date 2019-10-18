@@ -13,6 +13,7 @@
         <result property="depeVar" column="depe_var"/>
         <result property="remarks" column="remarks"/>
         <result property="crteTime" column="crte_time"/>
+        <result property="bussType" column="buss_type"/>
     </resultMap>
 
 </mapper>

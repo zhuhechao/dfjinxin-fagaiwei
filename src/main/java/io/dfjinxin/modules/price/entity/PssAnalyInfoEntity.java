@@ -78,7 +78,8 @@ public class PssAnalyInfoEntity implements Serializable {
 //        if ("一般相关性分析".equals(from.getAnalyWay())) {
 //            to.depeVar = to.indeVar;
 //        }
-
+        if(to.getBussType()==null)
+            to.setBussType(1);//默认一般相关性分析
         return to;
     }
 

@@ -6,8 +6,10 @@ import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.modules.price.dao.PssAnalyReltDao;
 import io.dfjinxin.modules.price.entity.PssAnalyReltEntity;
 import io.dfjinxin.modules.price.service.PssAnalyReltService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -21,4 +23,11 @@ public class PssAnalyReltServiceImpl extends ServiceImpl<PssAnalyReltDao, PssAna
         return new PageUtils(page);
     }
 
+    @Autowired
+    private PssAnalyReltDao pssAnalyReltDao;
+
+    @Override
+    public List<PssAnalyReltEntity> getList(Map<String, Object> params ) {
+        return pssAnalyReltDao.getList(params);
+    }
 }

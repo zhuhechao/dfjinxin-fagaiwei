@@ -19,4 +19,5 @@ import java.util.Map;
 @Mapper
 public interface PssAnalyReltDao extends BaseMapper<PssAnalyReltEntity> {
     Page queryPage(Page page, @Param("param")Map map);
+    List<PssAnalyReltEntity>getList(@Param("param")Map map);
 }

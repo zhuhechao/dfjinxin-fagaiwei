@@ -13,6 +13,8 @@ import io.dfjinxin.modules.price.service.PssAnalyInfoService;
 import io.dfjinxin.modules.price.service.PssAnalyReltService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections.map.CaseInsensitiveMap;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.zookeeper.server.DataNode;
@@ -74,7 +76,7 @@ public class PssAnalyInfoController {
     /**
      * 运行一般相关性分析
      */
-    @PostMapping("/runGeneral ")
+    @PostMapping("/runGeneral")
     @ApiOperation("运行")
     public R runGeneral (@RequestBody PssAnalyInfoDto dto) {
 
@@ -93,6 +95,23 @@ public class PssAnalyInfoController {
                 JSONArray jsonArray = JSONArray.parseArray(jsonObject.get("coe").toString());
                 relt.setAnalyCoe(jsonArray.toJSONString());
             }
+            PssAnalyInfoEntity p = PssAnalyInfoEntity.toEntity(dto);
+            Map map = new CaseInsensitiveMap();
+
+            if(dto.getAnalyId()!=null)
+                map.put("analyId",dto.getAnalyId());
+            else{
+                map.put("analyName",relt.getReltName());
+                map.put("analyWay",relt.getAnalyWay());
+                map.put("datasetId",dto.getDataSetId());
+                map.put("remarks",dto.getRemarks());
+                map.put("indeVar",p.getIndeVar());
+                map.put("depeVar",dto.getDepeVar());
+            }
+            List<PssAnalyReltEntity> list = pssAnalyReltService.getList(map);
+            if(list!=null && list.size()>0)
+                relt.setReltId(list.get(0).getReltId());
+
             pssAnalyReltService.saveOrUpdate(relt);
         }
 
@@ -177,14 +196,16 @@ public class PssAnalyInfoController {
                 "    \"    \"人均猪肉消费量\": 0.7011,\",\n" +
                 "    \"    \"存栏数\": 0.958,\",\n" +
                 "    \"    \"猪肉产量\": 1,\",\n" +
-                "    \"    \"_row\": \"猪肉产量\"\",\n" +
+                "    \"    \"_row\": \"猪肉产+量\"\",\n" +
                 "    \"  }\",\n" +
                 "    \"] \",\n" +
                 "    \"\",\n" +
                 "    \"\"\n" +
                 "  ]\n" +
                 "}";
-        strRet = testCallPy().get("data").toString();
+        R r = testCallPy();
+        if(r.get("data")!=null && !StringUtils.isEmpty(r.get("data").toString()))
+            strRet = r.get("data") .toString();
         JSONObject jsonObject = transStrToJsonObject(strRet);
         return R.ok().put("data",jsonObject
         );

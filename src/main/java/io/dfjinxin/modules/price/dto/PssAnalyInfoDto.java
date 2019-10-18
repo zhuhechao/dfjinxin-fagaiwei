@@ -37,4 +37,8 @@ public class PssAnalyInfoDto implements Serializable {
 
     @ApiModelProperty(value="他变量" ,name="depeVar",required = false)
     private String depeVar;
+
+    @ApiModelProperty(value="业务类型" ,name="bussType",required = true)
+    private Integer bussType;
+
 }

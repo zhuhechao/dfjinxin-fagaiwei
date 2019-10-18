@@ -31,7 +31,45 @@
             AND pdi.data_set_id = #{param.datasetId}
         </if>
         <if test="param.analyName != null and param.analyName.trim() != ''">
-            AND pai.analy_name LIKE concat('%', #{param.analyName}, '%')
+            AND par.relt_name = #{param.analyName}
+        </if>
+        <if test="param.remarks != null and param.remarks.trim() != ''">
+            AND pai.remarks = #{param.remarks}
+        </if>
+        <if test="param.indeVar != null and param.indeVar.trim() != ''">
+            AND pai.inde_var = #{param.indeVar}
+        </if>
+        <if test="param.depeVar != null and param.depeVar.trim() != ''">
+            AND pai.depe_var = #{param.depeVar}
+        </if>
+    </select>
+
+    <select id="getList" resultMap="pssAnalyReltMap">
+        SELECT *
+        FROM pss_analy_relt par
+        LEFT JOIN pss_analy_info pai ON pai.analy_id = par.analy_id
+        LEFT JOIN pss_dataset_info pdi ON pdi.data_set_id = pai.data_set_id
+        WHERE 1 = 1
+        <if test="param.analyWay != null">
+            AND par.analy_way = #{param.analyWay}
+        </if>
+        <if test="param.datasetId != null">
+            AND pdi.data_set_id = #{param.datasetId}
+        </if>
+        <if test="param.analyName != null and param.analyName.trim() != ''">
+            AND par.relt_name = #{param.analyName}
+        </if>
+        <if test="param.remarks != null and param.remarks.trim() != ''">
+            AND pai.remarks = #{param.remarks}
+        </if>
+        <if test="param.indeVar != null and param.indeVar.trim() != ''">
+            AND pai.inde_var = #{param.indeVar}
+        </if>
+        <if test="param.depeVar != null and param.depeVar.trim() != ''">
+            AND pai.depe_var = #{param.depeVar}
+        </if>
+        <if test="param.analyId != null ">
+            AND pai.analy_id = #{param.analyId}
         </if>
     </select>
 </mapper>

@@ -2,8 +2,10 @@ package io.dfjinxin.modules.price.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.common.utils.PageUtils;
+import io.dfjinxin.modules.price.dao.PssAnalyReltDao;
 import io.dfjinxin.modules.price.entity.PssAnalyReltEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +18,6 @@ import java.util.Map;
 public interface PssAnalyReltService extends IService<PssAnalyReltEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+    List<PssAnalyReltEntity> getList(Map<String, Object> params);
 }
 
