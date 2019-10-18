@@ -63,6 +63,14 @@ public class PssCommTotalController {
         return R.ok().put("data", page);
     }
 
+    @PostMapping("/getSubCommByCommId/{commId}")
+    @ApiOperation("根据指定商品id查询该商品的下级商品")
+    public R getSubCommByCommId(@PathVariable("commId") Integer commId) {
+
+        List<PssCommTotalEntity> commList = pssCommTotalService.getSubCommByCommId(commId);
+        return R.ok().put("data", commList);
+    }
+
     /**
      * 保存
      */
