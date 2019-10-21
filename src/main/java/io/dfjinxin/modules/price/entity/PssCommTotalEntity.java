@@ -64,6 +64,12 @@ public class PssCommTotalEntity implements Serializable {
 	@TableField(exist = false)
 	private String ewarnName;
 
+	/**
+	 * pss_comm_conf 表主键
+	 */
+	@TableField(exist = false)
+	private Integer confId;
+
 	@TableField(exist = false)
 	private List<PssCommTotalEntity> subCommList;
 

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -92,6 +93,17 @@ public class PssCommTotalController {
             return R.error("该商品已配置此种类型预警!");
         }
         pssCommConfService.saveCommConf(commId, ewarnIds, indexIds);
+        return R.ok();
+    }
+
+    @PostMapping("/delete/{confId}")
+    @ApiOperation(value = "商品配置-删除配置", notes = "参数传confId")
+    public R save(@RequestBody Integer confId) {
+        PssCommConfEntity commConfEntity = pssCommConfService.getById(confId);
+        if (commConfEntity == null) {
+            return R.error(confId + "数据不存在!");
+        }
+        pssCommConfService.deleteCommConf(confId);
         return R.ok();
     }
 

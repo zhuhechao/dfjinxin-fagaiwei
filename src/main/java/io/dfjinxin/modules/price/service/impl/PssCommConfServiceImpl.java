@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -59,5 +60,16 @@ public class PssCommConfServiceImpl extends ServiceImpl<PssCommConfDao, PssCommC
         where.in("index_id", indexIds);
         where.in("ewarn_id", ewarnIds);
         return pssCommConfDao.selectList(where);
+    }
+
+    @Override
+    public void deleteCommConf(Integer confId) {
+        if (confId != null) {
+            PssCommConfEntity commConfEntity = new PssCommConfEntity();
+            commConfEntity.setConfId(confId);
+            commConfEntity.setDelFlag(1);
+            commConfEntity.setCrteDate(new Date());
+            pssCommConfDao.updateById(commConfEntity);
+        }
     }
 }

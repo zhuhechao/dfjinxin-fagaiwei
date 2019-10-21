@@ -260,6 +260,7 @@
         SELECT c2.*,
         pcc.ewarn_id,
         pcc.remarks,
+        pcc.conf_id as confId,
         pec.ewarn_id,
         pec.ewarn_name
         FROM pss_comm_total c2
