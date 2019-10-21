@@ -21,5 +21,7 @@ public interface PssCommConfService extends IService<PssCommConfEntity> {
     void saveCommConf(Integer commId,List<Integer> ewarnIds,List<Integer> indexIds);
 
     List<PssCommConfEntity> getCommConfByParms(Integer commId, List<Integer> ewarnIds, List<Integer> indexIds);
+
+    void deleteCommConf(Integer confId);
 }
 

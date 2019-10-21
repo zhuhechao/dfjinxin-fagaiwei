@@ -23,6 +23,8 @@ public class PssCommConfEntity implements Serializable {
 	 *
 	 */
 	@TableId
+	private Integer confId;
+
 	private Integer commId;
 	/**
 	 *
