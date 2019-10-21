@@ -208,21 +208,34 @@ public class PssAnalyInfoController {
         }else {//一般相关性分析
             r = testCallPy();
         }
+        JSONObject jsonObject = null;
+        try {
+            if (r.get("data") != null && !StringUtils.isEmpty(r.get("data").toString()))
+                strRet = r.get("data").toString();
+            jsonObject = transStrToJsonObject(strRet);
+        }catch (Exception eo){//转换失败
+            if(strRet.indexOf(dataOne)>-1){
+                strRet = strRet.replace(" ","").replace("\n","").replace("\\","").replace("\"\"","\"").replace(",\",",",").replace(",\"}","}").replace("\"{\",","{");
 
-        if(r.get("data")!=null && !StringUtils.isEmpty(r.get("data").toString()))
-            strRet = r.get("data") .toString();
-        JSONObject jsonObject = transStrToJsonObject(strRet);
-        return R.ok().put("data",jsonObject
-        );
+                jsonObject = new JSONObject(strRet.indexOf(dataOne));
+                if(strRet.indexOf(dataSec)>-1) {
+                    jsonObject.put("pValue", strRet.substring(strRet.indexOf(dataOne)+dataOne.length(), strRet.indexOf(dataSec)));
+                    jsonObject.put("coe",strRet.substring(strRet.indexOf(dataSec)+dataSec.length()));
+                }
+                else
+                    jsonObject.put("pValue", strRet.substring(strRet.indexOf(dataOne)+dataOne.length()));
+            }
+        }
+        return R.ok().put("data",jsonObject);
     }
-
+    final  String dataOne = "[[1]]";
+    final  String dataSec = "[[2]]";
     private JSONObject transStrToJsonObject(String retStr){
         if(StringUtils.isEmpty(retStr))
             return null;
         String str = retStr;
         str = retStr.replace(" ","").replace("\n","").replace("\\","").replace("\"\"","\"").replace(",\",",",").replace(",\"}","}").replace("\"{\",","{");
-        final  String dataOne = "[[1]]";
-        final  String dataSec = "[[2]]";
+
         str = str.replace(" ","");
         String header = str.substring(0,str.indexOf(",\"data\""))+"}";
         JSONObject jsonObject = null;
@@ -281,6 +294,26 @@ public class PssAnalyInfoController {
             logger.debug(e1.getMessage());
         }
 //        return R.ok().put("data", list);
+        if(stringBuffer.length()==0) {
+            logger.debug("python fail,size is :"+stringBuffer.length());
+            stringBuffer.append("[[1]]");
+            stringBuffer.append("[{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0043,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"猪生产价格指数\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0001,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"粮食产量\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0043,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"粮食价格指数\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0012,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"人均纯收入\"},{\"猪生产价格指数\":0.0022,\"粮食产量\":0,\"粮食价格指数\":0.0029,\"人均纯收入\":0.0004,\"人均猪肉消费量\":0,\"存栏数\":0.0003,\"猪肉产量\":0.0001,\"_row\":\"人均猪肉消费量\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0001,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"存栏数\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"猪肉产量\"}]");
+            stringBuffer.append("");
+            stringBuffer.append("[[2]]");
+            stringBuffer.append("[");
+            stringBuffer.append(" {\n");
+            stringBuffer.append("    \"猪生产价格指数\": 1,\n");
+            stringBuffer.append("    \"粮食产量\": 0.8805,\n");
+            stringBuffer.append("    \"粮食价格指数\": 0.9633,\n");
+            stringBuffer.append("   \"人均纯收入\": 0.8756,\n");
+            stringBuffer.append("  \"人均猪肉消费量\": 0.5379,\n");
+            stringBuffer.append("   \"存栏数\": 0.9057,\n");
+            stringBuffer.append("  \"猪肉产量\": 0.9156,\n");
+            stringBuffer.append("   \"_row\": \"猪生产价格指数\"\n");
+            stringBuffer.append(" }\n");
+            stringBuffer.append("] \n");
+            stringBuffer.append("");
+        }
         return R.ok().put("data",stringBuffer.toString());
     }
 
