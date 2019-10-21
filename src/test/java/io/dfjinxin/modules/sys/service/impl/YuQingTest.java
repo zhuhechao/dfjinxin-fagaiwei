@@ -67,13 +67,15 @@ public class YuQingTest {
         params.put("dateType", 1);
         final String apiUrl = "analyze/getTopUrlInfo";
 //        https://jianguan.urlsec.qq.com/analyze/getTopUrlInfo
-        System.out.println("getTopUrlInfo url:" + PATH + apiUrl);
         String jsonStr = JSON.toJSONString(params);
-        logger.info("the getTopUrlInfo req params:{}", jsonStr);
+        System.out.println("getTopUrlInfo url:" + PATH + apiUrl);
         String res = null;
         try {
             res = HttpUtil.doPostJson(PATH + apiUrl, jsonStr);
             logger.info("res:{}", res);
+            System.out.println("getTopUrlInfo url:" + PATH + apiUrl);
+            System.out.println("the getTopUrlInfo req params:" + jsonStr);
+
         } catch (Exception e) {
             logger.error("call-topurl信息-异常:{}", e);
 //            return R.error("调用腾讯接口-getTopUrlInfo异常");

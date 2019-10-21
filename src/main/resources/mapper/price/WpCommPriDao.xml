@@ -21,5 +21,9 @@
         <result property="dataSource" column="data_source"/>
     </resultMap>
 
+    <select id="selectLastPrice" resultType="io.dfjinxin.modules.price.entity.WpCommPriEntity">
+        select wcp.* from wp_comm_pri wcp where comm_id =#{commId} order by data_time desc limit 0,1;
+    </select>
+
 
 </mapper>

@@ -3,6 +3,7 @@ package io.dfjinxin.modules.price.dao;
 import io.dfjinxin.modules.price.entity.WpCommPriEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -16,4 +17,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WpCommPriDao extends BaseMapper<WpCommPriEntity> {
 
+    WpCommPriEntity selectLastPrice(@Param("commId") Integer commId);
 }

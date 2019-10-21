@@ -98,10 +98,10 @@ public class PssCommTotalController {
 
     @PostMapping("/delete/{confId}")
     @ApiOperation(value = "商品配置-删除配置", notes = "参数传confId")
-    public R save(@RequestBody Integer confId) {
+    public R delete(@PathVariable("confId") Integer confId) {
         PssCommConfEntity commConfEntity = pssCommConfService.getById(confId);
         if (commConfEntity == null) {
-            return R.error(confId + "数据不存在!");
+            return R.error("商品配置conf_id-"+confId + ",数据不存在!");
         }
         pssCommConfService.deleteCommConf(confId);
         return R.ok();

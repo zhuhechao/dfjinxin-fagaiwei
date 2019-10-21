@@ -261,12 +261,19 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         map.put("huanBi", huanBi);
         map.put("tongBi", tongBi);
         //计算所有4类商品价格
-        String sql = "select comm_id from pss_comm_total where parent_code=" + commId;
         QueryWrapper where3 = new QueryWrapper();
-        where3.inSql("comm_id", sql);
-        where3.orderByDesc("data_time");
-        List priceList = wpCommPriDao.selectList(where3);
+        where3.eq("parent_code", commId.toString());
+        where3.eq("data_flag", 0);
+        where3.eq("level_code", 3);
+        List<PssCommTotalEntity> commList = pssCommTotalDao.selectList(where3);
+
+        List<WpCommPriEntity> priceList = new ArrayList<>();
+        for (PssCommTotalEntity comm : commList) {
+            WpCommPriEntity pri = wpCommPriDao.selectLastPrice(comm.getCommId());
+            priceList.add(pri);
+        }
         map.put("allPriceList", priceList);
+
         if (priceList != null && priceList.size() > 0) {
             map.put("todayPrice", priceList.get(0));
         }
