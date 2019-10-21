@@ -1,8 +1,8 @@
 package io.dfjinxin.modules.price.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.price.dto.PssAnalyInfoDto;
@@ -14,20 +14,15 @@ import io.dfjinxin.modules.price.service.PssAnalyReltService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.zookeeper.server.DataNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -74,26 +69,26 @@ public class PssAnalyInfoController {
     }
 
     /**
-     * 运行一般相关性分析
+     * 运行相关性分析
      */
     @PostMapping("/runGeneral")
     @ApiOperation("运行")
     public R runGeneral (@RequestBody PssAnalyInfoDto dto) {
 
 //        R r = testCallPy();
-        R r = callRet();
+        R r = callRet(dto);
         JSONObject jsonObject = (JSONObject)r.get("data");
         if(null!=r && r.get("code").toString().equals("0")){
             pssAnalyInfoService.saveOrUpdate(dto);
             PssAnalyReltEntity relt = new PssAnalyReltEntity();
             relt.analyInfoToRelEnt(PssAnalyInfoEntity.toEntity(dto));
             if(null!=jsonObject.get("pValue")){
-                JSONArray jsonArray = JSONArray.parseArray(jsonObject.get("pValue").toString());
-                relt.setPvalue(jsonArray.toJSONString());
+                Object jsonArray = JSONArray.parse(jsonObject.get("pValue").toString(),Feature.OrderedField);
+                relt.setPvalue(jsonArray.toString());
             }
             if(null!=jsonObject.get("coe")) {
-                JSONArray jsonArray = JSONArray.parseArray(jsonObject.get("coe").toString());
-                relt.setAnalyCoe(jsonArray.toJSONString());
+                Object jsonArray = JSONArray.parse(jsonObject.get("coe").toString(),Feature.OrderedField);
+                relt.setAnalyCoe(jsonArray.toString());
             }
             PssAnalyInfoEntity p = PssAnalyInfoEntity.toEntity(dto);
             Map map = new CaseInsensitiveMap();
@@ -118,7 +113,7 @@ public class PssAnalyInfoController {
         return R.ok();
     }
 
-    public R callRet() {
+    public R callRet(PssAnalyInfoDto pssAnalyInfoDto ){
         String strRet= "{\n" +
                 "  \"msg\": \"success\",\n" +
                 "  \"code\": 0,\n" +
@@ -203,7 +198,17 @@ public class PssAnalyInfoController {
                 "    \"\"\n" +
                 "  ]\n" +
                 "}";
-        R r = testCallPy();
+        R r = null;
+        if(pssAnalyInfoDto.getAnalyWay().equals("偏相关性分析")){
+            r = testCallPy();
+        }else if(pssAnalyInfoDto.getAnalyWay().equals("格兰杰")){
+            r = testCallPy();
+        }else if(pssAnalyInfoDto.getAnalyWay().equals("路径分析")){
+            r = testCallPy();
+        }else {//一般相关性分析
+            r = testCallPy();
+        }
+
         if(r.get("data")!=null && !StringUtils.isEmpty(r.get("data").toString()))
             strRet = r.get("data") .toString();
         JSONObject jsonObject = transStrToJsonObject(strRet);
@@ -226,7 +231,7 @@ public class PssAnalyInfoController {
 
             jsonObject = JSONObject.parseObject(header);
             try {
-                JSONArray jsonArrayOne = JSON.parseArray("[" + data + "]");
+                Object jsonArrayOne = JSONArray.parse("[" + data + "]",Feature.OrderedField);
                 jsonObject.put("pValue",jsonArrayOne);
             }catch(Exception eo){
 
@@ -234,7 +239,7 @@ public class PssAnalyInfoController {
             try {
                 str = str.substring(str.indexOf(dataSec) + dataSec.length() + 1);
                 str = str.substring(str.indexOf("\"[\",") + 4, str.indexOf(",\"]") - 1);
-                JSONArray jsonArraySec = JSONArray.parseArray("[" + str + "]");
+                Object jsonArraySec = JSONArray.parse("["+str+"]", Feature.OrderedField);
                 jsonObject.put("coe",jsonArraySec);
             }catch(Exception es){
 
