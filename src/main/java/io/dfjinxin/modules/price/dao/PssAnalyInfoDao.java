@@ -1,8 +1,12 @@
 package io.dfjinxin.modules.price.dao;
 
-import io.dfjinxin.modules.price.entity.PssAnalyInfoEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.dfjinxin.modules.price.entity.PssAnalyInfoEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -13,5 +17,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface PssAnalyInfoDao extends BaseMapper<PssAnalyInfoEntity> {
-	
+    List<PssAnalyInfoEntity> getAnalyInfo(@Param("param")Map map);
 }

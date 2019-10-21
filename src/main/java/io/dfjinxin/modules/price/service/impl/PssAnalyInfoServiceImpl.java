@@ -26,12 +26,28 @@ public class PssAnalyInfoServiceImpl extends ServiceImpl<PssAnalyInfoDao, PssAna
 
     @Autowired
     private PssDatasetInfoDao pssDatasetInfoDao;
+    @Autowired
+    private PssAnalyInfoDao pssAnalyInfoDao;
 
     @Override
     public PssAnalyInfoDto saveOrUpdate(PssAnalyInfoDto dto) {
         PssAnalyInfoEntity entity = PssAnalyInfoEntity.toEntity(dto);
 
+        if(dto.getAnalyId()==null){
+            Map map = new CaseInsensitiveMap();
+            map.put("analyName",dto.getAnalyName());
+            map.put("analyWay",dto.getAnalyWay());
+            map.put("datasetId",dto.getDataSetId());
+            map.put("remarks",dto.getRemarks());
+            List<PssAnalyInfoEntity>list = getAnalyInfo(map);
+            if(list!=null && list.size()>0) {
+                entity.setAnalyId(list.get(0).getAnalyId());
+                dto.setAnalyId(list.get(0).getAnalyId());
+            }
+        }
         super.saveOrUpdate(entity);
+
+        dto.setAnalyId(entity.getAnalyId());
         return PssAnalyInfoEntity.toData(entity);
     }
 
@@ -79,4 +95,8 @@ public class PssAnalyInfoServiceImpl extends ServiceImpl<PssAnalyInfoDao, PssAna
         return pssDatasetInfoDao.getDataSetByAnalyWay(analyWay);
     }
 
+    @Override
+    public List<PssAnalyInfoEntity> getAnalyInfo(Map<String, Object> params) {
+        return pssAnalyInfoDao.getAnalyInfo(params);
+    }
 }
