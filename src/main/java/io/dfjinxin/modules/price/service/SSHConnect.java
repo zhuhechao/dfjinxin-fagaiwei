@@ -82,11 +82,9 @@ public class SSHConnect {
        try {
            Session session = openConnection();
            InputStream inputStream= executeCommand(cmd,session);
-
            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-           String line;
            StringBuffer stringBuffer = new StringBuffer();
-
+           String line;
            int i = 0;
            while (i < 8 && (line = in.readLine()) != null ) {//服务器环境是返回8次空本地是+1
                if (line.length() == 0) {
