@@ -11,6 +11,7 @@ import io.dfjinxin.modules.price.entity.PssAnalyReltEntity;
 import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
 import io.dfjinxin.modules.price.service.PssAnalyInfoService;
 import io.dfjinxin.modules.price.service.PssAnalyReltService;
+import io.dfjinxin.modules.price.service.SSHConnect;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
@@ -19,6 +20,8 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
@@ -35,8 +38,19 @@ import java.util.Map;
 @RestController
 @RequestMapping("price/pssanalyinfo")
 @Api(tags = "分析信息")
+@Configuration
 public class PssAnalyInfoController {
 
+    @Value("${ssh.user}")
+    private String userName ;
+    @Value("${ssh.host}")
+    private String host;
+
+    @Value("${ssh.pass}")
+    private String pass;
+
+    @Value("${ssh.port}")
+    private int port;
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -206,7 +220,9 @@ public class PssAnalyInfoController {
         }else if(pssAnalyInfoDto.getAnalyWay().equals("路径分析")){
             r = testCallPy();
         }else {//一般相关性分析
-            r = testCallPy();
+            r = callGenerPy("/home/ndrc-test/pyjiaoben/cor_ana.py",new String[]{"\"ana_data_1\"",
+                    "\"Brent_forward_price&output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
+
         }
         JSONObject jsonObject = null;
         try {
@@ -263,6 +279,55 @@ public class PssAnalyInfoController {
 
         }
         return jsonObject;
+    }
+
+    /**
+     * 调用相关分析py
+     * @return
+     */
+    private R callGenerPy(String file,String[] params) {
+        StringBuffer stringBuffer = new StringBuffer();
+        logger.debug("调用 python start");
+
+
+        //调用远程python(239)
+        SSHConnect sshConnect = new SSHConnect(host,userName,pass,port);
+        String commandPy = "python3 " + file + " ";
+        for (String str : params) {
+            commandPy+=  str + " " ;
+        }
+        stringBuffer.append(sshConnect.executePython(commandPy));
+
+//        String file = "/home/ndrc-test/pyjiaoben/cor_ana.py";
+//        logger.debug("file path:" + file);
+//        if(params==null || params.length<2)
+//            return null;
+////        String[] args = new String[]{"python3", file, "/ana_data_1/", "Brent_forward_price&output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa"};
+//        String[] args = new String[]{"python3", file, params[0], params[1]};
+//        for (String str : args) {
+//            logger.debug("call py arg:" + str);
+//        }
+//        try {
+//            Process proc = Runtime.getRuntime().exec(args);// 执行py文件
+//            BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+//            String line = null;
+//            while ((line = in.readLine()) != null) {
+//                logger.debug("call result the result:" + line);
+//                stringBuffer.append(line);
+//            }
+//            in.close();
+//            proc.waitFor();
+//            logger.debug("调用 end");
+//        } catch (Exception e1) {
+//            logger.debug("调用 py异常");
+//            logger.debug(e1.getMessage());
+//        }
+        if(stringBuffer.length()==0) {
+            logger.debug("python general is failed,size is :"+stringBuffer.length());
+            stringBuffer.append("[[1]]");
+            stringBuffer.append("[{\"output\":0}]");
+        }
+        return R.ok().put("data",stringBuffer.toString());
     }
 
     @PostMapping("/testPy")

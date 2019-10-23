@@ -326,6 +326,12 @@
 			<version>4.5.7</version>
 		</dependency>
 
+		<dependency>
+			<groupId>ch.ethz.ganymed</groupId>
+			<artifactId>ganymed-ssh2</artifactId>
+			<version>262</version>
+		</dependency>
+
 	</dependencies>
 
 	<dependencyManagement>
