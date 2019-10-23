@@ -96,7 +96,7 @@ public class SSHConnect {
            while ((line = in.readLine()) != null) {
                if (line.length() == 0)
                    continue;
-               if(StringUtils.trim(line).equals("[root@slave1 ~]#"))
+               if(StringUtils.trim(line).length()>0 && StringUtils.trim(line).substring(StringUtils.trim(line).length()-1).equals("#"))
                    break;
                logger.debug("call result the result:" + line);
 //                list.add(line);

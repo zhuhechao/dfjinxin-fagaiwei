@@ -128,97 +128,17 @@ public class PssAnalyInfoController {
     }
 
     public R callRet(PssAnalyInfoDto pssAnalyInfoDto ){
-        String strRet= "{\n" +
-                "  \"msg\": \"success\",\n" +
-                "  \"code\": 0,\n" +
-                "  \"data\": [\n" +
-                "    \"[[1]]\",\n" +
-                "    \"[{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0043,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"猪生产价格指数\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0001,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"粮食产量\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0043,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"粮食价格指数\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0012,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"人均纯收入\"},{\"猪生产价格指数\":0.0022,\"粮食产量\":0,\"粮食价格指数\":0.0029,\"人均纯收入\":0.0004,\"人均猪肉消费量\":0,\"存栏数\":0.0003,\"猪肉产量\":0.0001,\"_row\":\"人均猪肉消费量\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0001,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"存栏数\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"猪肉产量\"}] \",\n" +
-                "    \"\",\n" +
-                "    \"[[2]]\",\n" +
-                "    \"[\",\n" +
-                "    \"  {\",\n" +
-                "    \"    \"猪生产价格指数\": 1,\",\n" +
-                "    \"    \"粮食产量\": 0.8805,\",\n" +
-                "    \"    \"粮食价格指数\": 0.9633,\",\n" +
-                "    \"    \"人均纯收入\": 0.8756,\",\n" +
-                "    \"    \"人均猪肉消费量\": 0.5379,\",\n" +
-                "    \"    \"存栏数\": 0.9057,\",\n" +
-                "    \"    \"猪肉产量\": 0.9156,\",\n" +
-                "    \"    \"_row\": \"猪生产价格指数\"\",\n" +
-                "    \"  },\",\n" +
-                "    \"  {\",\n" +
-                "    \"    \"猪生产价格指数\": 0.8805,\",\n" +
-                "    \"    \"粮食产量\": 1,\",\n" +
-                "    \"    \"粮食价格指数\": 0.8613,\",\n" +
-                "    \"    \"人均纯收入\": 0.7915,\",\n" +
-                "    \"    \"人均猪肉消费量\": 0.6921,\",\n" +
-                "    \"    \"存栏数\": 0.8642,\",\n" +
-                "    \"    \"猪肉产量\": 0.878,\",\n" +
-                "    \"    \"_row\": \"粮食产量\"\",\n" +
-                "    \"  },\",\n" +
-                "    \"  {\",\n" +
-                "    \"    \"猪生产价格指数\": 0.9633,\",\n" +
-                "    \"    \"粮食产量\": 0.8613,\",\n" +
-                "    \"    \"粮食价格指数\": 1,\",\n" +
-                "    \"    \"人均纯收入\": 0.939,\",\n" +
-                "    \"    \"人均猪肉消费量\": 0.5256,\",\n" +
-                "    \"    \"存栏数\": 0.8972,\",\n" +
-                "    \"    \"猪肉产量\": 0.9466,\",\n" +
-                "    \"    \"_row\": \"粮食价格指数\"\",\n" +
-                "    \"  },\",\n" +
-                "    \"  {\",\n" +
-                "    \"    \"猪生产价格指数\": 0.8756,\",\n" +
-                "    \"    \"粮食产量\": 0.7915,\",\n" +
-                "    \"    \"粮食价格指数\": 0.939,\",\n" +
-                "    \"    \"人均纯收入\": 1,\",\n" +
-                "    \"    \"人均猪肉消费量\": 0.6036,\",\n" +
-                "    \"    \"存栏数\": 0.8545,\",\n" +
-                "    \"    \"猪肉产量\": 0.9409,\",\n" +
-                "    \"    \"_row\": \"人均纯收入\"\",\n" +
-                "    \"  },\",\n" +
-                "    \"  {\",\n" +
-                "    \"    \"猪生产价格指数\": 0.5379,\",\n" +
-                "    \"    \"粮食产量\": 0.6921,\",\n" +
-                "    \"    \"粮食价+格指数\": 0.5256,\",\n" +
-                "    \"    \"人均纯收入\": 0.6036,\",\n" +
-                "    \"    \"人均猪肉消费量\": 1,\",\n" +
-                "    \"    \"存栏数\": 0.6599,\",\n" +
-                "    \"    \"猪肉产量\": 0.7011,\",\n" +
-                "    \"    \"_row\": \"人均猪肉消费量\"\",\n" +
-                "    \"  },\",\n" +
-                "    \"  {\",\n" +
-                "    \"    \"猪生产价格指数\": 0.9057,\",\n" +
-                "    \"    \"粮食产量\": 0.8642,\",\n" +
-                "    \"    \"粮食价格指数\": 0.8972,\",\n" +
-                "    \"    \"人均纯收入\": 0.8545,\",\n" +
-                "    \"    \"人均猪肉消费量\": 0.6599,\",\n" +
-                "    \"    \"存栏数\": 1,\",\n" +
-                "    \"    \"猪肉产量\": 0.958,\",\n" +
-                "    \"    \"_row\": \"存栏数\"\",\n" +
-                "    \"  },\",\n" +
-                "    \"  {\",\n" +
-                "    \"    \"猪生产价格指数\": 0.9156,\",\n" +
-                "    \"    \"粮食产量\": 0.878,\",\n" +
-                "    \"    \"粮食价格指数\": 0.9466,\",\n" +
-                "    \"    \"人均纯收入\": 0.9409,\",\n" +
-                "    \"    \"人均猪肉+消费量\": 0.7011,\",\n" +
-                "    \"    \"存栏数\": 0.958,\",\n" +
-                "    \"    \"猪肉产量\": 1,\",\n" +
-                "    \"    \"_row\": \"猪肉产+量\"\",\n" +
-                "    \"  }\",\n" +
-                "    \"] \",\n" +
-                "    \"\",\n" +
-                "    \"\"\n" +
-                "  ]\n" +
-                "}";
+        String strRet= null;
         R r = null;
         if(pssAnalyInfoDto.getAnalyWay().equals("偏相关性分析")){
-            r = testCallPy();
+            r = callGenerPy("/home/ndrc-test/pyjiaoben/pcor_ana.py",new String[]{"\"ana_data_1\"",
+                    "\"Brent_forward_price&output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
         }else if(pssAnalyInfoDto.getAnalyWay().equals("格兰杰")){
-            r = testCallPy();
+            r = callGenerPy("/home/ndrc-test/pyjiaoben/granger_ana.py",new String[]{"\"ana_data_1\"", "\"Brent_forward_price\" ",
+                    "\"output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
         }else if(pssAnalyInfoDto.getAnalyWay().equals("路径分析")){
-            r = testCallPy();
+           r = callGenerPy("/home/ndrc-test/pyjiaoben/path_ana.py",new String[]{"\"ana_data_1\"", "\"Brent_forward_price\" ",
+                    "\"output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
         }else {//一般相关性分析
             r = callGenerPy("/home/ndrc-test/pyjiaoben/cor_ana.py",new String[]{"\"ana_data_1\"",
                     "\"Brent_forward_price&output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
@@ -298,30 +218,6 @@ public class PssAnalyInfoController {
         }
         stringBuffer.append(sshConnect.executePython(commandPy));
 
-//        String file = "/home/ndrc-test/pyjiaoben/cor_ana.py";
-//        logger.debug("file path:" + file);
-//        if(params==null || params.length<2)
-//            return null;
-////        String[] args = new String[]{"python3", file, "/ana_data_1/", "Brent_forward_price&output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa"};
-//        String[] args = new String[]{"python3", file, params[0], params[1]};
-//        for (String str : args) {
-//            logger.debug("call py arg:" + str);
-//        }
-//        try {
-//            Process proc = Runtime.getRuntime().exec(args);// 执行py文件
-//            BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-//            String line = null;
-//            while ((line = in.readLine()) != null) {
-//                logger.debug("call result the result:" + line);
-//                stringBuffer.append(line);
-//            }
-//            in.close();
-//            proc.waitFor();
-//            logger.debug("调用 end");
-//        } catch (Exception e1) {
-//            logger.debug("调用 py异常");
-//            logger.debug(e1.getMessage());
-//        }
         if(stringBuffer.length()==0) {
             logger.debug("python general is failed,size is :"+stringBuffer.length());
             stringBuffer.append("[[1]]");
