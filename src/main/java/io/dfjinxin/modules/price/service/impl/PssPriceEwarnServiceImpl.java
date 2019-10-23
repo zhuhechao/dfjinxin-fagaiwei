@@ -3,7 +3,6 @@ package io.dfjinxin.modules.price.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import io.dfjinxin.common.dto.PssCommTotalDto;
 import io.dfjinxin.common.utils.DateUtils;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
@@ -18,7 +17,6 @@ import io.dfjinxin.modules.price.entity.WpAsciiInfoEntity;
 import io.dfjinxin.modules.price.entity.WpCommPriEntity;
 import io.dfjinxin.modules.price.service.PssCommTotalService;
 import io.dfjinxin.modules.price.service.PssPriceEwarnService;
-import org.apache.ibatis.annotations.One;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,25 +63,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     @Override
     public Map<String, Object> queryList() {
 
-        /*QueryWrapper<PssCommTotalEntity> where1 = new QueryWrapper();
-        where1.eq("level_code", "0");
-        where1.eq("data_flag", "0");
-        List<PssCommTotalEntity> pssCommTotalEntities = pssCommTotalDao.selectList(where1);
-        List list = new ArrayList<>();
-        Map<String, List<PssPriceEwarnEntity>> map;
-        for (PssCommTotalEntity entity : pssCommTotalEntities) {
-            List<PssPriceEwarnEntity> queryList = pssPriceEwarnDao.queryList(entity.getCommId());
-            map = new HashMap<>();
-            if (1 == entity.getCommId()) {
-                map.put("dazong", queryList);
-            } else {
-                map.put("minsheng", queryList);
-            }
-            list.add(map);
-        }
-        return list;*/
-
-        Map<String, Object> map = queryType3Warn();
+        Map<String, Object> map = firstPageView();
         if (map == null || !map.containsKey("ewanInfo")) {
             return null;
         }
@@ -158,60 +138,105 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         return resultList;
     }
 
+    /**
+     * 首页数据展示
+     *
+     * @return
+     */
     @Override
-    public Map<String, Object> queryType3Warn() {
-        List<Map<String, Object>> list = new ArrayList<>();
-        Map<String, Object> map = new HashMap<>();
-        List todayUp = new ArrayList();
-        List todayDown = new ArrayList();
-        List<PssPriceEwarnEntity> pssPriceEwarnEntityList = pssPriceEwarnDao.queryType3Warn();
-        List<RateValDto> rateValDtos = new ArrayList<>();
-        for (PssPriceEwarnEntity entity : pssPriceEwarnEntityList) {
-            WpAsciiInfoEntity asciiInfoEntity = wpAsciiInfoDao.selectById(entity.getEwarnLevel());
+    public Map<String, Object> firstPageView() {
 
+        Map<String, Object> retMap = new HashMap<>();
+        int todayUp = 0;
+        int todayDown = 0;
+        //当天预警类型占比
+        List<PssPriceEwarnEntity> todayMaxPricEwarnList = new ArrayList<>();
+        QueryWrapper where1 = new QueryWrapper();
+        where1.groupBy("comm_id");
+        List<PssPriceEwarnEntity> priceEwarnList = pssPriceEwarnDao.selectList(where1);
+        for (PssPriceEwarnEntity entity : priceEwarnList) {
+            List<PssPriceEwarnEntity> entities = pssPriceEwarnDao.queryPriceEwarnByCommId(entity.getCommId());
+            if (entities == null || entities.size() < 2) {
+                continue;
+            }
+            PssPriceEwarnEntity today = entities.get(0);
+            PssPriceEwarnEntity yestday = entities.get(1);
+            //统计实时总揽
+            // 大于昨天为上涨
+            if (today.getPriRange().compareTo(yestday.getPriRange()) == 1) {
+                todayUp += 1;
+            }
+            //小于昨天为下跌 相等不计算
+            if (today.getPriRange().compareTo(yestday.getPriRange()) == -1) {
+                todayDown += 1;
+            }
+            todayMaxPricEwarnList.add(entities.get(0));
+        }
+
+        List<RateValDto> rateValDtos = new ArrayList<>();
+        List<PssPriceEwarnEntity> ewanInfoList = new ArrayList<>();
+        for (PssPriceEwarnEntity entity : todayMaxPricEwarnList) {
+            WpAsciiInfoEntity asciiInfoEntity = wpAsciiInfoDao.selectById(entity.getEwarnLevel());
             PssCommTotalEntity commTotalEntity = getParantCommByCommId(entity.getCommId());
             //把预警商品名称设置为父类商品名称
             entity.setCommName(commTotalEntity.getCommName());
             entity.setCommId(commTotalEntity.getCommId());
             entity.setEwarnLevel(asciiInfoEntity.getCodeName());
-            //统计实时总揽
-            if (entity.getPriRange().compareTo(BigDecimal.ZERO) == 1) {
-                todayUp.add(entity);
-            }
-            if (entity.getPriRange().compareTo(BigDecimal.ZERO) == -1) {
-                todayDown.add(entity);
-            }
-
+            ewanInfoList.add(entity);
+            //用于计算预警类型占比
             RateValDto rateValDto = new RateValDto();
             rateValDto.setEwanName(asciiInfoEntity.getCodeName());
             rateValDto.setEwarnLevel(entity.getEwarnLevel());
             rateValDtos.add(rateValDto);
-
         }
-        //商品预警详情
-        map.put("ewanInfo", pssPriceEwarnEntityList);
-        QueryWrapper where = new QueryWrapper();
-        where.eq("data_flag", 0);
-        int commTotal = pssCommTotalDao.selectCount(where);
-        //商品总数量
-        map.put("commTotal", commTotal);
-        //今日上涨数量
-        map.put("totalUp", todayUp.size());
-        //今日下跌数量
-        map.put("totalDown", todayDown.size());
-        //商品预警类型占比
-//        contionRateVal(rateValDtos);
-        map.put("rateVel", contionRateVal(rateValDtos));
 
-        //商品最近一个月涨跌值
         QueryWrapper where2 = new QueryWrapper();
-        //一个月前没有，暂时改成一年前
-//        where2.between("Date(ewarn_date)", DateUtils.getLastMonthByVal(1), DateUtils.getCurrentDayStr());
-        where2.between("Date(ewarn_date)", DateUtils.getLastYearByVal(1), DateUtils.getCurrentDayStr());
-        List<PssPriceEwarnEntity> priValList = pssPriceEwarnDao.selectList(where2);
-        map.put("priVal", priValList);
-        return map;
+        where2.eq("data_flag", 0);
+        int commTotal = pssCommTotalDao.selectCount(where2);
+        //商品总数量
+        retMap.put("commTotal", commTotal);
+        //最近所有商品一个月涨跌值
+        QueryWrapper where3 = new QueryWrapper();
+        //一个月前
+        where3.between("Date(ewarn_date)", DateUtils.getLastMonthByVal(1), DateUtils.getCurrentDayStr());
+//        一年前
+//        where3.between("Date(ewarn_date)", DateUtils.getLastYearByVal(1), DateUtils.getCurrentDayStr());
+        List<PssPriceEwarnEntity> monthPriRangeList = pssPriceEwarnDao.selectList(where3);
+        retMap.put("priVal", monthPriRangeList);
+        //今日上涨数量
+        retMap.put("totalUp", todayUp);
+        //今日下跌数量
+        retMap.put("totalDown", todayDown);
+        //当前天商品预警类型占比
+        retMap.put("rateVel", contionRateVal(rateValDtos));
+        //商品预警详情
+        retMap.put("ewanInfo", distinctSameSubCommEwarn(ewanInfoList));
+        return retMap;
     }
+
+    private List distinctSameSubCommEwarn(List<PssPriceEwarnEntity> ewanInfoList) {
+        //用于存放重复的元素的list
+//        List<PssPriceEwarnEntity> repeatList = new ArrayList<>();
+        for (int i = 0; i < ewanInfoList.size() - 1; i++) {
+            for (int j = ewanInfoList.size() - 1; j > i; j--) {
+                if (ewanInfoList.get(j).getCommId().equals(ewanInfoList.get(i).getCommId())) {
+                    //把相同元素加入list(找出相同的)
+//                    repeatList.add(ewanInfoList.get(j));
+                    if (ewanInfoList.get(j).getPriRange().compareTo(ewanInfoList.get(i).getPriRange()) == 1) {
+                        ewanInfoList.remove(i);//删除重复元素
+                    } else {
+                        ewanInfoList.remove(j);//删除重复元素
+                    }
+                }
+            }
+        }
+//        for (PssPriceEwarnEntity entity : repeatList) {
+//            System.out.println(entity.getCommId());
+//            System.out.println(entity.getPriRange());
+//        }
+        return ewanInfoList;
+    }
+
 
     /**
      * 计算二级页面增副和所有价格数据

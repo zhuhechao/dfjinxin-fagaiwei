@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author z.h.c
@@ -50,4 +51,6 @@ public interface PssCommTotalDao extends BaseMapper<PssCommTotalEntity> {
     int findCommCountByLevelCode2(@Param("parentCode") Integer parentCode, @Param("param") PssCommTotalDto dto);
 
     PssCommTotalEntity getType1CommBySubCommId(@Param("commId")Integer commId);
+
+    List<PssCommTotalEntity> getDistinctSameParentCode(@Param("commIds") Set<Integer> commIds);
 }

@@ -309,6 +309,10 @@
                 where comm_id = #{commId}))
 
     </select>
+    <select id="getDistinctSameParentCode" resultType="io.dfjinxin.modules.price.entity.PssCommTotalEntity">
+        select distinct parent_code from pss_comm_total
+        where comm_id in (#{commIds})
+    </select>
 
 
 </mapper>
