@@ -338,9 +338,10 @@ public class DateUtils {
 
 
     public static void main(String[] args) {
-        System.out.println(DateUtils.getLastMonthByVal(1));
-        System.out.println(DateUtils.getLastYearByVal(1));
-        System.out.println(DateUtils.dateToStr(DateUtils.addDateDays(new Date(),-1)));
+        System.out.println(DateUtils.addDateDays(new Date(),-1));
+//        System.out.println(DateUtils.getLastMonthByVal(1));
+//        System.out.println(DateUtils.getLastYearByVal(1));
+//        System.out.println(DateUtils.dateToStr(DateUtils.addDateDays(new Date(),-1)));
 //        System.out.println(DateUtils.getCurrentDayStr());
     }
 }

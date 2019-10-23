@@ -75,6 +75,15 @@ public class PssEwarnConfController {
         return R.ok();
     }
 
+    @PostMapping("/update")
+    @ApiOperation("预警配置-修改")
+    public R update(@RequestBody PssEwarnConfEntity pssEwarnConf) {
+        ValidatorUtils.validateEntity(pssEwarnConf);
+        pssEwarnConf.setCrteDate(new Date());
+        pssEwarnConfService.updateById(pssEwarnConf);
+        return R.ok();
+    }
+
     /**
      * 删除
      */

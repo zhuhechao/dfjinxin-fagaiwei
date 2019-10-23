@@ -27,5 +27,7 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
     Map<String, Object> converZF(Integer commId);
 
     Map<String, Object> firstPageView();
+
+    Map<String, Object> firstPageView2();
 }
 
