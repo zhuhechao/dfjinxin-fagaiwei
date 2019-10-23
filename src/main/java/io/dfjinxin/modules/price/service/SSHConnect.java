@@ -6,15 +6,12 @@ import ch.ethz.ssh2.Session;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 
 import java.io.*;
 
 /**
  * Created by yzn00 on 2019/10/22.
  */
-@Configuration
 public class SSHConnect {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -22,8 +19,6 @@ public class SSHConnect {
 
     private static final int RECONNECT_TIMES = 20;
 
-    @Value("${ssh.user")
-    private String name;
     private String userName ;
 
     public String getUserName() {

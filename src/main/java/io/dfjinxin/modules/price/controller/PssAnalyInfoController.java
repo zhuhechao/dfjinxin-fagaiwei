@@ -183,7 +183,6 @@ public class PssAnalyInfoController {
                 Object jsonArrayOne = JSONArray.parse("[" + data + "]",Feature.OrderedField);
                 jsonObject.put("pValue",jsonArrayOne);
             }catch(Exception eo){
-
             }
             try {
                 str = str.substring(str.indexOf(dataSec) + dataSec.length() + 1);
@@ -191,12 +190,9 @@ public class PssAnalyInfoController {
                 Object jsonArraySec = JSONArray.parse("["+str+"]", Feature.OrderedField);
                 jsonObject.put("coe",jsonArraySec);
             }catch(Exception es){
-
             }
 
-
         }catch (Exception e){
-
         }
         return jsonObject;
     }
