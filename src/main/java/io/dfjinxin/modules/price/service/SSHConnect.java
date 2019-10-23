@@ -64,7 +64,7 @@ public class SSHConnect {
 
     private int sleepTime=100;
 
-    private int waitTime=10;
+    private int waitTime=500;
 
     public  SSHConnect(String ip,String userName,String pass,int port ){
         this.host = ip;
@@ -86,15 +86,16 @@ public class SSHConnect {
            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
            String line;
            StringBuffer stringBuffer = new StringBuffer();
-           int rows = 1000;
+
            int i = 0;
-           while ((line = in.readLine()) != null) {
-               if (line.length() == 0)
+           while (i < 8 && (line = in.readLine()) != null ) {//服务器环境是返回8次空本地是+1
+               if (line.length() == 0) {
+                   logger.debug("exe numbers "+i++);
                    continue;
+               }
                if(StringUtils.trim(line).length()>0 && StringUtils.trim(line).substring(StringUtils.trim(line).length()-1).equals("#"))
                    break;
                logger.debug("call result the result:" + line);
-//                list.add(line);
                stringBuffer.append(line);
            }
            in.close();
