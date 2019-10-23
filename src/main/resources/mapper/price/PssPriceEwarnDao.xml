@@ -59,7 +59,7 @@
         group by pct.parent_code
     </select>-->
 
-    <select id="queryType3Warn" resultMap="pssPriceEwarnMap">
+    <!--<select id="queryType3Warn" resultMap="pssPriceEwarnMap">
         select ewarn_id,comm_id,
            stat_area_code,
            pric_type_id,
@@ -71,7 +71,7 @@
         from pss_price_ewarn ppe
         group by ppe.comm_id
         order by ewarn_date desc;
-    </select>
+    </select>-->
 
 
     <select id="queryEwarnlevel" resultType="io.dfjinxin.modules.price.entity.PssPriceEwarnEntity">
@@ -86,6 +86,10 @@
     <select id="selectMaxDateTimeEntiey" resultType="io.dfjinxin.modules.price.entity.PssPriceEwarnEntity">
        select max(ppe.ewarn_date) as ewarn_date,ppe.pri_value,ppe.comm_id
         FROM pss_price_ewarn ppe where comm_id =#{commId}
+    </select>
+
+    <select id="queryPriceEwarnByCommId" resultType="io.dfjinxin.modules.price.entity.PssPriceEwarnEntity">
+        select * from pss_price_ewarn where comm_id=#{commId} order by ewarn_date desc limit 0,2
     </select>
 
 
