@@ -92,7 +92,7 @@ public class PssAnalyInfoController {
 //        R r = testCallPy();
         R r = callRet(dto);
         JSONObject jsonObject = (JSONObject)r.get("data");
-        if(null!=r && r.get("code").toString().equals("0")){
+        if(null!=r && r.get("code").toString().equals("0") && jsonObject!=null){
             pssAnalyInfoService.saveOrUpdate(dto);
             PssAnalyReltEntity relt = new PssAnalyReltEntity();
             relt.analyInfoToRelEnt(PssAnalyInfoEntity.toEntity(dto));
@@ -122,9 +122,10 @@ public class PssAnalyInfoController {
                 relt.setReltId(list.get(0).getReltId());
 
             pssAnalyReltService.saveOrUpdate(relt);
+            return R.ok();
         }
 
-        return R.ok();
+        return R.error("未更新任何信息！");
     }
 
     public R callRet(PssAnalyInfoDto pssAnalyInfoDto ){
@@ -156,10 +157,10 @@ public class PssAnalyInfoController {
                 jsonObject = new JSONObject(strRet.indexOf(dataOne));
                 if(strRet.indexOf(dataSec)>-1) {
                     jsonObject.put("pValue", strRet.substring(strRet.indexOf(dataOne)+dataOne.length(), strRet.indexOf(dataSec)));
-                    jsonObject.put("coe",strRet.substring(strRet.indexOf(dataSec)+dataSec.length()));
+                    jsonObject.put("coe",strRet.substring(strRet.indexOf(dataSec)+dataSec.length(),strRet.lastIndexOf("}]")+2));
                 }
                 else
-                    jsonObject.put("pValue", strRet.substring(strRet.indexOf(dataOne)+dataOne.length()));
+                    jsonObject.put("pValue", strRet.substring(strRet.indexOf(dataOne)+dataOne.length(),strRet.indexOf("}]")+2));
             }
         }
         return R.ok().put("data",jsonObject);
