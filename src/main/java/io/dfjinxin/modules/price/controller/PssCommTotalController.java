@@ -3,6 +3,7 @@ package io.dfjinxin.modules.price.controller;
 import io.dfjinxin.common.dto.PssCommTotalDto;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
+import io.dfjinxin.common.validator.ValidatorUtils;
 import io.dfjinxin.modules.price.entity.PssCommConfEntity;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import io.dfjinxin.modules.price.service.PssCommConfService;
@@ -14,7 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -96,12 +98,37 @@ public class PssCommTotalController {
         return R.ok();
     }
 
+    @PostMapping("/update")
+    @ApiOperation(value = "商品配置-修改")
+    public R save(@RequestBody PssCommConfEntity entity) {
+        ValidatorUtils.validateEntity(entity);
+        if (entity == null) {
+            return R.error("请求参数为空!");
+        }
+
+        List<Integer> ewarnIds = new ArrayList<>();
+        ewarnIds.add(entity.getEwarnId());
+        List<Integer> indexIds = new ArrayList<>();
+        indexIds.add(entity.getIndexId());
+
+        List<PssCommConfEntity> commConfEntityList = pssCommConfService.getCommConfByParms(entity.getCommId(),
+                ewarnIds, indexIds);
+        if (commConfEntityList != null && commConfEntityList.size() > 0) {
+            return R.error("该商品已配置此种类型预警!");
+        }
+
+        entity.setCrteDate(new Date());
+        pssCommConfService.updateById(entity);
+        return R.ok();
+    }
+
+
     @PostMapping("/delete/{confId}")
     @ApiOperation(value = "商品配置-删除配置", notes = "参数传confId")
     public R delete(@PathVariable("confId") Integer confId) {
         PssCommConfEntity commConfEntity = pssCommConfService.getById(confId);
         if (commConfEntity == null) {
-            return R.error("商品配置conf_id-"+confId + ",数据不存在!");
+            return R.error("商品配置conf_id-" + confId + ",数据不存在!");
         }
         pssCommConfService.deleteCommConf(confId);
         return R.ok();

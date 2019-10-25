@@ -67,6 +67,7 @@ public class PssDatasetInfoController {
     @ApiOperation("获取hive表名")
     public R getHiveTableNames() {
         String sql = "show tables";
+        // pss_comm_total,wp_index_base_info
         List<Map<String, Object>> tableNameList = hiveService.selectData(sql);
         return R.ok().put("data", tableNameList);
     }
@@ -87,9 +88,15 @@ public class PssDatasetInfoController {
      */
     @PostMapping("/save")
     @ApiOperation("保存")
-//    public R save(@RequestBody PssDatasetInfoDto dto) {
     public R save(@RequestBody PssDatasetInfoEntity dto) {
         pssDatasetInfoService.save(dto);
+        return R.ok();
+    }
+
+    @PostMapping("/delete{dataSetId}")
+    @ApiOperation("删除")
+    public R delete(@RequestBody Integer dataSetId) {
+        pssDatasetInfoService.removeById(dataSetId);
         return R.ok();
     }
 }
