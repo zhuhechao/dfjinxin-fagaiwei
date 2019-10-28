@@ -93,7 +93,7 @@ public class PssDatasetInfoController {
         return R.ok();
     }
 
-    @PostMapping("/delete{dataSetId}")
+    @PostMapping("/delete/{dataSetId}")
     @ApiOperation("删除")
     public R delete(@RequestBody Integer dataSetId) {
         pssDatasetInfoService.removeById(dataSetId);

@@ -19,5 +19,7 @@ public interface WpBaseIndexInfoService extends IService<WpBaseIndexInfoEntity> 
     PageUtils queryPage(Map<String, Object> params);
 
     List<WpBaseIndexInfoEntity> getIndexNameByType(Integer commId);
+
+    List<WpBaseIndexInfoEntity> getIndexTreeByCommId(Integer commId);
 }
 

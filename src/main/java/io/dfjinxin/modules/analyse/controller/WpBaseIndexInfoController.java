@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 
-
 /**
- *
- *
  * @author z.h.c
  * @email z.h.c@126.com
  * @date 2019-09-02 15:38:20
@@ -34,10 +31,15 @@ public class WpBaseIndexInfoController {
      */
     @GetMapping("/info/{commId}")
     @ApiOperation("根据4类商品id获取该商品指标类型为'价格'的指标名称,eg:172,115,201")
-    public R info(@PathVariable("commId") Integer commId){
-		List<WpBaseIndexInfoEntity> indexNameByList = wpBaseIndexInfoService.getIndexNameByType(commId);
-
+    public R info(@PathVariable("commId") Integer commId) {
+        List<WpBaseIndexInfoEntity> indexNameByList = wpBaseIndexInfoService.getIndexNameByType(commId);
         return R.ok().put("data", indexNameByList);
     }
 
+    @GetMapping("/tree/{commId}")
+    @ApiOperation("根据4类商品id获取该商品的指标类型、指标名称tree")
+    public R tree(@PathVariable("commId") Integer commId) {
+        List<WpBaseIndexInfoEntity> tree = wpBaseIndexInfoService.getIndexTreeByCommId(commId);
+        return R.ok().put("data", tree);
+    }
 }
