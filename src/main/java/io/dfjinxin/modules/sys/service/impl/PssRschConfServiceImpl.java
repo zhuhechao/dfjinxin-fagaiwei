@@ -24,6 +24,8 @@ public class PssRschConfServiceImpl extends ServiceImpl<PssRschConfDao, PssRschC
         addQueryCondition(params,"rptType","rpt_type","eq",qr);
         addQueryCondition(params,"rschFreq","rsch_Freq","eq",qr);
         addQueryCondition(params,"rschName","rsch_name","like",qr);
+        params.put("delFlag","0");
+        addQueryCondition(params,"delFlag","del_flag","eq",qr);
         //addQueryCondition(params,"rcshId","rcsh_id",qr);
         qr.orderByDesc("create_time");
 
@@ -44,7 +46,7 @@ public class PssRschConfServiceImpl extends ServiceImpl<PssRschConfDao, PssRschC
             if ("eq".equals(queryType)){
                 qr.eq(con_cloum,o.toString());
             }
-                qr.eq("del_flag",0);
+
         }
     }
 
