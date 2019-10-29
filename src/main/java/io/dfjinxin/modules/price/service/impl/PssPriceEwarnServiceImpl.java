@@ -17,7 +17,6 @@ import io.dfjinxin.modules.price.entity.WpAsciiInfoEntity;
 import io.dfjinxin.modules.price.entity.WpCommPriEntity;
 import io.dfjinxin.modules.price.service.PssCommTotalService;
 import io.dfjinxin.modules.price.service.PssPriceEwarnService;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -347,22 +346,23 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     public Map<String, Object> converZF(Integer commId) {
 
         Map<String, Object> map = new HashMap<>();
-        PssPriceEwarnEntity entity = pssPriceEwarnDao.selectMaxRange(commId);
-        //计算当天价格
-        PssPriceEwarnEntity today = pssPriceEwarnDao.selectMaxDateTimeEntiey(entity.getCommId());
-        BigDecimal todayPriValue = today.getPriValue();
+        //昨天时间
+        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
+        // 查询昨天涨幅最大的4类商品预警
+        PssPriceEwarnEntity entity = pssPriceEwarnDao.selectMaxRange(commId,lastDayStr);
+        BigDecimal lastPriValue = entity.getPriValue();
 
-        //计算昨天价格
-        Date lastDate = DateUtils.addDateDays(today.getEwarnDate(), -1);
+        //计算前天价格
+        Date last2Date = DateUtils.addDateDays(entity.getEwarnDate(), -1);
         QueryWrapper where2 = new QueryWrapper();
-        where2.eq("Date(ewarn_date)", DateUtils.dateToStr(lastDate));
+        where2.eq("Date(ewarn_date)", DateUtils.dateToStr(last2Date));
         where2.eq("comm_id", entity.getCommId());
         PssPriceEwarnEntity entity1 = pssPriceEwarnDao.selectOne(where2);
-        BigDecimal lastDayPriValue = entity1.getPriValue();
+        BigDecimal last2DayPriValue = entity1.getPriValue();
 
         //计算上月今日价格
         QueryWrapper where4 = new QueryWrapper();
-        Date lastMonthDay = DateUtils.addDateDays(today.getEwarnDate(), -30);
+        Date lastMonthDay = DateUtils.addDateDays(entity.getEwarnDate(), -31);
         where4.eq("Date(ewarn_date)", DateUtils.dateToStr(lastMonthDay));
         where4.eq("comm_id", entity.getCommId());
         PssPriceEwarnEntity entity2 = pssPriceEwarnDao.selectOne(where4);
@@ -371,9 +371,9 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         BigDecimal ONE = new BigDecimal(1);
         BigDecimal HUN = new BigDecimal(100);
         //环比
-        BigDecimal huanBiTemp = todayPriValue.divide(lastMonthTodayPrice, 2, RoundingMode.HALF_UP).subtract(ONE);
+        BigDecimal huanBiTemp = lastPriValue.divide(lastMonthTodayPrice, 2, RoundingMode.HALF_UP).subtract(ONE);
         // 同比
-        BigDecimal tongBiTemp = todayPriValue.divide(lastDayPriValue, 2, RoundingMode.HALF_UP).subtract(ONE);
+        BigDecimal tongBiTemp = lastPriValue.divide(last2DayPriValue, 2, RoundingMode.HALF_UP).subtract(ONE);
         String huanBi = huanBiTemp.multiply(HUN).toString() + "%";
         String tongBi = tongBiTemp.multiply(HUN).toString() + "%";
         map.put("huanBi", huanBi);
@@ -401,7 +401,6 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     private PssCommTotalEntity getParantCommByCommId(Integer commId) {
 
         PssCommTotalEntity level_code3Comm = pssCommTotalDao.selectById(commId);
-
         QueryWrapper where2 = new QueryWrapper();
         where2.eq("comm_id", level_code3Comm.getParentCode());
         where2.eq("level_code", 2);

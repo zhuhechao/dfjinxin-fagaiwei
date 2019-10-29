@@ -14,16 +14,6 @@ import java.util.List;
 @Service("pssDatasetInfoService")
 public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, PssDatasetInfoEntity> implements PssDatasetInfoService {
 
-
-    @Override
-    public PssDatasetInfoDto saveOrUpdate(PssDatasetInfoDto dto) {
-        PssDatasetInfoEntity entity = PssDatasetInfoEntity.toEntity(dto);
-        //TODO 调用python返回成功则入库存
-
-        super.saveOrUpdate(entity);
-        return PssDatasetInfoEntity.toData(entity);
-    }
-
     @Override
     public List<PssDatasetInfoDto> listAll() {
         return baseMapper.selectList(new QueryWrapper());

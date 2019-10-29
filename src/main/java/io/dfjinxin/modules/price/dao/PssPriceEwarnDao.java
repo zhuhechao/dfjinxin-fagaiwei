@@ -27,14 +27,16 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
 
     List<PssPriceEwarnEntity> queryEwarnlevel();
 
-    PssPriceEwarnEntity selectMaxRange(@Param("commId") Integer commId);
+    PssPriceEwarnEntity selectMaxRange(
+            @Param("commId") Integer commId,
+            @Param("dateStr") String dateStr);
 
-    PssPriceEwarnEntity selectMaxDateTimeEntiey(@Param("commId") Integer commId);
+//    PssPriceEwarnEntity selectMaxDateTimeEntiey(@Param("commId") Integer commId);
 
     List<PssPriceEwarnEntity> queryPriceEwarnByCommId(@Param("commId") Integer commId);
 
-    List<PssPriceEwarnEntity> queryPriceEwarnByDate(@Param("commId")Integer commId,
-                                                    @Param("dateStr")String dateStr);
+    List<PssPriceEwarnEntity> queryPriceEwarnByDate(@Param("commId") Integer commId,
+                                                    @Param("dateStr") String dateStr);
 
-    List<Map<Integer, Object>> countEwarn(@Param("dateStr")String dateStr);
+    List<Map<Integer, Object>> countEwarn(@Param("dateStr") String dateStr);
 }

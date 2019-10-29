@@ -209,7 +209,6 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
             } else {
                 return new PageUtils(null, count, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
             }
-//            return new PageUtils(type1CommList, count, pssCommTotalDto.getPageSize(), pssCommTotalDto.getPageIndex());
         }
 
         return null;

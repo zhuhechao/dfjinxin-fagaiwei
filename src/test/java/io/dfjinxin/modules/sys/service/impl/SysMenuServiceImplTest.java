@@ -1,18 +1,19 @@
 package io.dfjinxin.modules.sys.service.impl;
 
 //import io.dfjinxin.common.validator.Assert;
+
+import com.alibaba.fastjson.JSON;
+import io.dfjinxin.modules.price.controller.PssDatasetInfoController;
+import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
 import io.dfjinxin.modules.price.service.PssPriceEwarnService;
-import io.dfjinxin.modules.sys.entity.GovRootMenuEntity;
-import io.dfjinxin.modules.sys.service.SysMenuService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.util.Assert;
 
-import java.util.List;
+import java.util.Date;
 
 
 @RunWith(SpringRunner.class)
@@ -23,9 +24,26 @@ public class SysMenuServiceImplTest {
 
     @Autowired
     private PssPriceEwarnService pssPriceEwarnService;
+    @Autowired
+    private PssDatasetInfoController controller;
 
     @Test
     public void getMenuFromGovAuth() {
-        pssPriceEwarnService.queryDetail(113,18);
+        pssPriceEwarnService.queryDetail(113, 18);
     }
+
+    @Test
+    public void saveDataSet() {
+        PssDatasetInfoEntity entity = new PssDatasetInfoEntity();
+        entity.setDataSetName("test1028 fhv");
+        entity.setDataSetType(1);
+        entity.setDataTime(new Date());
+        String josnStr = "{'index_id': ['NY_0003271968','NY_0003271977']}";
+//        String josnStr = '{"index_id":"[NY_0003271968","NY_0003271977"]}';
+        entity.setIndeVar(JSON.toJSONString(josnStr));
+        System.out.println(entity.getIndeVar());
+        controller.saveDataSet(entity);
+    }
+
+
 }

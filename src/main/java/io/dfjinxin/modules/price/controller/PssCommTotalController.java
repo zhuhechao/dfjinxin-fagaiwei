@@ -77,9 +77,11 @@ public class PssCommTotalController {
     /**
      * 保存
      */
-    @PostMapping("/save")
-    @ApiOperation(value = "商品配置-保存配置", notes = "commId:4类商品id,ewarnIds:预警id列表,indexIds:商品对应指标类型为价格的列表 .eg:{\"commId\":172, \"ewarnIds\":[3,8],\"indexIds\":[39,40,41] } ")
-    public R save(@RequestBody Map<String, Object> params) {
+    @PostMapping("/saveAndUpdate")
+    @ApiOperation(value = "商品配置-保存&修改配置",
+            notes = "新增操作 commId:4类商品id,ewarnIds:预警id列表,indexIds:商品对应指标类型为价格的列表 .eg:{\"commId\":172, \"ewarnIds\":[3,8],\"indexIds\":[39,40,41] } " +
+                    "更新只剩 confId: 主键id,commId:4类商品id,ewarnIds:预警id,indexIds:商品对应指标类型为价格 eg:{\"confId\":1,\"commId\":172, \"ewarnIds\":[9],\"indexIds\":[42] }")
+    public R saveAndUpdate(@RequestBody Map<String, Object> params) {
         if (params.isEmpty() || params.size() == 0) {
             R.error("请求参数为空!");
         }
@@ -90,17 +92,34 @@ public class PssCommTotalController {
             return R.error("请求参数为空!");
         }
 
-        List<PssCommConfEntity> commConfEntityList = pssCommConfService.getCommConfByParms(commId, ewarnIds, indexIds);
-        if (commConfEntityList != null && commConfEntityList.size() > 0) {
-            return R.error("该商品已配置此种类型预警!");
+
+        //修改
+        if (params.containsKey("confId")) {
+            Integer confId = (Integer) params.get("confId");
+            PssCommConfEntity conf = pssCommConfService.getById(confId);
+            if (conf == null) {
+                return R.error("商品预警" + confId + "-配置不存在!");
+            }
+
+            PssCommConfEntity confEntity = new PssCommConfEntity();
+            confEntity.setConfId(confId);
+            confEntity.setCrteDate(new Date());
+            confEntity.setIndexId(indexIds.get(0));
+            confEntity.setEwarnId(ewarnIds.get(0));
+            pssCommConfService.updateById(confEntity);
+        } else {
+            List<PssCommConfEntity> commConfEntityList = pssCommConfService.getCommConfByParms(commId, ewarnIds, indexIds);
+            if (commConfEntityList != null && commConfEntityList.size() > 0) {
+                return R.error("该商品已配置此种类型预警!");
+            }
+            pssCommConfService.saveCommConf(commId, ewarnIds, indexIds);
         }
-        pssCommConfService.saveCommConf(commId, ewarnIds, indexIds);
         return R.ok();
     }
 
-    @PostMapping("/update")
+    /*@PostMapping("/update")
     @ApiOperation(value = "商品配置-修改")
-    public R save(@RequestBody PssCommConfEntity entity) {
+    public R update(@RequestBody Map<String, Object> params) {
         ValidatorUtils.validateEntity(entity);
         if (entity == null) {
             return R.error("请求参数为空!");
@@ -120,7 +139,7 @@ public class PssCommTotalController {
         entity.setCrteDate(new Date());
         pssCommConfService.updateById(entity);
         return R.ok();
-    }
+    }*/
 
 
     @PostMapping("/delete/{confId}")

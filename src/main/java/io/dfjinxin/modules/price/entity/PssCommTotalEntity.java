@@ -64,6 +64,12 @@ public class PssCommTotalEntity implements Serializable {
 	@TableField(exist = false)
 	private String ewarnName;
 
+	@TableField(exist = false)
+	private Integer ewarnTypeId;
+
+	@TableField(exist = false)
+	private Integer indexId;
+
 	/**
 	 * pss_comm_conf 表主键
 	 */

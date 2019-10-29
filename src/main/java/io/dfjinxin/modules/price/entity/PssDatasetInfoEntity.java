@@ -3,6 +3,7 @@ package io.dfjinxin.modules.price.entity;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.dfjinxin.modules.price.dto.PssDatasetInfoDto;
@@ -37,6 +38,12 @@ public class PssDatasetInfoEntity implements Serializable {
 	 *
 	 */
 	private String dataSetName;
+
+	/**
+	 * 数据集英文名称，由python返回
+	 */
+	@TableField(exist = false)
+	private String dataSetEngName;
 
 	/**
 	 *

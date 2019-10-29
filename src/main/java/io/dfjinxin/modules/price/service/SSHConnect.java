@@ -3,23 +3,25 @@ package io.dfjinxin.modules.price.service;
 import ch.ethz.ssh2.ChannelCondition;
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
+import io.dfjinxin.common.utils.R;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.Date;
 
 /**
  * Created by yzn00 on 2019/10/22.
  */
 public class SSHConnect {
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected static Logger logger = LoggerFactory.getLogger(SSHConnect.class);
 
     private static final int TIMEOUT = 2000;
 
     private static final int RECONNECT_TIMES = 20;
 
-    private String userName ;
+    private String userName;
 
     public String getUserName() {
         return userName;
@@ -62,50 +64,50 @@ public class SSHConnect {
 
     private int port;
 
-    private int sleepTime=100;
+    private int sleepTime = 100;
 
-    private int waitTime=500;
+    private int waitTime = 500;
 
-    public  SSHConnect(String ip,String userName,String pass,int port ){
+    public SSHConnect(String ip, String userName, String pass, int port) {
         this.host = ip;
         this.userName = userName;
         this.pass = pass;
         this.port = port;
     }
-    public SSHConnect(){
+
+    public SSHConnect() {
 
     }
 
-   public  String executePython(String cmd){
+    public String executePython(String cmd) {
 
-       String retStr = null;
-       try {
-           Session session = openConnection();
-           InputStream inputStream= executeCommand(cmd,session);
-           BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-           StringBuffer stringBuffer = new StringBuffer();
-           String line;
-           int i = 0;
-           while (i < 8 && (line = in.readLine()) != null ) {//服务器环境是返回8次空本地是+1
-               if (line.length() == 0) {
-                   logger.debug("exe numbers "+i++);
-                   continue;
-               }
-               if(StringUtils.trim(line).length()>0 && StringUtils.trim(line).substring(StringUtils.trim(line).length()-1).equals("#"))
-                   break;
-               logger.debug("call result the result:" + line);
-               stringBuffer.append(line);
-           }
-           in.close();
-           retStr = stringBuffer.toString();
+        String retStr = null;
+        try {
+            Session session = openConnection();
+            InputStream inputStream = executeCommand(cmd, session);
+            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuffer stringBuffer = new StringBuffer();
+            String line;
+            int i = 0;
+            while (i < 8 && (line = in.readLine()) != null) {//服务器环境是返回8次空本地是+1
+                if (line.length() == 0) {
+                    logger.debug("exe numbers " + i++);
+                    continue;
+                }
+                if (StringUtils.trim(line).length() > 0 && StringUtils.trim(line).substring(StringUtils.trim(line).length() - 1).equals("#"))
+                    break;
+                logger.debug("call result the result:" + line);
+                stringBuffer.append(line);
+            }
+            in.close();
+            retStr = stringBuffer.toString();
 
-       }catch (Exception e){
+        } catch (Exception e) {
 
-       }
-       finally {
-           return retStr;
-       }
-   }
+        } finally {
+            return retStr;
+        }
+    }
 
     public Session openConnection() throws Exception {
 
@@ -230,6 +232,29 @@ public class SSHConnect {
             }
         }
         return null;
+    }
+
+    /**
+     * @Desc: 调用远程python方法
+     * @Param: [file, params]
+     * @Return: io.dfjinxin.common.utils.R
+     * @Author: z.h.c
+     * @Date: 2019/10/28 14:18
+     */
+    public static String callPyProc(String pyFileName,
+                                    String jsonStr,
+                                    String host,
+                                    String userName,
+                                    String pass,
+                                    int port) {
+        logger.debug("调用文件:{},开始---", pyFileName);
+        logger.debug("请求参数:{}", jsonStr);
+        SSHConnect sshConnect = new SSHConnect(host, userName, pass, port);
+        String commandPy = "python3 " + pyFileName + " " + jsonStr;
+        String res = sshConnect.executePython(commandPy);
+        logger.debug("调用文件:{},结束---", pyFileName);
+        logger.debug("python返回结果{}", res);
+        return res;
     }
 
 }

@@ -64,14 +64,20 @@
     </select>
 
     <select id="selectMaxRange" resultType="io.dfjinxin.modules.price.entity.PssPriceEwarnEntity">
-        select max(ppe.pri_range) as pri_range,ppe.comm_id from pss_price_ewarn ppe
-        where comm_id in (select comm_id from pss_comm_total where parent_code=#{commId})
+        select ppe.*
+        from pss_price_ewarn ppe
+        where comm_id in (select pcc.comm_id
+                  from pss_comm_total pcc
+                  where pcc.parent_code = #{commId})
+        and ewarn_date = date(#{dateStr})
+        order by pri_range desc
+        limit 0,1;
     </select>
 
-    <select id="selectMaxDateTimeEntiey" resultType="io.dfjinxin.modules.price.entity.PssPriceEwarnEntity">
+    <!--<select id="selectMaxDateTimeEntiey" resultType="io.dfjinxin.modules.price.entity.PssPriceEwarnEntity">
        select max(ppe.ewarn_date) as ewarn_date,ppe.pri_value,ppe.comm_id
         FROM pss_price_ewarn ppe where comm_id =#{commId}
-    </select>
+    </select>-->
 
     <select id="queryPriceEwarnByCommId" resultType="io.dfjinxin.modules.price.entity.PssPriceEwarnEntity">
         select * from pss_price_ewarn where comm_id=#{commId} order by ewarn_date desc limit 0,2

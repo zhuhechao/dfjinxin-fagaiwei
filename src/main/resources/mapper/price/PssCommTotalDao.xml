@@ -257,12 +257,13 @@
     </select>-->
 
     <select id="selectSubCommByLevelCode2" resultMap="pssCommTotalMap">
-        SELECT c2.*,
+        select c2.*,
         pcc.ewarn_id,
+        pcc.index_id as indexId,
         pcc.remarks,
         pcc.conf_id as confId,
-        pec.ewarn_id,
-        pec.ewarn_name
+        pec.ewarn_name,
+        pec.ewarn_type_id as ewarnTypeId
         FROM pss_comm_total c2
         left join pss_comm_conf pcc on c2.comm_id=pcc.comm_id
         left join pss_ewarn_conf pec on pcc.ewarn_id = pec.ewarn_id
