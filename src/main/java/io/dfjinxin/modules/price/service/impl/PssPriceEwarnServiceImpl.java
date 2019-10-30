@@ -275,6 +275,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         retMap.put("ewanInfo", distinctSameSubCommEwarn(ewanInfoList));
         //查询昨日各种预警级别的数量
         List<Map<Integer, Object>> countList = pssPriceEwarnDao.countEwarn(lastDayStr);
+        Map<String,Object> countMap = new HashMap<>();
         for (Map<Integer, Object> map : countList) {
             if (map != null && !map.isEmpty()) {
                 Integer key = (Integer) map.get("ewarnLevel");
@@ -283,20 +284,27 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 int sum = total.intValue();
                 if (level == 71) {
                     //昨天红色预警涨数量
-                    retMap.put("redEwarnTotal", sum);
+                    countMap.put("redEwarnTotal", sum);
                 }
                 if (level == 72) {
-                    retMap.put("orangeEwarnTotal", sum);
+                    countMap.put("orangeEwarnTotal", sum);
                 }
                 if (level == 73) {
-                    retMap.put("yellowEwarnTotal", sum);
+                    countMap.put("yellowEwarnTotal", sum);
                 }
                 if (level == 74) {
-                    retMap.put("greenEwarnTotal", total);
+                    countMap.put("greenEwarnTotal", total);
                 }
             }
         }
 
+        Map<String,Object> temp = new HashMap<>();
+        temp.put("redEwarnTotal", 0);
+        temp.put("orangeEwarnTotal", 0);
+        temp.put("yellowEwarnTotal", 0);
+        temp.put("greenEwarnTotal", 0);
+        temp.putAll(countMap);
+        retMap.putAll(temp);
         return retMap;
     }
 

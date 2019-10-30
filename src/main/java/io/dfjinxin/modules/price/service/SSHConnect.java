@@ -253,7 +253,9 @@ public class SSHConnect {
         String commandPy = "python3 " + pyFileName + " " + jsonStr;
         String res = sshConnect.executePython(commandPy);
         logger.debug("调用文件:{},结束---", pyFileName);
-        logger.debug("python返回结果{}", res);
+        int index = res.lastIndexOf("{");
+        res = res.substring(index);
+        logger.debug("python返回结果:{}", res);
         return res;
     }
 

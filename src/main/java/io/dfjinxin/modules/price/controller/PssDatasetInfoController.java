@@ -110,7 +110,7 @@ public class PssDatasetInfoController {
     @ApiOperation("保存")
     public R saveDataSet(@RequestBody PssDatasetInfoEntity entity) {
         Log.info("数据集创建-start");
-        Long startTime = new Date().getTime();
+        long startTime = System.currentTimeMillis();
         String pyFileName = "/home/ndrc-test/unstack_single_table.py";
         String result = null;
         try {
@@ -118,7 +118,7 @@ public class PssDatasetInfoController {
         } catch (Exception e) {
             return R.error("调用python-{},文件异常。创建失败!");
         }
-        Log.info("调用文件:{}结束,用时:{}", pyFileName, (new Date().getTime() - startTime) + " 秒!");
+        Log.info("调用文件:{}结束,用时:{}", pyFileName, (System.currentTimeMillis() - startTime)/10000 + "秒!");
 
         JSONObject jsonObj = JSON.parseObject(result);
         String code = jsonObj.getString("code");
