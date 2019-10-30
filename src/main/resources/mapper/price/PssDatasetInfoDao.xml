@@ -10,6 +10,7 @@
         <result property="indeVar" column="inde_var" />
         <result property="dataTime" column="data_time"/>
         <result property="dataSetType" column="data_set_type"/>
+        <result property="dataSetEngName" column="data_set_eng_name"/>
     </resultMap>
 
     <select id="getDataSetByAnalyWay" resultMap="pssDatasetInfoMap">

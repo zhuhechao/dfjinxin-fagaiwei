@@ -42,13 +42,7 @@ public class PssDatasetInfoEntity implements Serializable {
 	/**
 	 * 数据集英文名称，由python返回
 	 */
-	@TableField(exist = false)
 	private String dataSetEngName;
-
-	/**
-	 *
-	 */
-//	private String tabName;
 
 	private String indeVar;
 	/**
