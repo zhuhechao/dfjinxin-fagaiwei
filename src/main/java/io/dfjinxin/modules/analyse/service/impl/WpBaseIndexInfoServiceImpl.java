@@ -10,13 +10,22 @@ import io.dfjinxin.modules.analyse.entity.WpBaseIndexInfoEntity;
 import io.dfjinxin.modules.analyse.service.WpBaseIndexInfoService;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
 @Service("wpBaseIndexInfoService")
 public class WpBaseIndexInfoServiceImpl extends ServiceImpl<WpBaseIndexInfoDao, WpBaseIndexInfoEntity> implements WpBaseIndexInfoService {
+
+    @Override
+    public List<WpBaseIndexInfoEntity> getIndexTreeByIds(String [] ids) {
+        if(ids==null||ids.length<1)
+            return null;
+        QueryWrapper<WpBaseIndexInfoEntity> where = new QueryWrapper<>();
+        where.in("index_id", ids);
+        where.orderByAsc("index_id");
+        return baseMapper.selectList(where);
+    }
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {

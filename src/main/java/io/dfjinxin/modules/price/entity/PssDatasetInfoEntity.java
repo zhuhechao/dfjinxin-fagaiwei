@@ -50,6 +50,9 @@ public class PssDatasetInfoEntity implements Serializable {
 	 */
 	private Date dataTime;
 
+	@TableField(exist = false)
+	private String indeName;
+
 
 	public static PssDatasetInfoEntity toEntity(PssDatasetInfoDto from) {
 		if (null == from) {

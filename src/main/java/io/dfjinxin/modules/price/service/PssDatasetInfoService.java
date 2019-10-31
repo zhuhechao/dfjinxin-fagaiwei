@@ -15,6 +15,6 @@ import java.util.List;
  */
 public interface PssDatasetInfoService extends IService<PssDatasetInfoEntity> {
 
-    List<PssDatasetInfoDto> listAll();
+    List<PssDatasetInfoEntity> listAll();
 }
 

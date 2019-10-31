@@ -2,14 +2,17 @@ package io.dfjinxin.modules.price.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
 import io.dfjinxin.common.utils.R;
+import io.dfjinxin.modules.analyse.entity.WpBaseIndexInfoEntity;
+import io.dfjinxin.modules.analyse.service.WpBaseIndexInfoService;
 import io.dfjinxin.modules.hive.service.HiveService;
-import io.dfjinxin.modules.price.dto.PssDatasetInfoDto;
 import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
 import io.dfjinxin.modules.price.service.PssDatasetInfoService;
 import io.dfjinxin.modules.price.service.SSHConnect;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Desc: 从hive获取数据表，用户选择表中字段的值组合。
@@ -40,6 +43,8 @@ public class PssDatasetInfoController {
     private PssDatasetInfoService pssDatasetInfoService;
     @Autowired
     private HiveService hiveService;
+    @Autowired
+    private WpBaseIndexInfoService wpBaseIndexInfoService;
 
     @Value("${ssh.user}")
     private String userName;
@@ -98,8 +103,36 @@ public class PssDatasetInfoController {
     @GetMapping("/listAll")
     @ApiOperation("返回所有数据集")
     public R listAll() {
-        List<PssDatasetInfoDto> list = pssDatasetInfoService.listAll();
+        List<PssDatasetInfoEntity> list = pssDatasetInfoService.listAll();
+        for(PssDatasetInfoEntity pssDatasetInfoEntity:list){
+            try {
+                Object jsonObject = JSON.parse(pssDatasetInfoEntity.getIndeVar().toString(), Feature.OrderedField);
+                String jsonStr = jsonObject.toString();
+                jsonStr = jsonStr.substring(jsonStr.indexOf("[")+1, jsonStr.indexOf("]"));
+                String []idsOrder = jsonStr.split(",");
+                List<WpBaseIndexInfoEntity> wpAsciiInfoEntityList = wpBaseIndexInfoService.getIndexTreeByIds(idsOrder);
+                final String[] names = new String[wpAsciiInfoEntityList.size()];
+                for(int i = 0;i<idsOrder.length;i++) {
+                    int m = i;
+                    wpAsciiInfoEntityList.forEach(f -> {
+                        if (idsOrder[m].equals(f.getIndexId().toString()))
+                            if (names[0] == null)
+                                names[0] = f.getIndexName() + ",";
+                            else
+                                names[0] += f.getIndexName() + ",";
+                    });
+                }
+                String []nms = names[0].split(",");
+                for(int i=0;i<names.length;i++){
+                    names[i] = nms[i];
+                }
+                Map indeNames = new HashedMap();
+                indeNames.put("indeNames",names);
+                pssDatasetInfoEntity.setIndeName(JSONObject.toJSONString(indeNames));
+            }catch (Exception e){
 
+            }
+        }
         return R.ok().put("list", list);
     }
 

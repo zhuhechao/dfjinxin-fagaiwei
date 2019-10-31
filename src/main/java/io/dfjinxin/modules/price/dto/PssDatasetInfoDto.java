@@ -32,4 +32,7 @@ public class PssDatasetInfoDto implements Serializable {
 
     @ApiModelProperty(value = "字段取值", name = "indeVar", required = true)
     private Map<String, Object> indeVar;
+
+    @ApiModelProperty(value="字段名称",name="indeName",required = false)
+    private Map<String,Object> indeName;
 }

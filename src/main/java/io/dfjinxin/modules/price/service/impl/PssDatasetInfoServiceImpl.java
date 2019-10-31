@@ -15,7 +15,7 @@ import java.util.List;
 public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, PssDatasetInfoEntity> implements PssDatasetInfoService {
 
     @Override
-    public List<PssDatasetInfoDto> listAll() {
+    public List<PssDatasetInfoEntity> listAll() {
         return baseMapper.selectList(new QueryWrapper());
     }
 }

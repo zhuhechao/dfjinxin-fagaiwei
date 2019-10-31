@@ -1,10 +1,14 @@
 package io.dfjinxin.modules.price.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
+import io.dfjinxin.modules.analyse.entity.WpBaseIndexInfoEntity;
+import io.dfjinxin.modules.analyse.service.WpBaseIndexInfoService;
 import io.dfjinxin.modules.price.dto.PssAnalyInfoDto;
 import io.dfjinxin.modules.price.entity.PssAnalyInfoEntity;
 import io.dfjinxin.modules.price.entity.PssAnalyReltEntity;
@@ -15,6 +19,7 @@ import io.dfjinxin.modules.price.service.SSHConnect;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -58,6 +63,9 @@ public class PssAnalyInfoController {
 
     @Autowired
     private PssAnalyReltService pssAnalyReltService;
+
+    @Autowired
+    private WpBaseIndexInfoService wpBaseIndexInfoService;
 
     /**
      * 列表
@@ -287,6 +295,30 @@ public class PssAnalyInfoController {
     @ApiOperation(value = "根据分析类型查询该类型的结果集")
     public R getDataSetByAnalyWay(@PathVariable("AnalyWay") String AnalyWay) {
         List<PssDatasetInfoEntity> dataSetList = pssAnalyInfoService.getDataSetByAnalyWay(AnalyWay);
+        for(PssDatasetInfoEntity pssDatasetInfoEntity:dataSetList){
+            try {
+                Object jsonObject = JSON.parse(pssDatasetInfoEntity.getIndeVar().toString(), Feature.OrderedField);
+                String jsonStr = jsonObject.toString();
+                jsonStr = jsonStr.substring(jsonStr.indexOf("[")+1, jsonStr.indexOf("]"));
+                String []idsOrder = jsonStr.split(",");
+                List<WpBaseIndexInfoEntity> wpAsciiInfoEntityList = wpBaseIndexInfoService.getIndexTreeByIds(idsOrder);
+                final String[] names = new String[wpAsciiInfoEntityList.size()];
+
+                for(int i=0;i<idsOrder.length;i++){
+                    int t = i;
+                    wpAsciiInfoEntityList.forEach(f->{
+                        if(f.getIndexId().toString().equals(idsOrder[t])) {
+                            names[t] = f.getIndexName();
+                        }
+                    });
+                }
+                Map indeNames = new HashedMap();
+                indeNames.put("indeNames",names);
+                pssDatasetInfoEntity.setIndeName(JSONObject.toJSONString(indeNames));
+            }catch (Exception e){
+
+            }
+        }
         return R.ok().put("data", dataSetList);
     }
 

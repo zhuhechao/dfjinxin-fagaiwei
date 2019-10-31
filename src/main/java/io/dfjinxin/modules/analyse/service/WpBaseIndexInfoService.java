@@ -21,5 +21,7 @@ public interface WpBaseIndexInfoService extends IService<WpBaseIndexInfoEntity> 
     List<WpBaseIndexInfoEntity> getIndexNameByType(Integer commId);
 
     List<WpBaseIndexInfoEntity> getIndexTreeByCommId(Integer commId);
+
+    List<WpBaseIndexInfoEntity> getIndexTreeByIds(String []ids);
 }
 
