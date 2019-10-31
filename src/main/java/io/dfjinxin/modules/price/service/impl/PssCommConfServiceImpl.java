@@ -5,11 +5,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
+import io.dfjinxin.modules.job.service.CommonJobService;
 import io.dfjinxin.modules.price.dao.PssCommConfDao;
 import io.dfjinxin.modules.price.dao.PssCommTotalDao;
 import io.dfjinxin.modules.price.entity.PssCommConfEntity;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
+import io.dfjinxin.modules.price.entity.PssEwarnConfEntity;
 import io.dfjinxin.modules.price.service.PssCommConfService;
+import io.dfjinxin.modules.price.service.PssEwarnConfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +30,10 @@ public class PssCommConfServiceImpl extends ServiceImpl<PssCommConfDao, PssCommC
 
     @Autowired
     private PssCommTotalDao pssCommTotalDao;
+    @Autowired
+    private CommonJobService commonJobService;
+    @Autowired
+    private PssEwarnConfService pssEwarnConfService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -64,6 +71,22 @@ public class PssCommConfServiceImpl extends ServiceImpl<PssCommConfDao, PssCommC
     }
 
     @Override
+    public void saveCommomJob(Integer commId, List<Integer> ewarnIds, List<Integer> indexIds) {
+        List<PssCommConfEntity> pcfs=getCommConfByParms(commId,ewarnIds,indexIds);
+        for (PssCommConfEntity py:pcfs){
+           PssEwarnConfEntity pe= pssEwarnConfService.queryEntityByEwarnId(py.getEwarnId()+"");
+           StringBuilder sb=new StringBuilder();
+           sb.append("ewarnId:").append(py.getEwarnId())
+                   .append("@")
+                   .append("commConfId:").append(py.getConfId());
+            commonJobService.saveScheJob(pe.getRschId()+"","warnTask",sb.toString());
+        }
+
+
+    }
+
+
+    @Override
     public void deleteCommConf(Integer confId) {
         if (confId != null) {
             PssCommConfEntity commConfEntity = new PssCommConfEntity();
@@ -73,4 +96,6 @@ public class PssCommConfServiceImpl extends ServiceImpl<PssCommConfDao, PssCommC
             pssCommConfDao.updateById(commConfEntity);
         }
     }
+
+
 }

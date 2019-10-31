@@ -70,8 +70,7 @@ public class PssEwarnConfController {
         ValidatorUtils.validateEntity(pssEwarnConf);
         pssEwarnConf.setDelFlag("0");
         pssEwarnConf.setCrteDate(new Date());
-        pssEwarnConfService.save(pssEwarnConf);
-
+        pssEwarnConfService.saveOrUpdate(pssEwarnConf);
         return R.ok();
     }
 

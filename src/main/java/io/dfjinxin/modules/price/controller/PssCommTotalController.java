@@ -113,6 +113,8 @@ public class PssCommTotalController {
                 return R.error("该商品已配置此种类型预警!");
             }
             pssCommConfService.saveCommConf(commId, ewarnIds, indexIds);
+            //添加调度任务
+            pssCommConfService.saveCommomJob(commId, ewarnIds, indexIds);
         }
         return R.ok();
     }

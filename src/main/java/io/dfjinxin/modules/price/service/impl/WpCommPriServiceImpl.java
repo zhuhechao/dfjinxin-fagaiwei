@@ -1,6 +1,10 @@
 package io.dfjinxin.modules.price.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -24,6 +28,20 @@ public class WpCommPriServiceImpl extends ServiceImpl<WpCommPriDao, WpCommPriEnt
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<WpCommPriEntity> getData(Map<String, Object> params) {
+        String commid=params.get("commId").toString();
+        Date startDate= (Date) params.get("startDate");
+        Date endDate= (Date) params.get("endDate");
+        String priType=  params.get("priType")+"";
+        QueryWrapper  queryWrapper=new QueryWrapper<WpCommPriEntity>();
+        queryWrapper.eq("comm_id",commid);
+        queryWrapper.eq("pri_type",priType);
+        queryWrapper.between("data_time",startDate,endDate);
+        queryWrapper.orderByDesc(new String[]{"data_time"});
+        return baseMapper.selectList(queryWrapper);
     }
 
 }

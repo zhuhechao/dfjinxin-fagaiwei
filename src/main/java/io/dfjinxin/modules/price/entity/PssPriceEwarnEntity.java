@@ -24,7 +24,7 @@ public class PssPriceEwarnEntity implements Serializable {
 	/**
 	 *
 	 */
-//	@TableId
+	@TableId
 	private Integer ewarnId;
 	/**
 	 *

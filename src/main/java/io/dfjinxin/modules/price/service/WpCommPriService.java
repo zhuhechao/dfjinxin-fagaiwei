@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.modules.price.entity.WpCommPriEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,6 @@ import java.util.Map;
 public interface WpCommPriService extends IService<WpCommPriEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+    List<WpCommPriEntity> getData (Map<String, Object> params) ;
 }
 

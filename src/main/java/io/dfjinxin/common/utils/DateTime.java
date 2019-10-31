@@ -338,7 +338,7 @@ public class DateTime {
         c.set(Calendar.HOUR_OF_DAY, 00);
         c.set(Calendar.MINUTE, 00);
         c.set(Calendar.SECOND, 00);
-
+        c.set(Calendar.MILLISECOND, 00);
         return c.getTime();
     }
 
