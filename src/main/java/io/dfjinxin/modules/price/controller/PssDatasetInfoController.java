@@ -105,33 +105,7 @@ public class PssDatasetInfoController {
     public R listAll() {
         List<PssDatasetInfoEntity> list = pssDatasetInfoService.listAll();
         for(PssDatasetInfoEntity pssDatasetInfoEntity:list){
-            try {
-                Object jsonObject = JSON.parse(pssDatasetInfoEntity.getIndeVar().toString(), Feature.OrderedField);
-                String jsonStr = jsonObject.toString();
-                jsonStr = jsonStr.substring(jsonStr.indexOf("[")+1, jsonStr.indexOf("]"));
-                String []idsOrder = jsonStr.split(",");
-                List<WpBaseIndexInfoEntity> wpAsciiInfoEntityList = wpBaseIndexInfoService.getIndexTreeByIds(idsOrder);
-                final String[] names = new String[wpAsciiInfoEntityList.size()];
-                for(int i = 0;i<idsOrder.length;i++) {
-                    int m = i;
-                    wpAsciiInfoEntityList.forEach(f -> {
-                        if (idsOrder[m].equals(f.getIndexId().toString()))
-                            if (names[0] == null)
-                                names[0] = f.getIndexName() + ",";
-                            else
-                                names[0] += f.getIndexName() + ",";
-                    });
-                }
-                String []nms = names[0].split(",");
-                for(int i=0;i<names.length;i++){
-                    names[i] = nms[i];
-                }
-                Map indeNames = new HashedMap();
-                indeNames.put("indeNames",names);
-                pssDatasetInfoEntity.setIndeName(JSONObject.toJSONString(indeNames));
-            }catch (Exception e){
-
-            }
+            pssDatasetInfoService.setPssDatasetInfoIndeName(pssDatasetInfoEntity);
         }
         return R.ok().put("list", list);
     }
