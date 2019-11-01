@@ -123,7 +123,7 @@ public class PssDatasetInfoController {
         try {
             result = SSHConnect.callPyProc(pyFileName, entity.getIndeVar(), host, userName, pass, port);
         } catch (Exception e) {
-            return R.error("调用python-{},文件异常。创建失败!");
+            return R.error("调用python,文件异常。创建失败!");
         }
         Log.info("调用文件:{}结束,用时:{}", pyFileName, (System.currentTimeMillis() - startTime)/10000 + "秒!");
 
