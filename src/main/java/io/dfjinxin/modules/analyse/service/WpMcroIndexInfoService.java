@@ -1,6 +1,7 @@
 package io.dfjinxin.modules.analyse.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import io.dfjinxin.modules.analyse.entity.WpBaseIndexInfoEntity;
 import io.dfjinxin.modules.analyse.entity.WpMcroIndexInfoEntity;
 import io.dfjinxin.modules.analyse.entity.WpMcroIndexValEntity;
 
@@ -19,5 +20,7 @@ public interface WpMcroIndexInfoService extends IService<WpMcroIndexInfoEntity> 
     List<Map<String, Object>> getAreaName();
 
     List<WpMcroIndexValEntity> queryIndexVals(String areaName,String indexId, String dateFrom, String dateTo);
+
+    List<WpMcroIndexInfoEntity> getIndexTreeByType();
 }
 

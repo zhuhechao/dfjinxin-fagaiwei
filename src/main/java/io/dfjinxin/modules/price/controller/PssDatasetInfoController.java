@@ -2,17 +2,14 @@ package io.dfjinxin.modules.price.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.parser.Feature;
 import io.dfjinxin.common.utils.R;
-import io.dfjinxin.modules.analyse.entity.WpBaseIndexInfoEntity;
+import io.dfjinxin.common.utils.python.PythonApiUtils;
 import io.dfjinxin.modules.analyse.service.WpBaseIndexInfoService;
 import io.dfjinxin.modules.hive.service.HiveService;
 import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
 import io.dfjinxin.modules.price.service.PssDatasetInfoService;
-import io.dfjinxin.modules.price.service.SSHConnect;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Desc: 从hive获取数据表，用户选择表中字段的值组合。
@@ -50,15 +46,15 @@ public class PssDatasetInfoController {
     private String userName;
     @Value("${ssh.host}")
     private String host;
-
     @Value("${ssh.pass}")
     private String pass;
-
     @Value("${ssh.port}")
     private int port;
 
-    private static Logger Log = LoggerFactory.getLogger(PssDatasetInfoController.class);
+    @Value("${ssh.url}")
+    private String pyUrl;
 
+    private static Logger Log = LoggerFactory.getLogger(PssDatasetInfoController.class);
 
     /**
      * @Desc: 获取大数据平台hive数据表
@@ -104,7 +100,7 @@ public class PssDatasetInfoController {
     @ApiOperation("返回所有数据集")
     public R listAll() {
         List<PssDatasetInfoEntity> list = pssDatasetInfoService.listAll();
-        for(PssDatasetInfoEntity pssDatasetInfoEntity:list){
+        for (PssDatasetInfoEntity pssDatasetInfoEntity : list) {
             pssDatasetInfoService.setPssDatasetInfoIndeName(pssDatasetInfoEntity);
         }
         return R.ok().put("list", list);
@@ -117,19 +113,29 @@ public class PssDatasetInfoController {
     @ApiOperation("保存")
     public R saveDataSet(@RequestBody PssDatasetInfoEntity entity) {
         Log.info("数据集创建-start");
-        long startTime = System.currentTimeMillis();
-        String pyFileName = "/home/ndrc-test/unstack_single_table.py";
+        String api = "createDataSet";
         String result = null;
-        try {
+        /*try {
+        String pyFileName = "/home/ndrc-test/unstack_single_table.py";
             result = SSHConnect.callPyProc(pyFileName, entity.getIndeVar(), host, userName, pass, port);
         } catch (Exception e) {
             return R.error("调用python,文件异常。创建失败!");
+        }*/
+        long startTime = System.currentTimeMillis();
+        try {
+            result = PythonApiUtils.doPost(pyUrl + api, entity.getIndeVar());
+        } catch (Exception e) {
+            return R.error("调用python-" + api + "服务异常。创建失败!");
         }
-        Log.info("调用文件:{}结束,用时:{}", pyFileName, (System.currentTimeMillis() - startTime)/10000 + "秒!");
+        Log.info("调用python-{}结束,用时:{}", api, (System.currentTimeMillis() - startTime) / 1000 + "秒!");
+
+        if (StringUtils.isEmpty(result)) {
+            return R.error("数据集创建失败!");
+        }
 
         JSONObject jsonObj = JSON.parseObject(result);
         String code = jsonObj.getString("code");
-        String tableName = jsonObj.getString("res");
+        String tableName = jsonObj.getString("data");
         if ("succ".equals(code) && StringUtils.isNotEmpty(tableName)) {
             entity.setDataSetEngName(tableName);
             pssDatasetInfoService.save(entity);

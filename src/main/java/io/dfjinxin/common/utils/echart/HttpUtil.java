@@ -60,14 +60,16 @@ public class HttpUtil {
     }
 
     /**
-    * @Desc:  http post，json格式提交方法
-    * @Param: [url, jsonStr]
-    * @Return: java.lang.String
-    * @Author: z.h.c
-    * @Date: 2019/10/17 12:43
-    */
+     * @Desc: http post，json格式提交方法
+     * @Param: [url, jsonStr]
+     * @Return: java.lang.String
+     * @Author: z.h.c
+     * @Date: 2019/10/17 12:43
+     */
     public static String doPostJson(String url, String json) throws Exception {
         // 创建Httpclient对象
+
+        System.out.println("json:" + json);
         CloseableHttpClient httpClient = HttpClients.createDefault();
         CloseableHttpResponse response = null;
         String resultString = "";
@@ -75,9 +77,9 @@ public class HttpUtil {
             // 创建Http Post请求
             HttpPost httpPost = new HttpPost(url);
             // 创建请求内容
-            httpPost.setHeader("HTTP Method","POST");
-            httpPost.setHeader("Connection","Keep-Alive");
-            httpPost.setHeader("Content-Type","application/json;charset=utf-8");
+            httpPost.setHeader("HTTP Method", "POST");
+            httpPost.setHeader("Connection", "Keep-Alive");
+            httpPost.setHeader("Content-Type", "application/json;charset=utf-8");
 //            httpPost.setHeader("x-authentication-token",token_header);
             StringEntity entity = new StringEntity(json);
             entity.setContentType("application/json;charset=utf-8");
@@ -92,7 +94,7 @@ public class HttpUtil {
             throw e;
         } finally {
             try {
-                if(response!=null){
+                if (response != null) {
                     response.close();
                 }
             } catch (IOException e) {

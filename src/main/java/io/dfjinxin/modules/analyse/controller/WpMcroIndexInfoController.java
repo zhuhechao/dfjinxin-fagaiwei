@@ -1,6 +1,5 @@
 package io.dfjinxin.modules.analyse.controller;
 
-import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.analyse.entity.WpMcroIndexInfoEntity;
 import io.dfjinxin.modules.analyse.entity.WpMcroIndexValEntity;
@@ -59,6 +58,13 @@ public class WpMcroIndexInfoController {
     public R getAreaName() {
         List<Map<String, Object>> wpMcroIndexInfos = wpMcroIndexInfoService.getAreaName();
         return R.ok().put("data", wpMcroIndexInfos);
+    }
+
+    @GetMapping("/tree")
+    @ApiOperation("获取宏观信息指标类型&名称tree")
+    public R tree() {
+        List<WpMcroIndexInfoEntity> tree = wpMcroIndexInfoService.getIndexTreeByType();
+        return R.ok().put("data", tree);
     }
 
 

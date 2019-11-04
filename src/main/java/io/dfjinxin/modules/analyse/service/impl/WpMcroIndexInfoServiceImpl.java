@@ -1,25 +1,22 @@
 package io.dfjinxin.modules.analyse.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.dfjinxin.common.dto.CountAndProvinceDto;
 import io.dfjinxin.common.utils.DateUtils;
+import io.dfjinxin.modules.analyse.dao.WpMcroIndexInfoDao;
 import io.dfjinxin.modules.analyse.dao.WpMcroIndexValDao;
+import io.dfjinxin.modules.analyse.entity.WpMcroIndexInfoEntity;
 import io.dfjinxin.modules.analyse.entity.WpMcroIndexValEntity;
+import io.dfjinxin.modules.analyse.service.WpMcroIndexInfoService;
 import org.apache.commons.lang.StringUtils;
-import org.apache.hadoop.hive.metastore.api.Database;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import io.dfjinxin.common.utils.PageUtils;
-import io.dfjinxin.common.utils.Query;
-
-import io.dfjinxin.modules.analyse.dao.WpMcroIndexInfoDao;
-import io.dfjinxin.modules.analyse.entity.WpMcroIndexInfoEntity;
-import io.dfjinxin.modules.analyse.service.WpMcroIndexInfoService;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Service("wpMcroIndexInfoService")
@@ -46,7 +43,7 @@ public class WpMcroIndexInfoServiceImpl extends ServiceImpl<WpMcroIndexInfoDao, 
             CountAndProvinceDto dto = new CountAndProvinceDto();
             dto.setStatAreaId(type0.getStatAreaId());
             dto.setStatAreaName(type0.getStatAreaName());
-            List<Map<String,Object>> indexNameList = wpMcroIndexValDao.selectdistinctIndexName(type0.getStatAreaName(), type0.getIndexId());
+            List<Map<String, Object>> indexNameList = wpMcroIndexValDao.selectdistinctIndexName(type0.getStatAreaName(), type0.getIndexId());
             dto.setIndexNameList(indexNameList);
             dtoList0.add(dto);
         }
@@ -56,7 +53,7 @@ public class WpMcroIndexInfoServiceImpl extends ServiceImpl<WpMcroIndexInfoDao, 
             CountAndProvinceDto dto = new CountAndProvinceDto();
             dto.setStatAreaId(type1.getStatAreaId());
             dto.setStatAreaName(type1.getStatAreaName());
-            List<Map<String,Object>> indexNameList = wpMcroIndexValDao.selectdistinctIndexName(type1.getStatAreaName(), type1.getIndexId());
+            List<Map<String, Object>> indexNameList = wpMcroIndexValDao.selectdistinctIndexName(type1.getStatAreaName(), type1.getIndexId());
             dto.setIndexNameList(indexNameList);
             dtoList1.add(dto);
         }
@@ -69,7 +66,7 @@ public class WpMcroIndexInfoServiceImpl extends ServiceImpl<WpMcroIndexInfoDao, 
     }
 
     @Override
-    public List<WpMcroIndexValEntity> queryIndexVals(String areaName,String indexId, String dateFrom, String dateTo) {
+    public List<WpMcroIndexValEntity> queryIndexVals(String areaName, String indexId, String dateFrom, String dateTo) {
 
         QueryWrapper where = new QueryWrapper();
         where.eq("index_id", indexId);
@@ -82,6 +79,21 @@ public class WpMcroIndexInfoServiceImpl extends ServiceImpl<WpMcroIndexInfoDao, 
         }
         List<WpMcroIndexValEntity> list = wpMcroIndexValDao.selectList(where);
         return list;
+    }
+
+    @Override
+    public List<WpMcroIndexInfoEntity> getIndexTreeByType() {
+
+        List<WpMcroIndexInfoEntity> indexTypeList = wpMcroIndexValDao.selectByType();
+        for (WpMcroIndexInfoEntity entity : indexTypeList) {
+            QueryWrapper<WpMcroIndexInfoEntity> where2 = new QueryWrapper<>();
+            where2.eq("index_flag", 0);
+            where2.eq("index_type", entity.getIndexType());
+            where2.groupBy("index_name");
+            List<WpMcroIndexInfoEntity> indexNameList = baseMapper.selectList(where2);
+            entity.setSubList(indexNameList);
+        }
+        return indexTypeList;
     }
 
 }

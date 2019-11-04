@@ -15,7 +15,7 @@
 
     <select id="selectIndexName" resultMap="wpMcroIndexInfoMap">
         select wmii.*
-            from wp_mcro_index_info wmii
+            from wp_macro_index_info wmii
                      left join wp_ascii_info wai
                                on wmii.index_flag = wai.code_id
             where wai.p_code_val in (
