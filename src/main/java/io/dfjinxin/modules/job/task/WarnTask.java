@@ -123,8 +123,7 @@ public class WarnTask implements ITask {
 
 	//价格涨跌幅百分比
 	private BigDecimal compareResult(BigDecimal b1,BigDecimal b2){
-		return b1.subtract(b2) .divide(b1,4, BigDecimal.ROUND_HALF_UP)
-				.multiply(new BigDecimal(100));
+		return b1.subtract(b2) .divide(b1,2, BigDecimal.ROUND_HALF_UP);
 	}
 
 	//价格涨跌幅所属级别判断
