@@ -29,5 +29,8 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
     Map<String, Object> firstPageView();
 
     Map<String, Object> firstPageView2();
+
+    List<PssPriceEwarnEntity> getDayReportData(Map<String,Object> params);
+    List<Map<String,Object>> getDayReportDataForBarImage(Map<String,Object> params);
 }
 

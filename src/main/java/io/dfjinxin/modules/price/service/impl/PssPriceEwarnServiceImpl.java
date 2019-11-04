@@ -308,6 +308,23 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         return retMap;
     }
 
+    @Override
+    public List<PssPriceEwarnEntity> getDayReportData(Map<String, Object> params) {
+
+        QueryWrapper<PssPriceEwarnEntity> qw=new QueryWrapper<PssPriceEwarnEntity>();
+        Date startDate= (Date) params.get("startDate");
+        Date endDate= (Date) params.get("endDate");
+        String commId=  params.get("commId")+"";
+        qw.eq("comm_id",commId);
+        qw.between("ewarn_date",startDate,endDate);
+        qw.orderByAsc("ewarn_date");
+        return getBaseMapper().selectList(qw);
+    }
+    @Override
+    public List<Map<String,Object>> getDayReportDataForBarImage(Map<String, Object> params) {
+        return pssPriceEwarnDao.getDayReport(params);
+    }
+
     private Map<String, Object> distinctSameSubCommEwarn(List<PssPriceEwarnEntity> ewanInfoList) {
         //用于存放重复的元素的list
 //        List<PssPriceEwarnEntity> repeatList = new ArrayList<>();
@@ -496,4 +513,9 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         map.put("priVal", priValList);
         return map;
     }
+
+
+
+
+
 }

@@ -106,7 +106,7 @@ public class WordUtil {
 						for (int j=0;j<runs.size(); j++){
 							XWPFRun run=runs.get(j);
 						Object ob = changeValue(run.toString(), map);
-						if (ob instanceof String){
+						if (ob instanceof String&&ob.toString()!=""){
 							run.setText((String)ob,0);
 						}else if (ob instanceof Map){
 							run.setText("",0);

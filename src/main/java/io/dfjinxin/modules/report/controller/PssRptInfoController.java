@@ -102,7 +102,7 @@ public class PssRptInfoController {
 
         return R.ok();
     }
-    @RequestMapping("/image/{infoId}/word/media/{imageName}")
+    @RequestMapping("/preview/image/{infoId}/word/media/{imageName}")
     public void previewImage(@PathVariable("infoId" ) String infoId,
                         @PathVariable(value = "imageName" ) String imageName ) throws Exception {
         PssRptInfoEntity prie = pssRptInfoService.getById(infoId);
