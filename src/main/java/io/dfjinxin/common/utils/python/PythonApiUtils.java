@@ -95,6 +95,7 @@ public class PythonApiUtils {
 
     public static void main(String[] args) {
 
+        String url = "http://10.1.3.239:8082/CorAna";
         String[] valArr = new String[]{
                 "b_1",
                 "b_2",
@@ -104,12 +105,12 @@ public class PythonApiUtils {
         params.put("table", "pig_data");
         params.put("variable", valArr);
         String json = JSON.toJSONString(params);
-        String res = doPost("CorAna", json);
+        String res = doPost(url, json);
         System.out.println("结果：" + res);
 
 
         /*String json2 = "{\"indeVar\":[39,13]}";
-        String res2 = doPost("createDataSet", json2);
+        String res2 = doPost("http://10.1.3.239:8082/createDataSet", json2);
         System.out.println("结果：" + res2);*/
     }
 }
