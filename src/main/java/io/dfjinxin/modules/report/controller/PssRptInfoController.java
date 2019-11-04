@@ -1,9 +1,7 @@
 package io.dfjinxin.modules.report.controller;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.URLEncoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -141,12 +139,18 @@ public class PssRptInfoController {
         Path p = Paths.get(appProperties.getPath().getUserDir(), prie.getRptPath());
         InputStream input = null;
         OutputStream out = null;
-        if ("docx".equals(fileType)) {
+        if ("html".equals(fileType)) {
             input = new FileInputStream(p.toString().replace("docx", "html"));
             response.setContentType("text/html;charset=UTF-8");//解决页面显示乱码 
-        } else {
+        } else if("pdf".equals(fileType)) {
             input = new FileInputStream(p.toString().replace("docx", "pdf"));
             response.setContentType("application/pdf");
+        }else{
+            File file =  new File(p.toString());
+            input = new FileInputStream(p.toString());
+            response.setContentType("application/x-msdownload");
+            response.setHeader("Content-disposition", "attachment; filename=" + URLEncoder.encode(file.getName(), "UTF-8"));
+            response.setHeader("Content-Length", String.valueOf(file.length()));
         }
         out = response.getOutputStream();
         byte[] b = new byte[512];
