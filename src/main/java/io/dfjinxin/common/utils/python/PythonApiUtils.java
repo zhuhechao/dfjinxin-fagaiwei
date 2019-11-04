@@ -96,14 +96,10 @@ public class PythonApiUtils {
     public static void main(String[] args) {
 
         String url = "http://10.1.3.239:8082/CorAna";
-        String[] valArr = new String[]{
-                "b_1",
-                "b_2",
-                "m_3",
-                "m_2"};
+        String[] valArr = new String[]{"Brent_forward_price", "output_china", "Apparent_consumption", "Oil_demand_world"};
         Map<String, Object> params = new HashMap<>();
-        params.put("table", "pig_data");
-        params.put("variable", valArr);
+        params.put("table", "ana_data_1");
+        params.put("indepVar", valArr);
         String json = JSON.toJSONString(params);
         String res = doPost(url, json);
         System.out.println("结果：" + res);
