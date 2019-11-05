@@ -1,12 +1,11 @@
 package io.dfjinxin.modules.price.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
-import io.dfjinxin.modules.analyse.entity.WpBaseIndexInfoEntity;
+import io.dfjinxin.common.utils.python.PythonApiUtils;
 import io.dfjinxin.modules.analyse.service.WpBaseIndexInfoService;
 import io.dfjinxin.modules.price.dto.PssAnalyInfoDto;
 import io.dfjinxin.modules.price.entity.PssAnalyInfoEntity;
@@ -14,11 +13,11 @@ import io.dfjinxin.modules.price.entity.PssAnalyReltEntity;
 import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
 import io.dfjinxin.modules.price.service.PssAnalyInfoService;
 import io.dfjinxin.modules.price.service.PssAnalyReltService;
+import io.dfjinxin.modules.price.service.PssDatasetInfoService;
 import io.dfjinxin.modules.price.service.SSHConnect;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -46,15 +45,15 @@ import java.util.Map;
 public class PssAnalyInfoController {
 
     @Value("${ssh.user}")
-    private String userName ;
+    private String userName = "root";
     @Value("${ssh.host}")
-    private String host;
+    private String host="10.1.3.239";
 
     @Value("${ssh.pass}")
-    private String pass;
+    private String pass = "123456";
 
     @Value("${ssh.port}")
-    private int port;
+    private int port = 22;
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -65,6 +64,9 @@ public class PssAnalyInfoController {
 
     @Autowired
     private WpBaseIndexInfoService wpBaseIndexInfoService;
+
+    @Autowired
+    private PssDatasetInfoService pssDatasetInfoService;
 
     /**
      * 列表
@@ -138,38 +140,67 @@ public class PssAnalyInfoController {
     public R callRet(PssAnalyInfoDto pssAnalyInfoDto ){
         String strRet= null;
         R r = null;
-        if(pssAnalyInfoDto.getAnalyWay().equals("偏相关性分析")){
-            r = callGenerPy("/home/ndrc-test/pyjiaoben/pcor_ana.py",new String[]{"\"ana_data_1\"",
-                    "\"Brent_forward_price&output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
-        }else if(pssAnalyInfoDto.getAnalyWay().equals("格兰杰")){
-            r = callGenerPy("/home/ndrc-test/pyjiaoben/granger_ana.py",new String[]{"\"ana_data_1\"", "\"Brent_forward_price\" ",
-                    "\"output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
-        }else if(pssAnalyInfoDto.getAnalyWay().equals("路径分析")){
-           r = callGenerPy("/home/ndrc-test/pyjiaoben/path_ana.py",new String[]{"\"ana_data_1\"", "\"Brent_forward_price\" ",
-                    "\"output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
-        }else {//一般相关性分析
-            r = callGenerPy("/home/ndrc-test/pyjiaoben/cor_ana.py",new String[]{"\"ana_data_1\"",
-                    "\"Brent_forward_price&output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
+        PssAnalyInfoEntity pssAnalyInfoEntity = PssAnalyInfoEntity.toEntity(pssAnalyInfoDto);
+        PssDatasetInfoEntity pssDatasetInfoEntity = pssDatasetInfoService.getPssDatasetInfoById(pssAnalyInfoDto.getDataSetId());
+        pssDatasetInfoService.setPssDatasetInfoIndeName(pssDatasetInfoEntity);
+        JSONObject jsonObject = new JSONObject();
+        String url = "http://10.1.3.239:8082/";
+        if(pssDatasetInfoEntity!=null) {
+            JSONObject indeIds = JSONObject.parseObject( pssAnalyInfoEntity.getIndeVar(),Feature.OrderedField);
+            String []id = {""};
+            indeIds.forEach((k,v)->id[0] = v.toString().replace("[","").replace("]",""));
+            String[] indes = id[0].split(",");
+            String ids = "x_" + StringUtils.join(indes,"&x_");
+            if (pssAnalyInfoDto.getAnalyWay().equals("偏相关性分析")) {
+//                r = callGenerPy("/home/ndrc-test/pyjiaoben/pcor_ana.py", new String[]{"\"ana_data_1\"",
+//                        "\"Brent_forward_price&output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
+//                r = callGenerPy("/home/ndrc-test/pyjiaoben/pcor_ana.py", new String[]{pssDatasetInfoEntity.getDataSetEngName(),ids});
+                jsonObject.put("table",pssDatasetInfoEntity.getDataSetEngName());
+                jsonObject.put("indepVar",indes);
+                r = callPython(url+"pCorAna",jsonObject);
+            } else if (pssAnalyInfoDto.getAnalyWay().equals("格兰杰")) {
+//                r = callGenerPy("/home/ndrc-test/pyjiaoben/granger_ana.py", new String[]{"\"ana_data_1\"", "\"Brent_forward_price\" ",
+//                        "\"output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
+//                r = callGenerPy("/home/ndrc-test/pyjiaoben/granger_ana.py", new String[]{pssDatasetInfoEntity.getDataSetEngName(),pssAnalyInfoDto.getDepeVar(),ids});
+                jsonObject.put("table",pssDatasetInfoEntity.getDataSetEngName());
+                jsonObject.put("indepVar",indes);
+                jsonObject.put("depeVar",indes);
+                r = callPython(url+"grangerAna",jsonObject);
+            } else if (pssAnalyInfoDto.getAnalyWay().equals("路径分析")) {
+//                r = callGenerPy("/home/ndrc-test/pyjiaoben/path_ana.py", new String[]{"\"ana_data_1\"", "\"Brent_forward_price\" ",
+//                        "\"output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
+//                r = callGenerPy("/home/ndrc-test/pyjiaoben/path_ana.py", new String[]{pssDatasetInfoEntity.getDataSetEngName(),pssAnalyInfoDto.getDepeVar(),ids});
+                jsonObject.put("table",pssDatasetInfoEntity.getDataSetEngName());
+                jsonObject.put("indepVar",indes);
+                jsonObject.put("depeVar",indes);
+                r = callPython(url+"pathAna",jsonObject);
+            } else {//一般相关性分析
+//                r = callGenerPy("/home/ndrc-test/pyjiaoben/cor_ana.py", new String[]{"\"ana_data_1\"",
+//                        "\"Brent_forward_price&output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
+//                r = callGenerPy("/home/ndrc-test/pyjiaoben/cor_ana.py", new String[]{pssDatasetInfoEntity.getDataSetEngName(),ids});
+                jsonObject.put("table","ana_data_1");
+                jsonObject.put("indepVar", new String[]{"Brent_forward_price", "output_china", "Apparent_consumption", "Oil_demand_world"});
+                r = callPython(url+"CorAna",jsonObject);
+            }
+            try {
+                if (r.get("data") != null && !StringUtils.isEmpty(r.get("data").toString()))
+                    strRet = r.get("data").toString();
+                jsonObject = transStrToJsonObject(strRet);
+            }catch (Exception eo){//转换失败
+                if(strRet.indexOf(dataOne)>-1){
+                    strRet = strRet.replace(" ","").replace("\n","").replace("\\","").replace("\"\"","\"").replace(",\",",",").replace(",\"}","}").replace("\"{\",","{");
 
-        }
-        JSONObject jsonObject = null;
-        try {
-            if (r.get("data") != null && !StringUtils.isEmpty(r.get("data").toString()))
-                strRet = r.get("data").toString();
-            jsonObject = transStrToJsonObject(strRet);
-        }catch (Exception eo){//转换失败
-            if(strRet.indexOf(dataOne)>-1){
-                strRet = strRet.replace(" ","").replace("\n","").replace("\\","").replace("\"\"","\"").replace(",\",",",").replace(",\"}","}").replace("\"{\",","{");
-
-                jsonObject = new JSONObject(strRet.indexOf(dataOne));
-                if(strRet.indexOf(dataSec)>-1) {
-                    jsonObject.put("pValue", strRet.substring(strRet.indexOf(dataOne)+dataOne.length(), strRet.indexOf(dataSec)));
-                    jsonObject.put("coe",strRet.substring(strRet.indexOf(dataSec)+dataSec.length(),strRet.lastIndexOf("}]")+2));
+                    jsonObject = new JSONObject(strRet.indexOf(dataOne));
+                    if(strRet.indexOf(dataSec)>-1) {
+                        jsonObject.put("pValue", strRet.substring(strRet.indexOf(dataOne)+dataOne.length(), strRet.indexOf(dataSec)));
+                        jsonObject.put("coe",strRet.substring(strRet.indexOf(dataSec)+dataSec.length(),strRet.lastIndexOf("}]")+2));
+                    }
+                    else
+                        jsonObject.put("pValue", strRet.substring(strRet.indexOf(dataOne)+dataOne.length(),strRet.indexOf("}]")+2));
                 }
-                else
-                    jsonObject.put("pValue", strRet.substring(strRet.indexOf(dataOne)+dataOne.length(),strRet.indexOf("}]")+2));
             }
         }
+
         return R.ok().put("data",jsonObject);
     }
     final  String dataOne = "[[1]]";
@@ -203,6 +234,23 @@ public class PssAnalyInfoController {
         }catch (Exception e){
         }
         return jsonObject;
+    }
+
+    /**
+     * 调用相关分析py
+     * @param url
+     * @param jsonObject
+     * @return
+     */
+    private R callPython(String url,JSONObject jsonObject){
+        String retStr = null;
+        try{
+            retStr = PythonApiUtils.doPost(url,jsonObject.toJSONString());
+        }catch (Exception e){
+
+        }finally {
+            return R.ok().put("data",retStr);
+        }
     }
 
     /**
@@ -295,28 +343,7 @@ public class PssAnalyInfoController {
     public R getDataSetByAnalyWay(@PathVariable("AnalyWay") String AnalyWay) {
         List<PssDatasetInfoEntity> dataSetList = pssAnalyInfoService.getDataSetByAnalyWay(AnalyWay);
         for(PssDatasetInfoEntity pssDatasetInfoEntity:dataSetList){
-            try {
-                Object jsonObject = JSON.parse(pssDatasetInfoEntity.getIndeVar().toString(), Feature.OrderedField);
-                String jsonStr = jsonObject.toString();
-                jsonStr = jsonStr.substring(jsonStr.indexOf("[")+1, jsonStr.indexOf("]"));
-                String []idsOrder = jsonStr.split(",");
-                List<WpBaseIndexInfoEntity> wpAsciiInfoEntityList = wpBaseIndexInfoService.getIndexTreeByIds(idsOrder);
-                final String[] names = new String[wpAsciiInfoEntityList.size()];
-
-                for(int i=0;i<idsOrder.length;i++){
-                    int t = i;
-                    wpAsciiInfoEntityList.forEach(f->{
-                        if(f.getIndexId().toString().equals(idsOrder[t])) {
-                            names[t] = f.getIndexName();
-                        }
-                    });
-                }
-                Map indeNames = new HashedMap();
-                indeNames.put("indeNames",names);
-                pssDatasetInfoEntity.setIndeName(JSONObject.toJSONString(indeNames));
-            }catch (Exception e){
-
-            }
+            pssDatasetInfoService.setPssDatasetInfoIndeName(pssDatasetInfoEntity);
         }
         return R.ok().put("data", dataSetList);
     }
