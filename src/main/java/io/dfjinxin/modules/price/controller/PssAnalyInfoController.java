@@ -148,9 +148,24 @@ public class PssAnalyInfoController {
         if(pssDatasetInfoEntity!=null) {
             JSONObject indeIds = JSONObject.parseObject( pssAnalyInfoEntity.getIndeVar(),Feature.OrderedField);
             String []id = {""};
-            indeIds.forEach((k,v)->id[0] = v.toString().replace("[","").replace("]",""));
+            String []macroIds = {""};
+            indeIds.forEach((k,v)->{
+                if(k.indexOf("comm")>-1)
+                    id[0] = v.toString().replace("[","").replace("]","");
+                else if(k.indexOf("macro")>-1)
+                    macroIds[0] = v.toString().replace("[","").replace("]","");
+            });
             String[] indes = id[0].split(",");
-            String ids = "x_" + StringUtils.join(indes,"&x_");
+            String[] macIds = macroIds[0].split(",");
+            String ids = "";
+            if(indes.length>0 && !indes[0].equals(""))
+                ids += "b_" + StringUtils.join(indes,"&b_");
+            if(macIds.length>0 && !macIds[0].equals(""))
+                if(ids.length()>0)
+                    ids +=  "&m_" + StringUtils.join(macIds,"&m_");
+                else
+                    ids =  "m_" + StringUtils.join(macIds,"&m_");
+
             if (pssAnalyInfoDto.getAnalyWay().equals("偏相关性分析")) {
 //                r = callGenerPy("/home/ndrc-test/pyjiaoben/pcor_ana.py", new String[]{"\"ana_data_1\"",
 //                        "\"Brent_forward_price&output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
