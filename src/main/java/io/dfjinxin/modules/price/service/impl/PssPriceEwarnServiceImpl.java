@@ -17,6 +17,8 @@ import io.dfjinxin.modules.price.entity.WpAsciiInfoEntity;
 import io.dfjinxin.modules.price.entity.WpCommPriEntity;
 import io.dfjinxin.modules.price.service.PssCommTotalService;
 import io.dfjinxin.modules.price.service.PssPriceEwarnService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,8 @@ import java.util.*;
 
 @Service("pssPriceEwarnService")
 public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssPriceEwarnEntity> implements PssPriceEwarnService {
+
+    private static Logger logger = LoggerFactory.getLogger(PssPriceEwarnServiceImpl.class);
 
     @Autowired
     PssPriceEwarnDao pssPriceEwarnDao;
@@ -275,7 +279,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         retMap.put("ewanInfo", distinctSameSubCommEwarn(ewanInfoList));
         //查询昨日各种预警级别的数量
         List<Map<Integer, Object>> countList = pssPriceEwarnDao.countEwarn(lastDayStr);
-        Map<String,Object> countMap = new HashMap<>();
+        Map<String, Object> countMap = new HashMap<>();
         for (Map<Integer, Object> map : countList) {
             if (map != null && !map.isEmpty()) {
                 Integer key = (Integer) map.get("ewarnLevel");
@@ -298,7 +302,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             }
         }
 
-        Map<String,Object> temp = new HashMap<>();
+        Map<String, Object> temp = new HashMap<>();
         temp.put("redEwarnTotal", 0);
         temp.put("orangeEwarnTotal", 0);
         temp.put("yellowEwarnTotal", 0);
@@ -311,17 +315,18 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     @Override
     public List<PssPriceEwarnEntity> getDayReportData(Map<String, Object> params) {
 
-        QueryWrapper<PssPriceEwarnEntity> qw=new QueryWrapper<PssPriceEwarnEntity>();
-        Date startDate= (Date) params.get("startDate");
-        Date endDate= (Date) params.get("endDate");
-        String commId=  params.get("commId")+"";
-        qw.eq("comm_id",commId);
-        qw.between("ewarn_date",startDate,endDate);
+        QueryWrapper<PssPriceEwarnEntity> qw = new QueryWrapper<PssPriceEwarnEntity>();
+        Date startDate = (Date) params.get("startDate");
+        Date endDate = (Date) params.get("endDate");
+        String commId = params.get("commId") + "";
+        qw.eq("comm_id", commId);
+        qw.between("ewarn_date", startDate, endDate);
         qw.orderByAsc("ewarn_date");
         return getBaseMapper().selectList(qw);
     }
+
     @Override
-    public List<Map<String,Object>> getDayReportDataForBarImage(Map<String, Object> params) {
+    public List<Map<String, Object>> getDayReportDataForBarImage(Map<String, Object> params) {
         return pssPriceEwarnDao.getDayReport(params);
     }
 
@@ -374,7 +379,11 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         //昨天时间
         String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
         // 查询昨天涨幅最大的4类商品预警
-        PssPriceEwarnEntity entity = pssPriceEwarnDao.selectMaxRange(commId,lastDayStr);
+        PssPriceEwarnEntity entity = pssPriceEwarnDao.selectMaxRange(commId, lastDayStr);
+        if (entity == null) {
+            logger.error("商品{}预警价格,数据不存在!", commId);
+            return null;
+        }
         BigDecimal lastPriValue = entity.getPriValue();
 
         //计算前天价格
@@ -383,6 +392,10 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         where2.eq("Date(ewarn_date)", DateUtils.dateToStr(last2Date));
         where2.eq("comm_id", entity.getCommId());
         PssPriceEwarnEntity entity1 = pssPriceEwarnDao.selectOne(where2);
+        if (entity1 == null) {
+            logger.error("商品{}预警价格,数据不存在!", commId);
+            return null;
+        }
         BigDecimal last2DayPriValue = entity1.getPriValue();
 
         //计算上月今日价格
@@ -391,6 +404,10 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         where4.eq("Date(ewarn_date)", DateUtils.dateToStr(lastMonthDay));
         where4.eq("comm_id", entity.getCommId());
         PssPriceEwarnEntity entity2 = pssPriceEwarnDao.selectOne(where4);
+        if (entity2 == null) {
+            logger.error("商品{}预警价格,数据不存在!", commId);
+            return null;
+        }
         BigDecimal lastMonthTodayPrice = entity2.getPriValue();
 
         BigDecimal ONE = new BigDecimal(1);
@@ -513,9 +530,6 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         map.put("priVal", priValList);
         return map;
     }
-
-
-
 
 
 }
