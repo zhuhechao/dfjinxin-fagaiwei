@@ -42,14 +42,17 @@ public class WpMcroIndexInfoEntity implements Serializable {
 	/**
 	 *
 	 */
+	@TableField(exist = false)
 	private Integer indexFlag;
 	/**
 	 *
 	 */
+	@TableField(exist = false)
 	private String indexDescribe;
 	/**
 	 *
 	 */
+	@TableField(exist = false)
 	private Date dataTime;
 
 	@TableField(exist = false)

@@ -22,5 +22,7 @@ public interface WpMcroIndexInfoService extends IService<WpMcroIndexInfoEntity> 
     List<WpMcroIndexValEntity> queryIndexVals(String areaName,String indexId, String dateFrom, String dateTo);
 
     List<WpMcroIndexInfoEntity> getIndexTreeByType();
+
+    List<WpMcroIndexInfoEntity> getIndexTreeByIds(String [] ids);
 }
 

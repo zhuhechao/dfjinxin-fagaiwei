@@ -96,4 +96,14 @@ public class WpMcroIndexInfoServiceImpl extends ServiceImpl<WpMcroIndexInfoDao, 
         return indexTypeList;
     }
 
+    @Override
+    public List<WpMcroIndexInfoEntity> getIndexTreeByIds(String [] ids) {
+        if(ids==null||ids.length<1)
+            return null;
+        QueryWrapper<WpMcroIndexInfoEntity> where = new QueryWrapper<>();
+        where.in("index_id", ids);
+        where.orderByAsc("index_id");
+        return baseMapper.selectList(where);
+    }
+
 }
