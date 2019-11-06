@@ -49,10 +49,6 @@ public class PssCommTotalEntity implements Serializable {
 	/**
 	 *
 	 */
-	private String createName;
-	/**
-	 *
-	 */
 	private Integer dataFlag;
 
 	@TableField(exist = false)

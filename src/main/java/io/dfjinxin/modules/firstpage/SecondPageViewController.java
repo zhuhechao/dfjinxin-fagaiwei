@@ -3,7 +3,6 @@ package io.dfjinxin.modules.firstpage;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.analyse.service.WpCommIndexValService;
 import io.dfjinxin.modules.price.service.PssPriceEwarnService;
-import io.dfjinxin.modules.price.service.impl.PssPriceEwarnServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
