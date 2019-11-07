@@ -43,7 +43,9 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
         QueryWrapper qr=new QueryWrapper<PssRptConfEntity>();
         addQueryCondition(params,"rptType","rpt_type",qr);
         addQueryCondition(params,"rptFreq","rpt_Freq",qr);
-        addQueryCondition(params,"rcshId","rcsh_id",qr);
+//        addQueryCondition(params,"rcshId","rcsh_id",qr);
+        addQueryCondition(params,"rschId","rsch_id",qr);
+
         qr.orderByDesc("crte_date");
 
         IPage<PssRptConfEntity> page = this.page(

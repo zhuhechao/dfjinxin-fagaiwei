@@ -115,12 +115,6 @@ public class PssDatasetInfoController {
         Log.info("数据集创建-start");
         String api = "createDataSet";
         String result = null;
-        /*try {
-        String pyFileName = "/home/ndrc-test/unstack_single_table.py";
-            result = SSHConnect.callPyProc(pyFileName, entity.getIndeVar(), host, userName, pass, port);
-        } catch (Exception e) {
-            return R.error("调用python,文件异常。创建失败!");
-        }*/
         long startTime = System.currentTimeMillis();
         try {
             result = PythonApiUtils.doPost(pyUrl + api, entity.getIndeVar());
@@ -139,8 +133,10 @@ public class PssDatasetInfoController {
         if ("succ".equals(code) && StringUtils.isNotEmpty(tableName)) {
             entity.setDataSetEngName(tableName);
             pssDatasetInfoService.save(entity);
+            return R.ok();
+        } else {
+            return R.error("数据集创建失败!");
         }
-        return R.error("数据集创建失败!");
     }
 
     @PostMapping("/delete/{dataSetId}")
