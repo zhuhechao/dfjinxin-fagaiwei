@@ -1,11 +1,13 @@
 package io.dfjinxin.modules.price.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import io.dfjinxin.common.utils.DateUtils;
-import io.dfjinxin.common.utils.PageUtils;
-import io.dfjinxin.common.utils.Query;
+import io.dfjinxin.common.utils.*;
+import io.dfjinxin.common.utils.echart.HttpUtil;
+import io.dfjinxin.modules.hive.service.HiveService;
 import io.dfjinxin.modules.price.dao.PssCommTotalDao;
 import io.dfjinxin.modules.price.dao.PssPriceEwarnDao;
 import io.dfjinxin.modules.price.dao.WpAsciiInfoDao;
@@ -17,6 +19,7 @@ import io.dfjinxin.modules.price.entity.WpAsciiInfoEntity;
 import io.dfjinxin.modules.price.entity.WpCommPriEntity;
 import io.dfjinxin.modules.price.service.PssCommTotalService;
 import io.dfjinxin.modules.price.service.PssPriceEwarnService;
+import io.dfjinxin.modules.yuqing.TengXunYuQing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +48,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
     @Autowired
     PssCommTotalService pssCommTotalService;
+    @Autowired
+    private HiveService hiveService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -261,9 +266,9 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             rateValDtos.add(rateValDto);
         }
 
-        //TODO 查询hive上所有数据源的总数
-        int commTotal = 0;
-        retMap.put("commTotal", commTotal);
+        int hiveCount = getHiveCount();
+        int tengxunCount = getProgrammeDistribution();
+        retMap.put("commTotal", hiveCount + tengxunCount);
         //最近所有商品一个月涨跌值
         QueryWrapper where3 = new QueryWrapper();
         //一个月前
@@ -531,5 +536,58 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         return map;
     }
 
+    private int getHiveCount() {
+        final String sql = "select t.*\n" +
+                "from (select count(*) tol\n" +
+                "      from wp_base_index_val\n" +
+                "      UNION\n" +
+                "      select count(*) tol\n" +
+                "      from wp_marco_index_val) t";
+
+        Long totalCount = 0L;
+        List<Map<String, Object>> data = hiveService.selectData(sql);
+        if (data == null || data.size() < 1) {
+            return 0;
+        }
+        for (Map<String, Object> map : data) {
+            if (map.containsKey("t.tol")) {
+                totalCount += (Long) map.get("t.tol");
+            }
+        }
+        return totalCount.intValue();
+    }
+
+    public int getProgrammeDistribution() {
+        logger.info("getProgrammeDistribution信息,开始--");
+        long unixTime = new Date().getTime() / 1000;
+        String signid = MD5Utils.getMD5(unixTime + MD5Utils.getMD5(TengXunYuQing.APPID + TengXunYuQing.PWD));
+        Map<String, Object> params = new HashMap<>();
+        params.put("unixTime", unixTime);
+        params.put("appid", TengXunYuQing.APPID);
+        params.put("signid", signid);
+        params.put("node_userid", "0");
+        final String apiUrl = "analyze/getProgrammeDistribution";
+        String jsonStr = JSON.toJSONString(params);
+        logger.info("the getProgrammeDistribution req params:{}", jsonStr);
+        final String url = TengXunYuQing.PATH + apiUrl;
+        logger.info("the request url: {}", url);
+        String res = null;
+        try {
+            res = HttpUtil.doPostJson(url, jsonStr);
+            logger.info("res:{}", res);
+        } catch (Exception e) {
+            logger.error("call-getProgrammeDistribution信息-异常:{}", e);
+            return 0;
+        }
+        Object result = TengXunYuQing.converResult(res);
+        logger.info("the result:{}", result);
+        int totalContentCnt = 0;
+        if (result != null) {
+            JSONObject jsonObj = (JSONObject) result;
+            totalContentCnt = jsonObj.getInteger("total_content_cnt");
+        }
+        return totalContentCnt;
+
+    }
 
 }

@@ -61,20 +61,19 @@ public class YuQingTest {
         String signid = MD5Utils.getMD5(unixTime + MD5Utils.getMD5(APPID + PWD));
         Map<String, Object> params = new HashMap<>();
         params.put("unixTime", unixTime);
-        params.put("appid", APPID);
+        params.put("appid", "fagaiwei");
         params.put("signid", signid);
-        params.put("userId", "1");
-        params.put("dateType", 1);
-        final String apiUrl = "analyze/getTopUrlInfo";
+        params.put("node_userid", "0");
+        final String apiUrl = "analyze/getProgrammeDistribution";
 //        https://jianguan.urlsec.qq.com/analyze/getTopUrlInfo
         String jsonStr = JSON.toJSONString(params);
-        System.out.println("getTopUrlInfo url:" + PATH + apiUrl);
+        System.out.println("getProgrammeDistribution url:" + PATH + apiUrl);
         String res = null;
         try {
             res = HttpUtil.doPostJson(PATH + apiUrl, jsonStr);
             logger.info("res:{}", res);
-            System.out.println("getTopUrlInfo url:" + PATH + apiUrl);
-            System.out.println("the getTopUrlInfo req params:" + jsonStr);
+            System.out.println("getProgrammeDistribution url:" + PATH + apiUrl);
+            System.out.println("the getProgrammeDistribution req params:" + jsonStr);
 
         } catch (Exception e) {
             logger.error("call-topurl信息-异常:{}", e);

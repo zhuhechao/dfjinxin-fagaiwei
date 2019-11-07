@@ -5,10 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import io.dfjinxin.common.utils.MD5Utils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.common.utils.echart.HttpUtil;
+import io.dfjinxin.modules.price.service.PssPriceEwarnService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,11 +32,14 @@ import java.util.Map;
 @Api(tags = "TengXunYuQing", description = "腾讯-商品舆情Api")
 public class TengXunYuQing {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private final static Logger logger = LoggerFactory.getLogger(TengXunYuQing.class);
 
     public static final String PATH = "https://jianguan.urlsec.qq.com/";
     public static final String APPID = "fagaiwei";
     public static final String PWD = "fgwprice";
+
+    @Autowired
+    private PssPriceEwarnService pssPriceEwarnService;
 
 
     /**
@@ -236,7 +241,27 @@ public class TengXunYuQing {
         return R.ok().put("data", result);
     }
 
-    private Object converResult(String jsonStr) {
+    /**
+     * 接口名： analyze/getProgrammeDistribution
+     * 请求：获取配置方案结果分布 ,取total_content_cnt值
+     * POST
+     * Content-Type: application/json
+     * <p>
+     * unixTime：1540794339
+     * appid："fagaiwei"
+     * signid:：
+     * node_userid：用户id string类型 0
+     *
+     * @return
+     */
+    @PostMapping("getProgrammeDistribution/")
+    @ApiOperation("获取配置方案结果分布")
+    public R getProgrammeDistribution() {
+        return R.ok().put("data", pssPriceEwarnService.getProgrammeDistribution());
+
+    }
+
+    public static Object converResult(String jsonStr) {
         logger.info("call tengxun api,the respose is:{}", jsonStr);
         JSONObject jsonObj = JSON.parseObject(jsonStr);
         Integer code = jsonObj.getInteger("code");

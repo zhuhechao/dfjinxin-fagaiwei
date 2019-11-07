@@ -32,5 +32,8 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
 
     List<PssPriceEwarnEntity> getDayReportData(Map<String,Object> params);
     List<Map<String,Object>> getDayReportDataForBarImage(Map<String,Object> params);
+
+//    腾讯-获取配置方案结果分布
+    int getProgrammeDistribution();
 }
 
