@@ -18,6 +18,7 @@ import io.dfjinxin.modules.price.service.SSHConnect;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -158,14 +160,41 @@ public class PssAnalyInfoController {
             String[] indes = id[0].split(",");
             String[] macIds = macroIds[0].split(",");
             String ids = "";
-            if(indes.length>0 && !indes[0].equals(""))
-                ids += "b_" + StringUtils.join(indes,"&b_");
-            if(macIds.length>0 && !macIds[0].equals(""))
-                if(ids.length()>0)
-                    ids +=  "&m_" + StringUtils.join(macIds,"&m_");
-                else
-                    ids =  "m_" + StringUtils.join(macIds,"&m_");
-
+            String mIds = "";
+            if(indes.length>0 && !indes[0].equals("")) {
+                ids += "b_" + StringUtils.join(indes, "&b_");
+                indes = ids.split("&");
+            }else
+                indes = null;
+            if(macIds.length>0 && !macIds[0].equals("")) {
+                mIds += "&m_" + StringUtils.join(macIds, "&m_");
+                macIds = mIds.split("&");
+            }else
+                macIds = null;
+            //指标名称map，后面替换需要
+            JSONObject indeNames = JSONObject.parseObject(pssDatasetInfoEntity.getIndeName(),Feature.OrderedField);
+            Map idMap = new LinkedHashMap();
+            Map macMap = new LinkedHashMap();
+            final String [] tmpNames = {""};
+            final String [] tmpMacNms = {""};
+            indeNames.forEach((k,v)->{
+                if(k.indexOf("comm")>-1){
+                    tmpNames[0] = v.toString().replace("[","").replace("]","");
+                }else{
+                    tmpMacNms[0] = v.toString().replace("[","").replace("]","");
+                }
+            });
+            String []fnNames = tmpNames[0].split(",");
+            String []fnMacNms = tmpMacNms[0].split(",");
+            for(int i=0;i<fnNames.length&indes!=null;i++){
+                if(!StringUtils.isEmpty(indes[i]))
+                    idMap.put(indes[i],fnNames[i]);
+            }
+            for(int j=0;j<fnMacNms.length&macIds!=null;j++){
+                if(!StringUtils.isEmpty(macIds[j]))
+                    macMap.put(macIds[j],fnMacNms[j]);
+            }
+            String[]concatIds = ArrayUtils.addAll(indes,macIds);
             if (pssAnalyInfoDto.getAnalyWay().equals("偏相关性分析")) {
 //                r = callGenerPy("/home/ndrc-test/pyjiaoben/pcor_ana.py", new String[]{"\"ana_data_1\"",
 //                        "\"Brent_forward_price&output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
@@ -193,8 +222,10 @@ public class PssAnalyInfoController {
 //                r = callGenerPy("/home/ndrc-test/pyjiaoben/cor_ana.py", new String[]{"\"ana_data_1\"",
 //                        "\"Brent_forward_price&output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
 //                r = callGenerPy("/home/ndrc-test/pyjiaoben/cor_ana.py", new String[]{pssDatasetInfoEntity.getDataSetEngName(),ids});
-                jsonObject.put("table","ana_data_1");
-                jsonObject.put("indepVar", new String[]{"Brent_forward_price", "output_china", "Apparent_consumption", "Oil_demand_world"});
+                jsonObject.put("table",pssDatasetInfoEntity.getDataSetEngName());
+                        //"ana_data_1");
+                jsonObject.put("indepVar", concatIds);
+                        // new String[]{"Brent_forward_price", "output_china", "Apparent_consumption", "Oil_demand_world"});
                 r = callPython(url+"CorAna",jsonObject);
             }
             try {
@@ -212,6 +243,28 @@ public class PssAnalyInfoController {
                     }
                     else
                         jsonObject.put("pValue", strRet.substring(strRet.indexOf(dataOne)+dataOne.length(),strRet.indexOf("}]")+2));
+                }
+            }finally {
+                String[] o = {""};
+                o[0] = jsonObject.get("pValue").toString();
+                if(o[0]!=null) {
+                    idMap.forEach((k, v) -> {
+                        o[0] = o[0].replaceAll(k.toString(), v.toString());
+                    });
+                    macMap.forEach((k, v) -> {
+                        o[0] = o[0].replaceAll(k.toString(), v.toString());
+                    });
+                    jsonObject.put("pValue",o[0].replaceAll("\"\"","\""));
+                }
+                o[0] = jsonObject.get("coe").toString();
+                if(o[0]!=null) {
+                    idMap.forEach((k, v) ->{
+                        o[0] = o[0].replaceAll(k.toString(), v.toString());
+                    });
+                    macMap.forEach((k, v) -> {
+                        o[0] = o[0].replaceAll(k.toString(), v.toString());
+                    });
+                    jsonObject.put("coe",o[0].replaceAll("\"\"","\""));
                 }
             }
         }
