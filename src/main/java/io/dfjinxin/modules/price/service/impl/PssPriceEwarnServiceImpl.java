@@ -537,21 +537,28 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     }
 
     private int getHiveCount() {
-        final String sql = "select t.*\n" +
-                "from (select count(*) tol\n" +
-                "      from wp_base_index_val\n" +
-                "      UNION\n" +
-                "      select count(*) tol\n" +
-                "      from wp_marco_index_val) t";
+        final String sql_1 = "select count(*) tol from wp_base_index_val t";
+        final String sql_2 = "select count(*) tol from wp_marco_index_val t";
+
+        List<String> sqlList = new ArrayList<>();
+        sqlList.add(sql_1);
+        sqlList.add(sql_2);
 
         Long totalCount = 0L;
-        List<Map<String, Object>> data = hiveService.selectData(sql);
-        if (data == null || data.size() < 1) {
+        List<Map<String, Object>> data = new ArrayList<>();
+        for (String sql : sqlList) {
+            List<Map<String, Object>> res = hiveService.selectData(sql);
+            if (res != null && res.size() > 0) {
+                System.out.println(res.get(0).getClass());
+                data.add(res.get(0));
+            }
+        }
+        if (data == null || data.size() == 0) {
             return 0;
         }
         for (Map<String, Object> map : data) {
-            if (map.containsKey("t.tol")) {
-                totalCount += (Long) map.get("t.tol");
+            if (map.containsKey("tol")) {
+                totalCount += (Long) map.get("tol");
             }
         }
         return totalCount.intValue();
