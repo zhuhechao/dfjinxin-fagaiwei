@@ -70,22 +70,24 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
     @Transactional(rollbackFor = Exception.class)
     public void addOrUpdate(SysRoleEntity role) {
  		 int roleId = role.getRoleId();
-        if(roleId ==0 ){
+ 		 List<Integer> menus= role.getMenuIdList();
+ 		 if(menus.size()>0){
+			 String ms= StringUtils.join(menus.toArray(),",");
+			 role.setMenuIds(ms);
+		 }
+		if(roleId ==0 ){
         	veryRole(role,0);
 			baseMapper.save(role);
-
 		}else {
 			veryRole(role,1);
-			Date date = new Date();
-			Timestamp timestamp = new Timestamp(date.getTime());
-			role.setUpdDate(timestamp);
-			this.updateById(role);
-			sysRoleMenuService.saveOrUpdate(role.getRoleId(),role.getMenuIdList());
+			baseMapper.updateRole(role);
+//			sysRoleMenuService.saveOrUpdate(role.getRoleId(),role.getMenuIdList());
 		}
-		List<Integer> menus= role.getMenuIdList();
-		if(menus != null){
-			sysRoleMenuService.saveOrUpdate(roleId,role.getMenuIdList());
-		}
+		//sysRoleMenuService.saveOrUpdate(roleId,role.getMenuIdList());
+		//List<Integer> menus= role.getMenuIdList();
+//		if(menus != null){
+//			sysRoleMenuService.saveOrUpdate(roleId,role.getMenuIdList());
+//		}
     }
 
     @Override
@@ -101,8 +103,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 			throw new RRException("当前指定的角色已经被使用，不能删除！");
 		}
         this.removeByIds(rids);
-
-        //删除角色与菜单关联
+		//删除角色与菜单关联
        sysRoleMenuService.deleteBatch(roleIds);
 
     }

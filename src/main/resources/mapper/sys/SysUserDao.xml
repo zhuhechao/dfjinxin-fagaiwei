@@ -108,20 +108,29 @@
 	</insert>
 
     <!--更新用户数据-->
-    <update id="updateUserData" parameterType="io.dfjinxin.modules.sys.entity.SysUserEntity">
-		UPDATE pss_user_info
-		SET (
-		 user_name = #{userName},
-		 user_pass = #{user_pass},
-		 user_real_name = #{userRealName},
-		 mbl_phone_no = #{mblPhoneNo},
-		 fix_tphone_no = #{fixTphoneNo},
-		 email = #{email},
-		 user_status = #{userStatus},
-		 upd_date = CURRENT_TIMESTAMP()
-		)
-		WHERE
-		user_id = #{userId}
+    <!--<update id="updateUserData" parameterType="io.dfjinxin.modules.sys.entity.SysUserEntity">-->
+		<!--UPDATE pss_user_info-->
+		<!--SET (-->
+		 <!--user_name = #{userName},-->
+		 <!--user_pass = #{user_pass},-->
+		 <!--user_real_name = #{userRealName},-->
+		 <!--mbl_phone_no = #{mblPhoneNo},-->
+		 <!--fix_tphone_no = #{fixTphoneNo},-->
+		 <!--email = #{email},-->
+		 <!--user_status = #{userStatus},-->
+		 <!--upd_date = CURRENT_TIMESTAMP()-->
+		<!--)-->
+		<!--WHERE-->
+		<!--user_id = #{userId}-->
+	<!--</update>-->
+
+	<update id="updateUserData" parameterType="io.dfjinxin.modules.sys.entity.SysUserEntity" statementType="CALLABLE">
+		{CALL UPDATE_USER(
+		  #{userId,mode=IN},
+		  #{userStatus,mode=IN},
+		  #{roleId,mode=IN},
+		  #{error_no,jdbcType=INTEGER,mode=OUT}
+        )}
 	</update>
 
 

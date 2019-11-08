@@ -47,7 +47,7 @@ public interface SysUserDao extends BaseMapper<SysUserEntity> {
 	/**
 	 * 根据用户名删除用户
 	 */
-	void deleteByUserName(String username);
+	int deleteByUserName(String username);
 
 	/**
 	 * 查询用户信息
@@ -55,10 +55,10 @@ public interface SysUserDao extends BaseMapper<SysUserEntity> {
 	IPage<SysUserEntity> queryUserList(Page page, @Param("m") Map<String, Object> m);
 
 	//新增用户
-	void insertUserData(SysUserEntity sysUserEntity);
+	int insertUserData(SysUserEntity sysUserEntity);
 
 	//更新用户
-	void updateUserData(SysUserEntity sysUserEntity);
+	int updateUserData(SysUserEntity sysUserEntity);
 
 	//根据ID查询用户信息
 	SysUserEntity queryByUserId(@Param(value = "userId") String userId);
