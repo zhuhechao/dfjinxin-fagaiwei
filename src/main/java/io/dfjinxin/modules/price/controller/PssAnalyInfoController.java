@@ -144,11 +144,13 @@ public class PssAnalyInfoController {
         R r = null;
         PssAnalyInfoEntity pssAnalyInfoEntity = PssAnalyInfoEntity.toEntity(pssAnalyInfoDto);
         PssDatasetInfoEntity pssDatasetInfoEntity = pssDatasetInfoService.getPssDatasetInfoById(pssAnalyInfoDto.getDataSetId());
+        JSONObject indeIds = JSONObject.parseObject( pssAnalyInfoEntity.getIndeVar(),Feature.OrderedField);
+        pssDatasetInfoEntity.setIndeVar(indeIds.toJSONString());
         pssDatasetInfoService.setPssDatasetInfoIndeName(pssDatasetInfoEntity);
         JSONObject jsonObject = new JSONObject();
         String url = "http://10.1.3.239:8082/";
         if(pssDatasetInfoEntity!=null) {
-            JSONObject indeIds = JSONObject.parseObject( pssAnalyInfoEntity.getIndeVar(),Feature.OrderedField);
+
             String []id = {""};
             String []macroIds = {""};
             indeIds.forEach((k,v)->{

@@ -45,8 +45,8 @@ public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, Ps
         try {
             Object jsonObject = JSON.parse(pssDatasetInfoEntity.getIndeVar().toString(), Feature.OrderedField);
             Map indeNames = new HashedMap();
-            if(((JSONObject)jsonObject).get("commIndexIds")!=null){
-                String jsonStr = ((JSONObject)jsonObject).get("commIndexIds").toString();
+            if(((JSONObject)jsonObject).get("comm_table")!=null){
+                String jsonStr = ((JSONObject)jsonObject).get("comm_table").toString();
                 jsonStr = jsonStr.substring(jsonStr.indexOf("[")+1, jsonStr.indexOf("]"));
                 String []idsOrder = jsonStr.split(",");
                 List<WpBaseIndexInfoEntity> wpAsciiInfoEntityList = wpBaseIndexInfoService.getIndexTreeByIds(idsOrder);
@@ -62,8 +62,8 @@ public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, Ps
                 }
                 indeNames.put("commIndexNames",names);
             }
-            if(((JSONObject)jsonObject).get("macroIndexIds")!=null){
-                String jsonStr = ((JSONObject)jsonObject).get("macroIndexIds").toString();
+            if(((JSONObject)jsonObject).get("macro_table")!=null){
+                String jsonStr = ((JSONObject)jsonObject).get("macro_table").toString();
                 jsonStr = jsonStr.substring(jsonStr.indexOf("[")+1, jsonStr.indexOf("]"));
                 String []idsOrder = jsonStr.split(",");
                 List<WpMcroIndexInfoEntity> wpAsciiInfoEntityList = wpMcroIndexInfoService.getIndexTreeByIds(idsOrder);
