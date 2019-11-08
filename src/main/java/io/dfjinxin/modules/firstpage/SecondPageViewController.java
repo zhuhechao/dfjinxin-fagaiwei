@@ -54,7 +54,7 @@ public class SecondPageViewController {
         Map<String, Object> zfMap = pssPriceEwarnService.converZF(commId);
 
         if (list == null || list.size() < 1 || zfMap == null) {
-            return R.ok().put("data", null);
+            return R.ok("数据异常!").put("data", null);
         } else {
             resMap.putAll(zfMap);
             return R.ok().put("data", resMap);
