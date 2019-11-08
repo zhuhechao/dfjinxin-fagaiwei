@@ -136,4 +136,7 @@ public class SysUserEntity implements Serializable {
 	@TableField(exist = false)
 	private String roleId;
 
+	@TableField(exist = false)
+	private int error_no;
+
 }

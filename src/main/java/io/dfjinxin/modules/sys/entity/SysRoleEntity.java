@@ -75,4 +75,10 @@ public class SysRoleEntity implements Serializable {
 
 	@TableField(exist = false)
 	List<Integer> menuIdList;
+
+	@TableField(exist = false)
+	String menuIds;
+
+	@TableField(exist = false)
+	int error_no;
 }

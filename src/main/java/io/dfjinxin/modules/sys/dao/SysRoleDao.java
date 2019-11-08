@@ -50,10 +50,16 @@ public interface SysRoleDao extends BaseMapper<SysRoleEntity> {
 	List<Map<String,Object>> getRole();
 
 	/**
-	 * 用户信息保存
+	 * 角色信息新增
 	 *
 	 */
 	int save(SysRoleEntity role);
+
+	/**
+	 * 角色信息保存
+	 *
+	 */
+	int updateRole(SysRoleEntity role);
 
 
 }

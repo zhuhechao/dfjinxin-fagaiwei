@@ -64,12 +64,16 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		List<SysUserEntity> list = page.getRecords();
 		for(SysUserEntity map:list){
 		  Integer st= map.getUserStatus();
-		  String[] roleId = map.getRoleId().split(",");
-		  ArrayList<Integer> role = new ArrayList<>();
-		  for(String rid : roleId){
-		  	role.add(Integer.parseInt(rid));
+		  String roleId = map.getRoleId();
+		  if(roleId !=null && !roleId.equals("")){
+			  String[] roleIds = roleId.split(",");
+			  ArrayList<Integer> role = new ArrayList<>();
+			  for(String rid : roleIds){
+				  role.add(Integer.parseInt(rid));
+			  }
+			  map.setRoles(role);
 		  }
-		  map.setRoles(role);
+
 		  if(st == 1){
 		  	map.setStatus(true);
 		  }else {
@@ -111,9 +115,13 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 	@Override
 	public void update(SysUserEntity user) {
 		List<Integer> list = user.getRoles();
-		String userId = user.getUserId();
-		sysUserRoleService.saveOrUpdate(userId,list);
-		this.updateById(user);
+		String role= StringUtils.join(list.toArray(),",");
+		user.setRoleId(role);
+		user.setError_no(0);
+//		String userId = user.getUserId();
+//		sysUserRoleService.saveOrUpdate(userId,list);
+//		this.updateById(user);
+		baseMapper.updateUserData(user);
 
 	}
 

@@ -1,0 +1,63 @@
+DROP PROCEDURE IF EXISTS UPDATE_USER;
+DELIMITER //
+CREATE PROCEDURE UPDATE_USER(
+   IN P_USER_ID VARCHAR(20)
+   ,IN P_USER_STATUS INT
+	 ,IN ROLES VARCHAR(200)
+	 ,OUT ERROR_NO INT
+	 )
+	 BEGIN
+	 DECLARE IDX INT;
+	 DECLARE P_ROLE_ID VARCHAR(16);
+	 DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET ERROR_NO = 0;
+	 SET ERROR_NO = 1;
+
+	 START TRANSACTION;
+
+	 UPDATE pss_user_info
+	 SET
+	   user_status = P_USER_STATUS,
+		 upd_date = NOW()
+	 WHERE
+	 user_id = P_USER_ID ;
+
+	 DELETE  FROM pss_user_role_rela WHERE user_id = P_USER_ID ;
+
+	 SET IDX = LOCATE(',',ROLES);
+
+	 IF IDX = 0 AND LENGTH(ROLES)>0 THEN
+	      SET IDX = LENGTH(ROLES)+1;
+	 END IF;
+
+	 WHILE IDX > 0
+	 DO
+	    SET P_ROLE_ID = LEFT(ROLES,IDX-1);
+	 INSERT INTO pss_user_role_rela(
+	   user_id
+		 ,role_id
+		 ,cre_date
+		 ,upd_date
+	 )
+	 VALUES(
+	  P_USER_ID
+		,P_ROLE_ID
+		,NOW()
+		,NOW()
+	 );
+
+   SET ROLES = SUBSTR(ROLES FROM IDX+1);
+   SET IDX = LOCATE(',',ROLES);
+
+   IF IDX = 0 AND LENGTH(ROLES)>0 THEN
+	    SET IDX = LENGTH(ROLES)+1;
+	 END IF;
+
+END WHILE;
+
+   IF ERROR_NO = 0 THEN
+	    ROLLBACK;
+	 ELSE
+	    COMMIT;
+		END IF;
+
+END //

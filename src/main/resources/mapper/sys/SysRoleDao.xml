@@ -40,9 +40,31 @@
 	</select>
 
 	<!--用户信息保存-->
-	<insert id="save" parameterType="io.dfjinxin.modules.sys.entity.SysRoleEntity" useGeneratedKeys="true" keyProperty="roleId">
-		INSERT INTO pss_user_role_info (role_state, role_name, remarks, cre_date, upd_date, role_type_id) VALUES (
-		#{roleState},#{roleName},#{remarks},CURRENT_TIMESTAMP ,CURRENT_TIMESTAMP ,#{roleTypeId}
-		)
+	<!--<insert id="save" parameterType="io.dfjinxin.modules.sys.entity.SysRoleEntity" useGeneratedKeys="true" keyProperty="roleId">-->
+		<!--INSERT INTO pss_user_role_info (role_state, role_name, remarks, cre_date, upd_date, role_type_id) VALUES (-->
+		<!--#{roleState},#{roleName},#{remarks},CURRENT_TIMESTAMP ,CURRENT_TIMESTAMP ,#{roleTypeId}-->
+		<!--)-->
+	<!--</insert>-->
+	<insert id="save" parameterType="io.dfjinxin.modules.sys.entity.SysRoleEntity" statementType="CALLABLE">
+		{CALL INSERT_ROLE(
+		#{roleName,mode=IN}
+		,#{roleState,mode=IN}
+		,#{roleTypeId,mode=IN}
+		,#{remarks,mode=IN}
+		,#{menuIds,mode=IN}
+		,#{error_no,jdbcType=INTEGER,mode=OUT}
+		)}
 	</insert>
+
+	<update id="updateRole" parameterType="io.dfjinxin.modules.sys.entity.SysRoleEntity" statementType="CALLABLE">
+	   {CALL UPDATE_ROLE(
+	   #{roleId,mode=IN}
+	    ,#{roleName,mode=IN}
+		,#{roleState,mode=IN}
+		,#{roleTypeId,mode=IN}
+		,#{remarks,mode=IN}
+		,#{menuIds,mode=IN}
+		,#{error_no,jdbcType=INTEGER,mode=OUT}
+	   )}
+	</update>
 </mapper>
