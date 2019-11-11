@@ -10,8 +10,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
- *
+ *modify 2019.11.11
+ *表结构修改
  * @author z.h.c
  * @email z.h.c@126.com
  * @date 2019-09-02 15:38:20
@@ -33,16 +33,31 @@ public class WpBaseIndexInfoEntity implements Serializable {
 	/**
 	 *
 	 */
-	private String indexName;
-	/**
-	 *
-	 */
 	private String indexType;
 	/**
 	 *
 	 */
-	@TableField(exist=false)
-	private String indexFlag;
+	private String indexName;
+	/**
+	 *
+	 */
+	private String indexUsed;
+	/**
+	 *
+	 */
+	private String unit;
+	/**
+	 *
+	 */
+	private String areaName;
+	/**
+	 *
+	 */
+	private String frequence;
+	/**
+	 *
+	 */
+	private String sourceName;
 	/**
 	 *
 	 */
@@ -50,6 +65,8 @@ public class WpBaseIndexInfoEntity implements Serializable {
 	/**
 	 *
 	 */
+	private Integer indexFlag;
+
 	@TableField(exist = false)
 	private Date dataTime;
 
