@@ -414,8 +414,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     */
     private Map<String, Object> jiaGeYuCe(List<PssPriceReltEntity> reltTypeList) {
 
-        //明天日期
-        String tomorrowDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), 1));
+        //当天日期
+        String todayStr = DateUtils.dateToStr(new Date());
         //本周最后一天
         String weekLastDayStr = DateUtils.getWeekLastDayStr();
         //本月最后一天
@@ -438,7 +438,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             //日预测-统计30天
             if ("日预测".equals(entity.getForeType())) {
                 where5.eq("fore_type", "日预测");
-                where5.gt("fore_time", tomorrowDayStr);
+                where5.gt("fore_time", todayStr);
                 where5.last(" limit 0,30");
                 map.put("日预测", pssPriceReltDao.selectList(where5));
 
