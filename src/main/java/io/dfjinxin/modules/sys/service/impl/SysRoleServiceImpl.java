@@ -16,6 +16,7 @@ import io.dfjinxin.common.exception.RRException;
 import io.dfjinxin.common.utils.Constant;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
+import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.sys.dao.SysRoleDao;
 import io.dfjinxin.modules.sys.entity.SysDepEntity;
 import io.dfjinxin.modules.sys.entity.SysMenuEntity;
@@ -109,7 +110,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
     }
 
 	@Override
-	public List<Map<String,Object>> rolePerm(String role_id) {
+	public R rolePerm(String role_id) {
 		Map<String,Object> fmap = new HashMap<>();
 		List<Map<String,Object>> privilegeDef=  sysRoleMenuService.select(fmap);
 		Map<String,Object> smap = new HashMap<>();
@@ -127,7 +128,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 		priDefMap.forEach((k, v) -> result.add(pri4RoleMap.getOrDefault(k, v)));
 
 
-		return result;
+		return R.ok().put("data",result);
 	}
 
 	@Override

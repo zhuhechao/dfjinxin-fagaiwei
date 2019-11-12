@@ -10,6 +10,7 @@ package io.dfjinxin.modules.sys.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.common.utils.PageUtils;
+import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.sys.entity.SysMenuEntity;
 import io.dfjinxin.modules.sys.entity.SysRoleEntity;
 
@@ -32,7 +33,7 @@ public interface SysRoleService extends IService<SysRoleEntity> {
 	void deleteBatch(int[] roleIds);
 
 	//角色功能权限
-	public List<Map<String,Object>> rolePerm(String roleId);
+	public R rolePerm(String roleId);
 
 	//新增角色
 	void addRole(SysRoleEntity role);
