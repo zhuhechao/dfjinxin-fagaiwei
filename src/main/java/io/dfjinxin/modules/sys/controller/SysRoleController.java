@@ -85,8 +85,8 @@ public class SysRoleController extends AbstractController {
 	@SysLog("获取角色的权限信息")
 	@GetMapping("/rolePerm")
 	@RequiresPermissions("sys:role:rolePerm")
-	public List<Map<String,Object>> getRolePerm(String roleId){
-	List<Map<String,Object>> perm=	sysRoleService.rolePerm(roleId);
+	public R getRolePerm(String roleId){
+	R perm=	sysRoleService.rolePerm(roleId);
 	return perm;
 	}
 
