@@ -549,7 +549,6 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         for (String sql : sqlList) {
             List<Map<String, Object>> res = hiveService.selectData(sql);
             if (res != null && res.size() > 0) {
-                System.out.println(res.get(0).getClass());
                 data.add(res.get(0));
             }
         }
