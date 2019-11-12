@@ -45,7 +45,7 @@ public class PssAnalyReltController {
             @ApiImplicitParam(name = "pageSize", value = "返回数据量", required = false, dataType = "Int", paramType = "query")
     })
     public R query(@RequestParam(value = "analyName", required = false) String analyName,
-                   @RequestParam(value = "analyWay", required = false) Integer analyWay,
+                   @RequestParam(value = "analyWay", required = false) String analyWay,
                    @RequestParam(value = "datasetId", required = false) Integer datasetId,
                    @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
                    @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize) {

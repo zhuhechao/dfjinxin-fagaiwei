@@ -66,6 +66,6 @@
     <if test="param.dateTo != null ">
       AND ppr.data_date &lt;= #{param.dateTo}
     </if>
-    and pdi.data_set_type = 2
+
   </select>
 </mapper>
