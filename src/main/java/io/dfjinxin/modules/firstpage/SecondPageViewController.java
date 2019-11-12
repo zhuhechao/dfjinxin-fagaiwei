@@ -1,7 +1,7 @@
 package io.dfjinxin.modules.firstpage;
 
 import io.dfjinxin.common.utils.R;
-import io.dfjinxin.modules.analyse.service.WpCommIndexValService;
+import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
 import io.dfjinxin.modules.price.service.PssPriceEwarnService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,7 +34,7 @@ public class SecondPageViewController {
     @Autowired
     private PssPriceEwarnService pssPriceEwarnService;
     @Autowired
-    private WpCommIndexValService wpCommIndexValService;
+    private WpBaseIndexValService wpBaseIndexValService;
 
     /**
      * 列表
@@ -43,23 +43,22 @@ public class SecondPageViewController {
     @ApiOperation(value = "二级页面-展示", notes = "根据3级商品id 获取相应该商品所有4级商品 指标信息 eg:58")
     public R queryIndexTypeByCommId(@PathVariable("commId") Integer commId) {
         logger.info("二级页面,req commId:{}", commId);
-        List<Map<String, Object>> list = wpCommIndexValService.queryLevel4CommInfo(commId);
+//        List<Map<String, Object>> list = wpBaseIndexValService.queryLevel4CommInfo(commId);
+        List<Map<String, Object>> list = wpBaseIndexValService.secondPageIndexType(commId);
         Map<String, Object> resMap = new HashMap<>();
         for (Map<String, Object> var : list) {
             for (String key : var.keySet()) {
                 resMap.put(key, var.get(key));
             }
         }
-        //计算增副
-        Map<String, Object> zfMap = pssPriceEwarnService.converZF(commId);
-
-        if (list == null || list.size() < 1 || zfMap == null) {
+//        //计算增副
+        Map<String, Object> zfMap = pssPriceEwarnService.secondPageDetail(commId);
+        if (list == null || list.size() < 1 || zfMap == null || zfMap.isEmpty()) {
             return R.ok("数据异常!").put("data", null);
         } else {
             resMap.putAll(zfMap);
             return R.ok().put("data", resMap);
         }
-
     }
 
 }

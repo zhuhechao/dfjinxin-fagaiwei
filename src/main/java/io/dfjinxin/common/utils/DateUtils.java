@@ -241,6 +241,18 @@ public class DateUtils {
     }
 
     /**
+     * 获取本周最后一天
+     *
+     * @return
+     */
+    public static String getWeekLastDayStr() {
+        Calendar ca = Calendar.getInstance();
+        ca.set(Calendar.DAY_OF_WEEK, ca.getActualMaximum(Calendar.DAY_OF_WEEK));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateUtils.DATE_PATTERN);
+        return simpleDateFormat.format(ca.getTime());
+    }
+
+    /**
      * 获取当前天
      *
      * @return
@@ -338,7 +350,8 @@ public class DateUtils {
 
 
     public static void main(String[] args) {
-        System.out.println(DateUtils.addDateDays(new Date(),-1));
+        System.out.println(DateUtils.getWeekLastDayStr());
+        System.out.println(DateUtils.getMonthLastDayStr());
 //        System.out.println(DateUtils.getLastMonthByVal(1));
 //        System.out.println(DateUtils.getLastYearByVal(1));
 //        System.out.println(DateUtils.dateToStr(DateUtils.addDateDays(new Date(),-1)));

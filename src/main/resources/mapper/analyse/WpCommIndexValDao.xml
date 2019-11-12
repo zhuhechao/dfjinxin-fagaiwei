@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="io.dfjinxin.modules.analyse.dao.WpCommIndexValDao">
+<mapper namespace="io.dfjinxin.modules.analyse.dao.WpBaseIndexValDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="io.dfjinxin.modules.analyse.entity.WpCommIndexValEntity" id="wpCommIndexValMap">
-        <result property="indexI" column="index_i"/>
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity" id="wpBaseIndexValMap">
+        <result property="indexId" column="index_id"/>
         <result property="commId" column="comm_id"/>
         <result property="indexName" column="index_name"/>
         <result property="indexType" column="index_type"/>
-        <result property="statAreaId" column="stat_area_id"/>
-        <result property="statAreaName" column="stat_area_name"/>
-        <result property="statFrequency" column="stat_frequency"/>
-        <result property="indexVal" column="index_val"/>
-        <result property="indexUnit" column="index_unit"/>
-        <result property="dataTime" column="data_time"/>
-        <result property="dataSource" column="data_source"/>
+        <result property="areaName" column="area_name"/>
+        <result property="frequence" column="frequence"/>
+        <result property="unit" column="unit"/>
+        <result property="sourceName" column="source_name"/>
+        <result property="value" column="value"/>
+        <result property="date" column="date"/>
     </resultMap>
 
     <select id="queryIndexTypeByCommId" resultType="java.util.HashMap">
-        SELECT t1.index_type from wp_comm_index_val t1
+        SELECT t1.index_type from wp_base_index_val t1
         where t1.comm_id=#{commId}
         group by t1.index_type
         order by t1.index_type
@@ -27,7 +26,7 @@
 
     <select id="queryIndexTypeByCondition" parameterType="java.util.Map" resultType="java.util.HashMap">
         SELECT t2.comm_name, t1.index_name,sum(t1.index_val) index_val ,t1.index_unit
-        from wp_comm_index_val t1
+        from wp_base_index_val t1
         left join pss_comm_total  t2 on t1.comm_id=t2.comm_id
         where t1.comm_id=#{condition.commId}
         and t1.index_type=#{condition.indexType}
@@ -41,7 +40,7 @@
 
     <select id="queryIndexTypePrice" parameterType="java.util.Map" resultType="java.util.HashMap">
         SELECT t2.comm_name, t1.index_name,t1.index_val index_val ,t1.index_unit,t1.data_time
-        from wp_comm_index_val t1
+        from wp_base_index_val t1
         left join pss_comm_total  t2 on t1.comm_id=t2.comm_id
         where t1.comm_id=#{condition.commId}
         and t1.index_type=#{condition.indexType}
@@ -52,9 +51,9 @@
         order by t1.index_name,data_time
     </select>
 
-    <select id="selectListBystatAreaId" resultMap="wpCommIndexValMap">
+    <select id="selectListBystatAreaId" resultMap="wpBaseIndexValMap">
         SELECT max(data_time) as data_time,index_name,stat_area_name,stat_area_id,stat_frequency,index_val,index_unit
-        from wp_comm_index_val val
+        from wp_base_index_val val
         WHERE comm_id = #{commId}
         AND index_type = #{indexType}
         AND index_i = #{indexId}
@@ -63,16 +62,16 @@
         ORDER BY data_time desc
     </select>
 
-    <select id="queryByIndexType" resultMap="wpCommIndexValMap">
-        select * from wp_comm_index_val wiv
+    <select id="queryByIndexType" resultMap="wpBaseIndexValMap">
+        select * from wp_base_index_val wiv
         where index_type = #{indexType}
         and comm_id= #{commId}
         and stat_area_name='全国'
-        order by data_time desc
+        order by date desc
         limit 0,30
     </select>
 
-    <select id="queryMapValByIndexType" resultMap="wpCommIndexValMap">
+    <select id="queryMapValByIndexType" resultMap="wpBaseIndexValMap">
         SELECT
             max(data_time) as data_time,
            comm_id,index_type,
@@ -80,19 +79,19 @@
            stat_area_id,
            stat_area_name,
            index_val,index_unit
-        FROM wp_comm_index_val
+        FROM wp_base_index_val
         where index_type = '价格'
         and comm_id= #{commId}
         and stat_area_name !='全国'
         GROUP BY stat_area_name
-        ORDER BY data_time desc
+        ORDER BY date desc
     </select>
-    <select id="queryNoPriceByIndexType" resultMap="wpCommIndexValMap">
-        select * from wp_comm_index_val wiv
+    <select id="queryNoPriceByIndexType" resultMap="wpBaseIndexValMap">
+        select * from wp_base_index_val wiv
         where index_type = #{indexType}
         and comm_id= #{commId}
         and stat_area_name='全国'
-        order by data_time desc
+        order by date desc
         limit 0,2
     </select>
 

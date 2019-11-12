@@ -22,13 +22,9 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
 
     List<Object> queryDetail(Integer commId,Integer ewarnTypeId);
 
-//    Map<String,Object> queryType3Warn();
-
-    Map<String, Object> converZF(Integer commId);
+    Map<String, Object> secondPageDetail(Integer commId);
 
     Map<String, Object> firstPageView();
-
-    Map<String, Object> firstPageView2();
 
     List<PssPriceEwarnEntity> getDayReportData(Map<String,Object> params);
     List<Map<String,Object>> getDayReportDataForBarImage(Map<String,Object> params);

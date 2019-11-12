@@ -1,9 +1,8 @@
 package io.dfjinxin.modules.analyse.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import io.dfjinxin.common.dto.PssCommTotalDto;
-import io.dfjinxin.modules.analyse.entity.WpCommIndexValEntity;
-import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
+import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
+import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -20,20 +19,20 @@ import java.util.Map;
  */
 @Mapper
 @Repository
-public interface WpCommIndexValDao extends BaseMapper<WpCommIndexValEntity> {
+public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
     List<Map<String, Object>> queryIndexTypeByCommId(@Param("commId") Integer commId);
 
     List<Map<String, Object>> queryIndexTypeByCondition(@Param("condition") Map<String, Object> condition);
 
     List<Map<String, Object>> queryIndexTypePrice(@Param("condition") Map<String, Object> condition);
 
-    List<WpCommIndexValEntity> selectListBystatAreaId(@Param("commId")int commId,
+    List<WpBaseIndexValEntity> selectListBystatAreaId(@Param("commId")int commId,
                                                       @Param("indexType")String indexType,
                                                       @Param("indexId")Integer indexId);
 
-    List<WpCommIndexValEntity> queryByIndexType(@Param("commId")Integer commId, @Param("indexType")String indexType);
+    List<WpBaseIndexValEntity> queryByIndexType(@Param("commId")Integer commId, @Param("indexType")String indexType);
 
-    List<WpCommIndexValEntity> queryMapValByIndexType(@Param("commId")Integer commId );
+    List<WpBaseIndexValEntity> queryMapValByIndexType(@Param("commId")Integer commId );
 
-    List<WpCommIndexValEntity> queryNoPriceByIndexType(@Param("commId")Integer commId, @Param("indexType")String indexType);
+    List<WpBaseIndexValEntity> queryNoPriceByIndexType(@Param("commId")Integer commId, @Param("indexType")String indexType);
 }

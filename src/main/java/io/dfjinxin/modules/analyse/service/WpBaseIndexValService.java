@@ -2,7 +2,7 @@ package io.dfjinxin.modules.analyse.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.common.utils.PageUtils;
-import io.dfjinxin.modules.analyse.entity.WpCommIndexValEntity;
+import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.Map;
  * @email z.h.c@126.com
  * @date 2019-09-02 15:38:19
  */
-public interface WpCommIndexValService extends IService<WpCommIndexValEntity> {
+public interface WpBaseIndexValService extends IService<WpBaseIndexValEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
@@ -28,5 +28,8 @@ public interface WpCommIndexValService extends IService<WpCommIndexValEntity> {
     List<Map<String, Object>> queryLevel4CommInfo(Integer commId);
 
     Map<String, Object> analyseType4CommIndexs(Integer commId);
+
+    List<Map<String, Object>> secondPageIndexType(Integer commId);
+    List<WpBaseIndexValEntity> getprovinceLastDayMapData(Integer type3CommId,String indexType,String dataStr);
 }
 

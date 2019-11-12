@@ -6,18 +6,20 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.dfjinxin.modules.price.entity.PssPriceReltEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * 
- * 
+ *
+ *
  * @author bourne
  * @email kuibobo@gmail.com
  * @date 2019-09-03 16:47:42
  */
 @Mapper
+@Repository
 public interface PssPriceReltDao extends BaseMapper<PssPriceReltEntity> {
 
     IPage<PssPriceReltEntity> queryPage(Page page, @Param("param") Map map);

@@ -60,6 +60,7 @@ public class WpBaseIndexInfoServiceImpl extends ServiceImpl<WpBaseIndexInfoDao, 
         QueryWrapper<WpBaseIndexInfoEntity> where = new QueryWrapper<>();
         where.eq("comm_id", commId);
         where.groupBy("index_type");
+
         List<WpBaseIndexInfoEntity> indexTypeList = baseMapper.selectList(where);
         for (WpBaseIndexInfoEntity entity : indexTypeList) {
             QueryWrapper<WpBaseIndexInfoEntity> where2 = new QueryWrapper<>();
