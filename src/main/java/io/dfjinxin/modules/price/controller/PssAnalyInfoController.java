@@ -135,7 +135,8 @@ public class PssAnalyInfoController {
             pssAnalyReltService.saveOrUpdate(relt);
             Map data = new LinkedHashMap();
             data.put("pva",relt.getPvalue());
-            data.put("coe",relt.getAnalyCoe());
+            if(!StringUtils.isEmpty(relt.getAnalyCoe()))
+                data.put("coe",relt.getAnalyCoe());
             return R.ok().put("data", data);
         }
 
@@ -202,17 +203,17 @@ public class PssAnalyInfoController {
             String[]concatIds = ArrayUtils.addAll(indes,macIds);
             if (pssAnalyInfoDto.getAnalyWay().equals("偏相关性分析")) {
                 jsonObject.put("table",pssDatasetInfoEntity.getDataSetEngName());
-                jsonObject.put("indepVar",indes);
+                jsonObject.put("indepVar",concatIds);
                 r = callPython(url+"pCorAna",jsonObject);
             } else if (pssAnalyInfoDto.getAnalyWay().equals("格兰杰")) {
                 jsonObject.put("table",pssDatasetInfoEntity.getDataSetEngName());
-                jsonObject.put("indepVar",indes);
-                jsonObject.put("depeVar",indes);
+                jsonObject.put("indepVar",concatIds);
+                jsonObject.put("depeVar",pssAnalyInfoDto.getDepeVar());
                 r = callPython(url+"grangerAna",jsonObject);
             } else if (pssAnalyInfoDto.getAnalyWay().equals("路径分析")) {
                 jsonObject.put("table",pssDatasetInfoEntity.getDataSetEngName());
-                jsonObject.put("indepVar",indes);
-                jsonObject.put("depeVar",indes);
+                jsonObject.put("indepVar",concatIds);
+                jsonObject.put("depeVar",pssAnalyInfoDto.getDepeVar());
                 r = callPython(url+"pathAna",jsonObject);
             } else {//一般相关性分析
                 jsonObject.put("table",pssDatasetInfoEntity.getDataSetEngName());
@@ -247,15 +248,19 @@ public class PssAnalyInfoController {
                     });
                     jsonObject.put("pValue",o[0].replaceAll("\"\"","\""));
                 }
-                o[0] = jsonObject.get("coe").toString();
-                if(o[0]!=null) {
-                    idMap.forEach((k, v) ->{
-                        o[0] = o[0].replaceAll(k.toString(), v.toString());
-                    });
-                    macMap.forEach((k, v) -> {
-                        o[0] = o[0].replaceAll(k.toString(), v.toString());
-                    });
-                    jsonObject.put("coe",o[0].replaceAll("\"\"","\""));
+                try {
+                    o[0] = jsonObject.get("coe").toString();
+                    if (o[0] != null) {
+                        idMap.forEach((k, v) -> {
+                            o[0] = o[0].replaceAll(k.toString(), v.toString());
+                        });
+                        macMap.forEach((k, v) -> {
+                            o[0] = o[0].replaceAll(k.toString(), v.toString());
+                        });
+                        jsonObject.put("coe", o[0].replaceAll("\"\"", "\""));
+                    }
+                }catch (Exception ee){
+
                 }
             }
         }
