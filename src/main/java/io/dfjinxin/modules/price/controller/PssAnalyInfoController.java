@@ -133,7 +133,10 @@ public class PssAnalyInfoController {
                 relt.setReltId(list.get(0).getReltId());
 
             pssAnalyReltService.saveOrUpdate(relt);
-            return R.ok();
+            Map data = new LinkedHashMap();
+            data.put("pva",relt.getPvalue());
+            data.put("coe",relt.getAnalyCoe());
+            return R.ok().put("data", data);
         }
 
         return R.error("未更新任何信息！");
