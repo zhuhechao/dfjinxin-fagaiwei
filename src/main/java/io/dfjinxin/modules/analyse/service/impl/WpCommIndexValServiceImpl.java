@@ -2,15 +2,14 @@ package io.dfjinxin.modules.analyse.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.dfjinxin.common.dto.KpiInfoDto;
-import io.dfjinxin.common.utils.DateUtils;
 import io.dfjinxin.common.utils.KpiTypeEnum;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
 import io.dfjinxin.modules.analyse.dao.WpBaseIndexValDao;
 import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
-import io.dfjinxin.modules.analyse.entity.WpMcroIndexValEntity;
 import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
 import io.dfjinxin.modules.price.dao.PssCommTotalDao;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
@@ -28,9 +27,6 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
     @Autowired
     private WpBaseIndexValDao wpBaseIndexValDao;
 
-//    @Autowired
-//    private WpBaseIndexInfoDao wpBaseIndexInfoDao;
-
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<WpBaseIndexValEntity> page = this.page(
@@ -38,6 +34,20 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                 new QueryWrapper<WpBaseIndexValEntity>()
         );
 
+        return new PageUtils(page);
+    }
+
+    /**
+     * @Desc: 二级页面-根据3类商品统计指定 指标类型&时间的规格品取值
+     * @Param: [params]
+     * @Return: io.dfjinxin.common.utils.PageUtils
+     * @Author: z.h.c
+     * @Date: 2019/11/13 13:54
+     */
+    @Override
+    public PageUtils queryPageByDate(Map<String, Object> params) {
+        Page page = new Page((Integer) params.get("pageIndex"), (Integer) params.get("pageSize"));
+        page = (Page) super.baseMapper.queryPageByDate(page, params);
         return new PageUtils(page);
     }
 

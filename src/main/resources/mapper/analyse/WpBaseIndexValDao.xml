@@ -17,6 +17,22 @@
         <result property="date" column="date"/>
     </resultMap>
 
+    <resultMap type="io.dfjinxin.modules.analyse.dto.WpBaseIndexValEntityDto" id="wpBaseIndexValDtoMap">
+        <result property="indexId" column="index_id"/>
+        <result property="commId" column="comm_id"/>
+        <result property="indexName" column="index_name"/>
+        <result property="indexType" column="index_type"/>
+        <result property="areaName" column="area_name"/>
+        <result property="frequence" column="frequence"/>
+        <result property="unit" column="unit"/>
+        <result property="sourceName" column="source_name"/>
+        <result property="value" column="value"/>
+        <result property="date" column="date"/>
+
+        <!--商品名称-->
+        <result property="commName" column="comm_name"/>
+    </resultMap>
+
     <select id="queryIndexTypeByCommId" resultType="java.util.HashMap">
         SELECT t1.index_type from wp_base_index_val t1
         where t1.comm_id=#{commId}
@@ -86,6 +102,7 @@
         GROUP BY stat_area_name
         ORDER BY date desc
     </select>
+
     <select id="queryNoPriceByIndexType" resultMap="wpBaseIndexValMap">
         select * from wp_base_index_val wiv
         where index_type = #{indexType}
@@ -93,6 +110,22 @@
         and stat_area_name='全国'
         order by date desc
         limit 0,2
+    </select>
+
+    <!--add by zhc 11.13 二级页面-根据3类商品统计指定 指标类型&时间的规格品取值-->
+    <select id="queryPageByDate" resultMap="wpBaseIndexValDtoMap">
+        select val.*,total.comm_name
+        from wp_base_index_val val
+        left join pss_comm_total total
+        on val.comm_id = total.comm_id
+        where val.comm_id in (select comm_id from pss_comm_total where parent_code = #{param.commId})
+        and val.index_type = #{param.indexType}
+        <if test="param.startDate != null">
+            AND val.date <![CDATA[ >= ]]> #{param.startDate}
+        </if>
+        <if test="param.endDate != null">
+            AND val.date <![CDATA[ <= ]]> #{param.endDate}
+        </if>
     </select>
 
 </mapper>

@@ -1,8 +1,11 @@
 package io.dfjinxin.modules.analyse.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
 import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
+import io.dfjinxin.modules.price.entity.PssPriceReltEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -35,4 +38,7 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
     List<WpBaseIndexValEntity> queryMapValByIndexType(@Param("commId")Integer commId );
 
     List<WpBaseIndexValEntity> queryNoPriceByIndexType(@Param("commId")Integer commId, @Param("indexType")String indexType);
+
+    IPage<PssPriceReltEntity> queryPageByDate(Page page, @Param("param") Map map);
+
 }

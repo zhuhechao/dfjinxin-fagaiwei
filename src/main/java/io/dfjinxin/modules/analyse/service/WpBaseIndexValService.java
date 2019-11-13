@@ -31,5 +31,7 @@ public interface WpBaseIndexValService extends IService<WpBaseIndexValEntity> {
 
     List<Map<String, Object>> secondPageIndexType(Integer commId);
     List<WpBaseIndexValEntity> getprovinceLastDayMapData(Integer type3CommId,String indexType,String dataStr);
+
+    PageUtils queryPageByDate(Map<String, Object> params);
 }
 
