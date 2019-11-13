@@ -201,36 +201,22 @@ public class PssAnalyInfoController {
             }
             String[]concatIds = ArrayUtils.addAll(indes,macIds);
             if (pssAnalyInfoDto.getAnalyWay().equals("偏相关性分析")) {
-//                r = callGenerPy("/home/ndrc-test/pyjiaoben/pcor_ana.py", new String[]{"\"ana_data_1\"",
-//                        "\"Brent_forward_price&output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
-//                r = callGenerPy("/home/ndrc-test/pyjiaoben/pcor_ana.py", new String[]{pssDatasetInfoEntity.getDataSetEngName(),ids});
                 jsonObject.put("table",pssDatasetInfoEntity.getDataSetEngName());
                 jsonObject.put("indepVar",indes);
                 r = callPython(url+"pCorAna",jsonObject);
             } else if (pssAnalyInfoDto.getAnalyWay().equals("格兰杰")) {
-//                r = callGenerPy("/home/ndrc-test/pyjiaoben/granger_ana.py", new String[]{"\"ana_data_1\"", "\"Brent_forward_price\" ",
-//                        "\"output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
-//                r = callGenerPy("/home/ndrc-test/pyjiaoben/granger_ana.py", new String[]{pssDatasetInfoEntity.getDataSetEngName(),pssAnalyInfoDto.getDepeVar(),ids});
                 jsonObject.put("table",pssDatasetInfoEntity.getDataSetEngName());
                 jsonObject.put("indepVar",indes);
                 jsonObject.put("depeVar",indes);
                 r = callPython(url+"grangerAna",jsonObject);
             } else if (pssAnalyInfoDto.getAnalyWay().equals("路径分析")) {
-//                r = callGenerPy("/home/ndrc-test/pyjiaoben/path_ana.py", new String[]{"\"ana_data_1\"", "\"Brent_forward_price\" ",
-//                        "\"output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
-//                r = callGenerPy("/home/ndrc-test/pyjiaoben/path_ana.py", new String[]{pssDatasetInfoEntity.getDataSetEngName(),pssAnalyInfoDto.getDepeVar(),ids});
                 jsonObject.put("table",pssDatasetInfoEntity.getDataSetEngName());
                 jsonObject.put("indepVar",indes);
                 jsonObject.put("depeVar",indes);
                 r = callPython(url+"pathAna",jsonObject);
             } else {//一般相关性分析
-//                r = callGenerPy("/home/ndrc-test/pyjiaoben/cor_ana.py", new String[]{"\"ana_data_1\"",
-//                        "\"Brent_forward_price&output_china&Apparent_consumption&Oil_demand_world&Brent_spot_price&imports&exports&Closing_stock_usa\""});
-//                r = callGenerPy("/home/ndrc-test/pyjiaoben/cor_ana.py", new String[]{pssDatasetInfoEntity.getDataSetEngName(),ids});
                 jsonObject.put("table",pssDatasetInfoEntity.getDataSetEngName());
-                        //"ana_data_1");
                 jsonObject.put("indepVar", concatIds);
-                        // new String[]{"Brent_forward_price", "output_china", "Apparent_consumption", "Oil_demand_world"});
                 r = callPython(url+"CorAna",jsonObject);
             }
             try {
