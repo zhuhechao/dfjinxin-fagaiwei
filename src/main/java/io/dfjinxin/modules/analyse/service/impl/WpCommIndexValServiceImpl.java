@@ -297,7 +297,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                     List<WpBaseIndexValEntity> priList = null;
                     for (PssCommTotalEntity entity : commLevel3) {
                         if (commLevel2.getCommName().equals(entity.getCommName())) {
-                            priList = doIndexPriceInfo(null, entity.getCommId(), type);
+                            priList = doIndexInfo(baseIndexInfoEntities, type);
                         }
                     }
                     Map priMap = new HashMap();

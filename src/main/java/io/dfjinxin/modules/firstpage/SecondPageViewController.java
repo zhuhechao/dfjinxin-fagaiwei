@@ -55,6 +55,7 @@ public class SecondPageViewController {
                 resMap.put(key, var.get(key));
             }
         }
+
         //其它数据
         Map<String, Object> zfMap = pssPriceEwarnService.secondPageDetail(commId);
         resMap.putAll(zfMap);
