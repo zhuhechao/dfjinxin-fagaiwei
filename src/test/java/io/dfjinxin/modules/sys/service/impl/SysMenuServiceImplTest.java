@@ -31,10 +31,15 @@ public class SysMenuServiceImplTest {
     private WpBaseIndexValService wpBaseIndexValService;
 
     @Test
-    public void getprovinceLastDayMapData(){
+    public void pssPriceEwarnService() {
+        pssPriceEwarnService.secondPageDetail(44);
+    }
+
+    @Test
+    public void getprovinceLastDayMapData() {
         String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
 
-        wpBaseIndexValService.getprovinceLastDayMapData(30,"价格","2019-10-11");
+        wpBaseIndexValService.getprovinceLastDayMapData(30, "价格", "2019-10-11");
     }
 
     @Test

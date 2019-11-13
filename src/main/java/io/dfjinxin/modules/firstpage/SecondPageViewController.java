@@ -37,13 +37,17 @@ public class SecondPageViewController {
     private WpBaseIndexValService wpBaseIndexValService;
 
     /**
-     * 列表
-     */
+    * @Desc:  二级页面
+    * @Param: 3类商品id[commId]
+    * @Return: io.dfjinxin.common.utils.R
+    * @Author: z.h.c
+    * @Date: 2019/11/12 18:52
+    */
     @GetMapping("/view/{commId}")
     @ApiOperation(value = "二级页面-展示", notes = "根据3级商品id 获取相应该商品所有4级商品 指标信息 eg:58")
     public R queryIndexTypeByCommId(@PathVariable("commId") Integer commId) {
         logger.info("二级页面,req commId:{}", commId);
-//        List<Map<String, Object>> list = wpBaseIndexValService.queryLevel4CommInfo(commId);
+//        指标类型信息
         List<Map<String, Object>> list = wpBaseIndexValService.secondPageIndexType(commId);
         Map<String, Object> resMap = new HashMap<>();
         for (Map<String, Object> var : list) {
@@ -51,14 +55,10 @@ public class SecondPageViewController {
                 resMap.put(key, var.get(key));
             }
         }
-//        //计算增副
+        //其它数据
         Map<String, Object> zfMap = pssPriceEwarnService.secondPageDetail(commId);
-        if (list == null || list.size() < 1 || zfMap == null || zfMap.isEmpty()) {
-            return R.ok("数据异常!").put("data", null);
-        } else {
-            resMap.putAll(zfMap);
-            return R.ok().put("data", resMap);
-        }
+        resMap.putAll(zfMap);
+        return R.ok().put("data", resMap);
     }
 
 }
