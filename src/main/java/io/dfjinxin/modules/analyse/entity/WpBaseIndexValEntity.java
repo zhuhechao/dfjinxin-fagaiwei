@@ -3,11 +3,10 @@ package io.dfjinxin.modules.analyse.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
-import java.math.BigDecimal;
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  *
@@ -17,15 +16,15 @@ import lombok.Data;
  * @date 2019-09-02 15:38:19
  */
 @Data
-@TableName("wp_comm_index_val")
-public class WpCommIndexValEntity implements Serializable {
+@TableName("wp_base_index_val")
+public class WpBaseIndexValEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 *
 	 */
 	@TableId
-	private Integer indexI;
+	private Integer indexId;
 	/**
 	 *
 	 */
@@ -41,31 +40,30 @@ public class WpCommIndexValEntity implements Serializable {
 	/**
 	 *
 	 */
-	private Integer statAreaId;
+	private String areaName;
 	/**
 	 *
 	 */
-	private String statAreaName;
+	private String frequence;
 	/**
 	 *
 	 */
-	private String statFrequency;
+	private String unit;
 	/**
 	 *
 	 */
-	private BigDecimal indexVal;
+	private String sourceName;
 	/**
 	 *
 	 */
-	private String indexUnit;
+	private Double value;
 	/**
 	 *
 	 */
-	private Date dataTime;
-	/**
-	 *
-	 */
-	private String dataSource;
+	private Date date;
+
+
+
 
 	@TableField(exist = false)
 	private String commName;

@@ -1,7 +1,7 @@
 package io.dfjinxin.modules.analyse.controller;
 
 import io.dfjinxin.common.utils.R;
-import io.dfjinxin.modules.analyse.service.WpCommIndexValService;
+import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +27,13 @@ import java.util.Map;
 public class MultiAnalyseController {
 
     @Autowired
-    private WpCommIndexValService wpCommIndexValService;
+    private WpBaseIndexValService WpBaseIndexValService;
 
     @GetMapping("/detail/{commId}")
     @ApiOperation("多维分析详情页-根据3级商品id 获取相应该商品所有4级商品 指标信息")
     public R queryIndexTypeByCommId(@PathVariable("commId") Integer commId) {
 
-        List<Map<String, Object>> map  = wpCommIndexValService.queryLevel4CommInfo(commId);
+        List<Map<String, Object>> map  = WpBaseIndexValService.queryLevel4CommInfo(commId);
         return R.ok().put("data", map);
     }
 
@@ -55,7 +55,7 @@ public class MultiAnalyseController {
     @ApiOperation("多维分析详情页-根据3级商品id 获取相应该商品所有4级商品 指标信息")
     public R detailNew(@PathVariable("commId") Integer commId) {
 
-        Map<String, Object> map  = wpCommIndexValService.analyseType4CommIndexs(commId);
+        Map<String, Object> map  = WpBaseIndexValService.analyseType4CommIndexs(commId);
         return R.ok().put("data", map);
     }
 

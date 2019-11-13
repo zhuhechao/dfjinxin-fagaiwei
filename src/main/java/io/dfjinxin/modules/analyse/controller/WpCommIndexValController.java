@@ -3,8 +3,8 @@ package io.dfjinxin.modules.analyse.controller;
 import io.dfjinxin.common.utils.DateUtils;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
-import io.dfjinxin.modules.analyse.entity.WpCommIndexValEntity;
-import io.dfjinxin.modules.analyse.service.WpCommIndexValService;
+import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
+import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -33,7 +33,7 @@ import java.util.Map;
 @Api(tags = "WpCommIndexValController", description = "价格分析-趋势分析")
 public class WpCommIndexValController {
     @Autowired
-    private WpCommIndexValService wpCommIndexValService;
+    private WpBaseIndexValService WpBaseIndexValService;
 
     /**
      * 列表
@@ -42,7 +42,7 @@ public class WpCommIndexValController {
     @ApiOperation("趋势分析-趋势分析页")
     public R queryList() {
 
-        List<Map<String, PssCommTotalEntity>> list = wpCommIndexValService.queryList();
+        List<Map<String, PssCommTotalEntity>> list = WpBaseIndexValService.queryList();
         return R.ok().put("data", list);
     }
 
@@ -53,7 +53,7 @@ public class WpCommIndexValController {
     @ApiOperation("趋势分析详情页-根据 商品id 获取相应 指标类型")
     public R queryIndexTypeByCommId(@PathVariable("commId") Integer commId) {
 
-        List<Map<String, Object>> map  = wpCommIndexValService.queryIndexTypeByCommId(commId);
+        List<Map<String, Object>> map  = WpBaseIndexValService.queryIndexTypeByCommId(commId);
         return R.ok().put("data", map);
     }
     /**
@@ -86,7 +86,7 @@ public class WpCommIndexValController {
         params.put("commId", commId); params.put("indexType", indexType);
         params. put("dateTo", dateTo); params.put("dateFrom", dateFrom);
 
-        List<Map<String, Object>> map = wpCommIndexValService.queryDetailByCommId(params);
+        List<Map<String, Object>> map = WpBaseIndexValService.queryDetailByCommId(params);
         return R.ok().put("data", map);
     }
 

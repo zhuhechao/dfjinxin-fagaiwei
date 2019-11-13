@@ -48,8 +48,7 @@ public class WpBaseIndexInfoServiceImpl extends ServiceImpl<WpBaseIndexInfoDao, 
         where.eq("comm_id", commId);
         where.eq("index_flag", 0);
         where.eq("index_type", "价格");
-        //114码表中用途是预警的
-        where.eq("index_used", 114);
+        where.like("index_used", "%预警%");
         return baseMapper.selectList(where);
     }
 
@@ -61,6 +60,7 @@ public class WpBaseIndexInfoServiceImpl extends ServiceImpl<WpBaseIndexInfoDao, 
         QueryWrapper<WpBaseIndexInfoEntity> where = new QueryWrapper<>();
         where.eq("comm_id", commId);
         where.groupBy("index_type");
+
         List<WpBaseIndexInfoEntity> indexTypeList = baseMapper.selectList(where);
         for (WpBaseIndexInfoEntity entity : indexTypeList) {
             QueryWrapper<WpBaseIndexInfoEntity> where2 = new QueryWrapper<>();

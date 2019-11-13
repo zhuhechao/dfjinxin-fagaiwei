@@ -3,15 +3,19 @@
 
 <mapper namespace="io.dfjinxin.modules.analyse.dao.WpBaseIndexInfoDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="io.dfjinxin.modules.analyse.entity.WpBaseIndexInfoEntity" id="wpBaseIndexInfoMap">
         <result property="indexId" column="index_id"/>
         <result property="commId" column="comm_id"/>
-        <result property="indexName" column="index_name"/>
         <result property="indexType" column="index_type"/>
-        <result property="indexFlag" column="index_flag"/>
+        <result property="indexName" column="index_name"/>
+        <result property="indexUsed" column="index_used"/>
+        <result property="unit" column="unit"/>
+        <result property="areaName" column="area_name"/>
+        <result property="frequence" column="frequence"/>
+        <result property="sourceName" column="source_name"/>
         <result property="indexDescribe" column="index_describe"/>
-        <result property="dataTime" column="data_time"/>
+        <result property="indexFlag" column="index_flag"/>
     </resultMap>
 
 

@@ -2,6 +2,8 @@ package io.dfjinxin.modules.sys.service.impl;
 
 //import io.dfjinxin.common.validator.Assert;
 
+import io.dfjinxin.common.utils.DateUtils;
+import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
 import io.dfjinxin.modules.price.controller.PssDatasetInfoController;
 import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
 import io.dfjinxin.modules.price.service.PssPriceEwarnService;
@@ -25,6 +27,20 @@ public class SysMenuServiceImplTest {
     private PssPriceEwarnService pssPriceEwarnService;
     @Autowired
     private PssDatasetInfoController controller;
+    @Autowired
+    private WpBaseIndexValService wpBaseIndexValService;
+
+    @Test
+    public void pssPriceEwarnService() {
+        pssPriceEwarnService.secondPageDetail(44);
+    }
+
+    @Test
+    public void getprovinceLastDayMapData() {
+        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
+
+        wpBaseIndexValService.getprovinceLastDayMapData(30, "价格", "2019-10-11");
+    }
 
     @Test
     public void getMenuFromGovAuth() {
