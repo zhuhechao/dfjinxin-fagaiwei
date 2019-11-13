@@ -85,7 +85,10 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             return null;
         }
 
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> resMap = new HashMap<>();
+        resMap.put("ewanInfo",map.get("ewanInfo"));
+        return resMap;
+        /*Map<String, Object> result = new HashMap<>();
         List<PssPriceEwarnEntity> priceEwarnEntityList = (List<PssPriceEwarnEntity>) map.get("ewanInfo");
         List<PssPriceEwarnEntity> dazong = new ArrayList();
         List<PssPriceEwarnEntity> minsheng = new ArrayList();
@@ -100,8 +103,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             }
         }
         result.put("dazong", dazong);
-        result.put("minsheng", minsheng);
-        return result;
+        result.put("minsheng", minsheng);*/
+//        return result;
     }
 
     @Override
@@ -329,7 +332,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             where2.eq("comm_id", entity.getCommId());
             PssPriceEwarnEntity entity1 = pssPriceEwarnDao.selectOne(where2);
             if (entity1 == null) {
-                map.put("tongBi", "");
+                map.put("tongBi", 0);
                 logger.error("商品{}-{},预警价格,数据不存在!", entity.getCommId(), last2DateStr);
             } else {
                 // 前天价格
@@ -347,7 +350,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             PssPriceEwarnEntity entity2 = pssPriceEwarnDao.selectOne(where4);
 
             if (entity2 == null) {
-                map.put("huanBi", "");
+                map.put("huanBi", 0);
                 logger.error("商品{}-{},预警价格,数据不存在!", entity.getCommId(), lastMonthDayStr);
             } else {
                 //上月今日价格
@@ -358,8 +361,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 map.put("huanBi", huanBi);
             }
         } else {
-            map.put("huanBi", "");
-            map.put("tongBi", "");
+            map.put("huanBi", 0);
+            map.put("tongBi", 0);
         }
 
         //step2,统计昨天各规格品的商品价格
