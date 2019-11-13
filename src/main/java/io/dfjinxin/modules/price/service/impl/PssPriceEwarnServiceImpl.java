@@ -330,6 +330,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             QueryWrapper where2 = new QueryWrapper();
             where2.eq("Date(ewarn_date)", last2DateStr);
             where2.eq("comm_id", entity.getCommId());
+            where2.last(" limit 0,1");
             PssPriceEwarnEntity entity1 = pssPriceEwarnDao.selectOne(where2);
             if (entity1 == null) {
                 map.put("tongBi", 0);
@@ -347,6 +348,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             QueryWrapper where4 = new QueryWrapper();
             where4.eq("Date(ewarn_date)", lastMonthDayStr);
             where4.eq("comm_id", entity.getCommId());
+            where4.last("limit 0,1");
+
             PssPriceEwarnEntity entity2 = pssPriceEwarnDao.selectOne(where4);
 
             if (entity2 == null) {
