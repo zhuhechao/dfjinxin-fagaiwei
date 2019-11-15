@@ -38,7 +38,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
     }
 
     /**
-     * @Desc: 二级页面-根据3类商品统计指定 指标类型&时间的规格品取值
+     * @Desc: 二级页面(商品总览)-根据3类商品统计指定 指标类型&时间的规格品取值
      * @Param: [params]
      * @Return: io.dfjinxin.common.utils.PageUtils
      * @Author: z.h.c
@@ -258,7 +258,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
     }
 
     /**
-     * 二级页面 add by zhc 2019.11.11
+     * 二级页面(商品总览) add by zhc 2019.11.11
      * 根据3级商品id 获取相应该商品所有4级商品 指标信息
      *
      * @param commId

@@ -20,7 +20,7 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
 
     Map<String,Object> queryList();
 
-    List<Object> queryDetail(Integer commId,Integer ewarnTypeId);
+    Map<String, Object> queryconfByewarnTypeId(Integer commId,Integer ewarnTypeId);
 
     Map<String, Object> secondPageDetail(Integer commId);
 
@@ -31,5 +31,9 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
 
 //    腾讯-获取配置方案结果分布
     int getProgrammeDistribution();
+
+    Map<String, Object> queryIndexLineData(Integer ewarnTypeId, List<Integer> asList, String startDate, String endDate);
+
+    Map<String, Object> queryIndexAvgByIndexId(Integer indexId, Integer ewarnTypeId);
 }
 

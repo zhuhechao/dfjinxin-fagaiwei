@@ -17,9 +17,11 @@ import io.dfjinxin.modules.hive.service.HiveService;
 import io.dfjinxin.modules.price.dao.*;
 import io.dfjinxin.modules.price.dto.RateValDto;
 import io.dfjinxin.modules.price.entity.*;
+import io.dfjinxin.modules.price.service.PssCommConfService;
 import io.dfjinxin.modules.price.service.PssCommTotalService;
 import io.dfjinxin.modules.price.service.PssPriceEwarnService;
 import io.dfjinxin.modules.yuqing.TengXunYuQing;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     PssCommTotalDao pssCommTotalDao;
     @Autowired
     WpCommPriDao wpCommPriDao;
+    @Autowired
+    WpCommPriOrgDao wpCommPriOrgDao;
 
     @Autowired
     WpAsciiInfoDao wpAsciiInfoDao;
@@ -51,6 +55,9 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
     @Autowired
     PssPriceReltDao pssPriceReltDao;
+
+    @Autowired
+    PssCommConfService pssCommConfService;
 
     @Autowired
     PssCommTotalService pssCommTotalService;
@@ -86,76 +93,41 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         }
 
         Map<String, Object> resMap = new HashMap<>();
-        resMap.put("ewanInfo",map.get("ewanInfo"));
+        resMap.put("ewanInfo", map.get("ewanInfo"));
         return resMap;
-        /*Map<String, Object> result = new HashMap<>();
-        List<PssPriceEwarnEntity> priceEwarnEntityList = (List<PssPriceEwarnEntity>) map.get("ewanInfo");
-        List<PssPriceEwarnEntity> dazong = new ArrayList();
-        List<PssPriceEwarnEntity> minsheng = new ArrayList();
-        for (PssPriceEwarnEntity entity : priceEwarnEntityList) {
-            //取到的是3级商品的id，计算该3类商品属于哪一类商品
-            PssCommTotalEntity tyep1Comm = pssCommTotalDao.getType1CommBySubCommId(entity.getCommId());
-            //大宗商品
-            if (tyep1Comm != null && tyep1Comm.getCommId() == 1) {
-                dazong.add(entity);
-            } else {
-                minsheng.add(entity);
-            }
-        }
-        result.put("dazong", dazong);
-        result.put("minsheng", minsheng);*/
-//        return result;
     }
 
+    /**
+     * @Desc: 二级页面(预警展示)
+     * 统计指定3类商品下指定预警类型【常规&非常规】的规格品预警信息
+     * @Param: [commId, ewarnTypeId]
+     * @Return: java.util.List<java.lang.Object>
+     * @Author: z.h.c
+     * @Date: 2019/11/13 15:55
+     */
     @Override
-    public List<Object> queryDetail(Integer commId, Integer ewarnTypeId) {
+    public Map<String, Object> queryconfByewarnTypeId(Integer commId, Integer ewarnTypeId) {
 
-        String startDateStr = DateUtils.getMonthFirstDayStr();
-        String endDateStr = DateUtils.getCurrentDayStr();
-        List<PssPriceEwarnEntity> pssPriceEwarnEntities = pssPriceEwarnDao.queryEchartsData(commId, ewarnTypeId, startDateStr, endDateStr);
-        List<BigDecimal> echartsData = new ArrayList<>();
-        for (PssPriceEwarnEntity entity : pssPriceEwarnEntities) {
-            echartsData.add(entity.getPriValue());
+        if (commId == null || ewarnTypeId == null) return null;
+        List<PssCommConfEntity> entityList = pssCommConfService.queryByewarnTypeId(commId, ewarnTypeId);
+        Set<Integer> commIds = new HashSet<>();
+        for (PssCommConfEntity entity : entityList) {
+            commIds.add(entity.getCommId());
         }
 
-        Map<String, Object> map = new HashMap();
-        map.put("echartsData", echartsData);
-
-
-        //计算月平均
-        QueryWrapper where2 = new QueryWrapper();
-        where2.in("comm_id", commId);
-        where2.between("data_time", DateUtils.getMonthFirstDayStr(), DateUtils.getCurrentDayStr());
-        where2.orderByDesc("data_time");
-        List<WpCommPriEntity> mouthPriceList = wpCommPriDao.selectList(where2);
-        BigDecimal currentPrice = new BigDecimal(0);
-        if (mouthPriceList != null && mouthPriceList.size() > 0) {
-            currentPrice = mouthPriceList.get(0).getPriToday();
+        Map<String, Object> retMap = new HashMap<>();
+        for (Integer commIdOnly : commIds) {
+            Set<Integer> indexIds = new HashSet<>();
+            String commName = "";
+            for (PssCommConfEntity entity : entityList) {
+                if (commIdOnly.intValue() == entity.getCommId().intValue()) {
+                    indexIds.add(entity.getIndexId());
+                    commName = entity.getCommName();
+                }
+            }
+            retMap.put(commName, indexIds);
         }
-        BigDecimal mouthTotalPrice = new BigDecimal(0);
-        for (WpCommPriEntity entity : mouthPriceList) {
-            mouthTotalPrice = mouthTotalPrice.add(entity.getPriToday());
-        }
-        long diffDay = DateUtils.getMonthDiffDay();
-        BigDecimal mouthAvg = mouthTotalPrice.divide(new BigDecimal(diffDay), 2, RoundingMode.HALF_UP);
-
-        //计算年平均
-        QueryWrapper where3 = new QueryWrapper();
-        where3.in("comm_id", commId);
-        where3.between("data_time", DateUtils.getYearFirstDayStr(), DateUtils.getCurrentDayStr());
-        List<WpCommPriEntity> yearPriceList = wpCommPriDao.selectList(where3);
-        BigDecimal yearTotalPrice = new BigDecimal(0);
-        long yearDiffDay = DateUtils.getYearDiffDay();
-        for (WpCommPriEntity entity : yearPriceList) {
-            yearTotalPrice = yearTotalPrice.add(entity.getPriToday());
-        }
-        BigDecimal yearAvg = yearTotalPrice.divide(new BigDecimal(yearDiffDay), 2, RoundingMode.HALF_UP);
-        map.put("monthAvg", mouthAvg);
-        map.put("yearAvg", yearAvg);
-        map.put("currPrice", currentPrice);
-        List<Object> resultList = new ArrayList<>();
-        resultList.add(map);
-        return resultList;
+        return retMap;
     }
 
     /**
@@ -303,7 +275,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
 
     /**
-     * 计算二级页面除指标类型信息外的其它数据
+     * 计算二级页面(商品总览)除指标类型信息外的其它数据
      *
      * @param commId
      * @return
@@ -412,12 +384,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     }
 
     /**
-    * @Desc:  二级页面-价格预测情况
-    * @Param: [reltTypeList]
-    * @Return: java.util.Map<java.lang.String,java.lang.Object>
-    * @Author: z.h.c
-    * @Date: 2019/11/12 18:31
-    */
+     * @Desc: 二级页面(商品总览)-价格预测情况
+     * @Param: [reltTypeList]
+     * @Return: java.util.Map<java.lang.String, java.lang.Object>
+     * @Author: z.h.c
+     * @Date: 2019/11/12 18:31
+     */
     private Map<String, Object> jiaGeYuCe(List<PssPriceReltEntity> reltTypeList) {
 
         //当天日期
@@ -461,12 +433,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     }
 
     /**
-    * @Desc:  二级页面-全国价格走势&区域价格分布
-    * @Param: [commId, areaNmae, startDate, endDate]
-    * @Return: java.util.List<io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity>
-    * @Author: z.h.c
-    * @Date: 2019/11/12 18:33
-    */
+     * @Desc: 二级页面(商品总览)-全国价格走势&区域价格分布
+     * @Param: [commId, areaNmae, startDate, endDate]
+     * @Return: java.util.List<io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity>
+     * @Author: z.h.c
+     * @Date: 2019/11/12 18:33
+     */
     private List<WpBaseIndexValEntity> quYujiaGeByJiaGeZhiPiao(int commId, String areaNmae, String startDate, String endDate) {
         final String sql = "select pss_comm_total.comm_id from pss_comm_total where data_flag=0 and parent_code=" + commId;
         QueryWrapper<WpBaseIndexValEntity> where5 = new QueryWrapper();
@@ -483,12 +455,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     }
 
     /**
-    * @Desc:  根据4类商品查询所属性3类商品
-    * @Param: [commId]
-    * @Return: io.dfjinxin.modules.price.entity.PssCommTotalEntity
-    * @Author: z.h.c
-    * @Date: 2019/11/12 18:43
-    */
+     * @Desc: 根据4类商品查询所属性3类商品
+     * @Param: [commId]
+     * @Return: io.dfjinxin.modules.price.entity.PssCommTotalEntity
+     * @Author: z.h.c
+     * @Date: 2019/11/12 18:43
+     */
     private PssCommTotalEntity getParantCommByCommId(Integer commId) {
         PssCommTotalEntity level_code3Comm = pssCommTotalDao.selectById(commId);
         QueryWrapper where2 = new QueryWrapper();
@@ -499,12 +471,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     }
 
     /**
-    * @Desc:  首页-统计商品预警类型占比
-    * @Param: [list]
-    * @Return: java.util.Map<java.lang.String,java.lang.Object>
-    * @Author: z.h.c
-    * @Date: 2019/11/12 18:40
-    */
+     * @Desc: 首页-统计商品预警类型占比
+     * @Param: [list]
+     * @Return: java.util.Map<java.lang.String, java.lang.Object>
+     * @Author: z.h.c
+     * @Date: 2019/11/12 18:40
+     */
     private Map<String, Object> contionRateVal(List<RateValDto> list) {
         Map<String, Integer> map = new HashMap<>();
         for (RateValDto entity : list) {
@@ -531,9 +503,9 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     }
 
     /**
-     * @Desc:  首页-统计商品总数量
+     * @Desc: 首页-统计商品总数量
      * @Param: [list]
-     * @Return: java.util.Map<java.lang.String,java.lang.Object>
+     * @Return: java.util.Map<java.lang.String, java.lang.Object>
      * @Author: z.h.c
      * @Date: 2019/11/12 18:40
      */
@@ -602,6 +574,178 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         }
         return totalContentCnt;
 
+    }
+
+    /**
+     * 根据预警类型&指标 查询指标值
+     *
+     * @Desc:
+     * @Param: [ewarnTypeId, asList]
+     * @Return: java.util.Map<java.lang.String, java.util.List < java.lang.Object>>
+     * @Author: z.h.c
+     * @Date: 2019/11/14 14:45
+     */
+    @Override
+    public Map<String, Object> queryIndexLineData(Integer ewarnTypeId, List<Integer> indexIds, String startDate, String endDate) {
+
+        if (ewarnTypeId == null || indexIds == null || indexIds.size() < 1) return null;
+
+        Map<String, Object> resuMap = new HashMap<>();
+        for (int indexId : indexIds) {
+            QueryWrapper where = new QueryWrapper();
+            where.eq("index_id", indexId);
+            where.orderByDesc("data_time");
+            if (StringUtils.isNotEmpty(startDate) && StringUtils.isNotEmpty(endDate)) {
+                where.between("data_time", startDate, endDate);
+            } else {
+                where.last("limit 0,30");
+            }
+
+            //常规预警
+            if (ewarnTypeId == 18) {
+                List<WpCommPriEntity> list = wpCommPriDao.selectList(where);
+                if (list != null && list.size() > 1) {
+                    resuMap.put(list.get(0).getIndexName(), list);
+                }
+            }
+            //非常规预警
+            if (ewarnTypeId == 19) {
+                List<WpCommPriEntity> list = wpCommPriOrgDao.selectList(where);
+                if (list != null && list.size() > 1) {
+                    resuMap.put(list.get(0).getIndexName(), list);
+                }
+            }
+        }
+
+        return resuMap;
+
+    }
+
+    /**
+     * @Desc: 根据预警类型【常规或非常规】、指标id，统考某类指标的月平均、年平均、当前值
+     * @Param: [indexId, ewarnTypeId]
+     * @Return: java.util.Map<java.lang.String, java.lang.Object>
+     * @Author: z.h.c
+     * @Date: 2019/11/14 15:41
+     */
+    @Override
+    public Map<String, Object> queryIndexAvgByIndexId(Integer indexId, Integer ewarnTypeId) {
+
+        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));//昨天时间
+        String monthFirstDayStr = DateUtils.getMonthFirstDayStr();//本月第一天
+
+        String lastMonthFirstDayStr = DateUtils.getLastMonthFirstDayStr();//上月第一天
+        String lastMonthLastDayStr = DateUtils.getLastMonthLastDayStr();//上月最后一天
+
+        String yearFirstDayStr = DateUtils.getYearFirstDayStr();//本年第一天
+
+        String LastYearFirstDayStr = DateUtils.getLastYearFirstDayStr();//上年第一天
+        String LastYearLastDayStr = DateUtils.getLastYearLastDayStr();//上年最后一天
+        //本月、本年平均值
+        Map<String, Object> currYearMonthAvg = converIndexAvg(ewarnTypeId, indexId,
+                monthFirstDayStr, lastDayStr, yearFirstDayStr, lastDayStr);
+
+        Map<String, Object> lastYearMonthAvg = converIndexAvg(ewarnTypeId, indexId,
+                lastMonthFirstDayStr, lastMonthLastDayStr, LastYearFirstDayStr, LastYearLastDayStr);
+
+        Map<String, Object> retMap = new HashMap<>();
+        BigDecimal monthAvg = (BigDecimal) currYearMonthAvg.get("monthAvg");
+        BigDecimal yearAvg = (BigDecimal) currYearMonthAvg.get("yearAvg");
+        //昨天价格
+        BigDecimal lastDayPrice = (BigDecimal) currYearMonthAvg.get("lastDayPrice");
+        //前天价格
+        BigDecimal last2DayPrice = (BigDecimal) currYearMonthAvg.get("last2DayPrice");
+        String unit = (String) currYearMonthAvg.get("unit");
+
+        BigDecimal zero = new BigDecimal(0);
+
+        BigDecimal lastPriceTongBi = zero;
+        if (last2DayPrice.compareTo(zero) == 1) {
+            lastPriceTongBi = lastDayPrice.divide(last2DayPrice, 2, RoundingMode.HALF_UP);
+        }
+        //当前价格同比
+
+        BigDecimal lastMonthAvg = (BigDecimal) lastYearMonthAvg.get("monthAvg");
+        BigDecimal lastYearAvg = (BigDecimal) lastYearMonthAvg.get("yearAvg");
+
+        BigDecimal mouthTongBi = zero;
+        if (lastMonthAvg.compareTo(zero) == 1) {
+            mouthTongBi = monthAvg.divide(lastMonthAvg, 2, RoundingMode.HALF_UP);
+        }
+
+        BigDecimal yearTongBi = zero;
+        if (lastYearAvg.compareTo(zero) == 1) {
+            yearTongBi = yearAvg.divide(lastYearAvg, 2, RoundingMode.HALF_UP);
+        }
+
+        retMap.put("currPrice", lastDayPrice);
+        retMap.put("monthAvg", monthAvg);
+        retMap.put("yearAvg", yearAvg);
+        retMap.put("unit", unit);
+
+        retMap.put("mouthTongBi", mouthTongBi.toString() + "%");
+        retMap.put("yearTongBi", yearTongBi.toString() + "%");
+        retMap.put("currPriceTongBi", lastPriceTongBi.toString() + "%");
+        return retMap;
+    }
+
+    private Map<String, Object> converIndexAvg(int ewarnTypeId,
+                                               int indexId,
+                                               String monthStartDate,
+                                               String monthEndtDate,
+                                               String yearStatDate,
+                                               String yearEndDate) {
+        Map<String, Object> map = new HashMap<>();
+
+        List<WpCommPriDto> mouthPriceList = null;
+        List<WpCommPriDto> yearPriceList = null;
+        if (ewarnTypeId == 18) {
+            //计算月平均
+            mouthPriceList = wpCommPriDao.queryIndexByDate(indexId, monthStartDate, monthEndtDate);
+            //计算年平均
+            yearPriceList = wpCommPriDao.queryIndexByDate(indexId, yearStatDate, yearEndDate);
+        }
+        if (ewarnTypeId == 19) {
+            mouthPriceList = wpCommPriOrgDao.queryIndexByDate(indexId, monthStartDate, monthEndtDate);
+            yearPriceList = wpCommPriOrgDao.queryIndexByDate(indexId, yearStatDate, yearEndDate);
+        }
+
+        BigDecimal mouthTotalPrice = new BigDecimal(0);
+
+        for (WpCommPriDto entity : mouthPriceList) {
+            mouthTotalPrice = mouthTotalPrice.add(entity.getValue());
+        }
+
+        BigDecimal lastDayPrice = new BigDecimal(0);
+        BigDecimal last2DayPrice = new BigDecimal(0);
+        String unit = "";
+        //是否存在昨天(最新)价格
+        if (mouthPriceList != null && mouthPriceList.size() > 0) {
+            lastDayPrice = mouthPriceList.get(0).getValue();
+            unit = mouthPriceList.get(0).getUnit();
+        }
+
+        //是否存在前天价格
+        if (mouthPriceList != null && mouthPriceList.size() > 1) {
+            last2DayPrice = mouthPriceList.get(1).getValue();
+        }
+
+        map.put("lastDayPrice", lastDayPrice);
+        map.put("last2DayPrice", last2DayPrice);
+        map.put("unit", unit);
+
+//        long diffDay = DateUtils.getMonthDiffDay();
+        BigDecimal mouthAvg = mouthTotalPrice.divide(new BigDecimal(30), 2, RoundingMode.HALF_UP);
+        map.put("monthAvg", mouthAvg);
+
+        BigDecimal yearTotalPrice = new BigDecimal(0);
+//        long yearDiffDay = DateUtils.getYearDiffDay();
+        for (WpCommPriDto entity : yearPriceList) {
+            yearTotalPrice = yearTotalPrice.add(entity.getValue());
+        }
+        BigDecimal yearAvg = yearTotalPrice.divide(new BigDecimal(365), 2, RoundingMode.HALF_UP);
+        map.put("yearAvg", yearAvg);
+        return map;
     }
 
 }

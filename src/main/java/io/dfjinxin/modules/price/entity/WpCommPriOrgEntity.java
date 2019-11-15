@@ -15,8 +15,8 @@ import java.util.Date;
  * @date 2019-08-27 17:23:11
  */
 @Data
-@TableName("wp_comm_pri")
-public class WpCommPriEntity implements Serializable {
+@TableName("wp_comm_pri_org")
+public class WpCommPriOrgEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String indexName;

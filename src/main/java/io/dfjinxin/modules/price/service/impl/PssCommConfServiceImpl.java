@@ -6,15 +6,14 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
 import io.dfjinxin.modules.job.service.CommonJobService;
-import io.dfjinxin.modules.price.dao.PssCommConfDao;
 import io.dfjinxin.modules.price.dao.PssCommTotalDao;
 import io.dfjinxin.modules.price.entity.PssCommConfEntity;
-import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import io.dfjinxin.modules.price.entity.PssEwarnConfEntity;
 import io.dfjinxin.modules.price.service.PssCommConfService;
 import io.dfjinxin.modules.price.service.PssEwarnConfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import io.dfjinxin.modules.price.dao.PssCommConfDao;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -72,17 +71,29 @@ public class PssCommConfServiceImpl extends ServiceImpl<PssCommConfDao, PssCommC
 
     @Override
     public void saveCommomJob(Integer commId, List<Integer> ewarnIds, List<Integer> indexIds) {
-        List<PssCommConfEntity> pcfs=getCommConfByParms(commId,ewarnIds,indexIds);
-        for (PssCommConfEntity py:pcfs){
-           PssEwarnConfEntity pe= pssEwarnConfService.queryEntityByEwarnId(py.getEwarnId()+"");
-           StringBuilder sb=new StringBuilder();
-           sb.append("ewarnId:").append(py.getEwarnId())
-                   .append("@")
-                   .append("commConfId:").append(py.getConfId());
-            commonJobService.saveScheJob(pe.getRschId()+"","warnTask",sb.toString());
+        List<PssCommConfEntity> pcfs = getCommConfByParms(commId, ewarnIds, indexIds);
+        for (PssCommConfEntity py : pcfs) {
+            PssEwarnConfEntity pe = pssEwarnConfService.queryEntityByEwarnId(py.getEwarnId() + "");
+            StringBuilder sb = new StringBuilder();
+            sb.append("ewarnId:").append(py.getEwarnId())
+                    .append("@")
+                    .append("commConfId:").append(py.getConfId());
+            commonJobService.saveScheJob(pe.getRschId() + "", "warnTask", sb.toString());
         }
 
 
+    }
+
+    /**
+     * @Desc: 二级页面(预警展示)统计3类商品下指定预警类型的规格品信息
+     * @Param: [commId, ewarnTypeId]
+     * @Return: java.util.List<io.dfjinxin.modules.price.entity.PssCommConfEntity>
+     * @Author: z.h.c
+     * @Date: 2019/11/13 17:23
+     */
+    @Override
+    public List<PssCommConfEntity> queryByewarnTypeId(Integer commId, Integer ewarnTypeId) {
+        return pssCommConfDao.queryByewarnTypeId(commId, ewarnTypeId);
     }
 
 

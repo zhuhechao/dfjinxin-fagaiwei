@@ -16,33 +16,6 @@
         <result property="priRange" column="pri_range"/>
     </resultMap>
 
-    <!--<select id="queryList" resultMap="pssPriceEwarnMap">
-        select ppe.*, pct.comm_name
-        from PSS_price_ewarn ppe
-        left join pss_comm_total pct on ppe.comm_id = pct.comm_id
-        where pct.comm_id in (select comm_id
-                      from pss_comm_total
-                      where parent_code in (
-                          select comm_id
-                          from pss_comm_total
-                          where parent_code =#{commId}
-                          and data_flag=0
-                      ))
-        and pct.level_code=3
-        and pct.data_flag=0
-        order by ppe.ewarn_level desc
-    </select>-->
-
-    <select id="queryEchartsData" resultMap="pssPriceEwarnMap">
-        select ppe.*
-        from pss_price_ewarn ppe
-        where ppe.comm_id in (
-            select wcp.comm_id FROM wp_comm_pri wcp
-            WHERE wcp.data_time between #{startDateStr} and #{endDateStr}
-            and wcp.comm_id = #{commId}
-         )
-        and ppe.ewarn_type_id = #{ewarnTypeId}
-    </select>
 
     <select id="queryType3Warn" resultMap="pssPriceEwarnMap">
         select ewarn_id,comm_id,

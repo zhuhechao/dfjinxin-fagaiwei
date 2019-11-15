@@ -268,7 +268,7 @@ public class TengXunYuQing {
         if (code == 0) {
             return jsonObj.get("data");
         } else {
-            return jsonObj.getString("message");
+            return jsonObj.get("message");
         }
     }
 

@@ -25,5 +25,7 @@ public interface PssCommConfService extends IService<PssCommConfEntity> {
     void deleteCommConf(Integer confId);
 
     void saveCommomJob(Integer commId, List<Integer> ewarnIds, List<Integer> indexIds);
+
+    List<PssCommConfEntity> queryByewarnTypeId(Integer commId, Integer ewarnTypeId);
 }
 

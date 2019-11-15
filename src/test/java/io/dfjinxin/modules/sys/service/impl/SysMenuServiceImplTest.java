@@ -43,11 +43,6 @@ public class SysMenuServiceImplTest {
     }
 
     @Test
-    public void getMenuFromGovAuth() {
-        pssPriceEwarnService.queryDetail(113, 18);
-    }
-
-    @Test
     public void saveDataSet() {
         PssDatasetInfoEntity entity = new PssDatasetInfoEntity();
         entity.setDataSetName("test1028 fhv");

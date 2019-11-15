@@ -57,43 +57,6 @@ public class PssDatasetInfoController {
     private static Logger Log = LoggerFactory.getLogger(PssDatasetInfoController.class);
 
     /**
-     * @Desc: 获取大数据平台hive数据表
-     * @Param:
-     * @Return: io.dfjinxin.common.utils.R
-     * @Author: z.h.c
-     * @Date: 2019/10/11 11:14
-     */
-    /*@GetMapping("/getHiveData/{tableName}")
-    @ApiOperation("根据hive表名获取数据")
-    public R getHiveTables(@PathVariable("tableName") String tableName) {
-        String sql = "show tables";
-        String limit = " limit 10";
-        Map<String, Object> map = new HashMap<>();
-        *//*List<Map<String, Object>> tableList = hiveService.selectData(sql);
-        for (Map<String, Object> obj : tableList) {
-            for (Map.Entry<String, Object> entry : obj.entrySet()) {
-                Object tableName = entry.getValue();
-                String sql2 = "select * from " + tableName.toString() + limit;
-                List<Map<String, Object>> list = hiveService.selectData(sql2);
-                map.put(tableName.toString(), list);
-            }
-        }*//*
-
-        String sql2 = "select * from " + tableName + limit;
-        List<Map<String, Object>> list = hiveService.selectData(sql2);
-        return R.ok().put("data", list);
-    }
-
-    @GetMapping("/getHiveTableNames")
-    @ApiOperation("获取hive表名")
-    public R getHiveTableNames() {
-        String sql = "show tables";
-        // pss_comm_total,wp_index_base_info
-        List<Map<String, Object>> tableNameList = hiveService.selectData(sql);
-        return R.ok().put("data", tableNameList);
-    }*/
-
-    /**
      * 列表
      */
     @GetMapping("/listAll")

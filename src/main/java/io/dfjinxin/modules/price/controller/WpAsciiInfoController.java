@@ -28,10 +28,14 @@ public class WpAsciiInfoController {
     private WpAsciiInfoService wpAsciiInfoService;
 
     /**
-     * 根据代码查询代码类型
-     */
+    * @Desc:  根据码表codeId
+    * @Param: [CodeId]
+    * @Return: io.dfjinxin.common.utils.R
+    * @Author: z.h.c
+    * @Date: 2019/11/14 9:31
+    */
     @GetMapping("/getAsciiByCode/{CodeId}")
-    @ApiOperation("根据代码简称类型,查询类型信息")
+    @ApiOperation("根据码表codeId,查询类型信息")
     public R getInfoByCodeId(@PathVariable("CodeId") String CodeId) {
 
         List<WpAsciiInfoEntity> list = wpAsciiInfoService.getInfoByCodeId(CodeId);
@@ -48,50 +52,5 @@ public class WpAsciiInfoController {
         List<WpAsciiInfoEntity> list = wpAsciiInfoService.getInfoAll();
         return R.ok().put("data", list);
     }
-
-
-//    /**
-//     * 信息
-//     */
-//    @RequestMapping("/info/{codeId}")
-//    @RequiresPermissions("price:wpasciiinfo:info")
-//    public R info(@PathVariable("codeId") String codeId) {
-//        WpAsciiInfoEntity wpAsciiInfo = wpAsciiInfoService.getById(codeId);
-//
-//        return R.ok().put("wpAsciiInfo", wpAsciiInfo);
-//    }
-
-//    /**
-//     * 保存
-//     */
-//    @RequestMapping("/save")
-//    @RequiresPermissions("price:wpasciiinfo:save")
-//    public R save(@RequestBody WpAsciiInfoEntity wpAsciiInfo){
-//		wpAsciiInfoService.save(wpAsciiInfo);
-//
-//        return R.ok();
-//    }
-//
-//    /**
-//     * 修改
-//     */
-//    @RequestMapping("/update")
-//    @RequiresPermissions("price:wpasciiinfo:update")
-//    public R update(@RequestBody WpAsciiInfoEntity wpAsciiInfo){
-//		wpAsciiInfoService.updateById(wpAsciiInfo);
-//
-//        return R.ok();
-//    }
-//
-//    /**
-//     * 删除
-//     */
-//    @RequestMapping("/delete")
-//    @RequiresPermissions("price:wpasciiinfo:delete")
-//    public R delete(@RequestBody String[] codeIds){
-//		wpAsciiInfoService.removeByIds(Arrays.asList(codeIds));
-//
-//        return R.ok();
-//    }
 
 }

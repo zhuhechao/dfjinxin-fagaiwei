@@ -348,10 +348,67 @@ public class DateUtils {
         return format.format(date);
     }
 
+    /**
+     * 获取上一年的第一天
+     * @return
+     */
+    public static String getLastYearFirstDayStr() {
+        SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, -1);
+        calendar.set(Calendar.DAY_OF_YEAR, 1);
+        Date date = calendar.getTime();
+        return format.format(date);
+    }
+
+    /**
+     * 获取上一月的第一天
+     * @return
+     */
+    public static String getLastMonthFirstDayStr() {
+        SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -1);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        Date date = calendar.getTime();
+        return format.format(date);
+    }
+
+    /**
+     * 获取上一年的最后一天
+     * @return
+     */
+    public static String getLastYearLastDayStr() {
+        SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, 0);
+        calendar.set(Calendar.DAY_OF_YEAR ,-1);
+        Date date = calendar.getTime();
+        return format.format(date);
+    }
+
+    /**
+     * 获取上一月的最后一天
+     * @return
+     */
+    public static String getLastMonthLastDayStr() {
+        SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, 0);
+        calendar.set(Calendar.DAY_OF_MONTH ,-1);
+        Date date = calendar.getTime();
+        return format.format(date);
+    }
+
 
     public static void main(String[] args) {
-        System.out.println(DateUtils.getWeekLastDayStr());
-        System.out.println(DateUtils.getMonthLastDayStr());
+        System.out.println(DateUtils.getYearFirstDayStr());
+        System.out.println(DateUtils.getLastMonthFirstDayStr());
+        System.out.println(DateUtils.getLastMonthLastDayStr());
+        System.out.println(DateUtils.getLastYearFirstDayStr());
+        System.out.println(DateUtils.getLastYearLastDayStr());
+//        System.out.println(DateUtils.getMonthFirstDayStr());
+//        System.out.println(DateUtils.getMonthLastDayStr());
 //        System.out.println(DateUtils.getLastMonthByVal(1));
 //        System.out.println(DateUtils.getLastYearByVal(1));
 //        System.out.println(DateUtils.dateToStr(DateUtils.addDateDays(new Date(),-1)));

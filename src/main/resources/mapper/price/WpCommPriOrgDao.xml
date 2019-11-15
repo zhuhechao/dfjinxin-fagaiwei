@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="io.dfjinxin.modules.price.dao.WpCommPriDao">
+<mapper namespace="io.dfjinxin.modules.price.dao.WpCommPriOrgDao">
 
     <!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="io.dfjinxin.modules.price.entity.WpCommPriEntity" id="wpCommPriMap">
+  <!--  <resultMap type="io.dfjinxin.modules.price.entity.WpCommPriOrgEntity" id="wpCommPriOrgMap">
         <result property="indexId" column="index_id"/>
         <result property="indexName" column="index_name"/>
         <result property="unit" column="unit"/>
         <result property="dataTime" column="data_time"/>
     </resultMap>
-
+-->
 </mapper>

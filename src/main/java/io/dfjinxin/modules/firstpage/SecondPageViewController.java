@@ -8,7 +8,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("price/second")
-@Api(tags = "二级页面")
+@Api(tags = "二级页面(商品总览)")
 public class SecondPageViewController {
 
     private static Logger logger = LoggerFactory.getLogger(SecondPageViewController.class);
@@ -38,16 +37,16 @@ public class SecondPageViewController {
     private WpBaseIndexValService wpBaseIndexValService;
 
     /**
-     * @Desc: 二级页面
+     * @Desc: 二级页面(商品总览)
      * @Param: 3类商品id[commId]
      * @Return: io.dfjinxin.common.utils.R
      * @Author: z.h.c
      * @Date: 2019/11/12 18:52
      */
     @GetMapping("/view/{commId}")
-    @ApiOperation(value = "二级页面-展示", notes = "根据3级商品id 获取相应该商品所有4级商品 指标信息 eg:58")
+    @ApiOperation(value = "二级页面(商品总览)-展示", notes = "根据3级商品id 获取相应该商品所有4级商品 指标信息 eg:58")
     public R queryIndexTypeByCommId(@PathVariable("commId") Integer commId) {
-        logger.info("二级页面,req commId:{}", commId);
+        logger.info("二级页面(商品总览),req commId:{}", commId);
 //        指标类型信息
         List<Map<String, Object>> list = wpBaseIndexValService.secondPageIndexType(commId);
         Map<String, Object> resMap = new HashMap<>();
@@ -64,7 +63,7 @@ public class SecondPageViewController {
     }
 
     @GetMapping("/indexType/byDate/{commId}")
-    @ApiOperation(value = "二级页面-查询指定日期、指标类型的规格品取值", notes = "根据3级商品id 获取指定时间、指标类型规格品指标信息 eg:58")
+    @ApiOperation(value = "二级页面(商品总览)-查询指定日期、指标类型的规格品取值", notes = "根据3级商品id 获取指定时间、指标类型规格品指标信息 eg:58")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "indexType", value = "指标类型", required = true, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "startDate", value = "开始时间", required = false, dataType = "String", paramType = "query"),
