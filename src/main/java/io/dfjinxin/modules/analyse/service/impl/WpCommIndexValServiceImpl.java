@@ -16,6 +16,7 @@ import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 
@@ -370,7 +371,8 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         Double lastVal = last.getValue();
         Double tempVal = firstVal - lastVal;
         Double tongBi = tempVal / lastVal * 100;
-        first.setTongBi(tongBi.toString() + "%");
+        DecimalFormat df = new DecimalFormat("#.00");
+        first.setTongBi(df.format(tongBi) + "%");
         valEntities.set(0, first);
         return valEntities;
     }
@@ -400,7 +402,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         return list;
     }
 
-    private List doIndexPriceInfo(List<WpBaseIndexValEntity> list, int commId, String indexType) {
+  /*  private List doIndexPriceInfo(List<WpBaseIndexValEntity> list, int commId, String indexType) {
 
         for (WpBaseIndexValEntity indexValEntity : list) {
             if (indexValEntity.getCommId() == commId) {
@@ -409,7 +411,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
             }
         }
         return null;
-    }
+    }*/
 
     /**
      * @Desc: 查询某指标类型下规格品的价格信息
@@ -451,7 +453,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
     }
 
 
-    private List doIndexInfo(List<WpBaseIndexValEntity> commIdList) {
+   /* private List doIndexInfo(List<WpBaseIndexValEntity> commIdList) {
 
         List<KpiInfoDto> list = new ArrayList<>();
         for (WpBaseIndexValEntity indexInfoEntity : commIdList) {
@@ -480,7 +482,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
             }
         }
         return list;
-    }
+    }*/
 
 
     private Map<String, Object> queryCommByLevelCode0(PssCommTotalEntity levelCode0) {

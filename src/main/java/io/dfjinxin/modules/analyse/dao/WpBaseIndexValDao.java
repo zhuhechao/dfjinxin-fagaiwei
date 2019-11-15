@@ -29,9 +29,9 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
 
     List<Map<String, Object>> queryIndexTypePrice(@Param("condition") Map<String, Object> condition);
 
-    List<WpBaseIndexValEntity> selectListBystatAreaId(@Param("commId")int commId,
+    /*List<WpBaseIndexValEntity> selectListBystatAreaId(@Param("commId")int commId,
                                                       @Param("indexType")String indexType,
-                                                      @Param("indexId")Integer indexId);
+                                                      @Param("indexId")Integer indexId);*/
 
     List<WpBaseIndexValEntity> queryByIndexType(@Param("commId")Integer commId, @Param("indexType")String indexType);
 

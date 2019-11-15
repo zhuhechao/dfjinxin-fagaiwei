@@ -67,7 +67,7 @@
         order by t1.index_name,data_time
     </select>
 
-    <select id="selectListBystatAreaId" resultMap="wpBaseIndexValMap">
+    <!--<select id="selectListBystatAreaId" resultMap="wpBaseIndexValMap">
         SELECT max(date) as data_time,index_name,area_name,frequence,value,unit
         from wp_base_index_val val
         WHERE comm_id = #{commId}
@@ -76,7 +76,7 @@
         AND date IS NOT NULL
         GROUP BY area_name
         ORDER BY data_time desc
-    </select>
+    </select>-->
 
     <select id="queryByIndexType" resultMap="wpBaseIndexValMap">
         select * from wp_base_index_val wiv
