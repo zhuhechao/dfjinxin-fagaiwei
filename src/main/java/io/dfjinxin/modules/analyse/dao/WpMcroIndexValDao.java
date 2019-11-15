@@ -26,8 +26,9 @@ public interface WpMcroIndexValDao extends BaseMapper<WpMcroIndexValEntity> {
     List<Map<String,Object>> selectdistinctIndexName(@Param("areaName") String areaName,
                                                      @Param("indexId")Integer indexId);
 
-    @Select("select t1.*,t2.code_name as codeName from wp_macro_index_info t1 left join wp_ascii_info t2\n" +
-            "on t1.index_type = t2.code_id\n" +
-            "where index_flag=0 group by index_type")
-    List<WpMcroIndexInfoEntity> selectByType();
+//    @Select("select t1.*\n" +
+//            "from wp_macro_index_info t1\n" +
+//            "where t1.index_flag = 0\n" +
+//            "group by index_type")
+//    List<WpMcroIndexInfoEntity> selectByType();
 }

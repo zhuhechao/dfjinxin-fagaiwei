@@ -14,7 +14,6 @@
         <result property="areaName" column="area_name"/>
         <result property="frequence" column="frequence"/>
         <result property="sourceName" column="source_name"/>
-        <result property="indexDescribe" column="index_describe"/>
         <result property="indexFlag" column="index_flag"/>
     </resultMap>
 

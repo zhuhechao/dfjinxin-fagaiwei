@@ -88,95 +88,95 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         return wpBaseIndexValDao.queryIndexTypeByCommId(commId);
     }
 
-    @Override
-    public List<Map<String, Object>> queryLevel4CommInfo(Integer commId) {
-
-        //校验商品是否存在
-        QueryWrapper where = new QueryWrapper();
-        where.eq("data_flag", 0);
-        where.eq("comm_id", commId);
-        PssCommTotalEntity commLevel2 = pssCommTotalDao.selectOne(where);
-        if (commLevel2 == null) {
-            return null;
-        }
-        //获取该3类商品下的所有4类商品
-        QueryWrapper where1 = new QueryWrapper();
-        where1.eq("data_flag", 0);
-        where1.eq("parent_code", commId);
-        List<PssCommTotalEntity> commLevel3 = pssCommTotalDao.selectList(where1);
-        if (commLevel3 == null) {
-            return null;
-        }
-        List resultList = new ArrayList();
-        //查询4类商品所有指标类型
-        String sql = "select pss_comm_total.comm_id from pss_comm_total where data_flag=0 and parent_code=" + commId;
-        QueryWrapper where2 = new QueryWrapper();
-//        where2.eq("index_flag", 0);
-        where2.inSql("comm_id", sql);
-        where2.groupBy("index_type");
-        List<WpBaseIndexValEntity> baseIndexValEntityList = wpBaseIndexValDao.selectList(where2);
-
-        Set<String> indexTypeList = new HashSet<>();
-        for (WpBaseIndexValEntity entity : baseIndexValEntityList) {
-            indexTypeList.add(entity.getIndexType());
-        }
-
-        for (String type : indexTypeList) {
-            QueryWrapper where3 = new QueryWrapper();
-//            where3.eq("index_flag", 0);
-            where3.inSql("comm_id", sql);
-            where3.eq("index_type", type);
-            List<WpBaseIndexValEntity> baseIndexInfoEntities = wpBaseIndexValDao.selectList(where3);
-            KpiTypeEnum typeEnum = KpiTypeEnum.getbyType(type);
-            switch (typeEnum) {
-                //价格指标
-                case Pri:
-                    List<WpBaseIndexValEntity> priList = null;
-                    for (PssCommTotalEntity entity : commLevel3) {
-                        if (commLevel2.getCommName().equals(entity.getCommName())) {
-                            priList = doIndexPriceInfo(baseIndexInfoEntities, entity.getCommId(), type);
-                        }
-                    }
-                    Map priMap = new HashMap();
-                    priMap.put(type, priList);
-                    resultList.add(priMap);
-                    continue;
-                case Ccl:
-                    List<KpiInfoDto> cclList = doIndexInfo(baseIndexInfoEntities);
-                    Map cclMap = new HashMap();
-                    cclMap.put(type, cclList);
-                    resultList.add(cclMap);
-                    continue;
-                case Csp:
-                    List<KpiInfoDto> cspList = doIndexInfo(baseIndexInfoEntities);
-                    Map cspMap = new HashMap();
-                    cspMap.put(type, cspList);
-                    resultList.add(cspMap);
-                    continue;
-                case Cst:
-                    List<KpiInfoDto> cstList = doIndexInfo(baseIndexInfoEntities);
-                    Map cstMap = new HashMap();
-                    cstMap.put(type, cstList);
-                    resultList.add(cstMap);
-                    continue;
-                case Prd:
-                    List<KpiInfoDto> prdList = doIndexInfo(baseIndexInfoEntities);
-                    Map<String, List<KpiInfoDto>> prdMap = new HashMap();
-                    prdMap.put(type, prdList);
-                    resultList.add(prdMap);
-                    continue;
-                    //贸易
-                case Trd:
-                    List<KpiInfoDto> trdList = doIndexInfo(baseIndexInfoEntities);
-                    Map<String, List<KpiInfoDto>> trdMap = new HashMap();
-                    trdMap.put(type, trdList);
-                    resultList.add(trdMap);
-                    continue;
-                default:
-            }
-        }
-        return resultList;
-    }
+//    @Override
+//    public List<Map<String, Object>> queryLevel4CommInfo(Integer commId) {
+//
+//        //校验商品是否存在
+//        QueryWrapper where = new QueryWrapper();
+//        where.eq("data_flag", 0);
+//        where.eq("comm_id", commId);
+//        PssCommTotalEntity commLevel2 = pssCommTotalDao.selectOne(where);
+//        if (commLevel2 == null) {
+//            return null;
+//        }
+//        //获取该3类商品下的所有4类商品
+//        QueryWrapper where1 = new QueryWrapper();
+//        where1.eq("data_flag", 0);
+//        where1.eq("parent_code", commId);
+//        List<PssCommTotalEntity> commLevel3 = pssCommTotalDao.selectList(where1);
+//        if (commLevel3 == null) {
+//            return null;
+//        }
+//        List resultList = new ArrayList();
+//        //查询4类商品所有指标类型
+//        String sql = "select pss_comm_total.comm_id from pss_comm_total where data_flag=0 and parent_code=" + commId;
+//        QueryWrapper where2 = new QueryWrapper();
+////        where2.eq("index_flag", 0);
+//        where2.inSql("comm_id", sql);
+//        where2.groupBy("index_type");
+//        List<WpBaseIndexValEntity> baseIndexValEntityList = wpBaseIndexValDao.selectList(where2);
+//
+//        Set<String> indexTypeList = new HashSet<>();
+//        for (WpBaseIndexValEntity entity : baseIndexValEntityList) {
+//            indexTypeList.add(entity.getIndexType());
+//        }
+//
+//        for (String type : indexTypeList) {
+//            QueryWrapper where3 = new QueryWrapper();
+////            where3.eq("index_flag", 0);
+//            where3.inSql("comm_id", sql);
+//            where3.eq("index_type", type);
+//            List<WpBaseIndexValEntity> baseIndexInfoEntities = wpBaseIndexValDao.selectList(where3);
+//            KpiTypeEnum typeEnum = KpiTypeEnum.getbyType(type);
+//            switch (typeEnum) {
+//                //价格指标
+//                case Pri:
+//                    List<WpBaseIndexValEntity> priList = null;
+//                    for (PssCommTotalEntity entity : commLevel3) {
+//                        if (commLevel2.getCommName().equals(entity.getCommName())) {
+//                            priList = doIndexPriceInfo(baseIndexInfoEntities, entity.getCommId(), type);
+//                        }
+//                    }
+//                    Map priMap = new HashMap();
+//                    priMap.put(type, priList);
+//                    resultList.add(priMap);
+//                    continue;
+//                case Ccl:
+//                    List<KpiInfoDto> cclList = doIndexInfo(baseIndexInfoEntities);
+//                    Map cclMap = new HashMap();
+//                    cclMap.put(type, cclList);
+//                    resultList.add(cclMap);
+//                    continue;
+//                case Csp:
+//                    List<KpiInfoDto> cspList = doIndexInfo(baseIndexInfoEntities);
+//                    Map cspMap = new HashMap();
+//                    cspMap.put(type, cspList);
+//                    resultList.add(cspMap);
+//                    continue;
+//                case Cst:
+//                    List<KpiInfoDto> cstList = doIndexInfo(baseIndexInfoEntities);
+//                    Map cstMap = new HashMap();
+//                    cstMap.put(type, cstList);
+//                    resultList.add(cstMap);
+//                    continue;
+//                case Prd:
+//                    List<KpiInfoDto> prdList = doIndexInfo(baseIndexInfoEntities);
+//                    Map<String, List<KpiInfoDto>> prdMap = new HashMap();
+//                    prdMap.put(type, prdList);
+//                    resultList.add(prdMap);
+//                    continue;
+//                    //贸易
+//                case Trd:
+//                    List<KpiInfoDto> trdList = doIndexInfo(baseIndexInfoEntities);
+//                    Map<String, List<KpiInfoDto>> trdMap = new HashMap();
+//                    trdMap.put(type, trdList);
+//                    resultList.add(trdMap);
+//                    continue;
+//                default:
+//            }
+//        }
+//        return resultList;
+//    }
 
     @Override
     public Map<String, Object> analyseType4CommIndexs(Integer commId) {
@@ -211,33 +211,39 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                 QueryWrapper where3 = new QueryWrapper();
                 where3.eq("data_flag", 0);
                 if (type.getIndexType().equals("价格")) {
-                    //统计价格类型的4类最瓣指标价格
+                    //统计价格类型的4类最高指标价格
                     List<WpBaseIndexValEntity> valList = wpBaseIndexValDao.queryByIndexType(comm.getCommId(), "价格");
-                    where3.eq("comm_id", valList.get(0).getCommId());
-                    PssCommTotalEntity commTotalEntity = pssCommTotalDao.selectOne(where3);
-                    for (WpBaseIndexValEntity entity : valList) {
-                        entity.setCommName(commTotalEntity.getCommName() + "(" + type.getIndexType() + ")");
-                    }
-                    //计算同比
-                    valList = converTongBi(valList);
-                    priceList.add(valList);
-                    //计算省份地图值
-                    List<WpBaseIndexValEntity> mapValTempList = wpBaseIndexValDao.queryMapValByIndexType(comm.getCommId());
-                    if (mapValTempList != null && mapValTempList.size() > 1) {
-                        mapValList.add(mapValTempList);
+                    if (valList != null && valList.size() > 0) {
+
+                        where3.eq("comm_id", valList.get(0).getCommId());
+                        PssCommTotalEntity commTotalEntity = pssCommTotalDao.selectOne(where3);
+                        for (WpBaseIndexValEntity entity : valList) {
+                            entity.setCommName(commTotalEntity.getCommName() + "(" + type.getIndexType() + ")");
+                        }
+                        //计算同比
+                        valList = converTongBi(valList);
+                        priceList.add(valList);
+                        //计算省份地图值
+                        List<WpBaseIndexValEntity> mapValTempList = wpBaseIndexValDao.queryMapValByIndexType(comm.getCommId());
+                        if (mapValTempList != null && mapValTempList.size() > 1) {
+                            mapValList.add(mapValTempList);
+                        }
                     }
                 } else {
                     //计算非价格指标类型
                     List<WpBaseIndexValEntity> noPriceValList = wpBaseIndexValDao.queryNoPriceByIndexType(comm.getCommId(), type.getIndexType());
-                    where3.eq("comm_id", noPriceValList.get(0).getCommId());
-                    PssCommTotalEntity commTotalEntity = pssCommTotalDao.selectOne(where3);
-                    for (WpBaseIndexValEntity entity : noPriceValList) {
-                        entity.setCommName(commTotalEntity.getCommName() + "(" + type.getIndexType() + ")");
+                    if (noPriceValList != null && noPriceValList.size() > 0) {
+
+                        where3.eq("comm_id", noPriceValList.get(0).getCommId());
+                        PssCommTotalEntity commTotalEntity = pssCommTotalDao.selectOne(where3);
+                        for (WpBaseIndexValEntity entity : noPriceValList) {
+                            entity.setCommName(commTotalEntity.getCommName() + "(" + type.getIndexType() + ")");
+                        }
+                        //计算非价格指标类型同比
+                        noPriceValList = converTongBi(noPriceValList);
+                        noPriceValList.remove(1);
+                        noPriceList.add(noPriceValList);
                     }
-                    //计算非价格指标类型同比
-                    noPriceValList = converTongBi(noPriceValList);
-                    noPriceValList.remove(1);
-                    noPriceList.add(noPriceValList);
                 }
             }
         }

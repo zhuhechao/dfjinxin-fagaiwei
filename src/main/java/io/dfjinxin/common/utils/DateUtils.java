@@ -9,11 +9,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.rosuda.REngine.REXPMismatchException;
-import org.rosuda.REngine.Rserve.RConnection;
-import org.rosuda.REngine.Rserve.RserveException;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -200,33 +196,12 @@ public class DateUtils {
      * @return
      */
     public static String getYearFirstDayStr() {
-        // 获取截止当前天数
+        SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
         Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy");
-        Date nowDay = null;
-        try {
-            nowDay = format.parse(year + "");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        String time = format.format(nowDay);
-        String firstDay = time + "-01-01";
-        return firstDay;
+        cal.set(Calendar.DAY_OF_YEAR, 1);
+        Date time = cal.getTime();
+        return format.format(time);
     }
-
-//    /**
-//     * 获取某年第一天日期
-//     *
-//     * @return Date
-//     */
-//    public static Date getYearFirst() {
-//        Calendar calendar = Calendar.getInstance();
-//        int year = calendar.get(Calendar.YEAR);
-//        calendar.set(Calendar.YEAR, year);
-//        Date currYearFirst = calendar.getTime();
-//        return currYearFirst;
-//    }
 
     /**
      * 获取当月最后一天
@@ -319,37 +294,34 @@ public class DateUtils {
     }
 
     /**
-     * 获取当前系统时间前指定年的时间
+     * 获取一年前的日期
      *
      * @return
      */
     public static String getLastYearByVal(int val) {
         SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
-        Date date = new Date();
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
         calendar.add(Calendar.YEAR, -val);
-        date = calendar.getTime();
+        Date date = calendar.getTime();
         return format.format(date);
     }
 
     /**
-     * 获取当前系统时间前指定年的时间
+     * 获取一个月前的日期
      *
      * @return
      */
     public static String getLastMonthByVal(int val) {
         SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
-        Date date = new Date();
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
         calendar.add(Calendar.MONTH, -val);
-        date = calendar.getTime();
+        Date date = calendar.getTime();
         return format.format(date);
     }
 
     /**
      * 获取上一年的第一天
+     *
      * @return
      */
     public static String getLastYearFirstDayStr() {
@@ -363,6 +335,7 @@ public class DateUtils {
 
     /**
      * 获取上一月的第一天
+     *
      * @return
      */
     public static String getLastMonthFirstDayStr() {
@@ -376,41 +349,46 @@ public class DateUtils {
 
     /**
      * 获取上一年的最后一天
+     *
      * @return
      */
     public static String getLastYearLastDayStr() {
         SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.YEAR, 0);
-        calendar.set(Calendar.DAY_OF_YEAR ,-1);
+        calendar.set(Calendar.DAY_OF_YEAR, 0);
         Date date = calendar.getTime();
         return format.format(date);
     }
 
     /**
      * 获取上一月的最后一天
+     *
      * @return
      */
     public static String getLastMonthLastDayStr() {
         SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, 0);
-        calendar.set(Calendar.DAY_OF_MONTH ,-1);
+        calendar.set(Calendar.DAY_OF_MONTH, 0);
         Date date = calendar.getTime();
         return format.format(date);
     }
 
 
     public static void main(String[] args) {
-        System.out.println(DateUtils.getYearFirstDayStr());
         System.out.println(DateUtils.getLastMonthFirstDayStr());
         System.out.println(DateUtils.getLastMonthLastDayStr());
+        System.out.println("000000000000000000000000");
         System.out.println(DateUtils.getLastYearFirstDayStr());
         System.out.println(DateUtils.getLastYearLastDayStr());
-//        System.out.println(DateUtils.getMonthFirstDayStr());
-//        System.out.println(DateUtils.getMonthLastDayStr());
-//        System.out.println(DateUtils.getLastMonthByVal(1));
-//        System.out.println(DateUtils.getLastYearByVal(1));
+        System.out.println("000000000000000000000000");
+        System.out.println(DateUtils.getMonthFirstDayStr());
+        System.out.println(DateUtils.getMonthLastDayStr());
+        System.out.println("000000000000000000000000");
+        System.out.println(DateUtils.getYearFirstDayStr());
+        System.out.println("000000000000000000000000");
+        System.out.println(DateUtils.getLastMonthByVal(1));
+        System.out.println(DateUtils.getLastYearByVal(3));
+        System.out.println(DateUtils.getYearDiffDay());
 //        System.out.println(DateUtils.dateToStr(DateUtils.addDateDays(new Date(),-1)));
 //        System.out.println(DateUtils.getCurrentDayStr());
     }

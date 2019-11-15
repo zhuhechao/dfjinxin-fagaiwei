@@ -48,7 +48,7 @@ public class WpBaseIndexInfoServiceImpl extends ServiceImpl<WpBaseIndexInfoDao, 
         where.eq("comm_id", commId);
         where.eq("index_flag", 0);
         where.eq("index_type", "价格");
-        where.like("index_used", "%预警%");
+        where.like("index_used", "预警");
         return baseMapper.selectList(where);
     }
 

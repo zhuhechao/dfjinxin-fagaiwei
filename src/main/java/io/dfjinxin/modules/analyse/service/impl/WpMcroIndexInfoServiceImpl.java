@@ -75,7 +75,7 @@ public class WpMcroIndexInfoServiceImpl extends ServiceImpl<WpMcroIndexInfoDao, 
             where.between("data_time", dateFrom, dateTo);
         } else {
             //默认取最近三年
-            where.between("data_time", DateUtils.getLastYearByVal(20), DateUtils.getCurrentDayStr());
+            where.between("data_time", DateUtils.getLastYearByVal(3), DateUtils.getCurrentDayStr());
         }
         List<WpMcroIndexValEntity> list = wpMcroIndexValDao.selectList(where);
         return list;
@@ -84,7 +84,7 @@ public class WpMcroIndexInfoServiceImpl extends ServiceImpl<WpMcroIndexInfoDao, 
     @Override
     public List<WpMcroIndexInfoEntity> getIndexTreeByType() {
 
-        List<WpMcroIndexInfoEntity> indexTypeList = wpMcroIndexValDao.selectByType();
+        List<WpMcroIndexInfoEntity> indexTypeList = baseMapper.selectByType();
         for (WpMcroIndexInfoEntity entity : indexTypeList) {
             QueryWrapper<WpMcroIndexInfoEntity> where2 = new QueryWrapper<>();
             where2.eq("index_flag", 0);
@@ -97,8 +97,8 @@ public class WpMcroIndexInfoServiceImpl extends ServiceImpl<WpMcroIndexInfoDao, 
     }
 
     @Override
-    public List<WpMcroIndexInfoEntity> getIndexTreeByIds(String [] ids) {
-        if(ids==null||ids.length<1)
+    public List<WpMcroIndexInfoEntity> getIndexTreeByIds(String[] ids) {
+        if (ids == null || ids.length < 1)
             return null;
         QueryWrapper<WpMcroIndexInfoEntity> where = new QueryWrapper<>();
         where.in("index_id", ids);

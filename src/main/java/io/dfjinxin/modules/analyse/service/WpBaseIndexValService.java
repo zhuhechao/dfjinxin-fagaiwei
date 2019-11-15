@@ -25,7 +25,7 @@ public interface WpBaseIndexValService extends IService<WpBaseIndexValEntity> {
 
     List<Map<String, Object>> queryIndexTypeByCommId(Integer commId);
 
-    List<Map<String, Object>> queryLevel4CommInfo(Integer commId);
+//    List<Map<String, Object>> queryLevel4CommInfo(Integer commId);
 
     Map<String, Object> analyseType4CommIndexs(Integer commId);
 

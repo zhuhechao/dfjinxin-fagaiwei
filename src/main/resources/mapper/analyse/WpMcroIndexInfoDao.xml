@@ -9,23 +9,10 @@
         <result property="indexName" column="index_name"/>
         <result property="indexType" column="index_type"/>
         <result property="indexFlag" column="index_flag"/>
-        <result property="indexDescribe" column="index_describe"/>
-        <result property="dataTime" column="data_time"/>
+        <result property="unit" column="unit"/>
+        <result property="areaName" column="area_name"/>
+        <result property="frequence" column="frequence"/>
+        <result property="sourceName" column="source_name"/>
     </resultMap>
-
-    <select id="selectIndexName" resultMap="wpMcroIndexInfoMap">
-        select wmii.*
-            from wp_macro_index_info wmii
-                     left join wp_ascii_info wai
-                               on wmii.index_flag = wai.code_id
-            where wai.p_code_val in (
-                select code_id
-                from wp_ascii_info
-                where code_id = 'Kpi_Sign'
-                  and code_status = 0
-            )
-              and wai.code_id = 2
-    </select>
-
 
 </mapper>

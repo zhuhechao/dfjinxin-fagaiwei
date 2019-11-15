@@ -1,9 +1,7 @@
 package io.dfjinxin.modules.analyse.controller;
 
 import io.dfjinxin.common.utils.DateUtils;
-import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
-import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
 import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import io.swagger.annotations.Api;
@@ -14,7 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,8 +27,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("analyse/trend")
-@Api(tags = "WpCommIndexValController", description = "价格分析-趋势分析")
-public class WpCommIndexValController {
+@Api(tags = "WpBaseIndexValController", description = "价格分析-趋势分析")
+public class WpBaseIndexValController {
     @Autowired
     private WpBaseIndexValService WpBaseIndexValService;
 

@@ -27,31 +27,22 @@ public class WpMcroIndexInfoEntity implements Serializable {
 	 */
 	@TableId
 	private Integer indexId;
-	/**
-	 *
-	 */
+	private String unit;
 	private String indexName;
-
-	//码表中对应的名称
-	@TableField(exist = false)
-	private String codeName;
-	/**
-	 *
-	 */
-	private Integer indexType;
-	/**
-	 *
-	 */
-	@TableField(exist = false)
+	private String areaName;
+	private String frequence;
+	private String sourceName;
+	private String indexType;
 	private Integer indexFlag;
+
 	/**
 	 *
 	 */
 	@TableField(exist = false)
 	private String indexDescribe;
-	/**
-	 *
-	 */
+	//码表中对应的名称
+	@TableField(exist = false)
+	private String codeName;
 	@TableField(exist = false)
 	private Date dataTime;
 

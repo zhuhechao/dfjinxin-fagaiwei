@@ -61,10 +61,6 @@ public class WpBaseIndexInfoEntity implements Serializable {
 	/**
 	 *
 	 */
-	private String indexDescribe;
-	/**
-	 *
-	 */
 	private Integer indexFlag;
 
 	@TableField(exist = false)
