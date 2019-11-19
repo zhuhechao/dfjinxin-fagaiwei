@@ -340,16 +340,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             map.put("tongBi", 0);
         }
 
-        //step2,统计昨天各规格品的商品价格
+        //step2,规格品价格数据-统计昨天各规格品的商品价格数据
         final String sql = "select pss_comm_total.comm_id from pss_comm_total where data_flag=0 and parent_code=" + commId;
-        QueryWrapper where3 = new QueryWrapper();
-        where3.inSql("comm_id", sql);
-        where3.eq("date", lastDayStr);
-        where3.groupBy("comm_id");
-        List<WpBaseIndexValEntity> lastDayValList = wpBaseIndexValDao.selectList(where3);
+        List<WpBaseIndexValEntity> lastDayValList = wpBaseIndexValDao.queryLastDayPriceByCommId(commId, lastDayStr);
         map.put("priceList", lastDayValList);
 
-        //step3,规格品价格数据
+        //step3,地图数据-统计规格品指标类型为'价格'的各省份昨天价格数据
         List<WpBaseIndexValEntity> mapData = wpBaseIndexValService.getprovinceLastDayMapData(commId, "价格", lastDayStr);
         map.put("provinceMap", mapData);
 
@@ -565,12 +561,18 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             logger.error("call-getProgrammeDistribution信息-异常:{}", e);
             return 0;
         }
+
         Object result = TengXunYuQing.converResult(res);
         logger.info("the result:{}", result);
         int totalContentCnt = 0;
         if (result != null) {
-            JSONObject jsonObj = (JSONObject) result;
-            totalContentCnt = jsonObj.getInteger("total_content_cnt");
+            try {
+                JSONObject jsonObj = (JSONObject) result;
+                totalContentCnt = jsonObj.getInteger("total_content_cnt");
+            } catch (Exception e) {
+                logger.error("获取配置方案结果分布-解析异常{}", res);
+                e.printStackTrace();
+            }
         }
         return totalContentCnt;
 
@@ -590,10 +592,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
         if (ewarnTypeId == null || indexIds == null || indexIds.size() < 1) return null;
 
+        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));//昨天时间
         Map<String, Object> resuMap = new HashMap<>();
         for (int indexId : indexIds) {
             QueryWrapper where = new QueryWrapper();
             where.eq("index_id", indexId);
+            where.le("data_time", lastDayStr);
             where.orderByDesc("data_time");
             if (StringUtils.isNotEmpty(startDate) && StringUtils.isNotEmpty(endDate)) {
                 where.between("data_time", startDate, endDate);
