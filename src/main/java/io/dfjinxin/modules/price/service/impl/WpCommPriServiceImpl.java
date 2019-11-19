@@ -32,13 +32,11 @@ public class WpCommPriServiceImpl extends ServiceImpl<WpCommPriDao, WpCommPriEnt
 
     @Override
     public List<WpCommPriEntity> getData(Map<String, Object> params) {
-        String commid=params.get("commId").toString();
+        String indexId=params.get("indexId").toString();
         Date startDate= (Date) params.get("startDate");
         Date endDate= (Date) params.get("endDate");
-        String priType=  params.get("priType")+"";
         QueryWrapper  queryWrapper=new QueryWrapper<WpCommPriEntity>();
-        queryWrapper.eq("comm_id",commid);
-        queryWrapper.eq("pri_type",priType);
+        queryWrapper.eq("index_id",indexId);
         queryWrapper.between("data_time",startDate,endDate);
         queryWrapper.orderByDesc(new String[]{"data_time"});
         return baseMapper.selectList(queryWrapper);

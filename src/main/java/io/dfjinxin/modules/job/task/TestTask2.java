@@ -123,8 +123,6 @@ public class TestTask2 implements ITask {
 		logger.debug("TestTask定时任务正在执行，参数为：{}", params);
 	}
 
-
-
 	//docx报告转为pdf文档
     private String generateReportPdf(String filepath){
         {
@@ -215,7 +213,7 @@ public class TestTask2 implements ITask {
 
 		Map<String,Object> params=new HashMap<String,Object>();
 		//设置商品id  查询最近7天的预警数据按照 预警日期正序排列
-		params.put("commId",58);//params.put(pe.getCommId());
+		params.put("commId",pe.getCommId());//params.put("commId",58);
 		params.put("endDate",DateTime.getBeginOf(new Date()));
 		params.put("startDate", DateUtils.addDateDays(DateTime.getBeginOf(new Date()),-7));
 		//涨跌幅数据
@@ -248,10 +246,7 @@ public class TestTask2 implements ITask {
 		String reportImagePath1=reportResultPath+"report1.png";
 		EchartsUtil.generateImage(base64, reportImagePath1);
 
-
-
 		//生成第二张图片
-
 
 		//下属规格涨跌幅 图形所需数据
 		params.clear();params.put("commId",58);
