@@ -27,4 +27,9 @@ public interface SysDepService extends IService<SysDepEntity> {
      */
     List<Map<String,Object>> serDepInfo();
 
+    /**
+     * 获取指定的部门信息
+     */
+    SysDepEntity getDepId(String depId);
+
 }

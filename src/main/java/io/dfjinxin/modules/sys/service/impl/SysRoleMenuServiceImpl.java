@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +35,9 @@ public class SysRoleMenuServiceImpl extends ServiceImpl<SysRoleMenuDao, SysRoleM
 	@Transactional(rollbackFor = Exception.class)
 	public void saveOrUpdate(int roleId, List<Integer> menuIdList) {
 		//先删除角色与菜单关系
-		deleteBatch(new int[]{roleId});
+		ArrayList<Integer> list = new ArrayList<>();
+		list.add(roleId);
+		deleteBatch(list);
 
 		if(menuIdList.size() == 0){
 			return ;
@@ -51,11 +54,12 @@ public class SysRoleMenuServiceImpl extends ServiceImpl<SysRoleMenuDao, SysRoleM
 
 	@Override
 	public List<Map<String,Object>> queryMenuList(Map<String,Object> roleId) {
+
 		return   baseMapper.queryMenuList(roleId);
 	}
 
 	@Override
-	public int deleteBatch(int[] roleIds){
+	public int deleteBatch(ArrayList<Integer> roleIds){
 		return baseMapper.deleteBatch(roleIds);
 	}
 

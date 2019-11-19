@@ -11,6 +11,7 @@ import io.dfjinxin.modules.sys.entity.SysDepEntity;
 import io.dfjinxin.modules.sys.entity.SysUserEntity;
 import io.dfjinxin.modules.sys.service.SysDepService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ public class SysDepController  extends AbstractController{
     /**
      * 所有部门列表
      */
+    @ApiOperation("获取所有部门列表")
     @GetMapping("/list")
     @RequiresPermissions("sys:dep:list")
     public R list(@RequestParam Map<String, Object> params){
@@ -43,10 +45,10 @@ public class SysDepController  extends AbstractController{
     /**
      * 部门信息保存
      */
+    @ApiOperation("保存部门信息")
     @PostMapping("/save")
     @RequiresPermissions("sys:dep:save")
     public R saveDep(@RequestBody SysDepEntity dep){
-        verifyForm(dep);
         if(!dep.getDepId().equals("")|| dep.getDepId() != null){
             sysDepService.updateById(dep);
         }
@@ -56,10 +58,11 @@ public class SysDepController  extends AbstractController{
     /**
      * 部门信息
      */
+    @ApiOperation("获取指定部门信息")
     @GetMapping("/info")
     @RequiresPermissions("sys:dep:info")
     public R info(@RequestParam("depId") String depId){
-        SysDepEntity dep = sysDepService.getById(depId);
+        SysDepEntity dep = sysDepService.getDepId(depId);
         return R.ok().put("dep", dep);
     }
 
@@ -78,7 +81,7 @@ public class SysDepController  extends AbstractController{
     /**
      * 批量删除部门
      */
-    @SysLog("批量删除部门")
+    @ApiOperation("批量删除部门")
     @PostMapping("/delete")
     @RequiresPermissions("sys:dep:delete")
     public R delete(@RequestBody String[] depIds){
@@ -95,14 +98,22 @@ public class SysDepController  extends AbstractController{
         return R.ok();
     }
 
-    /**
-     * 验证参数是否正确
-     */
-    private void verifyForm(SysDepEntity dep) {
-        if (StringUtils.isBlank(dep.getDepName())) {
-            throw new RRException("菜单名称不能为空");
-        }
+    /*
+	 * 部门信息验证
+	 */
+    @ApiOperation("验证部门信息")
+    @PostMapping("/checkDep")
+    @RequiresPermissions("sys:dep:checkDep")
+    public R checkDep(@RequestBody SysDepEntity dep){
+        return verifyForm(dep);
+    }
 
+
+    private R verifyForm(SysDepEntity dep) {
+        if (StringUtils.isBlank(dep.getDepName())) {
+            return R.error(1,"菜单名称不能为空");
+        }
+        return R.ok();
     }
 
 }

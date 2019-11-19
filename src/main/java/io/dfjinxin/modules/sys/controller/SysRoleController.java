@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,12 +60,12 @@ public class SysRoleController extends AbstractController {
 	/**
 	 * 删除角色
 	 */
-	@SysLog("删除角色")
 	@PostMapping("/delete")
 	@RequiresPermissions("sys:role:delete")
 	@ApiOperation("删除角色")
-	public R delete(@RequestBody int[] roleIds){
-		sysRoleService.deleteBatch(roleIds);
+	public R delete(@RequestBody Map<String,Object> roleIds){
+		ArrayList<Integer> roles= (ArrayList<Integer>) roleIds.get("roleIds");
+		sysRoleService.deleteBatch(roles);
 
 		return R.ok();
 	}
@@ -72,7 +73,7 @@ public class SysRoleController extends AbstractController {
 	/**
 	 * 角色下拉框
 	 */
-	@SysLog("获取角色下拉框信息")
+	@ApiOperation("获取角色下拉框信息")
 	@GetMapping("/getRole")
 	public R getRole(){
 		List<Map<String,Object>> role=	sysRoleService.getRole();
@@ -82,7 +83,7 @@ public class SysRoleController extends AbstractController {
 	/**
 	 * 获取角色权限
 	 */
-	@SysLog("获取角色的权限信息")
+	@ApiOperation("获取角色的权限信息")
 	@GetMapping("/rolePerm")
 	@RequiresPermissions("sys:role:rolePerm")
 	public R getRolePerm(String roleId){
@@ -93,13 +94,27 @@ public class SysRoleController extends AbstractController {
 	/**
 	 * 保存或更新
 	 */
-	@SysLog("保存或者修改角色信息")
 	@PostMapping("/info")
 	@RequiresPermissions("sys:role:info")
 	@ApiOperation("新增或者修改角色")
 	public R addOrUpdate(@RequestBody SysRoleEntity role){
 		sysRoleService.addOrUpdate(role);
 		return R.ok();
+	}
+
+	@GetMapping("/checkRolePerm")
+	@RequiresPermissions("sys:role:checkRolePerm")
+	@ApiOperation("新增或者修改角色对权限进行验证")
+	public R checkPerm(@RequestBody SysRoleEntity role){
+		return sysRoleService.checkPerm(role);
+	}
+
+	@GetMapping("/checkDeleteInfo")
+	@RequiresPermissions("sys:role:checkDeleteInfo")
+	@ApiOperation("删除角色时进行验证")
+	public R checkPermInfo(@RequestBody Map<String,Object> roleIds){
+		ArrayList<Integer> roles= (ArrayList<Integer>) roleIds.get("roleIds");
+		return sysRoleService.checkPermInfo(roles);
 	}
 
 }

@@ -17,9 +17,6 @@
 		<if test="m.menu_state != null and m.menu_state != ''"><![CDATA[
 	       and pmf.menu_state = #{m.menu_state}
 	    ]]></if>
-		<if test="m.role_id != null and m.role_id != ''"><![CDATA[
-	       and pmf.role_id = #{m.role_id}
-	    ]]></if>
 		<if test="m.cre_time != null and m.cre_time != ''"><![CDATA[
 	       and pmf.cre_time >= #{m.cre_time}
 	    ]]></if>
@@ -29,16 +26,16 @@
 	</sql>
 	
 	<select id="queryMenuList" parameterType="map" resultType="map">
-		SELECT m.*
+		SELECT pmi.*
 		,p.role_id
-		FROM (SELECT * FROM pss_menu_info WHERE menu_state = 1 ) m
-		JOIN pss_role_perm_info p ON m.menu_id = p.menu_id
+		FROM (SELECT * FROM pss_menu_info WHERE menu_state = 1 ) pmi
+		JOIN pss_role_perm_info p ON pmi.menu_id = p.menu_id
 		WHERE  p.role_id = #{m.role_id}
 	</select>
 
 	<delete id="deleteBatch">
 		delete from pss_role_perm_info where role_id in
-		<foreach item="roleId" collection="array" open="(" separator="," close=")">
+		<foreach item="roleId" collection="list" open="(" separator="," close=")">
 			#{roleId}
 		</foreach>
 	</delete>

@@ -23,6 +23,10 @@ public interface SysDepDao extends BaseMapper<SysDepEntity> {
      */
     IPage<SysDepEntity> queryDep(Page page, @Param("m") Map<String, Object> m);
 
+    /**
+     * 获取指定的部门信息
+     */
+    SysDepEntity queryDep( @Param("m") Map<String, Object> m);
 
     /**
      * 新增部门信息

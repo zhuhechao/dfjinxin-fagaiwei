@@ -21,7 +21,7 @@
     <!--批量删除角色-->
 	<delete id="deleteBatch">
 		delete from pss_user_role_info where role_id in
-		<foreach item="roleId" collection="array" open="(" separator="," close=")">
+		<foreach item="roleId" collection="list" open="(" separator="," close=")">
 			#{roleId}
 		</foreach>
 	</delete>

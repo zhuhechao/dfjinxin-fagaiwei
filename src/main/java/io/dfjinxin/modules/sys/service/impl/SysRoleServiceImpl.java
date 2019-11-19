@@ -77,31 +77,19 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 			 role.setMenuIds(ms);
 		 }
 		if(roleId ==0 ){
-        	veryRole(role,0);
 			baseMapper.save(role);
 		}else {
-			veryRole(role,1);
 			baseMapper.updateRole(role);
-//			sysRoleMenuService.saveOrUpdate(role.getRoleId(),role.getMenuIdList());
 		}
-		//sysRoleMenuService.saveOrUpdate(roleId,role.getMenuIdList());
-		//List<Integer> menus= role.getMenuIdList();
-//		if(menus != null){
-//			sysRoleMenuService.saveOrUpdate(roleId,role.getMenuIdList());
-//		}
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteBatch(int[] roleIds) {
+    public void deleteBatch(ArrayList<Integer> roleIds) {
         //删除角色
 		List<Integer> rids = new ArrayList<>();
 		for(int data:roleIds){
 			rids.add(data);
-		}
-		List<SysUserRoleEntity> list= sysUserRoleService.listByIds(rids);
-		if(list !=null && list.size()>0){
-			throw new RRException("当前指定的角色已经被使用，不能删除！");
 		}
         this.removeByIds(rids);
 		//删除角色与菜单关联
@@ -142,44 +130,40 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 		return roles;
 	}
 
+
 	/**
 	 * 检查角色
+	 * flg 0表示新增角色，1表示修改角色
 	 */
-	private  void veryRole(SysRoleEntity r,int flag){
+	@Override
+	public  R checkPerm(SysRoleEntity r){
 			String  roleName= r.getRoleName();
-		    int rs = r.getRoleState();
+			int roleId = r.getRoleId();
+		    List<Integer> rs = r.getMenuIdList();
 		    int rt = r.getRoleTypeId();
 			Map<String,Object> map = new HashMap<>();
 		    map.put("role_name",roleName);
-		    List<SysRoleEntity> re = re= baseMapper.selectByMap(map);;
-			if(flag == 0 && re.size()>0){
-				throw new RRException("角色名称重复");
-			}else if(flag == 1 && re.size()>1){
-				throw new RRException("角色名称已存在！");
+		    List<SysRoleEntity> re =  baseMapper.selectByMap(map);
+			if(roleId == 0 && re.size()>0){
+				return R.error(1,"角色名称重复");
+			}else if(roleId != 0 && re.size()>1){
+				R.error(1,"角色名称已存在！");
 			}
-
-		    if(rt == 0){
-		    	throw new RRException("请指定角色类型！");
-		    }
-
+		   if(rt == 1 && !rs.contains(1)){
+               return R.error(1,"该角色未分配系统管理员权限！");
+		   }else if(rt !=1 && rs.contains(1)){
+		   	return  R.error(1,"改角色不应分配系统管理员角色！");
+		   }
+          return R.ok();
 	}
 
-
-	/**
-	 * 检查权限是否越权
-	 */
-	private void checkPrems(SysRoleEntity role){
-//		//如果不是超级管理员，则需要判断角色的权限是否超过自己的权限
-//		if(role.getCreateUserId() == Constant.SUPER_ADMIN){
-//			return ;
-//		}
-//
-//		//查询用户所拥有的菜单列表
-//		List<Long> menuIdList = sysUserService.queryAllMenuId(role.getCreateUserId());
-//
-//		//判断是否越权
-//		if(!menuIdList.containsAll(role.getMenuIdList())){
-//			throw new RRException("新增角色的权限，已超出你的权限范围");
-//		}
+	@Override
+	public R checkPermInfo(ArrayList<Integer> roles) {
+		List<SysUserRoleEntity> list= sysUserRoleService.listByIds(roles);
+		if(list !=null && list.size()>0){
+			return R.error(1,"当前指定的角色已经被使用，不能删除！");
+		}
+		return R.ok();
 	}
+
 }

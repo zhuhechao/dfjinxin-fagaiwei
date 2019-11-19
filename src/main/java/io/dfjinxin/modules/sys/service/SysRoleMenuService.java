@@ -11,6 +11,7 @@ package io.dfjinxin.modules.sys.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.modules.sys.entity.SysRoleMenuEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public interface SysRoleMenuService extends IService<SysRoleMenuEntity> {
 	/**
 	 * 根据角色ID数组，批量删除
 	 */
-	int deleteBatch(int[] roleIds);
+	int deleteBatch(ArrayList<Integer> roleIds);
 
 	/**
 	 * 根据查询菜单信息

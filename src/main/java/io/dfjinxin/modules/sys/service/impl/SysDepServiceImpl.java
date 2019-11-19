@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,5 +54,12 @@ public class SysDepServiceImpl extends ServiceImpl<SysDepDao, SysDepEntity> impl
   @Override
   public List<Map<String, Object>> serDepInfo() {
     return sysDepDao.searchDepInfo();
+  }
+
+  @Override
+  public SysDepEntity getDepId(String depId) {
+      Map<String,Object> map = new HashMap<>();
+      map.put("depId",depId);
+    return baseMapper.queryDep(map);
   }
 }

@@ -14,6 +14,7 @@ import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.sys.entity.SysMenuEntity;
 import io.dfjinxin.modules.sys.entity.SysRoleEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public interface SysRoleService extends IService<SysRoleEntity> {
 
 	void addOrUpdate(SysRoleEntity role);
 
-	void deleteBatch(int[] roleIds);
+	void deleteBatch(ArrayList<Integer> roleIds);
 
 	//角色功能权限
 	public R rolePerm(String roleId);
@@ -40,6 +41,12 @@ public interface SysRoleService extends IService<SysRoleEntity> {
 
 	//获取角色下拉框数据
 	List<Map<String,Object>> getRole();
+
+	//角色赋权验证
+	R checkPerm(SysRoleEntity role);
+
+	//删除角色时校验
+	R checkPermInfo(ArrayList<Integer> roles);
 
 
 }

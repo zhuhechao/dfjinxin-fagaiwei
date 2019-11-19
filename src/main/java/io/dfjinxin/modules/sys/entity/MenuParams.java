@@ -9,5 +9,5 @@ import java.util.List;
  */
 @Data
 public class MenuParams {
-    private List<SysMenuEntity> ids;
+    private List<Integer> ids;
 }

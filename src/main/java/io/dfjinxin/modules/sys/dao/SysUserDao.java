@@ -54,6 +54,13 @@ public interface SysUserDao extends BaseMapper<SysUserEntity> {
 	 */
 	IPage<SysUserEntity> queryUserList(Page page, @Param("m") Map<String, Object> m);
 
+	/**
+	 * 查询指定用户信息
+	 * @param m
+	 * @return
+	 */
+	SysUserEntity queryUserList(@Param("m") Map<String,Object> m);
+
 	//新增用户
 	int insertUserData(SysUserEntity sysUserEntity);
 
