@@ -64,6 +64,4 @@ public class PssPriceEwarnEntity implements Serializable {
 	@TableField(exist = false)
 	private String commName;
 
-	private String unit;
-
 }
