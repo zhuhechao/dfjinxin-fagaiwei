@@ -17,7 +17,7 @@
   <select id="list" resultMap="pssIndexReltDtoMap">
     SELECT pir.index_name, pir.data_date, pir.fore_index, wmiv.data_source, wmiv.index_val
     FROM pss_index_relt pir
-    LEFT JOIN wp_mcro_index_val wmiv ON pir.index_id = wmiv.index_id
+    LEFT JOIN wp_macro_index_val wmiv ON pir.index_id = wmiv.index_id
     WHERE
     pir.index_name  = #{indexName}
     AND pir.data_date &gt;= #{dateFrom}

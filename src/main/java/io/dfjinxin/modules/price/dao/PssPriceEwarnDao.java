@@ -3,6 +3,7 @@ package io.dfjinxin.modules.price.dao;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import io.dfjinxin.modules.price.dto.PwwPriceEwarnDto;
 import io.dfjinxin.modules.price.entity.PssPriceEwarnEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author z.h.c
@@ -21,10 +23,14 @@ import java.util.Map;
 @Repository
 public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
 
-   /* List<PssPriceEwarnEntity> queryEchartsData(@Param("commId") Integer commId,
-                                               @Param("ewarnTypeId") Integer ewarnTypeId,
-                                               @Param("startDateStr") String startDateStr,
-                                               @Param("endDateStr") String endDateStr);*/
+    @Select("select date(ppe.ewarn_date) as ewarnDate,count(*) as ewarnCount \n" +
+            "from pss_price_ewarn ppe\n" +
+            "where 1=1 and ppe.ewarn_level=#{ewarnLevel} \n" +
+            "and ppe.ewarn_date between date('${startDateStr}') and date('${endDateStr}')\n" +
+            "group by ewarn_date order by ewarn_date asc")
+    List<PwwPriceEwarnDto> getEwarnCountByDate(@Param("ewarnLevel") String ewarnLevel,
+                                              @Param("startDateStr") String startDateStr,
+                                              @Param("endDateStr") String endDateStr);
 
     List queryType3Warn();
 

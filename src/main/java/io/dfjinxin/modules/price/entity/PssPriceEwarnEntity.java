@@ -46,6 +46,8 @@ public class PssPriceEwarnEntity implements Serializable {
 	 *
 	 */
 	private String ewarnTypeId;
+
+	private String unit;
 	/**
 	 *
 	 */

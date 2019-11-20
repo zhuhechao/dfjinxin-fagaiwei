@@ -37,9 +37,9 @@ public class SysMenuServiceImplTest {
 
     @Test
     public void getprovinceLastDayMapData() {
-        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
+//        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
 
-        wpBaseIndexValService.getprovinceLastDayMapData(30, "价格", "2019-10-11");
+        pssPriceEwarnService.firstPageView();
     }
 
     @Test

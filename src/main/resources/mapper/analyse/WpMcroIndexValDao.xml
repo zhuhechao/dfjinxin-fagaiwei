@@ -23,7 +23,7 @@
         index_name as indexName,
         index_id as indexId,
         seq_id as seqId
-        from wp_mcro_index_val val
+        from wp_macro_index_val val
         where stat_area_name=#{areaName}
         group by index_id
     </select>

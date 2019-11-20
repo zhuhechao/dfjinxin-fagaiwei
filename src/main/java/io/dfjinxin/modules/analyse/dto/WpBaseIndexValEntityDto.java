@@ -17,7 +17,8 @@ import java.util.Date;
  * @date 2019-09-02 15:38:19
  */
 @Data
-@Accessors(chain = true)public class WpBaseIndexValEntityDto implements Serializable {
+@Accessors(chain = true)
+public class WpBaseIndexValEntityDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**

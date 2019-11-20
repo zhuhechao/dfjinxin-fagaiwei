@@ -10,9 +10,9 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 /**
  * 日期处理
@@ -52,6 +52,17 @@ public class DateUtils {
             return df.format(date);
         }
         return null;
+    }
+
+    public static Date parseDate(Date date, String format) {
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        Date newDate = null;
+        try {
+            newDate = sdf.parse(dateToStr(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return newDate;
     }
 
     public static String dateToStr(Date date) {
@@ -373,23 +384,57 @@ public class DateUtils {
         return format.format(date);
     }
 
+    //JAVA获取某段时间内的所有日期
+    public static List<Date> getDates(Date dStart, Date dEnd) {
+        Calendar cStart = Calendar.getInstance();
+        cStart.setTime(dStart);
+        List dateList = new ArrayList();
+        //别忘了，把起始日期加上
+        dateList.add(dStart);
+        // 此日期是否在指定日期之后
+        while (dEnd.after(cStart.getTime())) {
+            // 根据日历的规则，为给定的日历字段添加或减去指定的时间量
+            cStart.add(Calendar.DAY_OF_MONTH, 1);
+            dateList.add(cStart.getTime());
+        }
+        return dateList;
+    }
 
     public static void main(String[] args) {
-        System.out.println(DateUtils.getLastMonthFirstDayStr());
-        System.out.println(DateUtils.getLastMonthLastDayStr());
-        System.out.println("000000000000000000000000");
-        System.out.println(DateUtils.getLastYearFirstDayStr());
-        System.out.println(DateUtils.getLastYearLastDayStr());
-        System.out.println("000000000000000000000000");
-        System.out.println(DateUtils.getMonthFirstDayStr());
-        System.out.println(DateUtils.getMonthLastDayStr());
-        System.out.println("000000000000000000000000");
-        System.out.println(DateUtils.getYearFirstDayStr());
-        System.out.println("000000000000000000000000");
-        System.out.println(DateUtils.getLastMonthByVal(1));
-        System.out.println(DateUtils.getLastYearByVal(3));
-        System.out.println(DateUtils.getYearDiffDay());
-//        System.out.println(DateUtils.dateToStr(DateUtils.addDateDays(new Date(),-1)));
+
+
+        String start = "2019-11-01";
+        String end = "2019-11-19";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date dStart = null;
+        Date dEnd = null;
+        try {
+            dStart = sdf.parse(start);
+            dEnd = sdf.parse(end);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        List<Date> dateList = getDates(dStart, dEnd);
+        for (Date date : dateList) {
+            System.out.println(sdf.format(date));
+        }
+
+
+//        System.out.println(DateUtils.getLastMonthFirstDayStr());
+//        System.out.println(DateUtils.getLastMonthLastDayStr());
+//        System.out.println("000000000000000000000000");
+//        System.out.println(DateUtils.getLastYearFirstDayStr());
+//        System.out.println(DateUtils.getLastYearLastDayStr());
+//        System.out.println("000000000000000000000000");
+//        System.out.println(DateUtils.getMonthFirstDayStr());
+//        System.out.println(DateUtils.getMonthLastDayStr());
+//        System.out.println("000000000000000000000000");
+//        System.out.println(DateUtils.getYearFirstDayStr());
+//        System.out.println("000000000000000000000000");
+//        System.out.println(DateUtils.getLastMonthByVal(1));
+//        System.out.println(DateUtils.getLastYearByVal(3));
+//        System.out.println(DateUtils.getYearDiffDay());
+//            System.out.println(getMonthFirstDayStr());
 //        System.out.println(DateUtils.getCurrentDayStr());
     }
 }
