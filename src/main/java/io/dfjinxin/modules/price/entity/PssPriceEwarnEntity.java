@@ -41,7 +41,7 @@ public class PssPriceEwarnEntity implements Serializable {
 	/**
 	 *
 	 */
-	private String pricTypeId;
+	private Integer pricTypeId;
 	/**
 	 *
 	 */
@@ -61,5 +61,7 @@ public class PssPriceEwarnEntity implements Serializable {
 
 	@TableField(exist = false)
 	private String commName;
+
+	private String unit;
 
 }

@@ -14,6 +14,7 @@
         <result property="ewarnLevel" column="ewarn_level"/>
         <result property="priValue" column="pri_value"/>
         <result property="priRange" column="pri_range"/>
+        <result property="unit" column="unit"/>
     </resultMap>
 
 

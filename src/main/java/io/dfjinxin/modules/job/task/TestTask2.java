@@ -166,7 +166,7 @@ public class TestTask2 implements ITask {
 		map.put("${reportDate}",DateUtils.format(new Date(),"yyyy年MM月dd日"));
 
 		//指标名称
-		String indexName=pee.getPricTypeId();
+//		String indexName=pee.getPricTypeId();
 		//涨跌幅度
 		BigDecimal zdfd=pee.getPriRange();
 		sb.append(commName)

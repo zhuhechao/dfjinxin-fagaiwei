@@ -9,6 +9,7 @@
         <result property="indexName" column="index_name"/>
         <result property="unit" column="unit"/>
         <result property="dataTime" column="data_time"/>
+        <result property="areaName" column="area_name"/>
     </resultMap>
 
 </mapper>

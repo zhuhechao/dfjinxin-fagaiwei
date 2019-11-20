@@ -29,4 +29,6 @@ public class WpCommPriEntity implements Serializable {
 
 	private Date dataTime;
 
+	private String areaName;
+
 }

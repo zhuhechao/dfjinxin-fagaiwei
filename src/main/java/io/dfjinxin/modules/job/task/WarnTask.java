@@ -56,9 +56,8 @@ public class WarnTask implements ITask {
 
 		//商品配置
 		PssCommConfEntity pc=pssCommConfService.getById(commConfId);
-		Integer indexId = pc.getIndexId();
 		Map<String, Object> cc=new HashMap<String, Object>();
-
+		Integer indexId = pc.getIndexId();
 		cc.put("indexId",indexId);
 		cc.put("endDate",new Date());
 		//1：单日涨幅  2：连续涨幅
@@ -66,16 +65,19 @@ public class WarnTask implements ITask {
 				"1".equals(pe.getEwarnTerm())?-2:pe.getEwarnDays()));
 
 		List<WpCommPriEntity> wys=wpCommPriService.getData(cc);
+		System.out.println(wys.get(0).getUnit()+"88888888888888888888888888888888888888888888");
 		//价格预警结果
 		PssPriceEwarnEntity pee=new PssPriceEwarnEntity();
 		pee.setCommId(pc.getCommId());
 		pee.setEwarnDate(new Date());
 		//区域id
-		WpCommPriEntity wy=wpCommPriService.getById(pc.getIndexId());
-		//pee.setStatAreaCode(wy.getAreaId()+"");
-		pee.setPricTypeId(pc.getIndexId()+"");
-		pee.setEwarnTypeId(pe.getEwarnTypeId());
+		WpCommPriEntity wcp=wpCommPriService.getById(pc.getIndexId());
 
+
+		pee.setPricTypeId(pc.getIndexId());
+		pee.setEwarnTypeId(pe.getEwarnTypeId());
+		pee.setStatAreaCode(wcp.getAreaName());
+		pee.setUnit(wcp.getUnit());//单位
 		if("1".equals(pe.getEwarnTerm())){
 			BigDecimal price0=wys.get(0).getValue();
 			BigDecimal price1=wys.get(1).getValue();
@@ -101,7 +103,7 @@ public class WarnTask implements ITask {
 					ewarnLevelResult(b0.abs(),pe).equals(ewarnLevelResult(b2,pe))){
 				pee.setEwarnLevel(ewarnLevelResult(b0.abs(),pe));
 			}else{
-				pee.setEwarnLevel("G_W");
+				pee.setEwarnLevel("74");
 			}
 		}
 
