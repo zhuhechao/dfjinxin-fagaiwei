@@ -35,5 +35,7 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
     Map<String, Object> queryIndexLineData(Integer ewarnTypeId, List<Integer> asList, String startDate, String endDate);
 
     Map<String, Object> queryIndexAvgByIndexId(Integer indexId, Integer ewarnTypeId);
+
+    Map<String, Object> bigScreenView();
 }
 

@@ -12,5 +12,5 @@ import lombok.Data;
 public class RateValDto {
 
     private String ewarnLevel;
-    private String ewanName;
+//    private String ewanName;
 }

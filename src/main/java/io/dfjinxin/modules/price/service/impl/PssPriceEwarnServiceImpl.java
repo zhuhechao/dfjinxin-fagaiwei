@@ -144,12 +144,13 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     public Map<String, Object> firstPageView() {
         Map<String, Object> retMap = new HashMap<>();
 
+        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
         List<PssPriceEwarnEntity> yestDayMaxPricEwarnList = new ArrayList<>();
         QueryWrapper where1 = new QueryWrapper();
+        where1.eq("date(ewarn_date)", lastDayStr);
         where1.groupBy("comm_id");
         List<PssPriceEwarnEntity> priceEwarnList = pssPriceEwarnDao.selectList(where1);
         //根据分组id,查询当前日期前一天的数据
-        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
         for (PssPriceEwarnEntity entity : priceEwarnList) {
             List<PssPriceEwarnEntity> entities = pssPriceEwarnDao.queryPriceEwarnByDate(entity.getCommId(), lastDayStr);
             if (entities == null || entities.size() < 1) {
@@ -172,7 +173,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             ewanInfoList.add(entity);
             //用于计算预警类型占比
             RateValDto rateValDto = new RateValDto();
-            rateValDto.setEwanName(asciiInfoEntity.getCodeName());
+//            rateValDto.setEwanName(asciiInfoEntity.getCodeName());
             rateValDto.setEwarnLevel(entity.getEwarnLevel());
             rateValDtos.add(rateValDto);
         }
@@ -236,7 +237,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                     countMap.put("yellowEwarnTotal", sum);
                 }
                 if (level == 74) {
-                    countMap.put("greenEwarnTotal", total);
+                    countMap.put("greenEwarnTotal", sum);
                 }
             }
         }
@@ -449,6 +450,20 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             reltRusult.put(reltEntity.getCommId().toString(), jiaGeYuCe(reltTypeList));
         }
         map.put("jiaGeYuCe", reltRusult);
+
+        //step7,价格-根据3类商品，统计规格品中昨天涨幅最大的商品价格信息
+        QueryWrapper where2 = new QueryWrapper();
+        where2.inSql("comm_id", sql);
+        where2.eq("date(ewarn_date)", lastDayStr);
+        where2.groupBy("comm_id");
+        where2.orderByDesc("pri_range");
+        where2.orderByDesc("pri_value");
+        where2.last("limit 0,1");
+        PssPriceEwarnEntity lastDayRangeMaxEwarn = pssPriceEwarnDao.selectOne(where2);
+
+        map.put("price", lastDayRangeMaxEwarn == null ? 0 : lastDayRangeMaxEwarn.getPriValue());
+        map.put("unit", lastDayRangeMaxEwarn == null ? 0 : lastDayRangeMaxEwarn.getUnit());
+
         return map;
     }
 
@@ -768,6 +783,86 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         retMap.put("yearTongBi", yearTongBi.toString() + "%");
         retMap.put("currPriceTongBi", lastPriceTongBi.toString() + "%");
         return retMap;
+    }
+
+    /**
+     * @Desc: 大屏
+     * @Param: []
+     * @Return: java.util.Map<java.lang.String, java.lang.Object>
+     * @Author: z.h.c
+     * @Date: 2019/11/21 14:40
+     */
+    @Override
+    public Map<String, Object> bigScreenView() {
+        Map<String, Object> view = this.firstPageView();
+        Map<String, Object> retMap = new HashMap<>();
+        if (view.containsKey("commTotal")) {
+            //信息总量
+            retMap.put("infoTotal", view.get("commTotal"));
+        }
+        if (view.containsKey("ewanInfo")) {
+            //商品预警信息
+            retMap.put("ewanInfo", view.get("ewanInfo"));
+        }
+        if (view.containsKey("orangeEwarnTotal")) {
+            //橙色预警数量
+            retMap.put("orangeEwarnTotal", view.get("orangeEwarnTotal"));
+        }
+        if (view.containsKey("redEwarnTotal")) {
+            //红色预警数量
+            retMap.put("redEwarnTotal", view.get("redEwarnTotal"));
+        }
+
+        QueryWrapper where = new QueryWrapper();
+        where.eq("data_flag", 0);
+        //商品数量
+        retMap.put("commTotal", pssCommTotalDao.selectCount(where));
+
+        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));//昨天时间
+        String last180DayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -180));//180天前时间
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("data_flag", 0);
+        queryWrapper.le("level_code", 0);
+        List<PssCommTotalEntity> type1CommList = pssCommTotalDao.selectList(queryWrapper);
+        //大宗&民生类预警统计
+        for (PssCommTotalEntity comm : type1CommList) {
+            List<Map<String, Object>> mapList = this.ewarnCountByDate(comm.getCommId(), last180DayStr, lastDayStr);
+            retMap.put(comm.getCommName(), mapList);
+        }
+        //全部预警统计
+        List<Map<String, Object>> ewarnCountList = pssPriceEwarnDao.getEwarnCount(last180DayStr, lastDayStr);
+        retMap.put("allEwarnCount", ewarnCountList);
+
+        //风险按月走势图
+        QueryWrapper<PssPriceEwarnEntity> where1 = new QueryWrapper();
+        where1.eq("date(ewarn_date)", lastDayStr);
+        where1.groupBy("comm_id");
+        where1.orderByDesc("pri_range");
+        where1.last("limit 0,3");
+        List<PssPriceEwarnEntity> selectList = pssPriceEwarnDao.selectList(where1);
+
+        Map<String, Object> lineMap = new HashMap<>();
+        for (PssPriceEwarnEntity entity : selectList) {
+            List<PssPriceEwarnEntity> resList = pssPriceEwarnDao.getFirst3EwarnInfo(entity.getCommId(), last180DayStr, lastDayStr);
+            if (resList != null && resList.size() > 0) {
+                lineMap.put(resList.get(0).getCommName(), resList);
+            }
+        }
+        retMap.putAll(lineMap);
+        return retMap;
+    }
+
+    /**
+     * @Desc: 大屏-根据1类商品统计最近180内的各类预警级别的总数
+     * @Param: [type1CommId]
+     * @Return: java.util.Map<java.lang.String, java.lang.Object>
+     * @Author: z.h.c
+     * @Date: 2019/11/21 15:00
+     */
+    private List<Map<String, Object>> ewarnCountByDate(int type1CommId, String startDateStr, String endDateStr) {
+        List<Map<String, Object>> list = pssPriceEwarnDao.getEwarnCountByType1CommId(
+                type1CommId, startDateStr, endDateStr);
+        return list;
     }
 
     private Map<String, Object> converIndexAvg(int ewarnTypeId,
