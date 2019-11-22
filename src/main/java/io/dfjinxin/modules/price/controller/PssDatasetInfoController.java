@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,8 +40,6 @@ public class PssDatasetInfoController {
     private PssDatasetInfoService pssDatasetInfoService;
     @Autowired
     private HiveService hiveService;
-    @Autowired
-    private WpBaseIndexInfoService wpBaseIndexInfoService;
 
     @Value("${ssh.user}")
     private String userName;
@@ -102,9 +101,42 @@ public class PssDatasetInfoController {
         }
     }
 
+    /**
+     * 数据集修改-只修改 inde_val字段值
+     *
+     * @Desc:
+     * @Param: [entity]
+     * @Return: io.dfjinxin.common.utils.R
+     * @Author: z.h.c
+     * @Date: 2019/11/22 16:03
+     */
+    @PostMapping("/update/{dataSetId}")
+    @ApiOperation("修改-修改inde_val字段值")
+    public R saveDataSet(@PathVariable Integer dataSetId, @RequestParam final String indeVal) {
+        PssDatasetInfoEntity entity = new PssDatasetInfoEntity();
+        entity.setIndeVar(indeVal);
+        entity.setDataTime(new Date());
+        entity.setDataSetId(dataSetId);
+        pssDatasetInfoService.updateById(entity);
+        return R.ok();
+    }
+
+    /**
+     * @Desc: 删除应用库记录、hive上对应data_set_eng_name 记录
+     * @Param: [dataSetId]
+     * @Return: io.dfjinxin.common.utils.R
+     * @Author: z.h.c
+     * @Date: 2019/11/22 16:10
+     */
     @PostMapping("/delete/{dataSetId}")
     @ApiOperation("删除")
     public R delete(@PathVariable Integer dataSetId) {
+        PssDatasetInfoEntity entity = pssDatasetInfoService.getById(dataSetId);
+        if (entity == null) {
+            return R.error("数据" + dataSetId + ",不存在!");
+        }
+
+        hiveService.dropTable(entity.getDataSetEngName());
         pssDatasetInfoService.removeById(dataSetId);
         return R.ok();
     }

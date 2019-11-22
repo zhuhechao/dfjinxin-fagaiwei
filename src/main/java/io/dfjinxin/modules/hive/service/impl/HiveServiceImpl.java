@@ -98,4 +98,11 @@ public class HiveServiceImpl implements HiveService {
         return null;
     }
 
+    @Override
+    public void dropTable(final String tableName) {
+        String sql = "drop table " + tableName;
+        logger.debug("Preparing: (hive) :" + sql);
+        jdbcTemplate.execute(sql);
+    }
+
 }
