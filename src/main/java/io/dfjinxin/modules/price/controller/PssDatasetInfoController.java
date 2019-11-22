@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.common.utils.python.PythonApiUtils;
-import io.dfjinxin.modules.analyse.service.WpBaseIndexInfoService;
 import io.dfjinxin.modules.hive.service.HiveService;
 import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
 import io.dfjinxin.modules.price.service.PssDatasetInfoService;
@@ -21,13 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @Desc: 从hive获取数据表，用户选择表中字段的值组合。
- * 作为数据集落地到应用库
- * 流程：
- * step1,用户前端提交数据集组合，后台调python逻辑
- * step2,根据python结果，成功数据集入应用库，失败不入库
- * @Param:
- * @Return:
+ * @Desc:
  * @Author: z.h.c
  * @Date: 2019/10/11 10:47
  */
@@ -69,15 +62,21 @@ public class PssDatasetInfoController {
     }
 
     /**
-     * 列表
+     * @Desc: 流程：
+     * * step1,用户前端提交商品指标id 宏观指标id，后台调python逻辑
+     * * step2,根据python结果，成功数据集入应用库，失败不入库
+     * @Param: [entity]
+     * @Return: io.dfjinxin.common.utils.R
+     * @Author: z.h.c
+     * @Date: 2019/11/22 17:24
      */
     @PostMapping("/save")
     @ApiOperation("保存")
     public R saveDataSet(@RequestBody PssDatasetInfoEntity entity) {
         Log.info("数据集创建-start");
         String api = "createDataSet";
-        String result = null;
         long startTime = System.currentTimeMillis();
+        String result = null;
         try {
             result = PythonApiUtils.doPost(pyUrl + api, entity.getIndeVar());
         } catch (Exception e) {
@@ -102,9 +101,7 @@ public class PssDatasetInfoController {
     }
 
     /**
-     * 数据集修改-只修改 inde_val字段值
-     *
-     * @Desc:
+     * @Desc: 数据集修改-只修改inde_val字段值
      * @Param: [entity]
      * @Return: io.dfjinxin.common.utils.R
      * @Author: z.h.c
@@ -112,17 +109,20 @@ public class PssDatasetInfoController {
      */
     @PostMapping("/update/{dataSetId}")
     @ApiOperation("修改-修改inde_val字段值")
-    public R saveDataSet(@PathVariable Integer dataSetId, @RequestParam final String indeVal) {
-        PssDatasetInfoEntity entity = new PssDatasetInfoEntity();
+    public R update(@PathVariable Integer dataSetId, @RequestParam final String indeVal) {
+
+        PssDatasetInfoEntity entity = pssDatasetInfoService.getById(dataSetId);
+        if (entity == null) {
+            return R.error("数据" + dataSetId + ",不存在!");
+        }
         entity.setIndeVar(indeVal);
         entity.setDataTime(new Date());
-        entity.setDataSetId(dataSetId);
         pssDatasetInfoService.updateById(entity);
         return R.ok();
     }
 
     /**
-     * @Desc: 删除应用库记录、hive上对应data_set_eng_name 记录
+     * @Desc: 删除应用库记录、hive上对应data_set_eng_name 表
      * @Param: [dataSetId]
      * @Return: io.dfjinxin.common.utils.R
      * @Author: z.h.c
