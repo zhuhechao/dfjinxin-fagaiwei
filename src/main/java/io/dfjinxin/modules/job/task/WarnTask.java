@@ -57,27 +57,21 @@ public class WarnTask implements ITask {
 		//商品配置
 		PssCommConfEntity pc=pssCommConfService.getById(commConfId);
 		Map<String, Object> cc=new HashMap<String, Object>();
-		Integer indexId = pc.getIndexId();
-		cc.put("indexId",indexId);
+		cc.put("indexId",pc.getIndexId());
 		cc.put("endDate",new Date());
 		//1：单日涨幅  2：连续涨幅
 		cc.put("startDate",DateUtils.addDateDays(DateTime.getBeginOf(new Date()),
 				"1".equals(pe.getEwarnTerm())?-2:pe.getEwarnDays()));
 
 		List<WpCommPriEntity> wys=wpCommPriService.getData(cc);
-		System.out.println(wys.get(0).getUnit()+"88888888888888888888888888888888888888888888");
 		//价格预警结果
 		PssPriceEwarnEntity pee=new PssPriceEwarnEntity();
 		pee.setCommId(pc.getCommId());
 		pee.setEwarnDate(new Date());
-		//区域id
-		WpCommPriEntity wcp=wpCommPriService.getById(pc.getIndexId());
-
-
 		pee.setPricTypeId(pc.getIndexId());
 		pee.setEwarnTypeId(pe.getEwarnTypeId());
-		pee.setStatAreaCode(wcp.getAreaName());
-		pee.setUnit(wcp.getUnit());//单位
+		pee.setStatAreaCode(wys.get(0).getAreaName());
+		pee.setUnit(wys.get(0).getUnit());//单位
 		if("1".equals(pe.getEwarnTerm())){
 			BigDecimal price0=wys.get(0).getValue();
 			BigDecimal price1=wys.get(1).getValue();
