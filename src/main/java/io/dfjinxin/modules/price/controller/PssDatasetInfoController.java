@@ -34,14 +34,14 @@ public class PssDatasetInfoController {
     @Autowired
     private HiveService hiveService;
 
-    @Value("${ssh.user}")
-    private String userName;
-    @Value("${ssh.host}")
-    private String host;
-    @Value("${ssh.pass}")
-    private String pass;
-    @Value("${ssh.port}")
-    private int port;
+//    @Value("${ssh.user}")
+//    private String userName;
+//    @Value("${ssh.host}")
+//    private String host;
+//    @Value("${ssh.pass}")
+//    private String pass;
+//    @Value("${ssh.port}")
+//    private int port;
 
     @Value("${ssh.url}")
     private String pyUrl;
@@ -75,6 +75,7 @@ public class PssDatasetInfoController {
     public R saveDataSet(@RequestBody PssDatasetInfoEntity entity) {
         Log.info("数据集创建-start");
         String api = "createDataSet";
+        Log.info("调用python-[{}]服务,请求参数-{}", api, entity.getIndeVar());
         long startTime = System.currentTimeMillis();
         String result = null;
         try {
@@ -94,8 +95,10 @@ public class PssDatasetInfoController {
         if ("succ".equals(code) && StringUtils.isNotEmpty(tableName)) {
             entity.setDataSetEngName(tableName);
             pssDatasetInfoService.save(entity);
+            Log.info("数据集创建-成功!");
             return R.ok();
         } else {
+            Log.info("数据集创建-失败!");
             return R.error("数据集创建失败!");
         }
     }

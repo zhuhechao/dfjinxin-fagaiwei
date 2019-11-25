@@ -14,7 +14,6 @@ import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
 import io.dfjinxin.modules.price.service.PssAnalyInfoService;
 import io.dfjinxin.modules.price.service.PssAnalyReltService;
 import io.dfjinxin.modules.price.service.PssDatasetInfoService;
-import io.dfjinxin.modules.price.service.SSHConnect;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
@@ -46,16 +45,21 @@ import java.util.Map;
 @Configuration
 public class PssAnalyInfoController {
 
-    @Value("${ssh.user}")
-    private String userName = "root";
-    @Value("${ssh.host}")
-    private String host="10.1.3.239";
+    //    @Value("${ssh.user}")
+//    private String userName = "root";
+//    @Value("${ssh.host}")
+//    private String host="10.1.3.239";
+//
+//    @Value("${ssh.pass}")
+//    private String pass = "123456";
+//
+//    @Value("${ssh.port}")
+//    private int port = 22;
 
-    @Value("${ssh.pass}")
-    private String pass = "123456";
+    @Value("${ssh.url}")
+    private String url;
 
-    @Value("${ssh.port}")
-    private int port = 22;
+
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -98,155 +102,154 @@ public class PssAnalyInfoController {
      */
     @PostMapping("/runGeneral")
     @ApiOperation("运行")
-    public R runGeneral (@RequestBody PssAnalyInfoDto dto) {
+    public R runGeneral(@RequestBody PssAnalyInfoDto dto) {
 
 //        R r = testCallPy();
         R r = callRet(dto);
-        JSONObject jsonObject = (JSONObject)r.get("data");
-        if(null!=r && r.get("code").toString().equals("0") && jsonObject!=null){
+        JSONObject jsonObject = (JSONObject) r.get("data");
+        if (null != r && r.get("code").toString().equals("0") && jsonObject != null) {
             pssAnalyInfoService.saveOrUpdate(dto);
             PssAnalyReltEntity relt = new PssAnalyReltEntity();
             relt.analyInfoToRelEnt(PssAnalyInfoEntity.toEntity(dto));
-            if(null!=jsonObject.get("pValue")){
-                Object jsonArray = JSONArray.parse(jsonObject.get("pValue").toString(),Feature.OrderedField);
+            if (null != jsonObject.get("pValue")) {
+                Object jsonArray = JSONArray.parse(jsonObject.get("pValue").toString(), Feature.OrderedField);
                 relt.setPvalue(jsonArray.toString());
             }
-            if(null!=jsonObject.get("coe")) {
-                Object jsonArray = JSONArray.parse(jsonObject.get("coe").toString(),Feature.OrderedField);
+            if (null != jsonObject.get("coe")) {
+                Object jsonArray = JSONArray.parse(jsonObject.get("coe").toString(), Feature.OrderedField);
                 relt.setAnalyCoe(jsonArray.toString());
             }
             PssAnalyInfoEntity p = PssAnalyInfoEntity.toEntity(dto);
             Map map = new CaseInsensitiveMap();
 
-            if(dto.getAnalyId()!=null)
-                map.put("analyId",dto.getAnalyId());
-            else{
-                map.put("analyName",relt.getReltName());
-                map.put("analyWay",relt.getAnalyWay());
-                map.put("datasetId",dto.getDataSetId());
-                map.put("remarks",dto.getRemarks());
-                map.put("indeVar",p.getIndeVar());
-                map.put("depeVar",dto.getDepeVar());
+            if (dto.getAnalyId() != null)
+                map.put("analyId", dto.getAnalyId());
+            else {
+                map.put("analyName", relt.getReltName());
+                map.put("analyWay", relt.getAnalyWay());
+                map.put("datasetId", dto.getDataSetId());
+                map.put("remarks", dto.getRemarks());
+                map.put("indeVar", p.getIndeVar());
+                map.put("depeVar", dto.getDepeVar());
             }
             List<PssAnalyReltEntity> list = pssAnalyReltService.getList(map);
-            if(list!=null && list.size()>0)
+            if (list != null && list.size() > 0)
                 relt.setReltId(list.get(0).getReltId());
 
             pssAnalyReltService.saveOrUpdate(relt);
             Map data = new LinkedHashMap();
-            data.put("pva",relt.getPvalue());
-            if(!StringUtils.isEmpty(relt.getAnalyCoe()))
-                data.put("coe",relt.getAnalyCoe());
+            data.put("pva", relt.getPvalue());
+            if (!StringUtils.isEmpty(relt.getAnalyCoe()))
+                data.put("coe", relt.getAnalyCoe());
             return R.ok().put("data", data);
         }
 
         return R.error("未更新任何信息！");
     }
 
-    public R callRet(PssAnalyInfoDto pssAnalyInfoDto ){
-        String strRet= null;
+    public R callRet(PssAnalyInfoDto pssAnalyInfoDto) {
+        String strRet = null;
         R r = null;
         PssAnalyInfoEntity pssAnalyInfoEntity = PssAnalyInfoEntity.toEntity(pssAnalyInfoDto);
         PssDatasetInfoEntity pssDatasetInfoEntity = pssDatasetInfoService.getPssDatasetInfoById(pssAnalyInfoDto.getDataSetId());
-        JSONObject indeIds = JSONObject.parseObject( pssAnalyInfoEntity.getIndeVar(),Feature.OrderedField);
+        JSONObject indeIds = JSONObject.parseObject(pssAnalyInfoEntity.getIndeVar(), Feature.OrderedField);
         pssDatasetInfoEntity.setIndeVar(indeIds.toJSONString());
         pssDatasetInfoService.setPssDatasetInfoIndeName(pssDatasetInfoEntity);
         JSONObject jsonObject = new JSONObject();
-        String url = "http://10.1.3.239:8082/";
-        if(pssDatasetInfoEntity!=null) {
+//        String url = "http://10.1.3.239:8082/";
+        if (pssDatasetInfoEntity != null) {
 
-            String []id = {""};
-            String []macroIds = {""};
-            indeIds.forEach((k,v)->{
-                if(k.indexOf("comm")>-1)
-                    id[0] = v.toString().replace("[","").replace("]","");
-                else if(k.indexOf("macro")>-1)
-                    macroIds[0] = v.toString().replace("[","").replace("]","");
+            String[] id = {""};
+            String[] macroIds = {""};
+            indeIds.forEach((k, v) -> {
+                if (k.indexOf("comm") > -1)
+                    id[0] = v.toString().replace("[", "").replace("]", "");
+                else if (k.indexOf("macro") > -1)
+                    macroIds[0] = v.toString().replace("[", "").replace("]", "");
             });
             String[] indes = id[0].split(",");
             String[] macIds = macroIds[0].split(",");
             String ids = "";
             String mIds = "";
-            if(indes.length>0 && !indes[0].equals("")) {
+            if (indes.length > 0 && !indes[0].equals("")) {
                 ids += "b_" + StringUtils.join(indes, "&b_");
                 indes = ids.split("&");
-            }else
+            } else
                 indes = null;
-            if(macIds.length>0 && !macIds[0].equals("")) {
+            if (macIds.length > 0 && !macIds[0].equals("")) {
                 mIds += "&m_" + StringUtils.join(macIds, "&m_");
                 macIds = mIds.split("&");
-            }else
+            } else
                 macIds = null;
             //指标名称map，后面替换需要
-            JSONObject indeNames = JSONObject.parseObject(pssDatasetInfoEntity.getIndeName(),Feature.OrderedField);
+            JSONObject indeNames = JSONObject.parseObject(pssDatasetInfoEntity.getIndeName(), Feature.OrderedField);
             Map idMap = new LinkedHashMap();
             Map macMap = new LinkedHashMap();
-            final String [] tmpNames = {""};
-            final String [] tmpMacNms = {""};
-            indeNames.forEach((k,v)->{
-                if(k.indexOf("comm")>-1){
-                    tmpNames[0] = v.toString().replace("[","").replace("]","");
-                }else{
-                    tmpMacNms[0] = v.toString().replace("[","").replace("]","");
+            final String[] tmpNames = {""};
+            final String[] tmpMacNms = {""};
+            indeNames.forEach((k, v) -> {
+                if (k.indexOf("comm") > -1) {
+                    tmpNames[0] = v.toString().replace("[", "").replace("]", "");
+                } else {
+                    tmpMacNms[0] = v.toString().replace("[", "").replace("]", "");
                 }
             });
-            String []fnNames = tmpNames[0].split(",");
-            String []fnMacNms = tmpMacNms[0].split(",");
-            for(int i=0;i<fnNames.length&indes!=null;i++){
-                if(!StringUtils.isEmpty(indes[i]))
-                    idMap.put(indes[i],fnNames[i]);
+            String[] fnNames = tmpNames[0].split(",");
+            String[] fnMacNms = tmpMacNms[0].split(",");
+            for (int i = 0; i < fnNames.length & indes != null; i++) {
+                if (!StringUtils.isEmpty(indes[i]))
+                    idMap.put(indes[i], fnNames[i]);
             }
-            for(int j=0;j<fnMacNms.length&macIds!=null;j++){
-                if(!StringUtils.isEmpty(macIds[j]))
-                    macMap.put(macIds[j],fnMacNms[j]);
+            for (int j = 0; j < fnMacNms.length & macIds != null; j++) {
+                if (!StringUtils.isEmpty(macIds[j]))
+                    macMap.put(macIds[j], fnMacNms[j]);
             }
-            String[]concatIds = ArrayUtils.addAll(indes,macIds);
+            String[] concatIds = ArrayUtils.addAll(indes, macIds);
             if (pssAnalyInfoDto.getAnalyWay().equals("偏相关性分析")) {
-                jsonObject.put("table",pssDatasetInfoEntity.getDataSetEngName());
-                jsonObject.put("indepVar",concatIds);
-                r = callPython(url+"pCorAna",jsonObject);
-            } else if (pssAnalyInfoDto.getAnalyWay().equals("格兰杰")) {
-                jsonObject.put("table",pssDatasetInfoEntity.getDataSetEngName());
-                jsonObject.put("indepVar",concatIds);
-                jsonObject.put("depeVar",pssAnalyInfoDto.getDepeVar());
-                r = callPython(url+"grangerAna",jsonObject);
-            } else if (pssAnalyInfoDto.getAnalyWay().equals("路径分析")) {
-                jsonObject.put("table",pssDatasetInfoEntity.getDataSetEngName());
-                jsonObject.put("indepVar",concatIds);
-                jsonObject.put("depeVar",pssAnalyInfoDto.getDepeVar());
-                r = callPython(url+"pathAna",jsonObject);
-            } else {//一般相关性分析
-                jsonObject.put("table",pssDatasetInfoEntity.getDataSetEngName());
+                jsonObject.put("table", pssDatasetInfoEntity.getDataSetEngName());
                 jsonObject.put("indepVar", concatIds);
-                r = callPython(url+"CorAna",jsonObject);
+                r = callPython(url + "pCorAna", jsonObject);
+            } else if (pssAnalyInfoDto.getAnalyWay().equals("格兰杰")) {
+                jsonObject.put("table", pssDatasetInfoEntity.getDataSetEngName());
+                jsonObject.put("indepVar", concatIds);
+                jsonObject.put("depeVar", pssAnalyInfoDto.getDepeVar());
+                r = callPython(url + "grangerAna", jsonObject);
+            } else if (pssAnalyInfoDto.getAnalyWay().equals("路径分析")) {
+                jsonObject.put("table", pssDatasetInfoEntity.getDataSetEngName());
+                jsonObject.put("indepVar", concatIds);
+                jsonObject.put("depeVar", pssAnalyInfoDto.getDepeVar());
+                r = callPython(url + "pathAna", jsonObject);
+            } else {//一般相关性分析
+                jsonObject.put("table", pssDatasetInfoEntity.getDataSetEngName());
+                jsonObject.put("indepVar", concatIds);
+                r = callPython(url + "CorAna", jsonObject);
             }
             try {
                 if (r.get("data") != null && !StringUtils.isEmpty(r.get("data").toString()))
                     strRet = r.get("data").toString();
                 jsonObject = transStrToJsonObject(strRet);
-            }catch (Exception eo){//转换失败
-                if(strRet.indexOf(dataOne)>-1){
-                    strRet = strRet.replace(" ","").replace("\n","").replace("\\","").replace("\"\"","\"").replace(",\",",",").replace(",\"}","}").replace("\"{\",","{");
+            } catch (Exception eo) {//转换失败
+                if (strRet.indexOf(dataOne) > -1) {
+                    strRet = strRet.replace(" ", "").replace("\n", "").replace("\\", "").replace("\"\"", "\"").replace(",\",", ",").replace(",\"}", "}").replace("\"{\",", "{");
 
                     jsonObject = new JSONObject(strRet.indexOf(dataOne));
-                    if(strRet.indexOf(dataSec)>-1) {
-                        jsonObject.put("pValue", strRet.substring(strRet.indexOf(dataOne)+dataOne.length(), strRet.indexOf(dataSec)));
-                        jsonObject.put("coe",strRet.substring(strRet.indexOf(dataSec)+dataSec.length(),strRet.lastIndexOf("}]")+2));
-                    }
-                    else
-                        jsonObject.put("pValue", strRet.substring(strRet.indexOf(dataOne)+dataOne.length(),strRet.indexOf("}]")+2));
+                    if (strRet.indexOf(dataSec) > -1) {
+                        jsonObject.put("pValue", strRet.substring(strRet.indexOf(dataOne) + dataOne.length(), strRet.indexOf(dataSec)));
+                        jsonObject.put("coe", strRet.substring(strRet.indexOf(dataSec) + dataSec.length(), strRet.lastIndexOf("}]") + 2));
+                    } else
+                        jsonObject.put("pValue", strRet.substring(strRet.indexOf(dataOne) + dataOne.length(), strRet.indexOf("}]") + 2));
                 }
-            }finally {
+            } finally {
                 String[] o = {""};
                 o[0] = jsonObject.get("pValue").toString();
-                if(o[0]!=null) {
+                if (o[0] != null) {
                     idMap.forEach((k, v) -> {
                         o[0] = o[0].replaceAll(k.toString(), v.toString());
                     });
                     macMap.forEach((k, v) -> {
                         o[0] = o[0].replaceAll(k.toString(), v.toString());
                     });
-                    jsonObject.put("pValue",o[0].replaceAll("\"\"","\""));
+                    jsonObject.put("pValue", o[0].replaceAll("\"\"", "\""));
                 }
                 try {
                     o[0] = jsonObject.get("coe").toString();
@@ -259,69 +262,73 @@ public class PssAnalyInfoController {
                         });
                         jsonObject.put("coe", o[0].replaceAll("\"\"", "\""));
                     }
-                }catch (Exception ee){
+                } catch (Exception ee) {
 
                 }
             }
         }
 
-        return R.ok().put("data",jsonObject);
+        return R.ok().put("data", jsonObject);
     }
-    final  String dataOne = "[[1]]";
-    final  String dataSec = "[[2]]";
-    private JSONObject transStrToJsonObject(String retStr){
-        if(StringUtils.isEmpty(retStr))
+
+    final String dataOne = "[[1]]";
+    final String dataSec = "[[2]]";
+
+    private JSONObject transStrToJsonObject(String retStr) {
+        if (StringUtils.isEmpty(retStr))
             return null;
         String str = retStr;
-        str = retStr.replace(" ","").replace("\n","").replace("\\","").replace("\"\"","\"").replace(",\",",",").replace(",\"}","}").replace("\"{\",","{");
+        str = retStr.replace(" ", "").replace("\n", "").replace("\\", "").replace("\"\"", "\"").replace(",\",", ",").replace(",\"}", "}").replace("\"{\",", "{");
 
-        str = str.replace(" ","");
-        String header = str.substring(0,str.indexOf(",\"data\""))+"}";
+        str = str.replace(" ", "");
+        String header = str.substring(0, str.indexOf(",\"data\"")) + "}";
         JSONObject jsonObject = null;
         try {
             String data = str.substring(str.indexOf(dataOne) + dataOne.length() + 4, str.indexOf("}]") + 1);
 
             jsonObject = JSONObject.parseObject(header);
             try {
-                Object jsonArrayOne = JSONArray.parse("[" + data + "]",Feature.OrderedField);
-                jsonObject.put("pValue",jsonArrayOne);
-            }catch(Exception eo){
+                Object jsonArrayOne = JSONArray.parse("[" + data + "]", Feature.OrderedField);
+                jsonObject.put("pValue", jsonArrayOne);
+            } catch (Exception eo) {
             }
             try {
                 str = str.substring(str.indexOf(dataSec) + dataSec.length() + 1);
                 str = str.substring(str.indexOf("\"[\",") + 4, str.indexOf(",\"]") - 1);
-                Object jsonArraySec = JSONArray.parse("["+str+"]", Feature.OrderedField);
-                jsonObject.put("coe",jsonArraySec);
-            }catch(Exception es){
+                Object jsonArraySec = JSONArray.parse("[" + str + "]", Feature.OrderedField);
+                jsonObject.put("coe", jsonArraySec);
+            } catch (Exception es) {
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
         }
         return jsonObject;
     }
 
     /**
      * 调用相关分析py
+     *
      * @param url
      * @param jsonObject
      * @return
      */
-    private R callPython(String url,JSONObject jsonObject){
+    private R callPython(String url, JSONObject jsonObject) {
         String retStr = null;
-        try{
-            retStr = PythonApiUtils.doPost(url,jsonObject.toJSONString());
-        }catch (Exception e){
+        try {
+            retStr = PythonApiUtils.doPost(url, jsonObject.toJSONString());
+        } catch (Exception e) {
 
-        }finally {
-            return R.ok().put("data",retStr);
+        } finally {
+            return R.ok().put("data", retStr);
         }
     }
 
     /**
      * 调用相关分析py
+     *
      * @return
      */
-    private R callGenerPy(String file,String[] params) {
+   /* private R callGenerPy(String file,String[] params) {
         StringBuffer stringBuffer = new StringBuffer();
         logger.debug("调用 python start");
 
@@ -340,8 +347,7 @@ public class PssAnalyInfoController {
             stringBuffer.append("[{\"output\":0}]");
         }
         return R.ok().put("data",stringBuffer.toString());
-    }
-
+    }*/
     @PostMapping("/testPy")
     @ApiOperation("测试调用python")
     public R testCallPy() {
@@ -371,11 +377,10 @@ public class PssAnalyInfoController {
             logger.debug(e1.getMessage());
         }
 //        return R.ok().put("data", list);
-        if(stringBuffer.length()==0) {
-            logger.debug("python fail,size is :"+stringBuffer.length());
+        if (stringBuffer.length() == 0) {
+            logger.debug("python fail,size is :" + stringBuffer.length());
             stringBuffer.append("[[1]]");
             stringBuffer.append("[{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0043,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"猪生产价格指数\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0001,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"粮食产量\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0043,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"粮食价格指数\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0012,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"人均纯收入\"},{\"猪生产价格指数\":0.0022,\"粮食产量\":0,\"粮食价格指数\":0.0029,\"人均纯收入\":0.0004,\"人均猪肉消费量\":0,\"存栏数\":0.0003,\"猪肉产量\":0.0001,\"_row\":\"人均猪肉消费量\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0.0001,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"存栏数\"},{\"猪生产价格指数\":0,\"粮食产量\":0,\"粮食价格指数\":0,\"人均纯收入\":0,\"人均猪肉消费量\":0,\"存栏数\":0,\"猪肉产量\":0,\"_row\":\"猪肉产量\"}]");
-            stringBuffer.append("");
             stringBuffer.append("[[2]]");
             stringBuffer.append("[");
             stringBuffer.append(" {\n");
@@ -389,9 +394,8 @@ public class PssAnalyInfoController {
             stringBuffer.append("   \"_row\": \"猪生产价格指数\"\n");
             stringBuffer.append(" }\n");
             stringBuffer.append("] \n");
-            stringBuffer.append("");
         }
-        return R.ok().put("data",stringBuffer.toString());
+        return R.ok().put("data", stringBuffer.toString());
     }
 
 
@@ -406,7 +410,7 @@ public class PssAnalyInfoController {
     @ApiOperation(value = "根据分析类型查询该类型的结果集")
     public R getDataSetByAnalyWay(@PathVariable("AnalyWay") String AnalyWay) {
         List<PssDatasetInfoEntity> dataSetList = pssAnalyInfoService.getDataSetByAnalyWay(AnalyWay);
-        for(PssDatasetInfoEntity pssDatasetInfoEntity:dataSetList){
+        for (PssDatasetInfoEntity pssDatasetInfoEntity : dataSetList) {
             pssDatasetInfoService.setPssDatasetInfoIndeName(pssDatasetInfoEntity);
         }
         return R.ok().put("data", dataSetList);

@@ -171,7 +171,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 entity.setEwarnLevel(asciiInfoEntity.getCodeName());
             }
             ewanInfoList.add(entity);
-            //用于计算预警类型占比
+            //计算昨天涨幅&价格最高的预警类型占比
             RateValDto rateValDto = new RateValDto();
 //            rateValDto.setEwanName(asciiInfoEntity.getCodeName());
             rateValDto.setEwarnLevel(entity.getEwarnLevel());
@@ -213,7 +213,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         //step2,商品预警趋势-按预警级别分组统计 从本月一号到昨天预警数据
         retMap.put("priVal", lineDateMap);
 
-        //step3,商品预警分布-昨天商品预警类型占比
+        //step3,商品预警分布-昨天涨幅&价格最高的商品预警类型占比
         retMap.put("rateVel", contionRateVal(rateValDtos));
         //step4,商品预警详情(球形)
         retMap.put("ewanInfo", distinctSameSubCommEwarn(ewanInfoList));
