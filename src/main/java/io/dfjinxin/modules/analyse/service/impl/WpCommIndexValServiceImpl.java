@@ -397,7 +397,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         if ("生产".equals(indexType)) {
             where2.and(wrapper -> wrapper.like("index_name", "产量"));
         }
-        where2.groupBy("comm_id");
+//        where2.groupBy("comm_id");
         List<WpBaseIndexValEntity> list = wpBaseIndexValDao.selectList(where2);
         QueryWrapper<PssCommTotalEntity> where3 = new QueryWrapper();
         for (WpBaseIndexValEntity val : list) {
