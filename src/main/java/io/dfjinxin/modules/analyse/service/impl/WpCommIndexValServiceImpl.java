@@ -397,8 +397,10 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         if ("生产".equals(indexType)) {
             where2.and(wrapper -> wrapper.like("index_name", "产量"));
         }
-//        where2.groupBy("comm_id");
+        where2.orderByDesc("comm_id");
+        where2.orderByDesc("index_name");
         List<WpBaseIndexValEntity> list = wpBaseIndexValDao.selectList(where2);
+
         QueryWrapper<PssCommTotalEntity> where3 = new QueryWrapper();
         for (WpBaseIndexValEntity val : list) {
             where3.eq("comm_id", val.getCommId());
@@ -454,8 +456,6 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
             dto.setCommId(indexValEntity.getCommId());
             list.add(dto);
         }
-
-
         return list;
     }
 

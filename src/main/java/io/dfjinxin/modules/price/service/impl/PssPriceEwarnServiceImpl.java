@@ -376,7 +376,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             Date last2Date = DateUtils.addDateDays(entity.getEwarnDate(), -1);
             String last2DateStr = DateUtils.dateToStr(last2Date);//前天时间
             QueryWrapper where2 = new QueryWrapper();
-            where2.eq("Date(ewarn_date)", last2DateStr);
+            where2.eq("date(ewarn_date)", last2DateStr);
             where2.eq("comm_id", entity.getCommId());
             where2.last(" limit 0,1");
             PssPriceEwarnEntity entity1 = pssPriceEwarnDao.selectOne(where2);
@@ -394,7 +394,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
             //计算上月今日价格-计算环比
             QueryWrapper where4 = new QueryWrapper();
-            where4.eq("Date(ewarn_date)", lastMonthDayStr);
+            where4.eq("date(ewarn_date)", lastMonthDayStr);
             where4.eq("comm_id", entity.getCommId());
             where4.last("limit 0,1");
 
@@ -432,8 +432,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
         //规格品列表
         List<PssCommTotalEntity> type4CommList = pssCommTotalService.getSubCommByCommId(commId);
-        List<WpBaseIndexValEntity> quanGuoJiaGeZouShi_list = new ArrayList<>();
-        List<WpBaseIndexValEntity> quYuJiaGeFengBu_list = new ArrayList<>();
+//        List<WpBaseIndexValEntity> quanGuoJiaGeZouShi_list = new ArrayList<>();
+//        List<WpBaseIndexValEntity> quYuJiaGeFengBu_list = new ArrayList<>();
         Map<String, Object> quanGuoJiaGeZouShi_mapVal = new HashMap<>();
         Map<String, Object> quYuJiaGeFengBu_mapVal = new HashMap<>();
         for (PssCommTotalEntity comm : type4CommList) {
@@ -453,15 +453,17 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         QueryWrapper<PssPriceReltEntity> where5 = new QueryWrapper();
         where5.inSql("comm_id", sql);
         where5.groupBy("comm_id");
-        List<PssPriceReltEntity> reltEntityList = pssPriceReltDao.selectList(where5);
+        List<PssPriceReltEntity> tyep4CommList = pssPriceReltDao.selectList(where5);
 
         Map<String, Object> reltRusult = new HashMap<>();
-        for (PssPriceReltEntity reltEntity : reltEntityList) {
-            QueryWrapper<PssPriceReltEntity> where6 = new QueryWrapper();
-            where6.eq("comm_id", reltEntity.getCommId());
-            where6.groupBy("fore_type");
-            List<PssPriceReltEntity> reltTypeList = pssPriceReltDao.selectList(where6);
-            reltRusult.put(reltEntity.getCommId().toString(), jiaGeYuCe(reltTypeList));
+
+        String[] foreTypeArr = new String[]{"日预测", "周预测", "月预测"};
+        for (String foreType : foreTypeArr) {
+            Map<String, Object> foreTypeMap = new HashMap<>();
+            for (PssPriceReltEntity tyep4Comm : tyep4CommList) {
+                foreTypeMap.put(tyep4Comm.getCommId().toString(), this.jiaGeYuCe(foreType, tyep4Comm.getCommId()));
+            }
+            reltRusult.put(foreType, foreTypeMap);
         }
         map.put("jiaGeYuCe", reltRusult);
 
@@ -482,13 +484,13 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     }
 
     /**
-     * @Desc: 二级页面(商品总览)-价格预测情况
-     * @Param: [reltTypeList]
+     * @Desc: 二级页面(商品总览)-根据规格品id&预测类型查询
+     * @Param: 预测类型、4类商品id
      * @Return: java.util.Map<java.lang.String, java.lang.Object>
      * @Author: z.h.c
-     * @Date: 2019/11/12 18:31
+     * @Date: 2019/11/26 11:31
      */
-    private Map<String, Object> jiaGeYuCe(List<PssPriceReltEntity> reltTypeList) {
+    private List<PssPriceReltEntity> jiaGeYuCe(String foreType, Integer commId) {
 
         //当天日期
         String todayStr = DateUtils.dateToStr(new Date());
@@ -496,38 +498,35 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         String weekLastDayStr = DateUtils.getWeekLastDayStr();
         //本月最后一天
         String monthLastDayStr = DateUtils.getMonthLastDayStr();
-        Map<String, Object> map = new HashMap<>();
-        for (PssPriceReltEntity entity : reltTypeList) {
-            QueryWrapper<PssPriceReltEntity> where5 = new QueryWrapper();
-            where5.eq("comm_id", entity.getCommId());
-            where5.orderByAsc("fore_time");
+        QueryWrapper<PssPriceReltEntity> where5 = new QueryWrapper();
+        where5.eq("comm_id", commId);
+        where5.orderByAsc("fore_time");
 
-            //预测类型-日、周、月
-            //周预测-统计本周之后的4周数据
-            if ("周预测".equals(entity.getForeType())) {
-                //本周是后一天
-                where5.eq("fore_type", "周预测");
-                where5.gt("fore_time", weekLastDayStr);
-                where5.last(" limit 0,4");
-                map.put("周预测", pssPriceReltDao.selectList(where5));
-            }
-            //日预测-统计30天
-            if ("日预测".equals(entity.getForeType())) {
-                where5.eq("fore_type", "日预测");
-                where5.gt("fore_time", todayStr);
-                where5.last(" limit 0,30");
-                map.put("日预测", pssPriceReltDao.selectList(where5));
-
-            }
-            //月预测-统计当前月之后的12个月数据
-            if ("月预测".equals(entity.getForeType())) {
-                where5.eq("fore_type", "月预测");
-                where5.gt("fore_time", monthLastDayStr);
-                where5.last(" limit 0,12");
-                map.put("月预测", pssPriceReltDao.selectList(where5));
-            }
+        //预测类型-日、周、月
+        //周预测-统计本周之后的4周数据
+        if ("周预测".equals(foreType)) {
+            //本周是后一天
+            where5.eq("fore_type", "周预测");
+            where5.gt("fore_time", weekLastDayStr);
+            where5.last(" limit 0,4");
+            return pssPriceReltDao.selectList(where5);
         }
-        return map;
+        //日预测-统计30天
+        if ("日预测".equals(foreType)) {
+            where5.eq("fore_type", "日预测");
+            where5.gt("fore_time", todayStr);
+            where5.last(" limit 0,30");
+            return pssPriceReltDao.selectList(where5);
+
+        }
+        //月预测-统计当前月之后的12个月数据
+        if ("月预测".equals(foreType)) {
+            where5.eq("fore_type", "月预测");
+            where5.gt("fore_time", monthLastDayStr);
+            where5.last(" limit 0,12");
+            return pssPriceReltDao.selectList(where5);
+        }
+        return null;
     }
 
     /**
