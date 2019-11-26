@@ -1,5 +1,6 @@
 package io.dfjinxin.modules.price.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.dfjinxin.modules.price.dto.PssPriceReltDto;
@@ -57,6 +58,9 @@ public class PssPriceReltEntity implements Serializable {
      *
      */
     private Date reviTime;
+
+    @TableField(exist = false)
+    private String commName;
 
     public static PssPriceReltEntity toEntity(PssPriceReltDto from) {
         if (null == from) {
