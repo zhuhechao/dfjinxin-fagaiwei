@@ -333,7 +333,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                     cspMap.put(type, cspList);
                     resultList.add(cspMap);
                     continue;
-                case Cst://成本
+                case Cst://成本收益
                     List<KpiInfoDto> cstList = doIndexInfo(baseIndexInfoEntities, type);
                     Map cstMap = new HashMap();
                     cstMap.put(type, cstList);

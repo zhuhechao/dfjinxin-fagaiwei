@@ -36,6 +36,9 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
 
     Map<String, Object> queryIndexAvgByIndexId(Integer indexId, Integer ewarnTypeId);
 
-    Map<String, Object> bigScreenView();
+    Map<String, Object> bg_firstPage_commEwarn();
+
+    Map<String, Object> bg_firstPage_riskInfo();
+
 }
 

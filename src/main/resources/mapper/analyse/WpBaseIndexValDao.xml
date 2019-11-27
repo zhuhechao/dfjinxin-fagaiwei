@@ -118,7 +118,7 @@
         from wp_base_index_val val
         left join pss_comm_total total
         on val.comm_id = total.comm_id
-        where val.comm_id in (select comm_id from pss_comm_total where parent_code = #{param.commId})
+        where val.comm_id in (select comm_id from pss_comm_total where data_flag=0 and parent_code = #{param.commId})
         and val.index_type = #{param.indexType}
         <if test="param.startDate != null">
             AND val.date <![CDATA[ >= ]]> #{param.startDate}

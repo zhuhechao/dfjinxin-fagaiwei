@@ -12,27 +12,39 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 /**
- * @Desc:
+ * @Desc: 大屏-首页
  * @Author: z.h.c
  * @Date: 2019/11/21 15:39
  * @Version: 1.0
  */
 
 @RestController
-@RequestMapping("bigScreen/")
-@Api(tags = "大屏展示")
+@RequestMapping("bigScreen/firstPage")
+@Api(tags = "大屏-首页")
 public class BigScreenViewController {
 
     @Autowired
     private PssPriceEwarnService pssPriceEwarnService;
 
     /**
-     * 大屏
-     */
-    @GetMapping("/view")
-    @ApiOperation("大屏-view")
-    public R bigScreenView() {
-        Map<String,Object> map = pssPriceEwarnService.bigScreenView();
+    * @Desc: 商品预警信息
+    * @Param: []
+    * @Return: io.dfjinxin.common.utils.R
+    * @Author: z.h.c
+    * @Date: 2019/11/27 10:18
+    */
+    @GetMapping("/commEwarn")
+    @ApiOperation("大屏-首页-商品预警信息")
+    public R bg_firstPage_commEwarn() {
+        Map<String,Object> map = pssPriceEwarnService.bg_firstPage_commEwarn();
+
+        return R.ok().put("data", map);
+    }
+
+    @GetMapping("/riskInfo")
+    @ApiOperation("大屏-首页-风险信息")
+    public R bg_firstPage_riskInfo() {
+        Map<String,Object> map = pssPriceEwarnService.bg_firstPage_riskInfo();
 
         return R.ok().put("data", map);
     }
