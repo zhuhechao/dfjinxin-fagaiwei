@@ -27,22 +27,29 @@ public class BigScreenViewController {
     private PssPriceEwarnService pssPriceEwarnService;
 
     /**
-    * @Desc: 商品预警信息
+    * @Desc: 大屏-首页-商品预警&信息、预警、商品数量统计
     * @Param: []
     * @Return: io.dfjinxin.common.utils.R
     * @Author: z.h.c
     * @Date: 2019/11/27 10:18
     */
     @GetMapping("/commEwarn")
-    @ApiOperation("大屏-首页-商品预警信息")
+    @ApiOperation("大屏-首页-商品预警&信息、预警、商品数量统计")
     public R bg_firstPage_commEwarn() {
         Map<String,Object> map = pssPriceEwarnService.bg_firstPage_commEwarn();
 
         return R.ok().put("data", map);
     }
 
+    /**
+    * @Desc: 大屏-首页-风险信息统计
+    * @Param: []
+    * @Return: io.dfjinxin.common.utils.R
+    * @Author: z.h.c
+    * @Date: 2019/11/27 14:23
+    */
     @GetMapping("/riskInfo")
-    @ApiOperation("大屏-首页-风险信息")
+    @ApiOperation("大屏-首页-风险信息统计")
     public R bg_firstPage_riskInfo() {
         Map<String,Object> map = pssPriceEwarnService.bg_firstPage_riskInfo();
 
