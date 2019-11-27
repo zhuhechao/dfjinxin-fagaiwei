@@ -8,6 +8,7 @@
 
 package io.dfjinxin.modules.sys.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.dfjinxin.common.utils.Constant;
 import io.dfjinxin.modules.sys.dao.SysMenuDao;
 import io.dfjinxin.modules.sys.dao.SysUserDao;
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class ShiroServiceImpl implements ShiroService {
+public class ShiroServiceImpl extends ServiceImpl<SysUserTokenDao, SysUserTokenEntity> implements ShiroService {
     @Autowired
     private SysMenuDao sysMenuDao;
     @Autowired
@@ -66,5 +67,10 @@ public class ShiroServiceImpl implements ShiroService {
     @Override
     public void removeUserDBCache(String userName) {
         sysUserDao.deleteByUserName(userName);
+    }
+
+    @Override
+    public List<SysUserTokenEntity> queryAllTokenUser() {
+        return baseMapper.queryAllUserToken() ;
     }
 }

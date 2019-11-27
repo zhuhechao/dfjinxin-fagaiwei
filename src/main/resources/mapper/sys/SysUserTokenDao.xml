@@ -10,4 +10,8 @@
 	<select id="selectById" resultType="io.dfjinxin.modules.sys.entity.SysUserTokenEntity">
 		select * from pss_user_token where user_id = #{value}
 	</select>
+
+	<select id="queryAllUserToken" resultType="io.dfjinxin.modules.sys.entity.SysUserTokenEntity">
+		select * from pss_user_token where 1=1
+	</select>
 </mapper>
