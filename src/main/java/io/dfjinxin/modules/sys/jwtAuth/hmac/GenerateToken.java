@@ -1,5 +1,6 @@
 package io.dfjinxin.modules.sys.jwtAuth.hmac;
 
+import io.dfjinxin.common.utils.MD5Utils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.sys.entity.SysUserTokenEntity;
 import io.dfjinxin.modules.sys.service.ShiroService;
@@ -48,7 +49,8 @@ public class GenerateToken {
         SignatureAlgorithm algorithm = SignatureAlgorithm.HS256;
         byte[] secretKey = DatatypeConverter.parseBase64Binary(SECRET_KEY);
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", subject);
+        String subject2 = MD5Utils.getMD5(subject);
+        claims.put("userId", subject2);
         JwtBuilder jwt = Jwts.builder();
         if (Strings.isNotBlank(id)) jwt.setId(id);
         if (Strings.isNotBlank(iuser)) jwt.setIssuer(iuser);

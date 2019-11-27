@@ -2,38 +2,35 @@ package io.dfjinxin.modules.sys.controller;
 
 import com.google.common.base.Strings;
 import com.idsmanager.dingdang.jwt.DingdangUserRetriever;
+import io.dfjinxin.common.utils.MD5Utils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.common.utils.ShiroUtils;
-import io.dfjinxin.config.GovRedirectConfig;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import io.dfjinxin.modules.sys.entity.SysRoleEntity;
 import io.dfjinxin.modules.sys.entity.SysUserEntity;
 import io.dfjinxin.modules.sys.entity.SysUserTokenEntity;
 import io.dfjinxin.modules.sys.jwtAuth.hmac.CryptoUtil;
 import io.dfjinxin.modules.sys.jwtAuth.hmac.GenerateToken;
 import io.dfjinxin.modules.sys.jwtAuth.jwt.SubjectInfo;
-import io.dfjinxin.modules.sys.oauth2.OAuth2Token;
 import io.dfjinxin.modules.sys.service.ShiroService;
 import io.dfjinxin.modules.sys.service.SysRoleService;
 import io.dfjinxin.modules.sys.service.SysUserService;
 import io.dfjinxin.modules.sys.service.SysUserTokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
 
 @RestController
 @RequestMapping("zhjg")
@@ -52,12 +49,14 @@ public class SmartPriceLoginController extends AbstractController {
     @Autowired
     private ShiroService shiroService;
 
+    @Autowired
+    private CacheManager cacheManager;
+
 
 
     @GetMapping(value = {"/login", "/login/{userName}"})
     @ApiOperation("发改登陆接口")
     public R Login(@RequestParam(value = "id_token", required = false) String id_token, @PathVariable(value = "userName", required = false) String userName) {
-         System.out.println(id_token);
         if (Strings.isNullOrEmpty(id_token)) {
             SysUserEntity sysUserEntity = sysUserService.queryByUserName(userName);
             if (sysUserEntity == null) {
@@ -131,7 +130,7 @@ public class SmartPriceLoginController extends AbstractController {
 //        }
         String user= "79362e48e37283a7cdea0825e2614375";
         SysUserTokenEntity tokenEntity = shiroService.queryByToken(user);
-        Long dd= tokenEntity.getExpireTime().getTime()+10000;
+        Long dd= System.currentTimeMillis()+30000;
         String token = null;
         String sep = null;
         if (!Strings.isNullOrEmpty(urlParm)) {
@@ -148,21 +147,45 @@ public class SmartPriceLoginController extends AbstractController {
 
     }
 
-    @GetMapping(value = "/verifyToken")
-    @ApiOperation("集成系统认证")
-    public R sysVerify(@RequestParam(value = "very_token") String very_token) {
+//    @GetMapping(value = "/verifyToken")
+//    @ApiOperation("集成系统认证")
+//    public R sysVerify(@RequestParam(value = "very_token") String very_token) {
+//        SubjectInfo subjectInfo = CryptoUtil.parseJwt(very_token);
+//        String user = subjectInfo.getUserInfo();
+//        return getAndCheckToken(user,0L,null);
+//    }
 
-        SubjectInfo subjectInfo = CryptoUtil.parseJwt(very_token);
-        String user = subjectInfo.getUserInfo();
-        SysUserTokenEntity tokenEntity = shiroService.queryByToken(user);
-        Map map = new HashMap();
-        if(tokenEntity == null || tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()){
-            map.put("code", 1);
-        }else {
-            map.put("code", 0);
-        }
+    @GetMapping(value = "/verifyToken")
+    @ApiOperation("子系统token是否过期验证")
+    public R checkToken(@RequestParam Map<String,Object> params) {
+        ZoneOffset zoneOffset = ZoneOffset.ofHours(8);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        long st = localDateTime.toEpochSecond(zoneOffset);
+         Map map = new HashMap();
+         String nm = (String) params.get("nm");
+         long tm =Long.parseLong((String) params.get("tm")) ;
+         String clientId = (String) params.get("clientId");
+         String token = (String) params.get("token");
+         Cache.ValueWrapper cvalue= cacheManager.getCache("cacheToken").get(nm);
+         if(cvalue !=null){
+             return R.error(1,"不允许重复请求！");
+         }else {
+             cacheManager.getCache("cacheToken").put(nm,tm);
+         }
+         if(st-tm>90){
+             return R.error(1,"请求时间超时");
+         }
+         if( clientId.equals("yuqing")){
+           return getAndCheckToken(token,tm,"6AFjhK3MVNCyif");
+         }else if(clientId.equals("diaoyan")){
+             return getAndCheckToken(token,tm,"6BFmnvx7QERthz");
+         }else {
+             map.put("code",1);
+         }
+
         return R.ok(map);
     }
+
 
 
     private R mockLogin(String mockUserId) {
@@ -178,6 +201,33 @@ public class SmartPriceLoginController extends AbstractController {
         sysUserEntity.setUserName("mockUser");
         ShiroUtils.setSessionAttribute("user", sysUserEntity);
         return createResult;
+    }
+
+
+    private R getAndCheckToken(String token,long flag,String sert){
+        List<SysUserTokenEntity> list=  shiroService.queryAllTokenUser();
+        for(SysUserTokenEntity entity:list){
+            String mdToken=MD5Utils.getMD5(entity.getToken());
+            String tm = Long.toString(flag);
+            String v = tm+mdToken+sert;
+            String rToken = MD5Utils.getMD5(v);
+            if(sert !=null && rToken.equals(token)){
+                return  tokenTm(entity.getToken());
+            }
+        }
+
+        return R.error(1,"token不合法！");
+    }
+
+    private  R tokenTm(String token){
+        SysUserTokenEntity tokenEntity = shiroService.queryByToken(token);
+        Map map = new HashMap();
+        if(tokenEntity == null || tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()){
+            return R.error(1,"会话超时！");
+        }else {
+            map.put("code", 0);
+        }
+        return R.ok(map);
     }
 
 }

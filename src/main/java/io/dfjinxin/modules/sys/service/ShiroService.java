@@ -11,6 +11,7 @@ package io.dfjinxin.modules.sys.service;
 import io.dfjinxin.modules.sys.entity.SysUserEntity;
 import io.dfjinxin.modules.sys.entity.SysUserTokenEntity;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,4 +36,9 @@ public interface ShiroService {
     SysUserEntity queryUserByName(String userName);
 
     void removeUserDBCache(String userName);
+
+    /**
+     * 获取系统的可用的userTokenId
+     */
+    List<SysUserTokenEntity> queryAllTokenUser();
 }

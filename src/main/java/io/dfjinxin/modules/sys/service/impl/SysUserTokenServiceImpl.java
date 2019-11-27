@@ -38,7 +38,7 @@ public class SysUserTokenServiceImpl extends ServiceImpl<SysUserTokenDao, SysUse
 		Date now = new Date();
 		Timestamp tn = new Timestamp(now.getTime());
 		//过期时间
-		Timestamp expireTime = new Timestamp(now.getTime() + EXPIRE * 5000);
+		Timestamp expireTime = new Timestamp(now.getTime() + EXPIRE * 1000);
 
 		//判断是否生成过token
 		SysUserTokenEntity tokenEntity = this.getById(userId);
