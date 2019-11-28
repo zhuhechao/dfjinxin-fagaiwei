@@ -34,15 +34,6 @@ public class PssDatasetInfoController {
     @Autowired
     private HiveService hiveService;
 
-//    @Value("${ssh.user}")
-//    private String userName;
-//    @Value("${ssh.host}")
-//    private String host;
-//    @Value("${ssh.pass}")
-//    private String pass;
-//    @Value("${ssh.port}")
-//    private int port;
-
     @Value("${ssh.url}")
     private String pyUrl;
 
@@ -142,5 +133,35 @@ public class PssDatasetInfoController {
         hiveService.dropTable(entity.getDataSetEngName());
         pssDatasetInfoService.removeById(dataSetId);
         return R.ok();
+    }
+
+    /**
+     * @Desc: 数据集-查询已创建的数据集列表
+     * @Param: []
+     * @Return: io.dfjinxin.common.utils.R
+     * @Author: z.h.c
+     * @Date: 2019/11/28 17:54
+     */
+    @GetMapping("/getDataSetList")
+    @ApiOperation("数据集页面-获取已创建的数据集列表")
+    public R getDataSetList() {
+        return R.ok().put("data", pssDatasetInfoService.list());
+    }
+
+    /**
+     * @Desc: 数据集-根据指定数据集的 indeval查询指标(商品指标信息&宏观指标信息)信息
+     * @Param: []
+     * @Return: io.dfjinxin.common.utils.R
+     * @Author: z.h.c
+     * @Date: 2019/11/28 17:54
+     */
+    @GetMapping("/getIndexInfoByDataSetIndeVal")
+    @ApiOperation("数据集页面-根据指定数据集的indeval查询指标(商品指标信息&宏观指标信息)信息")
+    public R getIndexInfoByDataSetIndeVal(@RequestParam String indeVal) {
+
+        if (StringUtils.isEmpty(indeVal)) return R.ok("请求参数为空!");
+        Log.info("获取数据集-指标详情 req param:{}", JSONObject.parseObject(indeVal));
+
+        return R.ok().put("data", pssDatasetInfoService.getIndexInfoByDataSetIndeVal(indeVal));
     }
 }

@@ -80,7 +80,7 @@ public class PssCommTotalController {
     @PostMapping("/saveAndUpdate")
     @ApiOperation(value = "商品配置-保存&修改配置",
             notes = "新增操作 commId:4类商品id,ewarnIds:预警id列表,indexIds:商品对应指标类型为价格的列表 .eg:{\"commId\":172, \"ewarnIds\":[3,8],\"indexIds\":[39,40,41] } " +
-                    "更新只剩 confId: 主键id,commId:4类商品id,ewarnIds:预警id,indexIds:商品对应指标类型为价格 eg:{\"confId\":1,\"commId\":172, \"ewarnIds\":[9],\"indexIds\":[42] }")
+                    "更新操作 confId: 主键id,commId:4类商品id,ewarnIds:预警id,indexIds:商品对应指标类型为价格 eg:{\"confId\":1,\"commId\":172, \"ewarnIds\":[9],\"indexIds\":[42] }")
     public R saveAndUpdate(@RequestBody Map<String, Object> params) {
         if (params.isEmpty() || params.size() == 0) {
             R.error("请求参数为空!");

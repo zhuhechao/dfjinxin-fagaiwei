@@ -2,7 +2,12 @@ package io.dfjinxin.modules.sys.service.impl;
 
 //import io.dfjinxin.common.validator.Assert;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.dfjinxin.common.utils.DateUtils;
+import io.dfjinxin.modules.analyse.dao.WpBaseIndexValDao;
+import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
 import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
 import io.dfjinxin.modules.price.controller.PssDatasetInfoController;
 import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
@@ -14,7 +19,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.sql.SQLOutput;
+import java.sql.Wrapper;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 @RunWith(SpringRunner.class)
@@ -29,6 +38,9 @@ public class SysMenuServiceImplTest {
     private PssDatasetInfoController controller;
     @Autowired
     private WpBaseIndexValService wpBaseIndexValService;
+
+    @Autowired
+    private WpBaseIndexValDao wpBaseIndexValDao;
 
     @Test
     public void pssPriceEwarnService() {
@@ -53,5 +65,25 @@ public class SysMenuServiceImplTest {
         System.out.println("indevar is : " + entity.getIndeVar());
         controller.saveDataSet(entity);
     }
+
+    @Test
+    public void test_mybatisPlus_select() {
+        QueryWrapper<WpBaseIndexValEntity> where2 = new QueryWrapper();
+        where2.select("index_id,comm_id,index_name,index_type");
+        where2.eq("index_type", "价格");
+        where2.eq("date", "2019-11-25");
+        List<Map<String, Object>> wpBaseIndexValEntities = wpBaseIndexValDao.selectMaps(where2);
+        wpBaseIndexValEntities.forEach(System.out::println);
+    }
+
+    @Test
+    public void test_mybatisPlus_select2() {
+        LambdaQueryWrapper<WpBaseIndexValEntity> where2 = Wrappers.lambdaQuery();
+        where2.eq(WpBaseIndexValEntity::getIndexType, "价格");
+        where2.eq(WpBaseIndexValEntity::getDate, "2019-11-25");
+        List<Map<String, Object>> wpBaseIndexValEntities = wpBaseIndexValDao.selectMaps(where2);
+        wpBaseIndexValEntities.forEach(System.out::println);
+    }
+
 
 }

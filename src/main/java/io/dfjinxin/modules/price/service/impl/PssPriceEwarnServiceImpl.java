@@ -289,9 +289,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         Collections.sort(set, new Comparator<PwwPriceEwarnDto>() {
             @Override
             public int compare(PwwPriceEwarnDto u1, PwwPriceEwarnDto u2) {
+                // 前一个vs后一个 第一个比第二个大则返回正整数，否则返回负数。等于表示相等
+//                返回表示两个对象大小的标志，正数表示前一个大
                 if (u1.getEwarnDate().compareTo(u2.getEwarnDate()) == 0) {
                     return -1;
                 }
+                //升序排序
                 return u1.getEwarnDate().compareTo(u2.getEwarnDate());
             }
         });

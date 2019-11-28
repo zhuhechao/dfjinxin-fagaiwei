@@ -45,6 +45,11 @@ public class PssDatasetInfoEntity implements Serializable {
 	private String dataSetEngName;
 
 	private String indeVar;
+
+	private String commIndevalPath;
+
+	private String macroIndevalPath;
+
 	/**
 	 *
 	 */
