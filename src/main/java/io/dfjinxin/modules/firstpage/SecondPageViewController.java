@@ -62,8 +62,16 @@ public class SecondPageViewController {
         return R.ok().put("data", resMap);
     }
 
+    /**
+     * @Desc: 二级页面(商品总览) -根据3类商品、时间区域、指标类型分页查询规格品指标信息
+     * @Param: [commId, indexType, startDate, endDate, pageIndex, pageSize]
+     * @Return: io.dfjinxin.common.utils.R
+     * @Author: z.h.c
+     * @Date: 2019/11/29 12:20
+     */
     @GetMapping("/indexType/byDate/{commId}")
-    @ApiOperation(value = "二级页面(商品总览)-查询指定日期、指标类型的规格品取值", notes = "根据3级商品id 获取指定时间、指标类型规格品指标信息 eg:58")
+    @ApiOperation(value = "二级页面(商品总览)-根据3类商品、时间区域、指标类型分页查询规格品指标信息",
+            notes = "根据3级商品id 获取指定时间、指标类型规格品指标信息 eg:58")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "indexType", value = "指标类型", required = true, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "startDate", value = "开始时间", required = false, dataType = "String", paramType = "query"),
@@ -71,8 +79,8 @@ public class SecondPageViewController {
             @ApiImplicitParam(name = "pageIndex", value = "页码", required = false, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "每页条数", required = false, dataType = "Int", paramType = "query")
     })
-    public R queryIndexValByDate(
-            @PathVariable("commId") Integer commId ,
+    public R queryPageIndexValByDate(
+            @PathVariable("commId") Integer commId,
             @RequestParam(value = "indexType", required = true) String indexType,
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
@@ -92,5 +100,39 @@ public class SecondPageViewController {
 
         return R.ok().put("page", page);
     }
+
+
+    /**
+     * @Desc: 二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称、时间区域统计规格品各频度下各区域的指标信息
+     * @Param: [commId, indexType, startDate, endDate]
+     * @Return: io.dfjinxin.common.utils.R
+     * @Author: z.h.c
+     * @Date: 2019/11/29 12:20
+     */
+    @GetMapping("/lineChart/{commId}")
+    @ApiOperation(value = "二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称、时间区域统计规格品各频度下各区域的指标信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "indexType", value = "指标类型", required = true, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "startDate", value = "开始时间", required = true, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "endDate", value = "结束时间", required = true, dataType = "String", paramType = "query"),
+    })
+    public R queryLineChartByCondition(@PathVariable("commId") Integer commId,
+                                  @RequestParam(value = "indexType") String indexType,
+                                  @RequestParam(value = "indexName") String indexName,
+                                  @RequestParam(value = "startDate") String startDate,
+                                  @RequestParam(value = "endDate") String endDate) {
+
+        Map<String, Object> params = new HashMap() {{
+            put("indexType", indexType);
+            put("indexName", indexName);
+            put("startDate", startDate);
+            put("endDate", endDate);
+            put("commId", commId);
+        }};
+        Map<String, Object> map = wpBaseIndexValService.queryLineChartByCondition(params);
+
+        return R.ok().put("data", map);
+    }
+
 
 }

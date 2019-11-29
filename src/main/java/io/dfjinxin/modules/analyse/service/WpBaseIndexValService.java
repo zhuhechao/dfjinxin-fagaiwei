@@ -25,13 +25,14 @@ public interface WpBaseIndexValService extends IService<WpBaseIndexValEntity> {
 
     List<Map<String, Object>> queryIndexTypeByCommId(Integer commId);
 
-//    List<Map<String, Object>> queryLevel4CommInfo(Integer commId);
-
     Map<String, Object> analyseType4CommIndexs(Integer commId);
 
     List<Map<String, Object>> secondPageIndexType(Integer commId);
+
     List<WpBaseIndexValEntity> getprovinceLastDayMapData(Integer type3CommId,String indexType,String dataStr);
 
     PageUtils queryPageByDate(Map<String, Object> params);
+
+    Map<String, Object> queryLineChartByCondition(Map<String, Object> params);
 }
 

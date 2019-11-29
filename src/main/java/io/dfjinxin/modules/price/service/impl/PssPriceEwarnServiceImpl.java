@@ -435,18 +435,14 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
         //规格品列表
         List<PssCommTotalEntity> type4CommList = pssCommTotalService.getSubCommByCommId(commId);
-        Map<String, Object> quanGuoJiaGeZouShi_mapVal = new HashMap<>();
-        Map<String, Object> quYuJiaGeFengBu_mapVal = new HashMap<>();
-        for (PssCommTotalEntity comm : type4CommList) {
-            quanGuoJiaGeZouShi_mapVal.put(comm.getCommName(), this.quYujiaGeByJiaGeZhiPiao(comm.getCommId(), "全国", lastMonthDayStr, lastDayStr));
-            quYuJiaGeFengBu_mapVal.put(comm.getCommName(), this.quYujiaGeByJiaGeZhiPiao(comm.getCommId(), "", lastMonthDayStr, lastDayStr));
-        }
-
         //step4,全国价格走势 规格品指标类型是价格、区域是全国的、上月昨天到昨天的数据
-        map.put("quanGuoJiaGeZouShi", quanGuoJiaGeZouShi_mapVal);
+        List<String> quanGuoFrequenceList = this.getFrequenceByWhere(lastMonthDayStr, lastDayStr, "全国");
+        map.put("quanGuoJiaGeZouShi", this.convertQuYujiaGeByJiaGeZhiBiao(quanGuoFrequenceList, type4CommList, "全国", lastMonthDayStr, lastDayStr));
 
         //step5,区域价格分布 规格品指标类型是价格、区域是各省份、自治区的、昨天到上月昨天的数据
-        map.put("quYuJiaGeFengBu", quYuJiaGeFengBu_mapVal);
+        List<String> quYuFrequenceList = this.getFrequenceByWhere(lastMonthDayStr, lastDayStr, null);
+        map.put("quYuJiaGeFengBu", this.convertQuYujiaGeByJiaGeZhiBiao(quYuFrequenceList, type4CommList, null, lastMonthDayStr, lastDayStr));
+
 
         //step6,价格预测情况 统计规格品各种预测类型
         QueryWrapper<PssPriceReltEntity> where5 = new QueryWrapper();
@@ -480,6 +476,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
         return map;
     }
+
 
     /**
      * @Desc: 二级页面(商品总览)-根据规格品id&预测类型查询
@@ -528,28 +525,76 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     }
 
     /**
+     * @Desc: 根据时间区间、区域类型查询 频度类型
+     * @Param: [startDate, endDate, areaName]
+     * @Return: java.util.Map<java.lang.String, java.lang.String>
+     * @Author: z.h.c
+     * @Date: 2019/11/29 10:16
+     */
+    private List<String> getFrequenceByWhere(String startDate, String endDate, String areaName) {
+        List<String> frequenceList = new ArrayList<>();
+        QueryWrapper<WpBaseIndexValEntity> where5 = new QueryWrapper();
+        where5.select("frequence");
+        where5.between("date", startDate, endDate);
+        if ("全国".equals(areaName)) {
+            where5.eq("area_name", areaName);
+        } else {
+            where5.and(wrapper -> wrapper.likeLeft("area_name", "省").or().likeLeft("area_name", "自治区"));
+        }
+        where5.groupBy("frequence");
+        List<WpBaseIndexValEntity> entities = wpBaseIndexValDao.selectList(where5);
+        entities.forEach(entity -> {
+            frequenceList.add(entity.getFrequence());
+        });
+        return frequenceList;
+    }
+
+
+    /**
      * @Desc: 二级页面(商品总览)-全国价格走势&区域价格分布
      * @Param: [commId, areaNmae, startDate, endDate]
      * @Return: java.util.List<io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity>
      * @Author: z.h.c
      * @Date: 2019/11/12 18:33
      */
-    private List<WpBaseIndexValEntity> quYujiaGeByJiaGeZhiPiao(int commId, String areaNmae, String startDate, String endDate) {
-//        final String sql = "select pss_comm_total.comm_id from pss_comm_total where data_flag=0 and parent_code=" + commId;
+    private List<WpBaseIndexValEntity> quYujiaGeByJiaGeZhiBiao(int commId, String areaName, String frequance, String startDate, String endDate) {
         QueryWrapper<WpBaseIndexValEntity> where5 = new QueryWrapper();
-//        where5.inSql("comm_id", sql);
         where5.eq("comm_id", commId);
         where5.between("date", startDate, endDate);
         where5.eq("index_type", "价格");
-        if (areaNmae.equals("全国")) {
-            where5.eq("area_name", areaNmae);
+        where5.eq("frequance", frequance);
+        if ("全国".equals(areaName)) {
+            where5.eq("area_name", areaName);
         } else {
             where5.and(wrapper -> wrapper.likeLeft("area_name", "省").or().likeLeft("area_name", "自治区"));
         }
-//        where5.groupBy("comm_id");
         where5.orderByAsc("date");
         return wpBaseIndexValDao.selectList(where5);
     }
+
+    /**
+     * @Desc: 根据频度、规格品在时间区域内的指标信息
+     * @Param: [frequanceList, type4CommList, areaName, startDate, endDate]
+     * @Return: java.util.Map<java.lang.String, java.lang.Object>
+     * @Author: z.h.c
+     * @Date: 2019/11/29 11:14
+     */
+    private Map<String, Object> convertQuYujiaGeByJiaGeZhiBiao(List<String> frequanceList,
+                                                               List<PssCommTotalEntity> type4CommList,
+                                                               String areaName,
+                                                               String startDate,
+                                                               String endDate) {
+        Map<String, Object> map = new HashMap<>();
+        frequanceList.forEach(frequance -> {
+            Map<String, Object> commMap = new HashMap<>();
+            type4CommList.forEach(commTotalEntity -> {
+                commMap.put(commTotalEntity.getCommId().toString(), this.quYujiaGeByJiaGeZhiBiao(commTotalEntity.getCommId(), areaName, frequance, startDate, endDate));
+            });
+            map.put(frequance, commMap);
+        });
+        return map;
+    }
+
 
     /**
      * @Desc: 根据4类商品查询所属性3类商品

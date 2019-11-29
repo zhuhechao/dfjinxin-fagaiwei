@@ -341,6 +341,21 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
         return baseMapper.selectList(queryWrapper);
     }
 
+    /**
+     * @Desc: 查询指标商品
+     * @Param: [commId]
+     * @Return: io.dfjinxin.modules.price.entity.PssCommTotalEntity
+     * @Author: z.h.c
+     * @Date: 2019/11/29 14:41
+     */
+    @Override
+    public PssCommTotalEntity queryComm(Integer commId) {
+        QueryWrapper<PssCommTotalEntity> where = new QueryWrapper<>();
+        where.eq("comm_id", commId);
+        where.eq("data_flag", 0);
+        return baseMapper.selectOne(where);
+    }
+
 
     /**
      * @Desc: 根据1类商品id, 查询4类商品预警配置，
