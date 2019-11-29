@@ -103,13 +103,18 @@ public class PssDatasetInfoController {
      */
     @PostMapping("/update/{dataSetId}")
     @ApiOperation("修改-修改inde_val字段值")
-    public R update(@PathVariable Integer dataSetId, @RequestParam final String indeVal) {
+    public R update(@PathVariable Integer dataSetId,
+                    @RequestParam final String indeVal,
+                    @RequestParam final String commIndevalPath,
+                    @RequestParam final String macroIndevalPath) {
 
         PssDatasetInfoEntity entity = pssDatasetInfoService.getById(dataSetId);
         if (entity == null) {
             return R.error("数据" + dataSetId + ",不存在!");
         }
         entity.setIndeVar(indeVal);
+        entity.setCommIndevalPath(commIndevalPath);
+        entity.setMacroIndevalPath(macroIndevalPath);
         entity.setDataTime(new Date());
         pssDatasetInfoService.updateById(entity);
         return R.ok();
