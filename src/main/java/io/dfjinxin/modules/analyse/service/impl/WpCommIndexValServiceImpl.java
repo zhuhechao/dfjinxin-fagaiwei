@@ -84,7 +84,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         where5.eq("index_name", indexName);
         where5.between("date", startDate, endDate);
         where5.groupBy("frequence");
-        List<String> frequenceList = wpBaseIndexValDao.selectList(where5);
+        List<WpBaseIndexValEntity> frequenceList = wpBaseIndexValDao.selectList(where5);
 
         QueryWrapper where = new QueryWrapper();
         where.select("area_name");
@@ -102,15 +102,15 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         Map<String, Object> resMap = new HashMap<>();
         frequenceList.forEach(frequence -> {
             Map<String, Object> frequenceMap = new HashMap<>();
-            where.eq("frequence", frequence);
+            where.eq("frequence", frequence.getFrequence());
             where.groupBy("area_name");
-            List<String> areaNameList = wpBaseIndexValDao.selectList(where);
+            List<WpBaseIndexValEntity> areaNameList = wpBaseIndexValDao.selectList(where);
             areaNameList.forEach(areaName -> {
                 Map<String, Object> areaNameMap = new HashMap<>();
-                where2.eq("frequence", frequence);
-                where2.eq("area_name", areaName);
-                areaNameMap.put(areaName, wpBaseIndexValDao.selectList(where2));
-                frequenceMap.put(frequence, areaNameMap);
+                where2.eq("frequence", frequence.getFrequence());
+                where2.eq("area_name", areaName.getAreaName());
+                areaNameMap.put(areaName.getAreaName(), wpBaseIndexValDao.selectList(where2));
+                frequenceMap.put(frequence.getFrequence(), areaNameMap);
             });
             resMap.putAll(frequenceMap);
         });
