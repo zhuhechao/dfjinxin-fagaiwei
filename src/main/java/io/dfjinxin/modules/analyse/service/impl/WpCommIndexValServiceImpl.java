@@ -109,13 +109,40 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                 Map<String, Object> areaNameMap = new HashMap<>();
                 where2.eq("frequence", frequence.getFrequence());
                 where2.eq("area_name", areaName.getAreaName());
-                areaNameMap.put(areaName.getAreaName(), wpBaseIndexValDao.selectList(where2));
+                where2.orderByAsc("date");
+                List<WpBaseIndexValEntity> valEntityList = wpBaseIndexValDao.selectList(where2);
+                valEntityList.forEach(entity -> entity.setCommName(comm.getCommName()));
+                areaNameMap.put(areaName.getAreaName(), valEntityList);
                 frequenceMap.put(frequence.getFrequence(), areaNameMap);
             });
             resMap.putAll(frequenceMap);
         });
-
         return resMap;
+    }
+
+    /**
+     * @Desc: 统计3类品下有哪些指标类型是价格的规格品
+     * @Param: [commId]
+     * @Return: java.util.List<io.dfjinxin.modules.price.entity.PssCommTotalEntity>
+     * @Author: z.h.c
+     * @Date: 2019/11/29 16:42
+     */
+    @Override
+    public List<PssCommTotalEntity> queryCommListByCommId(Integer commId, String indexType) {
+        return wpBaseIndexValDao.queryCommListByCommId(commId, indexType);
+    }
+
+    /**
+     * @Desc: 根据规格品、指标类型 获取昨天各省份数据
+     * @Param: [commId, indexType]
+     * @Return: java.util.List<io.dfjinxin.modules.price.entity.PssCommTotalEntity>
+     * @Author: z.h.c
+     * @Date: 2019/11/29 18:12
+     */
+    @Override
+    public List<WpBaseIndexValEntity> getProvinceMapByCommId(Integer commId, String indexType) {
+        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
+        return wpBaseIndexValDao.getProvinceMapByCommId(commId, indexType, lastDayStr);
     }
 
     @Override

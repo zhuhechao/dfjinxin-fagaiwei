@@ -2,7 +2,9 @@ package io.dfjinxin.modules.firstpage;
 
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
+import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
 import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
+import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import io.dfjinxin.modules.price.service.PssPriceEwarnService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -59,7 +61,10 @@ public class SecondPageViewController {
         //其它数据
         Map<String, Object> zfMap = pssPriceEwarnService.secondPageDetail(commId);
         resMap.putAll(zfMap);
-        return R.ok().put("data", resMap);
+
+        //统计3类品下 有哪些指标类类型是价格的规格品
+        List<PssCommTotalEntity> type4commList = wpBaseIndexValService.queryCommListByCommId(commId, "价格");
+        return R.ok().put("data", resMap).put("type4commList", type4commList);
     }
 
     /**
@@ -97,8 +102,8 @@ public class SecondPageViewController {
             put("pageSize", pageSize);
         }};
         PageUtils page = wpBaseIndexValService.queryPageByDate(params);
-
-        return R.ok().put("page", page);
+        List<PssCommTotalEntity> type4commList = wpBaseIndexValService.queryCommListByCommId(commId, indexType);
+        return R.ok().put("page", page).put("type4CommList", type4commList);
     }
 
 
@@ -117,10 +122,10 @@ public class SecondPageViewController {
             @ApiImplicitParam(name = "endDate", value = "结束时间", required = true, dataType = "String", paramType = "query"),
     })
     public R queryLineChartByCondition(@PathVariable("commId") Integer commId,
-                                  @RequestParam(value = "indexType") String indexType,
-                                  @RequestParam(value = "indexName") String indexName,
-                                  @RequestParam(value = "startDate") String startDate,
-                                  @RequestParam(value = "endDate") String endDate) {
+                                       @RequestParam(value = "indexType") String indexType,
+                                       @RequestParam(value = "indexName") String indexName,
+                                       @RequestParam(value = "startDate") String startDate,
+                                       @RequestParam(value = "endDate") String endDate) {
 
         Map<String, Object> params = new HashMap() {{
             put("indexType", indexType);
@@ -132,6 +137,18 @@ public class SecondPageViewController {
         Map<String, Object> map = wpBaseIndexValService.queryLineChartByCondition(params);
 
         return R.ok().put("data", map);
+    }
+
+    @GetMapping("/provinceMap/{commId}")
+    @ApiOperation(value = "二级页面(商品总览)-价格指标面签-规格品昨日各省份地图数据-根据规格品、指标类型 获取昨天各省份数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "indexType", value = "指标类型", required = true, dataType = "String", paramType = "query")
+    })
+    public R getProvinceMapByCommId(@PathVariable("commId") Integer commId,
+                                    @RequestParam(value = "indexType") String indexType) {
+        List<WpBaseIndexValEntity> provinceMap = wpBaseIndexValService.getProvinceMapByCommId(commId, indexType);
+
+        return R.ok().put("data", provinceMap);
     }
 
 

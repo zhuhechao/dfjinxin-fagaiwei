@@ -557,12 +557,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
      * @Author: z.h.c
      * @Date: 2019/11/12 18:33
      */
-    private List<WpBaseIndexValEntity> quYujiaGeByJiaGeZhiBiao(int commId, String areaName, String frequance, String startDate, String endDate) {
+    private List<WpBaseIndexValEntity> quYujiaGeByJiaGeZhiBiao(int commId, String areaName, String frequence, String startDate, String endDate) {
         QueryWrapper<WpBaseIndexValEntity> where5 = new QueryWrapper();
         where5.eq("comm_id", commId);
         where5.between("date", startDate, endDate);
         where5.eq("index_type", "价格");
-        where5.eq("frequance", frequance);
+        where5.eq("frequence", frequence);
         if ("全国".equals(areaName)) {
             where5.eq("area_name", areaName);
         } else {
@@ -585,12 +585,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                                                                String startDate,
                                                                String endDate) {
         Map<String, Object> map = new HashMap<>();
-        frequanceList.forEach(frequance -> {
+        frequanceList.forEach(frequence -> {
             Map<String, Object> commMap = new HashMap<>();
             type4CommList.forEach(commTotalEntity -> {
-                commMap.put(commTotalEntity.getCommId().toString(), this.quYujiaGeByJiaGeZhiBiao(commTotalEntity.getCommId(), areaName, frequance, startDate, endDate));
+                commMap.put(commTotalEntity.getCommId().toString(), this.quYujiaGeByJiaGeZhiBiao(commTotalEntity.getCommId(), areaName, frequence, startDate, endDate));
             });
-            map.put(frequance, commMap);
+            map.put(frequence, commMap);
         });
         return map;
     }
