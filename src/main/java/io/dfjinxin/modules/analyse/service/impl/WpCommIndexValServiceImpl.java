@@ -142,7 +142,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
     @Override
     public List<WpBaseIndexValEntity> getProvinceMapByCommId(Integer commId, String indexType) {
         String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
-        return wpBaseIndexValDao.getProvinceMapByCommId(commId, indexType, lastDayStr);
+        return wpBaseIndexValDao.getProvinceMapByCommId(commId, lastDayStr,indexType);
     }
 
     @Override

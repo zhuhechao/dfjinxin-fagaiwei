@@ -289,7 +289,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         Collections.sort(set, new Comparator<PwwPriceEwarnDto>() {
             @Override
             public int compare(PwwPriceEwarnDto u1, PwwPriceEwarnDto u2) {
-                // 前一个vs后一个 第一个比第二个大则返回正整数，否则返回负数。等于表示相等
+                // 前一个vs后一个 第一个比第二个大则返回正整数，否则返回负数。0表示相等
 //                返回表示两个对象大小的标志，正数表示前一个大
                 if (u1.getEwarnDate().compareTo(u2.getEwarnDate()) == 0) {
                     return -1;
@@ -298,6 +298,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 return u1.getEwarnDate().compareTo(u2.getEwarnDate());
             }
         });
+
+        //lamdba方式写法
+        /*Collections.sort(set, (o1, o2) -> {
+            if (o1.getEwarnDate().compareTo(o2.getEwarnDate()) == 0) return -1;
+            return o1.getEwarnDate().compareTo(o2.getEwarnDate());
+        });*/
     }
 
     @Override
@@ -588,9 +594,14 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         frequanceList.forEach(frequence -> {
             Map<String, Object> commMap = new HashMap<>();
             type4CommList.forEach(commTotalEntity -> {
-                commMap.put(commTotalEntity.getCommId().toString(), this.quYujiaGeByJiaGeZhiBiao(commTotalEntity.getCommId(), areaName, frequence, startDate, endDate));
+                List<WpBaseIndexValEntity> valEntityList = this.quYujiaGeByJiaGeZhiBiao(commTotalEntity.getCommId(), areaName, frequence, startDate, endDate);
+                if (valEntityList != null && valEntityList.size() > 0) {
+                    commMap.put(commTotalEntity.getCommId().toString(), valEntityList);
+                }
             });
-            map.put(frequence, commMap);
+            if (!commMap.isEmpty()) {
+                map.put(frequence, commMap);
+            }
         });
         return map;
     }
@@ -854,7 +865,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     public Map<String, Object> bg_firstPage_commEwarn() {
         Map<String, Object> view = this.firstPageView();
         Map<String, Object> retMap = new HashMap<>();
-        if (view.containsKey("ewanInfo")) {
+
+        /*if (view.containsKey("ewanInfo")) {
             //商品预警信息
             retMap.put("ewarnInfo", view.get("ewanInfo"));
         }
@@ -869,7 +881,16 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         if (view.containsKey("redEwarnTotal")) {
             //红色预警数量
             retMap.put("redEwarnTotal", view.get("redEwarnTotal"));
-        }
+        }*/
+
+        //商品预警信息
+        retMap.put("ewarnInfo", view.getOrDefault("ewanInfo", null));
+        //信息总量
+        retMap.put("infoTotal", view.getOrDefault("commTotal", null));
+        //橙色预警数量
+        retMap.put("orangeEwarnTotal", view.getOrDefault("orangeEwarnTotal", null));
+        //红色预警数量
+        retMap.put("redEwarnTotal", view.getOrDefault("redEwarnTotal", null));
 
         QueryWrapper where = new QueryWrapper();
         where.eq("data_flag", 0);
