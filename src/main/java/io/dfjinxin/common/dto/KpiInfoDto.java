@@ -15,4 +15,5 @@ public class KpiInfoDto {
     private String indexUnit;
     private String dataTime;
     private Integer commId;
+    private Integer indexId;
 }

@@ -69,8 +69,8 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
 
         PssCommTotalEntity comm = pssCommTotalService.queryComm(params.containsKey("commId") ? (Integer) params.get("commId") : null);
         String indexType = params.containsKey("indexType") ? (String) params.get("indexType") : null;
-        String indexName = params.containsKey("indexName") ? (String) params.get("indexName") : null;
-        if (comm == null || indexType == null || indexName == null) return null;
+        Integer indexId = params.containsKey("indexId") ? (Integer) params.get("indexId") : null;
+        if (comm == null || indexType == null || indexId == null) return null;
 
         String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));//昨天时间
         String lastMonthDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -30));//一个月前时间
@@ -81,7 +81,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         where5.select("frequence");
         where5.eq("comm_id", comm.getCommId());
         where5.eq("index_type", indexType);
-        where5.eq("index_name", indexName);
+        where5.eq("index_id", indexId);
         where5.between("date", startDate, endDate);
         where5.groupBy("frequence");
         List<WpBaseIndexValEntity> frequenceList = wpBaseIndexValDao.selectList(where5);
@@ -89,14 +89,14 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         QueryWrapper where = new QueryWrapper();
         where.select("area_name");
         where.eq("comm_id", comm.getCommId());
-        where.eq("index_name", indexName);
+        where.eq("index_id", indexId);
         where.eq("index_type", indexType);
         where.between("date", startDate, endDate);
 
         QueryWrapper where2 = new QueryWrapper();
         where2.eq("comm_id", comm.getCommId());
         where2.eq("index_type", indexType);
-        where2.eq("index_name", indexName);
+        where2.eq("index_id", indexId);
         where2.between("date", startDate, endDate);
 
         Map<String, Object> resMap = new HashMap<>();
@@ -446,6 +446,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
             dto.setIndexUnit(indexValEntity.getUnit());
             dto.setDataTime(indexValEntity.getDate().toString());
             dto.setCommId(indexValEntity.getCommId());
+            dto.setIndexId(indexValEntity.getIndexId());
             list.add(dto);
         }
         return list;

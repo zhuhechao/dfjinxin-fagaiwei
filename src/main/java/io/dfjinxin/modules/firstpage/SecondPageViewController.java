@@ -115,21 +115,22 @@ public class SecondPageViewController {
      * @Date: 2019/11/29 12:20
      */
     @GetMapping("/lineChart/{commId}")
-    @ApiOperation(value = "二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称、时间区域统计规格品各频度下各区域的指标信息")
+    @ApiOperation(value = "二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称(id)、时间区域统计规格品各频度下各区域的指标信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "indexType", value = "指标类型", required = true, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "indexId", value = "指标名称(id)", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "startDate", value = "开始时间", required = true, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "endDate", value = "结束时间", required = true, dataType = "String", paramType = "query"),
     })
     public R queryLineChartByCondition(@PathVariable("commId") Integer commId,
                                        @RequestParam(value = "indexType") String indexType,
-                                       @RequestParam(value = "indexName") String indexName,
+                                       @RequestParam(value = "indexId") Integer indexId,
                                        @RequestParam(value = "startDate") String startDate,
                                        @RequestParam(value = "endDate") String endDate) {
 
         Map<String, Object> params = new HashMap() {{
             put("indexType", indexType);
-            put("indexName", indexName);
+            put("indexId", indexId);
             put("startDate", startDate);
             put("endDate", endDate);
             put("commId", commId);
@@ -140,7 +141,7 @@ public class SecondPageViewController {
     }
 
     @GetMapping("/provinceMap/{commId}")
-    @ApiOperation(value = "二级页面(商品总览)-价格指标面签-规格品昨日各省份地图数据-根据规格品、指标类型 获取昨天各省份数据")
+    @ApiOperation(value = "二级页面(商品总览)-价格指标页签-规格品昨日各省份地图数据-根据规格品、指标类型 获取昨天各省份数据")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "indexType", value = "指标类型", required = true, dataType = "String", paramType = "query")
     })
