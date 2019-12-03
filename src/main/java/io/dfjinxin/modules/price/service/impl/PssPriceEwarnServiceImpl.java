@@ -914,7 +914,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         String last180DayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -180));//180天前时间
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("data_flag", 0);
-        queryWrapper.le("level_code", 0);
+        queryWrapper.eq("level_code", 0);
         List<PssCommTotalEntity> type1CommList = pssCommTotalDao.selectList(queryWrapper);
         //大宗&民生类 风险统计
         for (PssCommTotalEntity comm : type1CommList) {
