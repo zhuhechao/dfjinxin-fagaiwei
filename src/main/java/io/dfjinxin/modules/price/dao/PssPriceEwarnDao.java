@@ -125,4 +125,27 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "  and date(ppe.ewarn_date) between #{last180DayStr} and #{lastDayStr}\n" +
             "order by date(ppe.ewarn_date) asc")
     List<PssPriceEwarnEntity> getFirst3EwarnInfo(Integer commId, String last180DayStr, String lastDayStr);
+
+    /**
+     * @Desc:  大屏-统计昨天涨幅排在前3名的，商品指定时间的价格信息，支持按一级目录过滤
+     * @Param: [commId, last180DayStr, lastDayStr, rootId]
+     * @Return: java.util.List<io.dfjinxin.modules.price.entity.PssPriceEwarnEntity>
+     * @Author: z.l.c
+     * @Date: 2019/11/21 17:24
+     */
+    @Select("<script>\n" +
+            "select ppe.*, comm.comm_name\n" +
+            "from pss_price_ewarn ppe\n" +
+            "left join pss_comm_total comm on ppe.comm_id = comm.comm_id\n" +
+            "left join pss_comm_total comm1 on comm.parent_code=comm1.comm_id\n" +
+            "left join pss_comm_total comm2 on comm1.parent_code=comm2.comm_id\n" +
+            "left join pss_comm_total comm3 on comm2.parent_code=comm3.comm_id\n" +
+            "where ppe.comm_id = #{commId}\n" +
+            "  and date(ppe.ewarn_date) between #{last180DayStr} and #{lastDayStr}\n" +
+            "<if test='rootId!=null  '> " +
+            "  and comm3.comm_id=#{rootId}" +
+            "</if>"+
+            "order by date(ppe.ewarn_date) asc\n" +
+            "</script>")
+    List<PssPriceEwarnEntity> getFirst3EwarnInfoNew(Integer commId, String last180DayStr, String lastDayStr, String rootId);
 }

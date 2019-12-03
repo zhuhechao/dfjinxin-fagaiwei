@@ -676,12 +676,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
         Long totalCount = 0L;
         List<Map<String, Object>> data = new ArrayList<>();
-        for (String sql : sqlList) {
-            List<Map<String, Object>> res = hiveService.selectData(sql);
-            if (res != null && res.size() > 0) {
-                data.add(res.get(0));
-            }
-        }
+//        for (String sql : sqlList) {
+//            List<Map<String, Object>> res = hiveService.selectData(sql);
+//            if (res != null && res.size() > 0) {
+//                data.add(res.get(0));
+//            }
+//        }
         if (data == null || data.size() == 0) {
             return 0;
         }
@@ -937,13 +937,27 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         where1.orderByDesc("pri_range");
         where1.last("limit 0,3");
         List<PssPriceEwarnEntity> selectList = pssPriceEwarnDao.selectList(where1);
-        List<List<PssPriceEwarnEntity>> monthRiskList = new ArrayList<>();
-        for (PssPriceEwarnEntity entity : selectList) {
-            List<PssPriceEwarnEntity> resList = pssPriceEwarnDao.getFirst3EwarnInfo(entity.getCommId(), last180DayStr, lastDayStr);
-            monthRiskList.add(resList);
-        }
+        List<List<List<PssPriceEwarnEntity>>> monthRiskList = new ArrayList<>();
+        monthRiskList.add(getMonthRiskEwarn(selectList, last180DayStr, lastDayStr, null));//全部商品
+        monthRiskList.add(getMonthRiskEwarn(selectList, last180DayStr, lastDayStr, "2"));//民生商品
+        monthRiskList.add(getMonthRiskEwarn(selectList, last180DayStr, lastDayStr, "1"));//大宗商品
         retMap.put("monthRiskEwarn", monthRiskList);
         return retMap;
+    }
+    /**
+     * @Desc: 大屏-首页-风险按月走势图-获取各一级商品TOP3走势
+     * @Param: [type1CommId]
+     * @Return: java.util.Map<java.lang.String, java.lang.Object>
+     * @Author: z.h.c
+     * @Date: 2019/12/3 15:00
+     */
+    private List<List<PssPriceEwarnEntity>> getMonthRiskEwarn(List<PssPriceEwarnEntity> selectList,String last180DayStr, String lastDayStr, String rootId){
+        List<List<PssPriceEwarnEntity>> monthRiskList = new ArrayList<>();
+        for (PssPriceEwarnEntity entity : selectList) {
+            List<PssPriceEwarnEntity> resList = pssPriceEwarnDao.getFirst3EwarnInfoNew(entity.getCommId(), last180DayStr, lastDayStr, rootId);
+            monthRiskList.add(resList);
+        }
+        return monthRiskList;
     }
 
     /**
