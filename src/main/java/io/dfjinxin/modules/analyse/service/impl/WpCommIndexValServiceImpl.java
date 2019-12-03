@@ -442,9 +442,9 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
             sb.append(indexValEntity.getIndexType());
             KpiInfoDto dto = new KpiInfoDto();
             dto.setIndexName(sb.toString());
-            dto.setIndexVal(indexValEntity.getValue().toString());
-            dto.setIndexUnit(indexValEntity.getUnit());
-            dto.setDataTime(indexValEntity.getDate().toString());
+            dto.setValue(indexValEntity.getValue().toString());
+            dto.setUnit(indexValEntity.getUnit());
+            dto.setDate(indexValEntity.getDate().toString());
             dto.setCommId(indexValEntity.getCommId());
             dto.setIndexId(indexValEntity.getIndexId());
             list.add(dto);
