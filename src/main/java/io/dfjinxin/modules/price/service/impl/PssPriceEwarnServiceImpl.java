@@ -179,10 +179,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         }
 
         int hiveCount = getHiveCount();
-        int tengxunCount = getProgrammeDistribution();
+        //华为云不通外网，暂时不调腾讯接口
+//        int tengxunCount = getProgrammeDistribution();
 
         //step1,实时预览-总量(万）
-        retMap.put("commTotal", hiveCount + tengxunCount);
+//        retMap.put("commTotal", hiveCount + tengxunCount);
+        retMap.put("commTotal", hiveCount);
 
         Map<String, Object> lineDateMap = new HashMap<>();
         QueryWrapper<PssPriceEwarnEntity> queryWrapper = new QueryWrapper();
@@ -668,7 +670,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
      */
     private int getHiveCount() {
         final String sql_1 = "select count(*) tol from wp_base_index_val t";
-        final String sql_2 = "select count(*) tol from wp_marco_index_val t";
+        final String sql_2 = "select count(*) tol from wp_macro_index_val t";
 
         List<String> sqlList = new ArrayList<>();
         sqlList.add(sql_1);

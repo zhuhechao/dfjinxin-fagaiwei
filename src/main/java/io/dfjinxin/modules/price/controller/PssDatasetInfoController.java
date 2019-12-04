@@ -2,9 +2,11 @@ package io.dfjinxin.modules.price.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.common.utils.python.PythonApiUtils;
 import io.dfjinxin.modules.hive.service.HiveService;
+import io.dfjinxin.modules.price.dao.PssDatasetInfoDao;
 import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
 import io.dfjinxin.modules.price.service.PssDatasetInfoService;
 import io.swagger.annotations.Api;
@@ -31,6 +33,10 @@ public class PssDatasetInfoController {
 
     @Autowired
     private PssDatasetInfoService pssDatasetInfoService;
+
+    @Autowired
+    private PssDatasetInfoDao pssDatasetInfoDao;
+
     @Autowired
     private HiveService hiveService;
 
@@ -64,8 +70,19 @@ public class PssDatasetInfoController {
     @PostMapping("/save")
     @ApiOperation("保存")
     public R saveDataSet(@RequestBody PssDatasetInfoEntity entity) {
+
         Log.info("数据集创建-start");
-        String api = "createDataSet";
+        if (entity == null || StringUtils.isEmpty(entity.getDataSetName())) {
+            return R.error("创建数据集参数为空!");
+        }
+
+        QueryWrapper<PssDatasetInfoEntity> where = new QueryWrapper();
+        where.eq("data_set_name", entity.getDataSetName());
+        where.isNotNull("data_set_eng_name");
+        int recordCount = pssDatasetInfoDao.selectCount(where);
+        if (recordCount > 0) return R.error("数据集名称重复!");
+
+        final String api = "createDataSet";
         Log.info("调用python-[{}]服务,请求参数-{}", api, entity.getIndeVar());
         long startTime = System.currentTimeMillis();
         String result = null;
