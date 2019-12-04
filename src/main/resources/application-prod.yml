@@ -10,7 +10,7 @@ mysql:
 hive:
     user: hdfs
     password:
-    url: jdbc:hive2://172.20.10.16:10000/zhjg
+    url: jdbc:hive2://172.20.10.63:10000/zhjg
     driver-class-name: org.apache.hive.jdbc.HiveDriver
     filters: stat
     initialSize: 2
@@ -24,10 +24,6 @@ hive:
     poolPreparedStatements: false
     maxPoolPreparedStatementPerConnectionSize: 500
 
-#连接远程服务器配置
+#python服务配置
 ssh:
-#    host: 10.1.3.239
-#    port: 22
-#    user: root
-#    pass: 123456
     url: http://172.20.10.16:8082/

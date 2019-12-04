@@ -11,9 +11,10 @@ import lombok.Data;
 @Data
 public class KpiInfoDto {
     private String indexName;
-    private String indexVal;
-    private String indexUnit;
-    private String dataTime;
+
+    private String value;
+    private String unit;
+    private String date;
     private Integer commId;
     private Integer indexId;
 }

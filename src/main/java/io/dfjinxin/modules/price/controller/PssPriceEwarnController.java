@@ -68,13 +68,13 @@ public class PssPriceEwarnController {
     @GetMapping("/indexLineData")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "ewarnTypeId", value = "预警类型", required = true, dataType = "Int", paramType = "query"),
-            @ApiImplicitParam(name = "indexIds", value = "指标id列表", required = true, dataType = "List", paramType = "query"),
+            @ApiImplicitParam(name = "indexIds", value = "指标id列表", required = true, allowMultiple = true, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "startDate", value = "开始时间", required = false, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "endDate", value = "结束时间", required = false, dataType = "String", paramType = "query"),
     })
     public R queryIndexLineData(
-            @RequestParam(value = "indexIds", required = true) Integer[] indexIds,
-            @RequestParam(value = "ewarnTypeId", required = true) int ewarnTypeId,
+            @RequestParam(value = "ewarnTypeId") Integer ewarnTypeId,
+            @RequestParam(value = "indexIds") Integer[] indexIds,
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate
     ) {
