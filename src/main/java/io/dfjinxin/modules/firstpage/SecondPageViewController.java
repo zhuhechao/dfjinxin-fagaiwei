@@ -145,7 +145,7 @@ public class SecondPageViewController {
             notes = "日期(yyyy-MM-dd)为空默认获取昨天数据")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "indexType", value = "指标类型", required = true, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "date", value = "日期", required = true, dataType = "String", paramType = "query")
+            @ApiImplicitParam(name = "date", value = "日期", required = false, dataType = "String", paramType = "query")
     })
     public R getProvinceMapByCommId(@PathVariable("commId") Integer commId,
                                     @RequestParam(value = "indexType") String indexType,
