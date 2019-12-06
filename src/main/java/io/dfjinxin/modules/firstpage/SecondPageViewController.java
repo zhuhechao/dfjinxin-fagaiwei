@@ -149,7 +149,7 @@ public class SecondPageViewController {
     })
     public R getProvinceMapByCommId(@PathVariable("commId") Integer commId,
                                     @RequestParam(value = "indexType") String indexType,
-                                    @RequestParam(value = "date") String date) {
+                                    @RequestParam(value = "date",required = false) String date) {
         List<WpBaseIndexValEntity> provinceMap = wpBaseIndexValService.getProvinceMapByCommId(commId, indexType, date);
 
         return R.ok().put("data", provinceMap);
