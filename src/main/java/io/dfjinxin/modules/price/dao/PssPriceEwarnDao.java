@@ -25,14 +25,12 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
 
     @Select("select date(ppe.ewarn_date) as ewarnDate,count(*) as ewarnCount \n" +
             "from pss_price_ewarn ppe\n" +
-            "where 1=1 and ppe.ewarn_level=#{ewarnLevel} \n" +
-            "and ppe.ewarn_date between date('${startDateStr}') and date('${endDateStr}')\n" +
+            "where ppe.ewarn_level=#{ewarnLevel} \n" +
+            "and date(ppe.ewarn_date) between '${startDateStr}' and '${endDateStr}'\n" +
             "group by date(ppe.ewarn_date)")
     List<PwwPriceEwarnDto> getEwarnCountByDate(@Param("ewarnLevel") String ewarnLevel,
                                                @Param("startDateStr") String startDateStr,
                                                @Param("endDateStr") String endDateStr);
-
-//    List queryType3Warn();
 
     List<PssPriceEwarnEntity> queryEwarnlevel();
 

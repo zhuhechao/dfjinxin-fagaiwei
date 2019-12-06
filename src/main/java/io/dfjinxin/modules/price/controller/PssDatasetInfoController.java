@@ -177,13 +177,15 @@ public class PssDatasetInfoController {
      * @Author: z.h.c
      * @Date: 2019/11/28 17:54
      */
-    @GetMapping("/getIndexInfoByDataSetIndeVal")
-    @ApiOperation("数据集页面-根据指定数据集的indeval查询指标(商品指标信息&宏观指标信息)信息")
-    public R getIndexInfoByDataSetIndeVal(@RequestParam String indeVal) {
+    @GetMapping("/getIndexInfoByDataSetId/{dataSetId}")
+    @ApiOperation("数据集页面-根据数据集dataSetId查询指标(商品指标信息&宏观指标信息)信息")
+    public R getIndexInfoByDataSetIndeVal(@PathVariable Integer dataSetId) {
 
-        if (StringUtils.isEmpty(indeVal)) return R.ok("请求参数为空!");
-        Log.info("获取数据集-指标详情 req param:{}", JSONObject.parseObject(indeVal));
+        PssDatasetInfoEntity entity = pssDatasetInfoService.getById(dataSetId);
+        if (entity == null) {
+            return R.error("数据" + dataSetId + ",不存在!");
+        }
 
-        return R.ok().put("data", pssDatasetInfoService.getIndexInfoByDataSetIndeVal(indeVal));
+        return R.ok().put("data", pssDatasetInfoService.getIndexInfoByDataSetIndeVal(entity.getIndeVar()));
     }
 }
