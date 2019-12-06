@@ -118,20 +118,18 @@ public class PssDatasetInfoController {
      * @Author: z.h.c
      * @Date: 2019/11/22 16:03
      */
-    @PostMapping("/update/{dataSetId}")
+    @PostMapping("/update")
     @ApiOperation("修改-修改inde_val字段值")
-    public R update(@PathVariable Integer dataSetId,
-                    @RequestParam final String indeVal,
-                    @RequestParam final String commIndevalPath,
-                    @RequestParam final String macroIndevalPath) {
+    public R update(@RequestBody PssDatasetInfoEntity entity) {
 
-        PssDatasetInfoEntity entity = pssDatasetInfoService.getById(dataSetId);
-        if (entity == null) {
-            return R.error("数据" + dataSetId + ",不存在!");
+        if (entity == null) return null;
+        PssDatasetInfoEntity queryEntity = pssDatasetInfoService.getById(entity.getDataSetId());
+        if (queryEntity == null) {
+            return R.error("数据集,不存在!");
         }
-        entity.setIndeVar(indeVal);
-        entity.setCommIndevalPath(commIndevalPath);
-        entity.setMacroIndevalPath(macroIndevalPath);
+        entity.setIndeVar(entity.getIndeVar());
+        entity.setCommIndevalPath(entity.getCommIndevalPath());
+        entity.setMacroIndevalPath(entity.getMacroIndevalPath());
         entity.setDataTime(new Date());
         pssDatasetInfoService.updateById(entity);
         return R.ok();
@@ -146,7 +144,7 @@ public class PssDatasetInfoController {
      */
     @PostMapping("/delete/{dataSetId}")
     @ApiOperation("删除")
-    public R delete(@PathVariable Integer dataSetId) {
+    public R delete(@PathVariable("dataSetId") Integer dataSetId) {
         PssDatasetInfoEntity entity = pssDatasetInfoService.getById(dataSetId);
         if (entity == null) {
             return R.error("数据" + dataSetId + ",不存在!");
@@ -179,7 +177,7 @@ public class PssDatasetInfoController {
      */
     @GetMapping("/getIndexInfoByDataSetId/{dataSetId}")
     @ApiOperation("数据集页面-根据数据集dataSetId查询指标(商品指标信息&宏观指标信息)信息")
-    public R getIndexInfoByDataSetIndeVal(@PathVariable Integer dataSetId) {
+    public R getIndexInfoByDataSetIndeVal(@PathVariable("dataSetId") Integer dataSetId) {
 
         PssDatasetInfoEntity entity = pssDatasetInfoService.getById(dataSetId);
         if (entity == null) {

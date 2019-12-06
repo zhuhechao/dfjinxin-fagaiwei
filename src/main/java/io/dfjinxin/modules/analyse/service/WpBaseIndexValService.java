@@ -37,7 +37,7 @@ public interface WpBaseIndexValService extends IService<WpBaseIndexValEntity> {
 
     List<PssCommTotalEntity> queryCommListByCommId(Integer commId,String indexType);
 
-    List<WpBaseIndexValEntity> getProvinceMapByCommId(Integer commId,String indexType);
+    List<WpBaseIndexValEntity> getProvinceMapByCommId(Integer commId,String indexType ,String date);
 
 
 }

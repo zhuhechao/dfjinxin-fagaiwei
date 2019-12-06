@@ -141,13 +141,16 @@ public class SecondPageViewController {
     }
 
     @GetMapping("/provinceMap/{commId}")
-    @ApiOperation(value = "二级页面(商品总览)-价格指标页签-规格品昨日各省份地图数据-根据规格品、指标类型 获取昨天各省份数据")
+    @ApiOperation(value = "二级页面(商品总览)-价格指标页签-规格品各省份地图数据:根据规格品id、指标类型、日期 获取各省份数据",
+            notes = "日期(yyyy-MM-dd)为空默认获取昨天数据")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "indexType", value = "指标类型", required = true, dataType = "String", paramType = "query")
+            @ApiImplicitParam(name = "indexType", value = "指标类型", required = true, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "date", value = "日期", required = true, dataType = "String", paramType = "query")
     })
     public R getProvinceMapByCommId(@PathVariable("commId") Integer commId,
-                                    @RequestParam(value = "indexType") String indexType) {
-        List<WpBaseIndexValEntity> provinceMap = wpBaseIndexValService.getProvinceMapByCommId(commId, indexType);
+                                    @RequestParam(value = "indexType") String indexType,
+                                    @RequestParam(value = "date") String date) {
+        List<WpBaseIndexValEntity> provinceMap = wpBaseIndexValService.getProvinceMapByCommId(commId, indexType, date);
 
         return R.ok().put("data", provinceMap);
     }

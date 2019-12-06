@@ -15,6 +15,7 @@ import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
 import io.dfjinxin.modules.price.dao.PssCommTotalDao;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import io.dfjinxin.modules.price.service.PssCommTotalService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -140,9 +141,11 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
      * @Date: 2019/11/29 18:12
      */
     @Override
-    public List<WpBaseIndexValEntity> getProvinceMapByCommId(Integer commId, String indexType) {
-        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
-        return wpBaseIndexValDao.getProvinceMapByCommId(commId, lastDayStr,indexType);
+    public List<WpBaseIndexValEntity> getProvinceMapByCommId(Integer commId, String indexType, String date) {
+        if (StringUtils.isEmpty(date)) {
+            date = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
+        }
+        return wpBaseIndexValDao.getProvinceMapByCommId(commId, date, indexType);
     }
 
     @Override
