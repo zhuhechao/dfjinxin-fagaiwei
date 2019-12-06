@@ -29,14 +29,6 @@ public class MultiAnalyseController {
     @Autowired
     private WpBaseIndexValService WpBaseIndexValService;
 
-//    @GetMapping("/detail/{commId}")
-//    @ApiOperation("多维分析详情页-根据3级商品id 获取相应该商品所有4级商品 指标信息")
-//    public R queryIndexTypeByCommId(@PathVariable("commId") Integer commId) {
-//
-//        List<Map<String, Object>> map  = WpBaseIndexValService.queryLevel4CommInfo(commId);
-//        return R.ok().put("data", map);
-//    }
-
     /**
     * @Desc:  新的多维分析 4类商品指标信息分析
      * 1、统计该3类商品下所有4类商品的指标类型为价格的所有最新价格及上一天的价格作涨辐

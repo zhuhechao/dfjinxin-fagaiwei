@@ -178,12 +178,9 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         }
 
         int hiveCount = getHiveCount();
-        //华为云不通外网，暂时不调腾讯接口
-//        int tengxunCount = getProgrammeDistribution();
-
+        int tengxunCount = getProgrammeDistribution();
         //step1,实时预览-总量(万）
-//        retMap.put("commTotal", hiveCount + tengxunCount);
-        retMap.put("commTotal", hiveCount);
+        retMap.put("commTotal", hiveCount + tengxunCount);
 
         Map<String, Object> lineDateMap = new HashMap<>();
         QueryWrapper<PssPriceEwarnEntity> queryWrapper = new QueryWrapper();
@@ -243,7 +240,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             }
         }
 
-        //step5,昨日各种预警级别的数量
+        //step5,实时预览-昨日各种预警级别的数量
         Map<String, Object> temp = new HashMap<>();
         temp.put("redEwarnTotal", 0);
         temp.put("orangeEwarnTotal", 0);
@@ -637,6 +634,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             }
         }
         Map<String, Object> resultMap = new HashMap<>();
+        //先放入默认值不存在的预警返回0
+        final String rateZero = "0%";
+        resultMap.put("红色预警", rateZero);
+        resultMap.put("黄色预警", rateZero);
+        resultMap.put("绿色预警", rateZero);
+        resultMap.put("橙色预警", rateZero);
 
         Iterator<String> iter = map.keySet().iterator();
         int num2 = list.size();
