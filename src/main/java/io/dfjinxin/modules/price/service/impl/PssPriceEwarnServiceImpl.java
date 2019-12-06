@@ -173,7 +173,6 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             ewanInfoList.add(entity);
             //计算昨天涨幅&价格最高的预警类型占比
             RateValDto rateValDto = new RateValDto();
-//            rateValDto.setEwanName(asciiInfoEntity.getCodeName());
             rateValDto.setEwarnLevel(entity.getEwarnLevel());
             rateValDtos.add(rateValDto);
         }
@@ -463,9 +462,14 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         for (String foreType : foreTypeArr) {
             Map<String, Object> foreTypeMap = new HashMap<>();
             for (PssPriceReltEntity tyep4Comm : tyep4CommList) {
-                foreTypeMap.put(tyep4Comm.getCommId().toString(), this.jiaGeYuCe(foreType, tyep4Comm.getCommId()));
+                List<PssPriceReltEntity> reltEntities = this.jiaGeYuCe(foreType, tyep4Comm.getCommId());
+                if (reltEntities != null && reltEntities.size() > 0) {
+                    foreTypeMap.put(tyep4Comm.getCommId().toString(), reltEntities);
+                }
             }
-            reltRusult.put(foreType, foreTypeMap);
+            if (!foreTypeMap.isEmpty()) {
+                reltRusult.put(foreType, foreTypeMap);
+            }
         }
         map.put("jiaGeYuCe", reltRusult);
 
@@ -501,33 +505,20 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         String weekLastDayStr = DateUtils.getWeekLastDayStr();
         //本月最后一天
         String monthLastDayStr = DateUtils.getMonthLastDayStr();
-//        QueryWrapper<PssPriceReltEntity> where5 = new QueryWrapper();
-//        where5.eq("comm_id", commId);
-//        where5.orderByAsc("fore_time");
 
         //预测类型-日、周、月
         //周预测-统计本周之后的4周数据
         if ("周预测".equals(foreType)) {
             //本周是后一天
-//            where5.eq("fore_type", "周预测");
-//            where5.gt("fore_time", weekLastDayStr);
-//            where5.last(" limit 0,4");
             return pssPriceReltDao.selectByForeType(commId, foreType, weekLastDayStr, 4);
         }
         //日预测-统计30天
         if ("日预测".equals(foreType)) {
-//            where5.eq("fore_type", "日预测");
-//            where5.gt("fore_time", todayStr);
-//            where5.last(" limit 0,30");
             return pssPriceReltDao.selectByForeType(commId, foreType, todayStr, 30);
         }
         //月预测-统计当前月之后的12个月数据
         if ("月预测".equals(foreType)) {
-//            where5.eq("fore_type", "月预测");
-//            where5.gt("fore_time", monthLastDayStr);
-//            where5.last("limit 0,12");
             return pssPriceReltDao.selectByForeType(commId, foreType, monthLastDayStr, 12);
-
         }
         return null;
     }
