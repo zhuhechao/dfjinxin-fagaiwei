@@ -444,8 +444,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         map.put("quanGuoJiaGeZouShi", this.convertQuYujiaGeByJiaGeZhiBiao(quanGuoFrequenceList, type4CommList, "全国", lastMonthDayStr, lastDayStr));
 
         //step5,区域价格分布 规格品指标类型是价格、区域是各省份、自治区的、昨天到上月昨天的数据
-        List<String> quYuFrequenceList = this.getFrequenceByWhere(lastMonthDayStr, lastDayStr, null);
-        map.put("quYuJiaGeFengBu", this.convertQuYujiaGeByJiaGeZhiBiao(quYuFrequenceList, type4CommList, null, lastMonthDayStr, lastDayStr));
+        List<String> quYuFrequenceList = this.getFrequenceByWhere(null, lastDayStr, null);
+        map.put("quYuJiaGeFengBu", this.convertQuYujiaGeByJiaGeZhiBiao(quYuFrequenceList, type4CommList, null, null, lastDayStr));
 
 
         //step6,价格预测情况 统计规格品各种预测类型
@@ -531,7 +531,11 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         List<String> frequenceList = new ArrayList<>();
         QueryWrapper<WpBaseIndexValEntity> where5 = new QueryWrapper();
         where5.select("frequence");
-        where5.between("date", startDate, endDate);
+        if (StringUtils.isEmpty(startDate)) {
+            where5.eq("date", endDate);
+        } else {
+            where5.between("date", startDate, endDate);
+        }
         if ("全国".equals(areaName)) {
             where5.eq("area_name", areaName);
         } else {
@@ -556,7 +560,11 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     private List<WpBaseIndexValEntity> quYujiaGeByJiaGeZhiBiao(int commId, String areaName, String frequence, String startDate, String endDate) {
         QueryWrapper<WpBaseIndexValEntity> where5 = new QueryWrapper();
         where5.eq("comm_id", commId);
-        where5.between("date", startDate, endDate);
+        if (StringUtils.isEmpty(startDate)) {
+            where5.eq("date", endDate);
+        } else {
+            where5.between("date", startDate, endDate);
+        }
         where5.eq("index_type", "价格");
         where5.eq("frequence", frequence);
         if ("全国".equals(areaName)) {
@@ -749,18 +757,19 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
         if (ewarnTypeId == null || indexIds == null || indexIds.size() < 1) return null;
 
-        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));//昨天时间
         Map<String, Object> resuMap = new HashMap<>();
         for (int indexId : indexIds) {
             QueryWrapper where = new QueryWrapper();
             where.eq("index_id", indexId);
-            where.le("data_time", lastDayStr);
-            where.orderByDesc("data_time");
+            where.orderByAsc("data_time");
             if (StringUtils.isNotEmpty(startDate) && StringUtils.isNotEmpty(endDate)) {
                 where.between("data_time", startDate, endDate);
             } else {
-                where.last("limit 0,30");
+                String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));//昨天时间
+                String last30DayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -30));//一个月前时间
+                where.between("data_time", last30DayStr, lastDayStr);
             }
+//            where.last("limit 0,30");
 
             //常规预警
             if (ewarnTypeId == 18) {
@@ -940,6 +949,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         retMap.put("monthRiskEwarn", monthRiskList);
         return retMap;
     }
+
     /**
      * @Desc: 大屏-首页-风险按月走势图-获取各一级商品TOP3走势
      * @Param: [type1CommId]
@@ -947,7 +957,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
      * @Author: z.h.c
      * @Date: 2019/12/3 15:00
      */
-    private List<List<PssPriceEwarnEntity>> getMonthRiskEwarn(List<PssPriceEwarnEntity> selectList,String last180DayStr, String lastDayStr, String rootId){
+    private List<List<PssPriceEwarnEntity>> getMonthRiskEwarn(List<PssPriceEwarnEntity> selectList, String last180DayStr, String lastDayStr, String rootId) {
         List<List<PssPriceEwarnEntity>> monthRiskList = new ArrayList<>();
         for (PssPriceEwarnEntity entity : selectList) {
             List<PssPriceEwarnEntity> resList = pssPriceEwarnDao.getFirst3EwarnInfoNew(entity.getCommId(), last180DayStr, lastDayStr, rootId);
