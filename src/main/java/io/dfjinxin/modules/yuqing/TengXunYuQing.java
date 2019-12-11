@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,14 +30,17 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("tengxun/analyze/")
-@Api(tags = "TengXunYuQing", description = "腾讯-商品舆情Api")
+@Api(tags = "腾讯-商品舆情Api")
 public class TengXunYuQing {
 
-    private final static Logger logger = LoggerFactory.getLogger(TengXunYuQing.class);
+    private static final Logger logger = LoggerFactory.getLogger(TengXunYuQing.class);
 
-    public static final String PATH = "https://jianguan.urlsec.qq.com/";
-    public static final String APPID = "fagaiwei";
-    public static final String PWD = "fgwprice";
+    @Value("${tengxun.path}")
+    private String path;
+    @Value("${tengxun.appId}")
+    private String appId;
+    @Value("${tengxun.pwd}")
+    private String pwd;
 
     @Autowired
     private PssPriceEwarnService pssPriceEwarnService;
@@ -67,10 +71,10 @@ public class TengXunYuQing {
 
         logger.info("商品舆情热度分布,请求参数:{}", commId);
         long unixTime = new Date().getTime() / 1000;
-        String signid = MD5Utils.getMD5(unixTime + MD5Utils.getMD5(APPID + PWD));
+        String signid = MD5Utils.getMD5(unixTime + MD5Utils.getMD5(appId + pwd));
         Map<String, Object> params = new HashMap<>();
         params.put("unixTime", unixTime);
-        params.put("appid", APPID);
+        params.put("appid", appId);
         params.put("signid", signid);
         params.put("programmeId", converCommId(commId));
         params.put("appType", 0);
@@ -78,7 +82,7 @@ public class TengXunYuQing {
         String jsonStr = JSON.toJSONString(params);
         logger.info("the getHeatTrend req params:{}", jsonStr);
         String apiUrl = "analyze/getHeatTrend";
-        final String url = PATH + apiUrl;
+        final String url = path + apiUrl;
         logger.info("the request url: {}", url);
         String res = null;
         try {
@@ -116,10 +120,10 @@ public class TengXunYuQing {
 
         logger.info("商品热点舆情,请求参数:{}", commId);
         long unixTime = new Date().getTime() / 1000;
-        String signid = MD5Utils.getMD5(unixTime + MD5Utils.getMD5(APPID + PWD));
+        String signid = MD5Utils.getMD5(unixTime + MD5Utils.getMD5(appId + pwd));
         Map<String, Object> params = new HashMap<>();
         params.put("unixTime", unixTime);
-        params.put("appid", APPID);
+        params.put("appid", appId);
         params.put("signid", signid);
         params.put("programmeId", converCommId(commId));
         params.put("appType", 0);
@@ -127,7 +131,7 @@ public class TengXunYuQing {
         final String apiUrl = "analyze/getHeatTop";
         String jsonStr = JSON.toJSONString(params);
         logger.info("the getHeatTrend req params:{}", jsonStr);
-        final String url = PATH + apiUrl;
+        final String url = path + apiUrl;
         logger.info("the request url: {}", url);
         String res = null;
         try {
@@ -166,10 +170,10 @@ public class TengXunYuQing {
 
         logger.info("商品舆情预警,请求参数:{}", commId);
         long unixTime = new Date().getTime() / 1000;
-        String signid = MD5Utils.getMD5(unixTime + MD5Utils.getMD5(APPID + PWD));
+        String signid = MD5Utils.getMD5(unixTime + MD5Utils.getMD5(appId + pwd));
         Map<String, Object> params = new HashMap<>();
         params.put("unixTime", unixTime);
-        params.put("appid", APPID);
+        params.put("appid", appId);
         params.put("signid", signid);
         params.put("node_userid", "1");
         params.put("programmeId", converCommId(commId));
@@ -181,7 +185,7 @@ public class TengXunYuQing {
         final String apiUrl = "yuqingcgi/queryStatisticsWarningContent";
         String jsonStr = JSON.toJSONString(params);
         logger.info("the getHeatTrend req params:{}", jsonStr);
-        final String url = PATH + apiUrl;
+        final String url = path + apiUrl;
         logger.info("the request url: {}", url);
         String res = null;
         try {
@@ -216,17 +220,17 @@ public class TengXunYuQing {
     public R getTopUrlInfo() {
         logger.info("topurl信息,开始--");
         long unixTime = new Date().getTime() / 1000;
-        String signid = MD5Utils.getMD5(unixTime + MD5Utils.getMD5(APPID + PWD));
+        String signid = MD5Utils.getMD5(unixTime + MD5Utils.getMD5(appId + pwd));
         Map<String, Object> params = new HashMap<>();
         params.put("unixTime", unixTime);
-        params.put("appid", APPID);
+        params.put("appid", appId);
         params.put("signid", signid);
         params.put("userId", "1");
         params.put("dateType", 1);
         final String apiUrl = "analyze/getTopUrlInfo";
         String jsonStr = JSON.toJSONString(params);
         logger.info("the getTopUrlInfo req params:{}", jsonStr);
-        final String url = PATH + apiUrl;
+        final String url = path + apiUrl;
         logger.info("the request url: {}", url);
         String res = null;
         try {

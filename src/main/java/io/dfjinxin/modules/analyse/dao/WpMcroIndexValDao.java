@@ -1,12 +1,9 @@
 package io.dfjinxin.modules.analyse.dao;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.dfjinxin.modules.analyse.entity.WpMcroIndexInfoEntity;
-import io.dfjinxin.modules.analyse.entity.WpMcroIndexValEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.dfjinxin.modules.analyse.entity.WpMcroIndexValEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

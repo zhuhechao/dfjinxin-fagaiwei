@@ -22,7 +22,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("price/pricee/warn")
-@Api(tags = "PssPriceEwarnController", description = "价格预警结果页")
+@Api(tags = "价格预警结果页")
 public class PssPriceEwarnController {
 
     @Autowired

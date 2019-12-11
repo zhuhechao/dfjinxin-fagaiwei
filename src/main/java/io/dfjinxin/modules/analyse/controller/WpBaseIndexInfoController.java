@@ -21,7 +21,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("price/wpbaseindexinfo")
-@Api(tags = "WpBaseIndexInfoController", description = "商品指标基础信息")
+@Api(tags = "商品指标基础信息")
 public class WpBaseIndexInfoController {
     @Autowired
     private WpBaseIndexInfoService wpBaseIndexInfoService;

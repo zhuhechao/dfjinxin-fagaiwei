@@ -33,7 +33,7 @@ import java.util.Map;
 @Api(tags = "PssCommTotalController", description = "价格监测子系统-商品配置")
 public class PssCommTotalController {
 
-    private Logger LOG = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(PssCommTotalController.class);
 
     @Autowired
     private PssCommTotalService pssCommTotalService;
@@ -109,7 +109,7 @@ public class PssCommTotalController {
             pssCommConfService.updateById(confEntity);
         } else {
             List<PssCommConfEntity> commConfEntityList = pssCommConfService.getCommConfByParms(commId, ewarnIds, indexIds);
-            if (commConfEntityList != null && commConfEntityList.size() > 0) {
+            if (!commConfEntityList.isEmpty()) {
                 return R.error("该商品已配置此种类型预警!");
             }
             pssCommConfService.saveCommConf(commId, ewarnIds, indexIds);

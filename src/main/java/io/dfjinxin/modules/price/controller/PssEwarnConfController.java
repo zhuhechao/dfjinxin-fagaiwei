@@ -26,8 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/price/ewarn/conf")
-@Api(tags = "PssEwarnConfController", description = "价格监测子系统-预警配置")
-//@Api(tags={"用户操作接口"})
+@Api(tags = "价格监测子系统-预警配置")
 public class PssEwarnConfController {
 
     @Autowired

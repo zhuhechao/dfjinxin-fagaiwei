@@ -43,7 +43,7 @@ public class PssDatasetInfoController {
     @Value("${ssh.url}")
     private String pyUrl;
 
-    private static Logger Log = LoggerFactory.getLogger(PssDatasetInfoController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PssDatasetInfoController.class);
 
     /**
      * 列表
@@ -71,7 +71,7 @@ public class PssDatasetInfoController {
     @ApiOperation("保存")
     public R saveDataSet(@RequestBody PssDatasetInfoEntity entity) {
 
-        Log.info("数据集创建-start");
+        LOG.info("数据集创建-start");
         if (entity == null || StringUtils.isEmpty(entity.getDataSetName())) {
             return R.error("创建数据集参数为空!");
         }
@@ -83,7 +83,7 @@ public class PssDatasetInfoController {
         if (recordCount > 0) return R.error("数据集名称重复!");
 
         final String api = "createDataSet";
-        Log.info("调用python-[{}]服务,请求参数-{}", api, entity.getIndeVar());
+        LOG.info("调用python-[{}]服务,请求参数-{}", api, entity.getIndeVar());
         long startTime = System.currentTimeMillis();
         String result = null;
         try {
@@ -91,7 +91,8 @@ public class PssDatasetInfoController {
         } catch (Exception e) {
             return R.error("调用python-" + api + "服务异常。创建失败!");
         }
-        Log.info("调用python-{}结束,用时:{}", api, (System.currentTimeMillis() - startTime) / 1000 + "秒!");
+        Long time = (System.currentTimeMillis() - startTime) / 1000;
+        LOG.info("调用python-[{}]结束,用时:{}秒!", api, time);
 
         if (StringUtils.isEmpty(result)) {
             return R.error("数据集创建失败!");
@@ -103,10 +104,10 @@ public class PssDatasetInfoController {
         if ("succ".equals(code) && StringUtils.isNotEmpty(tableName)) {
             entity.setDataSetEngName(tableName);
             pssDatasetInfoService.save(entity);
-            Log.info("数据集创建-成功!");
+            LOG.info("数据集创建-成功!");
             return R.ok();
         } else {
-            Log.info("数据集创建-失败!");
+            LOG.info("数据集创建-失败!");
             return R.error("数据集创建失败!");
         }
     }
@@ -147,7 +148,7 @@ public class PssDatasetInfoController {
     public R delete(@PathVariable("dataSetId") Integer dataSetId) {
         PssDatasetInfoEntity entity = pssDatasetInfoService.getById(dataSetId);
         if (entity == null) {
-            return R.error("数据" + dataSetId + ",不存在!");
+            return R.error("数据集-" + dataSetId + ",不存在!");
         }
 
         hiveService.dropTable(entity.getDataSetEngName());
@@ -169,7 +170,7 @@ public class PssDatasetInfoController {
     }
 
     /**
-     * @Desc: 数据集-根据指定数据集的 indeval查询指标(商品指标信息&宏观指标信息)信息
+     * @Desc: 数据集-根据指定数据集id查询指标(商品指标信息&宏观指标信息)信息
      * @Param: []
      * @Return: io.dfjinxin.common.utils.R
      * @Author: z.h.c
@@ -181,7 +182,7 @@ public class PssDatasetInfoController {
 
         PssDatasetInfoEntity entity = pssDatasetInfoService.getById(dataSetId);
         if (entity == null) {
-            return R.error("数据" + dataSetId + ",不存在!");
+            return R.error("数据集-" + dataSetId + ",不存在!");
         }
 
         return R.ok().put("data", pssDatasetInfoService.getIndexInfoByDataSetIndeVal(entity.getIndeVar()));

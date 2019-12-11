@@ -27,3 +27,9 @@ hive:
 #python服务配置
 ssh:
     url: http://172.20.10.16:8082/
+
+#腾讯接口配置
+tengxun:
+    path: https://jianguan.urlsec.qq.com/
+    appId: fagaiwei
+    pwd: fgwprice

@@ -1,8 +1,6 @@
 package io.dfjinxin.modules.price.dao;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
 import io.dfjinxin.modules.price.dto.PwwPriceEwarnDto;
 import io.dfjinxin.modules.price.entity.PssPriceEwarnEntity;
 import org.apache.ibatis.annotations.Mapper;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author z.h.c
@@ -37,10 +34,6 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
     PssPriceEwarnEntity selectMaxRange(
             @Param("commId") Integer commId,
             @Param("dateStr") String dateStr);
-
-//    PssPriceEwarnEntity selectMaxDateTimeEntiey(@Param("commId") Integer commId);
-
-//    List<PssPriceEwarnEntity> queryPriceEwarnByCommId(@Param("commId") Integer commId);
 
     List<PssPriceEwarnEntity> queryPriceEwarnByDate(@Param("commId") Integer commId,
                                                     @Param("dateStr") String dateStr);

@@ -25,7 +25,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("analyse/macro")
-@Api(tags = "WpMcroIndexInfoController", description = "价格分析-宏观分析")
+@Api(tags = "价格分析-宏观分析")
 public class WpMcroIndexInfoController {
 
     @Autowired
@@ -36,7 +36,7 @@ public class WpMcroIndexInfoController {
      * 列表
      */
     @GetMapping("/query")
-    @ApiOperation(value = "宏观分析-查询",notes = "areaCode:0-国内，1-国外")
+    @ApiOperation(value = "宏观分析-查询", notes = "areaCode:0-国内，1-国外")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "indexId", value = "指标id", required = true, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "areaName", value = "国家名称或国内的省份名称", required = true, dataType = "String", paramType = "query"),
@@ -48,12 +48,12 @@ public class WpMcroIndexInfoController {
                    @RequestParam(name = "dateFrom", required = false) String dateFrom,
                    @RequestParam(name = "dateTo", required = false) String dateTo
     ) {
-        List<WpMcroIndexValEntity> data = wpMcroIndexInfoService.queryIndexVals(areaName,indexId,dateFrom,dateTo);
+        List<WpMcroIndexValEntity> data = wpMcroIndexInfoService.queryIndexVals(areaName, indexId, dateFrom, dateTo);
         return R.ok().put("data", data);
     }
 
 
-    @GetMapping("getIndexName")
+    @GetMapping("/getIndexName")
     @ApiOperation(value = "宏观分析-获取指标名称")
     public R getAreaName() {
         List<Map<String, Object>> wpMcroIndexInfos = wpMcroIndexInfoService.getAreaName();
@@ -66,7 +66,6 @@ public class WpMcroIndexInfoController {
         List<WpMcroIndexInfoEntity> tree = wpMcroIndexInfoService.getIndexTreeByType();
         return R.ok().put("data", tree);
     }
-
 
 
 }

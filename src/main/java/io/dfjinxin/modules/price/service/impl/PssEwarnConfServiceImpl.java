@@ -69,7 +69,7 @@ public class PssEwarnConfServiceImpl extends ServiceImpl<PssEwarnConfDao, PssEwa
     public List<PssEwarnConfEntity> getWarnTypeAndName(String codeSimple) {
 
         if (StringUtils.isBlank(codeSimple)) {
-            return null;
+            return new ArrayList<>();
         }
 
         List<WpAsciiInfoEntity> list = wpAsciiInfoService.getInfoByCodeId(codeSimple);

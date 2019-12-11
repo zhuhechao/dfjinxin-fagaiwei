@@ -27,10 +27,10 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("analyse/trend")
-@Api(tags = "WpBaseIndexValController", description = "价格分析-趋势分析")
+@Api(tags = "价格分析-趋势分析")
 public class WpBaseIndexValController {
     @Autowired
-    private WpBaseIndexValService WpBaseIndexValService;
+    private WpBaseIndexValService wpBaseIndexValService;
 
     /**
      * 列表
@@ -39,7 +39,7 @@ public class WpBaseIndexValController {
     @ApiOperation("趋势分析-趋势分析页")
     public R queryList() {
 
-        List<Map<String, PssCommTotalEntity>> list = WpBaseIndexValService.queryList();
+        List<Map<String, PssCommTotalEntity>> list = wpBaseIndexValService.queryList();
         return R.ok().put("data", list);
     }
 
@@ -50,7 +50,7 @@ public class WpBaseIndexValController {
     @ApiOperation("趋势分析详情页-根据 商品id 获取相应 指标类型")
     public R queryIndexTypeByCommId(@PathVariable("commId") Integer commId) {
 
-        List<Map<String, Object>> map  = WpBaseIndexValService.queryIndexTypeByCommId(commId);
+        List<Map<String, Object>> map  = wpBaseIndexValService.queryIndexTypeByCommId(commId);
         return R.ok().put("data", map);
     }
     /**
@@ -83,7 +83,7 @@ public class WpBaseIndexValController {
         params.put("commId", commId); params.put("indexType", indexType);
         params. put("dateTo", dateTo); params.put("dateFrom", dateFrom);
 
-        List<Map<String, Object>> map = WpBaseIndexValService.queryDetailByCommId(params);
+        List<Map<String, Object>> map = wpBaseIndexValService.queryDetailByCommId(params);
         return R.ok().put("data", map);
     }
 

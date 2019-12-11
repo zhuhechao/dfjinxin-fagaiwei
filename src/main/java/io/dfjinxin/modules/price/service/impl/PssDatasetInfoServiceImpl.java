@@ -99,7 +99,7 @@ public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, Ps
     }
 
     /**
-     * @Desc: 数据集-查询已创建的数据集列表
+     * @Desc: 数据集-查询指标(商品指标信息&宏观指标信息)信息
      * @Param: []
      * @Return: java.util.List<io.dfjinxin.modules.price.entity.PssDatasetInfoEntity>
      * @Author: z.h.c
@@ -107,7 +107,7 @@ public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, Ps
      */
     @Override
     public List<DataSetIndexInfoDto> getIndexInfoByDataSetIndeVal(String indeVal) {
-        if (StringUtils.isEmpty(indeVal)) return null;
+        if (StringUtils.isEmpty(indeVal)) return new ArrayList<>();
 
         JSONObject jsonObj = JSONObject.parseObject(indeVal);
         List<DataSetIndexInfoDto> res = new ArrayList<>();

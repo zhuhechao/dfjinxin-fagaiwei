@@ -6,10 +6,12 @@ import io.dfjinxin.modules.price.service.WpAsciiInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -21,7 +23,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("price/ascii/info")
-@Api(tags = "WpAsciiInfoController", description = "智慧价格码值信息表")
+@Api(tags = "智慧价格码值信息表")
 public class WpAsciiInfoController {
 
     @Autowired

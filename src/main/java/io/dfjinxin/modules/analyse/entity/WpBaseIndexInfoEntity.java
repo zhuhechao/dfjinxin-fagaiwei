@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import org.apache.poi.ss.formula.functions.T;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -19,7 +20,7 @@ import java.util.List;
 @Data
 @TableName("wp_base_index_info")
 public class WpBaseIndexInfoEntity implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1905122041950251207L;
 
 	/**
 	 *
@@ -67,6 +68,6 @@ public class WpBaseIndexInfoEntity implements Serializable {
 	private Date dataTime;
 
 	@TableField(exist = false)
-	private List subList;
+	private List<T> subList;
 
 }
