@@ -63,7 +63,7 @@ public class WarnTask implements ITask {
         //价格预警结果
         PssPriceEwarnEntity pee = new PssPriceEwarnEntity();
         //常规预警下的取值 wp_comm_pri
-        if (pe.getEwarnTypeId().equals(18)) {
+        if ("18".equals(pe.getEwarnTypeId())) {
 
             List<WpCommPriEntity> wys = wpCommPriService.getData(cc);
 
@@ -100,23 +100,25 @@ public class WarnTask implements ITask {
                     pee.setEwarnLevel("74");
                 }
             }
+            pssPriceEwarnService.saveOrUpdate(pee);
+            logger.debug("定时任务正在执行，参数为：{}", params);
+
         }
         //非常规预警下的取值 wp_cmm_pri_org
-        if (pe.getEwarnTypeId().equals(19)) {
-
+        if ("19".equals(pe.getEwarnTypeId())) {
             List<WpCommPriOrgEntity> wpo = wpCommPriOrgService.getData(cc);
             pee.setCommId(pc.getCommId());
             pee.setEwarnDate(new Date());
             pee.setPricTypeId(pc.getIndexId());
             pee.setEwarnTypeId(pe.getEwarnTypeId());
-            pee.setStatAreaCode("东方金信");
+            pee.setStatAreaCode(wpo.get(0).getAreaName());
             pee.setUnit(wpo.get(0).getUnit());//单位
 
             if ("1".equals(pe.getEwarnTerm())) {
                 BigDecimal price0 = wpo.get(0).getValue();
                 BigDecimal price1 = wpo.get(1).getValue();
                 BigDecimal b1 = compareResult(price0, price1);
-                pee.setPriRange(b1);
+                pee.setPriRange (b1);
                 //预警级别//R_W:红   O_W:橙     Y_W:黄     G_W:绿
                 pee.setEwarnLevel(ewarnLevelResult(b1.abs(), pe));
             }
@@ -140,10 +142,11 @@ public class WarnTask implements ITask {
                     pee.setEwarnLevel("74");
                 }
             }
+            pssPriceEwarnService.saveOrUpdate(pee);
+            logger.debug("定时任务正在执行，参数为：{}", params);
         }
-        pssPriceEwarnService.saveOrUpdate(pee);
 
-        logger.debug("定时任务正在执行，参数为：{}", params);
+
     }
 
     //价格涨跌幅百分比
