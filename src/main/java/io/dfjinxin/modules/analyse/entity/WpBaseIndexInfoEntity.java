@@ -68,6 +68,6 @@ public class WpBaseIndexInfoEntity implements Serializable {
 	private Date dataTime;
 
 	@TableField(exist = false)
-	private List<T> subList;
+	private List subList;
 
 }

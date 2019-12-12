@@ -20,8 +20,8 @@ import java.util.Map;
 @Repository
 public interface WpMcroIndexValDao extends BaseMapper<WpMcroIndexValEntity> {
 
-    List<Map<String,Object>> selectdistinctIndexName(@Param("areaName") String areaName,
-                                                     @Param("indexId")Integer indexId);
+//    List<Map<String,Object>> selectdistinctIndexName(@Param("areaName") String areaName,
+//                                                     @Param("indexId")Integer indexId);
 
 //    @Select("select t1.*\n" +
 //            "from wp_macro_index_info t1\n" +

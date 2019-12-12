@@ -42,7 +42,8 @@ public class ModelController extends AbstractClientController {
 
     Logger logger = LoggerFactory.getLogger(ModelController.class);
 
-    private final static String pythonHost = "http://10.1.3.239:8082";//预生产环境
+    //    private final static String pythonHost = "http://10.1.3.239:8082";//预生产环境
+    private final static String pythonHost = "http://172.20.10.16:8092";//预生产环境
     private HttpClientSupport httpClientSupport = HttpClientSupport.getInstance(pythonHost);
 
     @RequestMapping(path = "/nlp/test", method = {RequestMethod.GET})
@@ -57,10 +58,14 @@ public class ModelController extends AbstractClientController {
     @ResponseBody
     @CrossOrigin(allowCredentials = "true")
     public R nlpRequest(HttpServletRequest request) throws IOException, URISyntaxException, ServletException {
+        logger.info("---模型管理调用python  开始---");
+        logger.info("模型管理-调用python 请求信息*****");
+        logger.info("模型管理 python host:{}", pythonHost);
         String response = clientRequest(request, true);
         HashMap map = JsonSupport.jsonToMap(response);
+        logger.info("-模型管理调用python返回结果:{}", map);
 //        JsonResult jsonpResult   = JsonSupport.makeJsonpResult(JsonResult.RESULT.SUCCESS, "YYY", null, JsonSupport.jsonToMap(response));
-        return R.ok().put("data", JsonSupport.jsonToMap(response));
+        return R.ok().put("data", map);
     }
 
     @RequestMapping("/download/**")

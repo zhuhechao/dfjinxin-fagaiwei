@@ -67,8 +67,7 @@ public class WpBaseIndexInfoServiceImpl extends ServiceImpl<WpBaseIndexInfoDao, 
             where2.eq("comm_id", entity.getCommId());
             where2.eq("index_type", entity.getIndexType());
             where2.groupBy("index_name");
-            List<WpBaseIndexInfoEntity> indexNameList = baseMapper.selectList(where2);
-            entity.setSubList(indexNameList);
+            entity.setSubList(baseMapper.selectList(where2));
         }
         return indexTypeList;
     }

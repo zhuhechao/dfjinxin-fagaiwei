@@ -3,30 +3,16 @@
 
 <mapper namespace="io.dfjinxin.modules.analyse.dao.WpMcroIndexValDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="io.dfjinxin.modules.analyse.entity.WpMcroIndexValEntity" id="wpMcroIndexValMap">
-        <result property="seqId" column="seq_id"/>
         <result property="indexId" column="index_id"/>
         <result property="indexName" column="index_name"/>
         <result property="indexType" column="index_type"/>
-        <result property="statAreaId" column="stat_area_id"/>
-        <result property="statAreaName" column="stat_area_name"/>
-        <result property="statFrequency" column="stat_frequency"/>
-        <result property="indexVal" column="index_val"/>
-        <result property="indexUnit" column="index_unit"/>
-        <result property="dataTime" column="data_time"/>
-        <result property="dataSource" column="data_source"/>
+        <result property="areaName" column="area_name"/>
+        <result property="sourceName" column="source_name"/>
+        <result property="frequence" column="frequence"/>
+        <result property="unit" column="unit"/>
     </resultMap>
-
-    <select id="selectdistinctIndexName" resultType="map">
-        select
-        index_name as indexName,
-        index_id as indexId,
-        seq_id as seqId
-        from wp_macro_index_val val
-        where stat_area_name=#{areaName}
-        group by index_id
-    </select>
 
 
 </mapper>

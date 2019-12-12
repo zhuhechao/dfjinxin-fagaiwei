@@ -17,12 +17,16 @@ import java.util.Map;
  */
 public interface WpMcroIndexInfoService extends IService<WpMcroIndexInfoEntity> {
 
-    List<Map<String, Object>> getAreaName();
+//    List<Map<String, Object>> getAreaName();
 
-    List<WpMcroIndexValEntity> queryIndexVals(String areaName,String indexId, String dateFrom, String dateTo);
+//    List<WpMcroIndexValEntity> queryIndexVals(String areaName,String indexId, String dateFrom, String dateTo);
 
     List<WpMcroIndexInfoEntity> getIndexTreeByType();
 
     List<WpMcroIndexInfoEntity> getIndexTreeByIds(String [] ids);
+
+    Map<String, Object> queryByIndexType(String indexType);
+
+    List<Map<String, Object>> queryIndexType();
 }
 

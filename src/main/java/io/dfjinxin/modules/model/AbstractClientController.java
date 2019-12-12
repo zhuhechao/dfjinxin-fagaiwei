@@ -38,62 +38,65 @@ public abstract class AbstractClientController {
         String response = null;
 
         String sendMethod = request.getMethod();
-        if(!Strings.isNullOrEmpty(sendMethod)){
+        logger.info("python req url:{}", serviceUrl);
+        logger.info("python req method:{}", sendMethod);
+        logger.info("python req params:{}", getParameter(request));
+        if (!Strings.isNullOrEmpty(sendMethod)) {
 
-            if(request instanceof MultipartHttpServletRequest){//有文件上传
+            if (request instanceof MultipartHttpServletRequest) {//有文件上传
                 MultipartHttpServletRequest muliRequest = (MultipartHttpServletRequest) request;
                 Iterator<String> fileNames = muliRequest.getFileNames();
                 URL classPath = this.getClass().getClassLoader().getResource("/");
                 String classPathStr = classPath.toString();
 
-                logger.debug("classPathStr : {}",classPathStr);
+                logger.debug("classPathStr : {}", classPathStr);
 //                classPathStr = classPathStr.replaceFirst("file:/","");
-                classPathStr = classPathStr.replaceFirst("file:","");
-                logger.debug("classPathStr : {}",classPathStr);
+                classPathStr = classPathStr.replaceFirst("file:", "");
+                logger.debug("classPathStr : {}", classPathStr);
 
-                Map<String,File> fileMap = new HashMap<>();
-                while (fileNames.hasNext()){
+                Map<String, File> fileMap = new HashMap<>();
+                while (fileNames.hasNext()) {
                     MultipartFile multiUploadFile = muliRequest.getFile(fileNames.next());
                     String fileName = multiUploadFile.getOriginalFilename();
-                    File uploadFile = new File(classPathStr+"/"+fileName);
+                    File uploadFile = new File(classPathStr + "/" + fileName);
                     uploadFile.deleteOnExit();
                     multiUploadFile.transferTo(uploadFile);
-                    fileMap.put(multiUploadFile.getName(),uploadFile);
+                    fileMap.put(multiUploadFile.getName(), uploadFile);
                 }
 
                 Map parameters = getParameter(request);
 
-                response = httpClientSupport().sendPostWithFile(serviceUrl,parameters,fileMap);
+                response = httpClientSupport().sendPostWithFile(serviceUrl, parameters, fileMap);
 
-            }else{
+            } else {
 
-                logger.debug("send url is =====>{}",serviceUrl);
-                if("get".equalsIgnoreCase(sendMethod)){
-                    response = httpClientSupport().sendRequest(serviceUrl,getParameter(request), RequestMethod.GET,useJson);
-                }else  if("post".equalsIgnoreCase(sendMethod)){
-                    response = httpClientSupport().sendRequest(serviceUrl,getParameter(request), RequestMethod.POST,useJson);
-                }else  if("put".equalsIgnoreCase(sendMethod)){
-                    response = httpClientSupport().sendRequest(serviceUrl,getParamesWithPutDelete(request), RequestMethod.PUT,useJson);
-                }else  if("delete".equalsIgnoreCase(sendMethod)){
-                    response = httpClientSupport().sendRequest(serviceUrl,getParamesWithPutDelete(request), RequestMethod.DELETE,useJson);
+                logger.debug("send url is =====>{}", serviceUrl);
+                if ("get".equalsIgnoreCase(sendMethod)) {
+                    response = httpClientSupport().sendRequest(serviceUrl, getParameter(request), RequestMethod.GET, useJson);
+                } else if ("post".equalsIgnoreCase(sendMethod)) {
+                    response = httpClientSupport().sendRequest(serviceUrl, getParameter(request), RequestMethod.POST, useJson);
+                } else if ("put".equalsIgnoreCase(sendMethod)) {
+                    response = httpClientSupport().sendRequest(serviceUrl, getParamesWithPutDelete(request), RequestMethod.PUT, useJson);
+                } else if ("delete".equalsIgnoreCase(sendMethod)) {
+                    response = httpClientSupport().sendRequest(serviceUrl, getParamesWithPutDelete(request), RequestMethod.DELETE, useJson);
                 }
 
             }
 
-            logger.debug("response json is ======>{}",response);
+            logger.debug("response json is ======>{}", response);
 
         }
         return response;
     }
 
-    public String checkServiceUrl(HttpServletRequest request){
-        String url  = request.getRequestURI();
+    public String checkServiceUrl(HttpServletRequest request) {
+        String url = request.getRequestURI();
         String[] urlCharts = url.split("/");
 
         StringBuilder builder = new StringBuilder();
         int count = 0;
-        for(String chart : urlCharts){
-            if(count>1){
+        for (String chart : urlCharts) {
+            if (count > 1) {
                 builder.append("/");
                 builder.append(chart);
             }
@@ -103,22 +106,22 @@ public abstract class AbstractClientController {
         return builder.toString();
     }
 
-    private Map<String,Object> getParameter(HttpServletRequest request){
-        Map<String,Object> params = new HashMap<>();
+    private Map<String, Object> getParameter(HttpServletRequest request) {
+        Map<String, Object> params = new HashMap<>();
         Enumeration<String> allNames = request.getParameterNames();
-        while(allNames.hasMoreElements()){
+        while (allNames.hasMoreElements()) {
             String paramName = allNames.nextElement();
-            params.put(paramName,request.getParameter(paramName));
+            params.put(paramName, request.getParameter(paramName));
         }
         return params;
     }
 
-    private Map getParamesWithPutDelete(HttpServletRequest request){
+    private Map getParamesWithPutDelete(HttpServletRequest request) {
         BufferedReader br = null;
         Map<String, String> dataMap = null;
         try {
             br = new BufferedReader(new InputStreamReader(request.getInputStream()));
-            String data =URLDecoder.decode(br.readLine(), "utf-8") ;
+            String data = URLDecoder.decode(br.readLine(), "utf-8");
 
             dataMap = Splitter.on('&')
                     .trimResults()
