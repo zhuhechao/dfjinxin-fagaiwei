@@ -771,7 +771,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             }
             //非常规预警
             if (ewarnTypeId == 19) {
-                List<WpCommPriEntity> list = wpCommPriOrgDao.selectList(where);
+                List<WpCommPriOrgEntity> list = wpCommPriOrgDao.selectList(where);
                 if (list != null && list.size() > 1) {
                     resuMap.put(list.get(0).getIndexName(), list);
                 }
