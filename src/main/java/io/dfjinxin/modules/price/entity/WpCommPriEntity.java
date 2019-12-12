@@ -1,6 +1,7 @@
 package io.dfjinxin.modules.price.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -27,6 +28,7 @@ public class WpCommPriEntity implements Serializable {
 
 	private String unit;
 
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
 	private Date dataTime;
 
 	private String areaName;
