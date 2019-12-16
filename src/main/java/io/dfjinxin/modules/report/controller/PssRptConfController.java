@@ -19,7 +19,7 @@ import io.dfjinxin.common.utils.R;
 
 
 /**
- * 
+ *
  *
  * @author mxq
  * @email 397968061@qq.com
@@ -27,7 +27,7 @@ import io.dfjinxin.common.utils.R;
  */
 @RestController
 @RequestMapping("report/pssrptconf")
-@Api(tags = "PssRptConfController", description = "分析报告-调度报告配置")
+@Api(tags = "调度报告配置")
 public class PssRptConfController {
     @Autowired
     private PssRptConfService pssRptConfService;
@@ -50,7 +50,7 @@ public class PssRptConfController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{rptId}")
+    @GetMapping("/info/{rptId}")
     @RequiresPermissions("report:pssrptconf:info")
     @ApiOperation("报告配置信息查询")
     @ApiImplicitParams({@ApiImplicitParam(name = "rptId", value = "主键id", required = true, dataType = "Long", paramType = "query")
@@ -67,7 +67,7 @@ public class PssRptConfController {
      */
     @PostMapping("/save")
     @RequiresPermissions("price:pssrptconf:save")
-    @ApiOperation("保存 报告配置信息")
+    @ApiOperation("保存-报告配置信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "dto", value = "保存信息", required = false, dataType = "PssRptConfDto", paramType = "query")
     })
@@ -79,9 +79,9 @@ public class PssRptConfController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @PostMapping("/update")
     @RequiresPermissions("report:pssrptconf:update")
-    @ApiOperation("保存 报告配置更新")
+    @ApiOperation("保存-报告配置更新")
     public R update(@RequestBody PssRptConfEntity pssRptConf){
 		pssRptConfService.updateById(pssRptConf);
 
@@ -91,9 +91,9 @@ public class PssRptConfController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
     @RequiresPermissions("report:pssrptconf:delete")
-    @ApiOperation("保存 报告配置删除")
+    @ApiOperation("保存-报告配置删除")
     public R delete(@RequestBody Long[] rptIds){
         List rschids=Arrays.asList(rptIds);
         for (int i=0;i<rschids.size();i++){

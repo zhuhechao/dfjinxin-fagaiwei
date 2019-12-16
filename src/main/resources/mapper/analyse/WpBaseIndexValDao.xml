@@ -67,40 +67,23 @@
         order by t1.index_name,data_time
     </select>
 
-    <!--<select id="selectListBystatAreaId" resultMap="wpBaseIndexValMap">
-        SELECT max(date) as data_time,index_name,area_name,frequence,value,unit
-        from wp_base_index_val val
-        WHERE comm_id = #{commId}
-        AND index_type = #{indexType}
-        AND index_id = #{indexId}
-        AND date IS NOT NULL
-        GROUP BY area_name
-        ORDER BY data_time desc
-    </select>-->
-
     <select id="queryByIndexType" resultMap="wpBaseIndexValMap">
         select * from wp_base_index_val wiv
         where index_type = #{indexType}
         and comm_id= #{commId}
         and area_name='全国'
-        order by date desc
+        and date <![CDATA[ <= ]]> #{date}
         limit 0,30
     </select>
 
     <select id="queryMapValByIndexType" resultMap="wpBaseIndexValMap">
-        SELECT max(date) as data_time,
-           comm_id,
-           index_type,
-           index_type,
-           area_name,
-           value,
-           unit
+        SELECT *
         FROM wp_base_index_val
         where index_type = '价格'
         and comm_id= #{commId}
         and area_name !='全国'
+        and date = #{date}
         GROUP BY area_name
-        ORDER BY date desc
     </select>
 
     <select id="queryNoPriceByIndexType" resultMap="wpBaseIndexValMap">

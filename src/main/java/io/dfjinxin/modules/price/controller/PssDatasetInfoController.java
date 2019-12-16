@@ -40,7 +40,7 @@ public class PssDatasetInfoController {
     @Autowired
     private HiveService hiveService;
 
-    @Value("${ssh.url}")
+    @Value("${python.url}")
     private String pyUrl;
 
     private static final Logger LOG = LoggerFactory.getLogger(PssDatasetInfoController.class);

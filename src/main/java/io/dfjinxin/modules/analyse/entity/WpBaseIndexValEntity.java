@@ -68,4 +68,6 @@ public class WpBaseIndexValEntity implements Serializable {
     @TableField(exist = false)
     private String tongBi;
 
+    @TableField(exist = false)
+    private String huanBi;
 }

@@ -24,9 +24,12 @@ hive:
     poolPreparedStatements: false
     maxPoolPreparedStatementPerConnectionSize: 500
 
-#python服务配置
-ssh:
+#远程服务python配置
+python:
+    #    数据集创建、相关性分析
     url: http://172.20.10.16:8082/
+    #    模型管理
+#    url2: http://172.20.10.16:8092
 
 #腾讯接口配置
 tengxun:

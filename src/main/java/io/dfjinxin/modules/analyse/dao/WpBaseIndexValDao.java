@@ -29,9 +29,9 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
 
     List<Map<String, Object>> queryIndexTypePrice(@Param("condition") Map<String, Object> condition);
 
-    List<WpBaseIndexValEntity> queryByIndexType(@Param("commId") Integer commId, @Param("indexType") String indexType);
+    List<WpBaseIndexValEntity> queryByIndexType(@Param("commId") Integer commId, @Param("indexType") String indexType, @Param("date") String date);
 
-    List<WpBaseIndexValEntity> queryMapValByIndexType(@Param("commId") Integer commId);
+    List<WpBaseIndexValEntity> queryMapValByIndexType(@Param("commId") Integer commId,@Param("date") String date);
 
     List<WpBaseIndexValEntity> queryNoPriceByIndexType(@Param("commId") Integer commId, @Param("indexType") String indexType);
 

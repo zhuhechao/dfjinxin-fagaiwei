@@ -24,7 +24,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("dataAccess/dataSources")
-@Api(tags = "DataSourcesController", description = "数据接入-数据源管理")
+@Api(tags = "数据源管理-操作")
 public class PssDataSourcesController {
 
     @Autowired

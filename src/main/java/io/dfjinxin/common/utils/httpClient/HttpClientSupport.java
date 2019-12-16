@@ -171,8 +171,7 @@ public class HttpClientSupport {
     public String sendRequest(String url, Map<String, Object> params, RequestMethod sendMethod, boolean useJson) throws IOException, URISyntaxException {
         Map<String, Object> paramMap = parseParams(params);
         URIBuilder uriBuilder = new URIBuilder(new StringBuilder()
-                .append(this.serviceUrl != null ? this.serviceUrl.trim() : "")
-                .append("/").append(url).toString());
+                .append(this.serviceUrl != null ? this.serviceUrl.trim() : "").append(url).toString());
 
         CloseableHttpResponse response = null;
         if (sendMethod.equals(RequestMethod.GET)) {

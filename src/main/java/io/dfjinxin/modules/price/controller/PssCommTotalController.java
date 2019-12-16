@@ -30,7 +30,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("price/comm/conf")
-@Api(tags = "PssCommTotalController", description = "价格监测子系统-商品配置")
+@Api(tags = "商品、商品配置")
 public class PssCommTotalController {
 
     private static final Logger LOG = LoggerFactory.getLogger(PssCommTotalController.class);

@@ -56,7 +56,7 @@ public class PssAnalyInfoController {
 //    @Value("${ssh.port}")
 //    private int port = 22;
 
-    @Value("${ssh.url}")
+    @Value("${python.url}")
     private String url;
 
 

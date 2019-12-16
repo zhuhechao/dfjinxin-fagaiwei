@@ -34,15 +34,12 @@ public abstract class AbstractClientController {
 
     public String clientRequest(HttpServletRequest request, boolean useJson) throws IOException, URISyntaxException, ServletException {
         String serviceUrl = checkServiceUrl(request);
-
         String response = null;
-
         String sendMethod = request.getMethod();
         logger.info("python req url:{}", serviceUrl);
         logger.info("python req method:{}", sendMethod);
         logger.info("python req params:{}", getParameter(request));
         if (!Strings.isNullOrEmpty(sendMethod)) {
-
             if (request instanceof MultipartHttpServletRequest) {//有文件上传
                 MultipartHttpServletRequest muliRequest = (MultipartHttpServletRequest) request;
                 Iterator<String> fileNames = muliRequest.getFileNames();
@@ -83,7 +80,7 @@ public abstract class AbstractClientController {
 
             }
 
-            logger.debug("response json is ======>{}", response);
+            logger.debug("python res json is ======>{}", response);
 
         }
         return response;

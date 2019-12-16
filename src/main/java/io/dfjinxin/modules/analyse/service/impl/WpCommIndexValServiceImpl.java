@@ -208,6 +208,8 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         List<List<WpBaseIndexValEntity>> priceList = new ArrayList<>();
         List<List<WpBaseIndexValEntity>> noPriceList = new ArrayList<>();
         List<List<WpBaseIndexValEntity>> mapValList = new ArrayList<>();
+        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));//前一天时间
+
         for (PssCommTotalEntity comm : type4comms) {
             QueryWrapper where2 = new QueryWrapper();
             where2.eq("comm_id", comm.getCommId());
@@ -219,8 +221,8 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                 where3.eq("data_flag", 0);
                 if (type.getIndexType().equals("价格")) {
                     //统计价格类型的4类最高指标价格
-                    List<WpBaseIndexValEntity> valList = wpBaseIndexValDao.queryByIndexType(comm.getCommId(), "价格");
-                    if (valList != null && valList.size() > 0) {
+                    List<WpBaseIndexValEntity> valList = wpBaseIndexValDao.queryByIndexType(comm.getCommId(), "价格", lastDayStr);
+                    if (!valList.isEmpty()) {
 
                         where3.eq("comm_id", valList.get(0).getCommId());
                         PssCommTotalEntity commTotalEntity = pssCommTotalDao.selectOne(where3);
@@ -229,10 +231,11 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                         }
                         //计算同比
                         valList = converTongBi(valList);
+                        valList = converHuanBi(valList);
                         priceList.add(valList);
                         //计算省份地图值
-                        List<WpBaseIndexValEntity> mapValTempList = wpBaseIndexValDao.queryMapValByIndexType(comm.getCommId());
-                        if (mapValTempList != null && mapValTempList.size() > 1) {
+                        List<WpBaseIndexValEntity> mapValTempList = wpBaseIndexValDao.queryMapValByIndexType(comm.getCommId(), lastDayStr);
+                        if (!mapValTempList.isEmpty()) {
                             mapValList.add(mapValTempList);
                         }
                     }
@@ -269,6 +272,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
 
         return resMap;
     }
+
 
     /**
      * 二级页面(商品总览) add by zhc 2019.11.11
@@ -370,6 +374,76 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         return resultList;
     }
 
+    /**
+     * @Desc: 根据频度计算环比
+     * @Param: [valList]
+     * @Return: java.util.List<io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity>
+     * @Author: z.h.c
+     * @Date: 2019/12/16 16:47
+     */
+    private List<WpBaseIndexValEntity> converHuanBi(List<WpBaseIndexValEntity> valList) {
+        if (valList.isEmpty()) return null;
+
+        //昨天最新价格
+        WpBaseIndexValEntity lastDayPrice = valList.get(0);
+        String frequence = lastDayPrice.getFrequence();
+        Double firstVal = lastDayPrice.getValue();
+        Double lastVal = null;
+        String queryDate = "";
+
+        QueryWrapper<WpBaseIndexValEntity> where = new QueryWrapper<>();
+        where.eq("comm_id", lastDayPrice.getCommId());
+        where.eq("index_id", lastDayPrice.getIndexId());
+        where.eq("index_type", lastDayPrice.getIndexType());
+        where.eq("frequence", frequence);
+        where.last("limit 0,1");
+        if ("日".equals(frequence)) {
+            //前天价格
+            WpBaseIndexValEntity last2DayPrice = valList.get(1);
+            lastVal = last2DayPrice == null ? 0 : last2DayPrice.getValue();
+        }
+        if ("月".equals(frequence)) {
+            //统计一个月前价格
+            queryDate = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -30));//一个月前时间
+            where.eq("date", queryDate);
+            WpBaseIndexValEntity lastMonthPrice = baseMapper.selectOne(where);
+            lastVal = lastMonthPrice == null ? 0 : lastMonthPrice.getValue();
+        }
+        if ("周".equals(frequence)) {
+            //统计一个月前价格
+            queryDate = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -7));//一周时间
+            where.eq("date", queryDate);
+            WpBaseIndexValEntity lastWeekPrice = baseMapper.selectOne(where);
+            lastVal = lastWeekPrice == null ? 0 : lastWeekPrice.getValue();
+        }
+        if ("年".equals(frequence)) {
+            //统计一个月前价格
+            queryDate = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -365));//一年前时间
+            where.eq("date", queryDate);
+            WpBaseIndexValEntity lastYearPrice = baseMapper.selectOne(where);
+            lastVal = lastYearPrice == null ? 0 : lastYearPrice.getValue();
+        }
+
+        if (lastVal == 0) {
+            lastDayPrice.setHuanBi("0%");
+            valList.set(0, lastDayPrice);
+        } else {
+            Double tempVal = firstVal - lastVal;
+            Double huanBi = tempVal / lastVal * 100;
+            DecimalFormat df = new DecimalFormat("#.00");
+            lastDayPrice.setHuanBi(df.format(huanBi) + "%");
+            valList.set(0, lastDayPrice);
+        }
+        return valList;
+    }
+
+    /**
+     * @Desc: 计算同比
+     * @Param: [valEntities]
+     * @Return: java.util.List<io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity>
+     * @Author: z.h.c
+     * @Date: 2019/12/16 16:47
+     */
     private List<WpBaseIndexValEntity> converTongBi(List<WpBaseIndexValEntity> valEntities) {
         WpBaseIndexValEntity first = valEntities.get(0);
         WpBaseIndexValEntity last = valEntities.get(1);

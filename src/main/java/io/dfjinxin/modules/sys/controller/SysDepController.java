@@ -25,7 +25,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/sys/dep")
-@Api(tags = "SysDepController", description = "部门管理")
+@Api(tags = "部门管理")
 public class SysDepController  extends AbstractController{
     @Autowired
     private SysDepService sysDepService;

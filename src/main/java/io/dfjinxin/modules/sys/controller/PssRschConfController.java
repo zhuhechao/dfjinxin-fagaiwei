@@ -21,7 +21,7 @@ import io.dfjinxin.common.utils.R;
 
 
 /**
- * 
+ *
  *
  * @author mxq
  * @email 397968061@qq.com
@@ -29,7 +29,7 @@ import io.dfjinxin.common.utils.R;
  */
 @RestController
 @RequestMapping("job/pssrschconf")
-@Api(tags = "PssRschConfController", description = "调度管理-调度配置")
+@Api(tags = "调度管理-调度配置")
 
 public class PssRschConfController {
     @Autowired

@@ -37,7 +37,7 @@ import java.util.Set;
  */
 @RestController
 @RequestMapping("/sys/menu")
-@Api(tags = "SysMenuController", description = "菜单管理")
+@Api(tags = "菜单管理")
 public class SysMenuController {
 	@Autowired
 	private SysMenuService sysMenuService;

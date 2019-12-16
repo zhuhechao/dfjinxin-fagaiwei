@@ -39,7 +39,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/sys/user")
-@Api(tags = "SysUserController", description = "用户管理")
+@Api(tags = "用户管理")
 public class SysUserController extends AbstractController {
 	@Autowired
 	private SysUserService sysUserService;

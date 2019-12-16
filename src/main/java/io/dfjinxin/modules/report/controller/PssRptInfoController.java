@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * 
+ *
  *
  * @author mxq
  * @email 397968061@qq.com
@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @RestController
 @RequestMapping("report/pssrptinfo")
-@Api(tags = "PssRptInfoController", description = "报告信息表")
+@Api(tags = "报告信息-配置、管理")
 
 public class PssRptInfoController {
     @Autowired
@@ -43,7 +43,7 @@ public class PssRptInfoController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @GetMapping("/list")
     @RequiresPermissions("report:pssrptinfo:list")
     @ApiOperation("报告运行信息列表分页")
     public R list(@RequestParam Map<String, Object> params){
@@ -56,7 +56,7 @@ public class PssRptInfoController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{rptId}")
+    @GetMapping("/info/{rptId}")
     @RequiresPermissions("report:pssrptinfo:info")
     @ApiOperation("报告运行信息获取")
     public R info(@PathVariable("rptId") Long rptId){
@@ -68,7 +68,7 @@ public class PssRptInfoController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     @RequiresPermissions("report:pssrptinfo:save")
     @ApiOperation("报告运行信息保存")
     public R save(@RequestBody PssRptInfoEntity pssRptInfo){
@@ -80,7 +80,7 @@ public class PssRptInfoController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @PostMapping("/update")
     @RequiresPermissions("report:pssrptinfo:update")
     @ApiOperation("报告运行信息更新")
     public R update(@RequestBody PssRptInfoEntity pssRptInfo){
@@ -92,7 +92,7 @@ public class PssRptInfoController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
     @RequiresPermissions("report:pssrptinfo:delete")
     @ApiOperation("报告运行信息删除")
     public R delete(@RequestBody Long[] rptIds){
@@ -100,7 +100,8 @@ public class PssRptInfoController {
 
         return R.ok();
     }
-    @RequestMapping("/preview/image/{infoId}/word/media/{imageName}")
+
+    @PostMapping("/preview/image/{infoId}/word/media/{imageName}")
     public void previewImage(@PathVariable("infoId" ) String infoId,
                         @PathVariable(value = "imageName" ) String imageName ) throws Exception {
         PssRptInfoEntity prie = pssRptInfoService.getById(infoId);
@@ -108,7 +109,7 @@ public class PssRptInfoController {
         OutputStream out = null;
         Path imageP=Paths.get(new StringBuilder()
                 .append(appProperties.getPath().getUserDir())
-                .append(prie.getRptPath().substring(0,prie.getRptPath().lastIndexOf("\\")))
+                .append(prie.getRptPath(), 0, prie.getRptPath().lastIndexOf("\\"))
                 .append("/image/").append(infoId).append("/word/media/").append(imageName).toString());
         input = new FileInputStream(imageP.toString());
         response.setContentType("image/png");
@@ -132,7 +133,7 @@ public class PssRptInfoController {
     }
 
 
-    @RequestMapping("/preview")
+    @PostMapping("/preview")
     public void preview(@RequestParam(value = "fileType" ) String fileType,
                         @RequestParam(value = "infoId" ) String infoId ) throws Exception {
         PssRptInfoEntity prie = pssRptInfoService.getById(infoId);

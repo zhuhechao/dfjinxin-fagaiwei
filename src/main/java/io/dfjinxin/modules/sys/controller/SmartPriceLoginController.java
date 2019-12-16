@@ -34,7 +34,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("zhjg")
-@Api(tags = "SmartPriceLoginController", description = "发改登录")
+@Api(tags = "发改登录")
 public class SmartPriceLoginController extends AbstractController {
 
     @Autowired

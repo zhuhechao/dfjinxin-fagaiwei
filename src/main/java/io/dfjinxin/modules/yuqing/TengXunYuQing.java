@@ -44,7 +44,7 @@ public class TengXunYuQing {
 
     @Autowired
     private PssPriceEwarnService pssPriceEwarnService;
-
+//    接口文件地址 https://docs.qq.com/doc/DQmZ5eGpJTXZQT2d6
 
     /**
      * 商品舆情热度分布
