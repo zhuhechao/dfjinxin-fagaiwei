@@ -315,6 +315,8 @@ public class PssAnalyInfoController {
     private R callPython(String url, JSONObject jsonObject) {
         String retStr = null;
         try {
+            logger.info("调用python分析接口-url:{}", url);
+            logger.info("调用python分析接口-reqParams:{}", jsonObject.toJSONString());
             retStr = PythonApiUtils.doPost(url, jsonObject.toJSONString());
         } catch (Exception e) {
 
