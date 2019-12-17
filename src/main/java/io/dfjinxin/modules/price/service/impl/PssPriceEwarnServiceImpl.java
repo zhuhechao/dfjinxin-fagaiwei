@@ -98,7 +98,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     @Override
     public Map<String, Object> queryList() {
 
-        Map<String, Object> map = firstPageView();
+        Map<String, Object> map = firstPageView(false);
         if (map == null || !map.containsKey("ewanInfo")) {
             return null;
         }
@@ -142,14 +142,14 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     }
 
     /**
-     * @Desc: 首页展示 第二次修改
+     * @Desc: 首页展示 第二次修改,为false不查询Hive
      * @Param: []
      * @Return: java.util.Map<java.lang.String, java.lang.Object>
      * @Author: z.h.c
      * @Date: 2019/10/23 13:56
      */
     @Override
-    public Map<String, Object> firstPageView() {
+    public Map<String, Object> firstPageView(boolean queryHive) {
         Map<String, Object> retMap = new HashMap<>();
 
         String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
@@ -185,10 +185,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             rateValDtos.add(rateValDto);
         }
 
-        int hiveCount = getHiveCount();
-        int tengxunCount = getProgrammeDistribution();
-        //step1,实时预览-总量(万）
-        retMap.put("commTotal", hiveCount + tengxunCount);
+        if (queryHive) {
+//            int hiveCount = getHiveCount();
+            int tengxunCount = getProgrammeDistribution();
+            //step1,实时预览-总量(万）
+            retMap.put("commTotal", /*hiveCount +*/ tengxunCount);
+        }
 
         Map<String, Object> lineDateMap = new HashMap<>();
         QueryWrapper<PssPriceEwarnEntity> queryWrapper = new QueryWrapper();
@@ -859,7 +861,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
      */
     @Override
     public Map<String, Object> bg_firstPage_commEwarn() {
-        Map<String, Object> view = this.firstPageView();
+        Map<String, Object> view = this.firstPageView(true);
         Map<String, Object> retMap = new HashMap<>();
 
         //商品预警信息

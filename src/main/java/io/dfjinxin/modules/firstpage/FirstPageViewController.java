@@ -25,13 +25,14 @@ public class FirstPageViewController {
 
     @Autowired
     private PssPriceEwarnService pssPriceEwarnService;
+
     /**
      * 列表
      */
     @GetMapping("/view")
     @ApiOperation("首页-商品预警详细")
     public R firstpage() {
-        Map<String,Object> map = pssPriceEwarnService.firstPageView();
+        Map<String, Object> map = pssPriceEwarnService.firstPageView(true);
 
         return R.ok().put("data", map);
     }

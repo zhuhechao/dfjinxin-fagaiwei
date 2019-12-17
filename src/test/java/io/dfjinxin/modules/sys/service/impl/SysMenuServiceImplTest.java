@@ -51,7 +51,7 @@ public class SysMenuServiceImplTest {
     public void getprovinceLastDayMapData() {
 //        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
 
-        pssPriceEwarnService.firstPageView();
+        pssPriceEwarnService.firstPageView(false);
     }
 
     @Test
