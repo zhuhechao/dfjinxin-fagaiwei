@@ -30,7 +30,7 @@ public class PssRptConfEntity implements Serializable {
 	/**
 	 * 商品ID
 	 */
-	private String commId;
+	private Integer commId;
 	/**
 	 * 报告类型 0 自动 1 手工
 	 */

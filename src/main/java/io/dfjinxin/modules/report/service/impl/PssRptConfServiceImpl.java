@@ -72,7 +72,7 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
             PssRptInfoEntity prie=new PssRptInfoEntity();
             //保存商品信息
             PssCommTotalEntity pte=pssCommTotalService.getById(entity.getCommId());
-            prie.setCommId(pte.getCommId()+"");
+            prie.setCommId(pte.getCommId());
             prie.setCommName(pte.getCommName());
             prie.setRptType("1");
             prie.setRptFreq(entity.getRptFreq());

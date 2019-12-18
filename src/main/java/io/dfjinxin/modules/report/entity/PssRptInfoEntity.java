@@ -31,7 +31,7 @@ public class PssRptInfoEntity implements Serializable {
 	/**
 	 * 商品id
 	 */
-	private String commId;
+	private Integer commId;
 	/**
 	 * 商品名称
 	 */
