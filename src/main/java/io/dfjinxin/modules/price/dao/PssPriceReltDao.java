@@ -29,11 +29,24 @@ public interface PssPriceReltDao extends BaseMapper<PssPriceReltEntity> {
             "                   on relt.comm_id = com.comm_id\n" +
             "where relt.comm_id =   #{commId}\n" +
             "  and relt.fore_type = #{foreType}\n" +
-            "  and relt.fore_time > #{foreTime}\n" +
-            "order by fore_time desc\n" +
+            "  and relt.data_date > #{dataDate}\n" +
+            "order by data_date asc\n" +
             "limit 0,#{endIndex}")
     List<PssPriceReltEntity> selectByForeType(@Param("commId") Integer commId,
                                               @Param("foreType") String foreType,
-                                              @Param("foreTime") String foreTime,
+                                              @Param("dataDate") String dataDate,
                                               @Param("endIndex") Integer endIndex);
+
+    @Select("select relt.*, com.comm_name\n" +
+            "from pss_price_relt relt\n" +
+            "         left join pss_comm_total com\n" +
+            "                   on relt.comm_id = com.comm_id\n" +
+            "where relt.comm_id =   #{commId}\n" +
+            "  and relt.fore_type = #{foreType}\n" +
+            "  and relt.data_date between #{startDate} and #{endDate}\n" +
+            "order by data_date asc")
+    List<PssPriceReltEntity> selectByDate(@Param("commId") Integer commId,
+                                          @Param("foreType") String foreType,
+                                          @Param("startDate") String startDate,
+                                          @Param("endDate") String endDate);
 }

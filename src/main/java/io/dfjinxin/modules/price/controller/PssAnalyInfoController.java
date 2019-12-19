@@ -212,12 +212,12 @@ public class PssAnalyInfoController {
             } else if (pssAnalyInfoDto.getAnalyWay().equals("格兰杰")) {
                 jsonObject.put("table", pssDatasetInfoEntity.getDataSetEngName());
                 jsonObject.put("indepVar", concatIds);
-                jsonObject.put("depeVar", pssAnalyInfoDto.getDepeVar());
+                jsonObject.put("depeVar", "b_" + pssAnalyInfoDto.getDepeVar());
                 r = callPython(url + "grangerAna", jsonObject);
             } else if (pssAnalyInfoDto.getAnalyWay().equals("路径分析")) {
                 jsonObject.put("table", pssDatasetInfoEntity.getDataSetEngName());
                 jsonObject.put("indepVar", concatIds);
-                jsonObject.put("depeVar", pssAnalyInfoDto.getDepeVar());
+                jsonObject.put("depeVar", "b_" + pssAnalyInfoDto.getDepeVar());
                 r = callPython(url + "pathAna", jsonObject);
             } else {//一般相关性分析
                 jsonObject.put("table", pssDatasetInfoEntity.getDataSetEngName());

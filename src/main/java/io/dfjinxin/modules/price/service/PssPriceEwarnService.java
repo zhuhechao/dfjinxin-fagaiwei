@@ -3,6 +3,7 @@ package io.dfjinxin.modules.price.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.modules.price.entity.PssPriceEwarnEntity;
+import io.dfjinxin.modules.price.entity.PssPriceReltEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,8 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
     Map<String, Object> bg_firstPage_commEwarn();
 
     Map<String, Object> bg_firstPage_riskInfo();
+
+    List<PssPriceReltEntity> jiaGeYuCe(String foreType, Integer commId);
 
 }
 

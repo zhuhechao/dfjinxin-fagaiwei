@@ -44,7 +44,10 @@ public class ModelController extends AbstractClientController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ModelController.class);
 
+    //测试环境
     private static String pythonHost = "http://10.1.3.239:8092";
+    //生产环境
+//    private static String pythonHost = "http://172.20.10.16:8092";
     private HttpClientSupport httpClientSupport = HttpClientSupport.getInstance(pythonHost);
 
 //    @RequestMapping(path = "/nlp/test", method = {RequestMethod.GET})

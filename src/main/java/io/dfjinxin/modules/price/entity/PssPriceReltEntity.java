@@ -25,7 +25,10 @@ public class PssPriceReltEntity implements Serializable {
      *
      */
     @TableId
+    private Long id;
+
     private Integer commId;
+    private Integer indexId;
     /**
      *
      */
@@ -62,7 +65,7 @@ public class PssPriceReltEntity implements Serializable {
     @TableField(exist = false)
     private String commName;
 
-    public static PssPriceReltEntity toEntity(PssPriceReltDto from) {
+ /*   public static PssPriceReltEntity toEntity(PssPriceReltDto from) {
         if (null == from) {
             return null;
         }
@@ -78,5 +81,5 @@ public class PssPriceReltEntity implements Serializable {
         PssPriceReltDto to = new PssPriceReltDto();
         BeanUtils.copyProperties(from, to);
         return to;
-    }
+    }*/
 }
