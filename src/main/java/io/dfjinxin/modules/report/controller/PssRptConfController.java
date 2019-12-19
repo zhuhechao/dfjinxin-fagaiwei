@@ -47,7 +47,7 @@ public class PssRptConfController {
             @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
             @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize,
             @RequestParam(value = "rptType", required = false) String rptType,
-            @RequestParam(value = "dataType", required = false) String rptFreq
+            @RequestParam(value = "rptFreq", required = false) String rptFreq
     ) {
         Map<String, Object> params = new HashMap() {{
             put("pageIndex", pageIndex);
