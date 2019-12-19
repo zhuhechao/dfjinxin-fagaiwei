@@ -27,21 +27,14 @@
 
 
     <!--列表展示-->
-    <select id="queryPage" resultMap="pssRptConfMap">
-        SELECT
-        rpt_id,
-        comm_id,
-        rpt_name,
-        rpt_type,
-        rpt_freq,
-        rpt_date,
-        stat_code,
-        crte_date,
-        crte_name,
-        rvew_remarks,
-        comm_name
+    <select id="queryPage" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT rpt.rpt_id, rpt.comm_id, rpt.rpt_name, rpt.rpt_type, rpt.rpt_freq, rpt.rpt_date,
+        rpt.stat_code, rpt.crte_date, rpt.crte_name, rpt.rvew_remarks, rpt.comm_name, rsch.rsch_name
         FROM
-        pss_rpt_conf
+        pss_rpt_conf rpt
+        left join
+        pss_rsch_conf rsch
+        on rpt.rsch_id = rsch.rsch_id
         <include refid="rptConfWhere"></include>
     </select>
 

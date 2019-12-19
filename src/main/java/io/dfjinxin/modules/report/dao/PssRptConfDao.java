@@ -20,5 +20,5 @@ import java.util.Map;
 @Mapper
 public interface PssRptConfDao extends BaseMapper<PssRptConfEntity> {
 
-    IPage<PssPriceReltEntity> queryPage(Page page, @Param("param") Map<String, Object> map);
+    IPage<Map<String, Object>> queryPage(Page page, @Param("param") Map<String,Object> params);
 }
