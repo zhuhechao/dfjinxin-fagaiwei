@@ -23,6 +23,6 @@ public interface PssDataSourcesDao extends BaseMapper<PssDataSourcesEntity> {
 
 
 
-    IPage<PssPriceReltEntity> queryPage(Page page, @Param("param") Map<String, Object> map);
+    IPage<PssDataSourcesEntity> queryPage(Page page, @Param("param") Map<String, Object> map);
 
 }

@@ -33,21 +33,22 @@ public class PssRptConfController {
     private PssRptConfService pssRptConfService;
 
     /**
-     * 列表
+     * 分页
      */
     @GetMapping("/list")
-    @RequiresPermissions("report:pssrptconf:list")
-    @ApiOperation("报告配置列表分页")
+    @ApiOperation(value = "报告配置-查询")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageIndex", value = "页码", required = false, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "返回数据集", required = false, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "rptType", value = "报告类型", required = false, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "rptFreq", value = "报告频度", required = false, dataType = "String", paramType = "query"),
     })
-    public R list(@RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
-                  @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
-                  @RequestParam(value = "rptType", required = false) String rptType,
-                  @RequestParam(value = "rptFreq", required = false) String rptFreq) {
+    public R list(
+            @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
+            @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize,
+            @RequestParam(value = "rptType", required = false) String rptType,
+            @RequestParam(value = "dataType", required = false) String rptFreq
+    ) {
         Map<String, Object> params = new HashMap() {{
             put("pageIndex", pageIndex);
             put("pageSize", pageSize);
