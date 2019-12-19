@@ -1,8 +1,14 @@
 package io.dfjinxin.modules.report.dao;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.dfjinxin.modules.price.entity.PssPriceReltEntity;
 import io.dfjinxin.modules.report.entity.PssRptConfEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Map;
 
 /**
  * 
@@ -14,4 +20,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface PssRptConfDao extends BaseMapper<PssRptConfEntity> {
 
+    IPage<PssPriceReltEntity> queryPage(Page page, @Param("param") Map<String, Object> map);
 }

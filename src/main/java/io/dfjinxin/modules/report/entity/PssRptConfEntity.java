@@ -51,6 +51,10 @@ public class PssRptConfEntity implements Serializable {
 	 * 报告名称
 	 */
 	private String rptName;
+
+	//商品名称
+	private String commName;
+
 	/**
 	 * 统计区域代码
 	 */

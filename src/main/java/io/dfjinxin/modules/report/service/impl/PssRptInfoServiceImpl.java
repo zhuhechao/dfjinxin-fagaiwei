@@ -25,7 +25,7 @@ public class PssRptInfoServiceImpl extends ServiceImpl<PssRptInfoDao, PssRptInfo
         addQueryCondition(params,"crteTime","crte_time","between",qr);
         addQueryCondition(params,"rschFreq","rpt_freq","eq",qr);
         addQueryCondition(params,"rptStatus","rpt_status","eq",qr);
-        qr.orderByDesc("crteTime");
+        qr.orderByDesc("crte_time");
 
         IPage<PssRptInfoEntity> page = this.page(
                 new Query<PssRptInfoEntity>().getPage(params),

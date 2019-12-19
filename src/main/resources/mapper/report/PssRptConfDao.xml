@@ -12,6 +12,7 @@
         <result property="rschId" column="rsch_id"/>
         <result property="rptDate" column="rpt_date"/>
         <result property="rptName" column="rpt_name"/>
+        <result property="commName" column="comm_name"/>
         <result property="statCode" column="stat_code"/>
         <result property="rptPath" column="rpt_path"/>
         <result property="crteDate" column="crte_date"/>
@@ -24,5 +25,39 @@
         <result property="rptAttachmentName" column="rpt_attachment_name"/>
     </resultMap>
 
+
+    <!--列表展示-->
+    <select id="queryPage" resultMap="pssRptConfMap">
+        SELECT
+        rpt_id,
+        comm_id,
+        rpt_name,
+        rpt_type,
+        rpt_freq,
+        rpt_date,
+        stat_code,
+        crte_date,
+        crte_name,
+        rvew_remarks,
+        comm_name
+        FROM
+        pss_rpt_conf
+        <include refid="rptConfWhere"></include>
+    </select>
+
+
+
+    <!-- 条件查询 -->
+    <sql id="rptConfWhere">
+        <where>
+            <if test="param.rptType!= null and param.rptType!= '' ">
+                rpt_type = #{param.rptType}
+            </if>
+            <if test="param.rptFreq!= null and param.rptFreq!= '' ">
+                AND rpt_freq = #{param.rptFreq}
+            </if>
+        </where>
+
+    </sql>
 
 </mapper>

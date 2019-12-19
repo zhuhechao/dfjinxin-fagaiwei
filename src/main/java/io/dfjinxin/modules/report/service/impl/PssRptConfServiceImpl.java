@@ -2,6 +2,7 @@ package io.dfjinxin.modules.report.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.dfjinxin.common.utils.DateTime;
 import io.dfjinxin.common.utils.PageUtils;
@@ -40,12 +41,10 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        QueryWrapper qr=new QueryWrapper<PssRptConfEntity>();
+       /* QueryWrapper qr=new QueryWrapper<PssRptConfEntity>();
+
         addQueryCondition(params,"rptType","rpt_type",qr);
         addQueryCondition(params,"rptFreq","rpt_Freq",qr);
-//        addQueryCondition(params,"rcshId","rcsh_id",qr);
-        addQueryCondition(params,"rschId","rsch_id",qr);
-
         qr.orderByDesc("crte_date");
 
         IPage<PssRptConfEntity> page = this.page(
@@ -53,15 +52,19 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
                 qr
         );
 
+        return new PageUtils(page);*/
+
+        Page page = new Page((Integer) params.get("pageIndex"), (Integer) params.get("pageSize"));
+        page = (Page) super.baseMapper.queryPage(page, params);
         return new PageUtils(page);
     }
 
-    private void addQueryCondition(Map<String, Object> params,String con,String con_cloum ,QueryWrapper qr){
-        Object o=params.get(con);
-        if(o!=null&& StringUtils.isNotBlank(o.toString())){
-            qr.eq(con_cloum,o.toString());
-        }
-    }
+//    private void addQueryCondition(Map<String, Object> params,String con,String con_cloum ,QueryWrapper qr){
+//        Object o=params.get(con);
+//        if(o!=null&& StringUtils.isNotBlank(o.toString())){
+//            qr.eq(con_cloum,o.toString());
+//        }
+//    }
 
 
     @Override
