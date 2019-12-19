@@ -26,6 +26,7 @@
         <result property="foreTime" column="fore_time"/>
         <result property="reviPrice" column="revi_price"/>
         <result property="reviTime" column="revi_time"/>
+        <result property="realPrice" column="value"/>
 
         <result property="commName" column="comm_name"/>
         <result property="modName" column="mod_name"/>
@@ -42,34 +43,44 @@
         LEFT JOIN pss_comm_total pct ON ppr.comm_id = pct.comm_id
         LEFT JOIN pss_dataset_info pdi ON ppr.data_set_id = pdi.data_set_id
         LEFT JOIN pss_fore_mod_result pfmr ON ppr.mod_id = pfmr.mod_id
-        WHERE 1 = 1
-        <!--    <if test="param.parentCode != null">-->
-        <!--      AND pct.parent_code = #{param.parentCode}-->
-        <!--    </if>-->
-        <!--    <if test="param.levelCode != null">-->
-        <!--      AND pct.level_code = #{param.levelCode}-->
-        <!--    </if>-->
+        WHERE 1=1
 
-        <if test="param.foreType != null"><!-- 预测类型 -->
-            AND ppr.fore_type = #{param.foreType}
-        </if>
-        <if test="param.commName != null and param.commName.trim() != ''">
-            <!-- 过滤商品名
-          AND pct.comm_name LIKE concat('%', #{param.commName}, '%')-->
+        <if test="param.type3CommId != null and param.type3CommId!= ''">
             and ppr.comm_id in (select tmp.comm_id from pss_comm_total tmp
             where data_flag=0 and tmp.parent_code = #{param.type3CommId})
         </if>
 
+        <!-- 预测类型 -->
+        <if test="param.foreType != null and param.foreType!= ''">
+            AND ppr.fore_type = #{param.foreType}
+        </if>
 
-        <!--    <if test="param.commId != null">-->
-        <!--      AND ppr.comm_id = #{param.commId}-->
-        <!--    </if>-->
-        <!--    <if test="param.dateFrom != null ">-->
-        <!--      AND ppr.data_date &gt;= #{param.dateFrom}-->
-        <!--    </if>-->
-        <!--    <if test="param.dateTo != null ">-->
-        <!--      AND ppr.data_date &lt;= #{param.dateTo}-->
-        <!--    </if>-->
+        <if test="param.dateFrom != null ">
+            AND ppr.data_date &gt;= #{param.dateFrom}
+        </if>
+        <if test="param.dateTo != null ">
+            AND ppr.data_date &lt;= #{param.dateTo}
+        </if>
+
+    </select>
+
+    <select id="getDataGrid" resultMap="pssPriceReltDtoMap">
+        SELECT ppr.*, val.value
+        FROM pss_price_relt ppr
+        left join wp_base_index_val val on val.comm_id = ppr.comm_id
+        WHERE ppr.comm_id in (select tmp.comm_id
+            from pss_comm_total tmp
+            where data_flag = 0
+            and tmp.parent_code = #{param.commId})
+        and val.index_id = ppr.index_id
+        and val.date = ppr.data_date
+
+        <if test="param.dateFrom != null ">
+            AND ppr.data_date &gt;= #{param.dateFrom}
+        </if>
+        <if test="param.dateTo != null ">
+            AND ppr.data_date &lt;= #{param.dateTo}
+        </if>
 
     </select>
 </mapper>

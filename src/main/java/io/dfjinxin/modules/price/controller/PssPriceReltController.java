@@ -3,17 +3,16 @@ package io.dfjinxin.modules.price.controller;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.common.validator.ValidatorUtils;
+import io.dfjinxin.modules.price.dto.PssPriceReltDto;
 import io.dfjinxin.modules.price.entity.PssPriceReltEntity;
 import io.dfjinxin.modules.price.service.PssPriceReltService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,21 +81,44 @@ public class PssPriceReltController {
     }
 
 
-    @GetMapping("/query/comm")
-    @RequiresPermissions("price:psspricerelt:querycomm")
-    @ApiOperation("查询商品预测结果")
+    /**
+     * @Desc: 二级页面(预测分析)-默认预测商品统计
+     * @Param: [commId, dateFrom, dateTo, pageIndex, pageSize]
+     * @Return: io.dfjinxin.common.utils.R
+     * @Author: z.h.c
+     * @Date: 2019/12/19 14:12
+     */
+    @GetMapping("/secondpage/comm")
+    @ApiOperation(value = "二级页面(预测分析)(统计指定3类商品下规格品的价格预测信息)", notes = "3类商品下最多只会有一种规格品做预测")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "commId", value = "商品id", required = false, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "commId", value = "商品id", required = true, dataType = "Int", paramType = "query")
+    })
+    public R queryComm(@RequestParam(value = "commId") Integer commId) {
+        PssPriceReltDto data = pssPriceReltService.queryCommByCommId(commId);
+        return R.ok().put("data", data);
+    }
+
+    /**
+     * @Desc: 二级页面(预测分析)-根据时间区间统计折线图&表格数据
+     * @Param: [commId, dateFrom, dateTo, pageIndex, pageSize]
+     * @Return: io.dfjinxin.common.utils.R
+     * @Author: z.h.c
+     * @Date: 2019/12/19 14:12
+     */
+    @GetMapping("/secondpage/linecharts")
+    @ApiOperation(value = "二级页面(预测分析)根据时间区间统计折线图&表格数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "commId", value = "商品id", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "dateFrom", value = "开始时间", required = false, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "dateTo", value = "结束时间", required = false, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "pageIndex", value = "页码", required = false, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "返回数据量", required = false, dataType = "Int", paramType = "query")
     })
-    public R queryComm(@RequestParam(value = "commId", required = false) Integer commId,
-                       @RequestParam(value = "dateFrom", required = false) String dateFrom,
-                       @RequestParam(value = "dateTo", required = false) String dateTo,
-                       @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
-                       @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize) {
+    public R lineCharts(@RequestParam(value = "commId", required = true) Integer commId,
+                        @RequestParam(value = "dateFrom", required = false) String dateFrom,
+                        @RequestParam(value = "dateTo", required = false) String dateTo,
+                        @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
+                        @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize) {
         Map<String, Object> params = new HashMap() {{
             put("commId", commId);
             put("dateFrom", dateFrom);
@@ -104,9 +126,10 @@ public class PssPriceReltController {
             put("pageIndex", pageIndex);
             put("pageSize", pageSize);
         }};
-        PageUtils page = pssPriceReltService.queryPage(params);
-
-        return R.ok().put("page", page);
+        //表格数据
+        PageUtils page = pssPriceReltService.getDataGrid(params);
+        Map<String, Object> charts = pssPriceReltService.getLineCharts(params);
+        return R.ok().put("page", page).put("lineCharts", charts);
     }
 
     /**

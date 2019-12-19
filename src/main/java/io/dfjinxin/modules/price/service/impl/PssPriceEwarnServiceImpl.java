@@ -35,6 +35,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service("pssPriceEwarnService")
@@ -432,7 +433,9 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
         //step3,生产数据情况
         List<WpBaseIndexValEntity> prodData = wpBaseIndexValService.getprovinceLastDayMapData(commId, "生产", lastDayStr);
-        map.put("prodData", prodData);
+        //根据结果集按频度字段分组
+        Map<String, List<WpBaseIndexValEntity>> collect = prodData.stream().collect(Collectors.groupingBy(WpBaseIndexValEntity::getFrequence));
+        map.put("prodData", collect);
 
         //规格品列表
         List<PssCommTotalEntity> type4CommList = pssCommTotalService.getSubCommByCommId(commId);

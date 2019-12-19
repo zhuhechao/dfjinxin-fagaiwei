@@ -2,8 +2,10 @@ package io.dfjinxin.modules.price.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.common.utils.PageUtils;
+import io.dfjinxin.modules.price.dto.PssPriceReltDto;
 import io.dfjinxin.modules.price.entity.PssPriceReltEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +18,11 @@ public interface PssPriceReltService extends IService<PssPriceReltEntity> {
     PageUtils queryPage(Map<String, Object> params);
 
     Map<String, Object> detail(Long id, String dateFrom, String DateTo);
+
+    PssPriceReltDto queryCommByCommId(Integer commId);
+
+    Map<String, Object> getLineCharts(Map<String, Object> params);
+
+    PageUtils getDataGrid(Map<String, Object> params);
 }
 

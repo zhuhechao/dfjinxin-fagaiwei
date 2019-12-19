@@ -75,6 +75,8 @@ public class PssPriceReltDto implements Serializable {
      *
      */
     private BigDecimal reviPrice;
+
+    private BigDecimal realPrice;
     /**
      *
      */
