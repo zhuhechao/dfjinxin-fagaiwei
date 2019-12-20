@@ -1,6 +1,7 @@
 package io.dfjinxin.modules.report.dto;
 
 
+import io.dfjinxin.modules.sys.entity.PssRschConfEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -26,7 +27,11 @@ public class PssRptConfDto implements Serializable {
     private Long rptId;
 
     @ApiModelProperty(value = "商品ID", name = "commId", required = true)
-    private String commId;
+    private Integer commId;
+
+    @ApiModelProperty(value = "商品名称", name = "commName", required = true)
+    private String commName;
+
     /**
      * 报告类型 0 自动 1 手工
      */
@@ -41,7 +46,11 @@ public class PssRptConfDto implements Serializable {
      * 调度配置id 类型为自动  时有值 手动时为空
      */
     @ApiModelProperty(value = "调度配置id 类型为自动  时有值 手动时为空", name = "rschId", required = true)
-    private String rschId;
+    private Integer rschId;
+
+    //调度的实体类
+    private PssRschConfEntity rschConfEntity = new PssRschConfEntity();
+
     /**
      * 报告日期
      */

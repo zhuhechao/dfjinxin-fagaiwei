@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import io.dfjinxin.modules.report.dto.PssRptConfDto;
+import io.dfjinxin.modules.sys.entity.PssRschConfEntity;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
@@ -42,7 +43,12 @@ public class PssRptConfEntity implements Serializable {
 	/**
 	 * 调度配置id 类型为自动  时有值 手动时为空
 	 */
-	private String rschId;
+//	private Integer rschId;
+
+	//调度的实体类
+	private PssRschConfEntity rschConfEntity = new PssRschConfEntity();
+
+
 	/**
 	 * 报告日期
 	 */

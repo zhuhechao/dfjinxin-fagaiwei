@@ -70,7 +70,7 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
 
 
         //根据调度配置id获取配置信息
-        PssRschConfEntity pe= pssRschConfService.getById(entity.getRschId());
+        PssRschConfEntity pe= pssRschConfService.getById(entity.getRschConfEntity().getRschId());
 
         //根据调度配置建立定时任务
         ScheduleJobEntity sb=new ScheduleJobEntity();

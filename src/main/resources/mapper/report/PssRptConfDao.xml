@@ -9,7 +9,8 @@
         <result property="commId" column="comm_id"/>
         <result property="rptType" column="rpt_type"/>
         <result property="rptFreq" column="rpt_freq"/>
-        <result property="rschId" column="rsch_id"/>
+        <result property="rschConfEntity.rschId" column="rsch_id"/>
+        <result property="rschConfEntity.rschName" column="rsch_name"/>
         <result property="rptDate" column="rpt_date"/>
         <result property="rptName" column="rpt_name"/>
         <result property="commName" column="comm_name"/>
@@ -27,7 +28,7 @@
 
 
     <!--列表展示-->
-    <select id="queryPage" resultType="java.util.Map">
+    <select id="queryPage" parameterType="java.util.Map" resultMap="pssRptConfMap">
         SELECT rpt.rpt_id, rpt.comm_id, rpt.rpt_name, rpt.rpt_type, rpt.rpt_freq, rpt.rpt_date,
         rpt.stat_code, rpt.crte_date,rpt.rpt_path, rpt.crte_name, rpt.rvew_remarks,
         rpt.comm_name, rpt.rsch_id, rpt.rpt_attachment_path, rpt.rev_status, rpt.rpt_attachment_name, rsch.rsch_name
