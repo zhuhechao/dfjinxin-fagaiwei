@@ -49,6 +49,17 @@ public class PssRschConfController {
         return R.ok().put("page", page);
     }
 
+    /**
+     * 列表
+     */
+    @GetMapping("/queryRschList")
+    @ApiOperation("所有调度列表")
+    public R queryRschList() {
+        List<PssRschConfEntity> page = pssRschConfService.list();
+
+        return R.ok().put("page", page);
+    }
+
 
     /**
      * 信息

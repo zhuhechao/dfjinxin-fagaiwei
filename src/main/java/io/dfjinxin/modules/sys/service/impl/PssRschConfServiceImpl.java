@@ -20,12 +20,12 @@ public class PssRschConfServiceImpl extends ServiceImpl<PssRschConfDao, PssRschC
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        QueryWrapper qr=new QueryWrapper<PssRschConfEntity>();
-        addQueryCondition(params,"rptType","rpt_type","eq",qr);
-        addQueryCondition(params,"rschFreq","rsch_Freq","eq",qr);
-        addQueryCondition(params,"rschName","rsch_name","like",qr);
-        params.put("delFlag","0");
-        addQueryCondition(params,"delFlag","del_flag","eq",qr);
+        QueryWrapper qr = new QueryWrapper<PssRschConfEntity>();
+        addQueryCondition(params, "rptType", "rpt_type", "eq", qr);
+        addQueryCondition(params, "rschFreq", "rsch_Freq", "eq", qr);
+        addQueryCondition(params, "rschName", "rsch_name", "like", qr);
+        params.put("delFlag", "0");
+        addQueryCondition(params, "delFlag", "del_flag", "eq", qr);
         //addQueryCondition(params,"rcshId","rcsh_id",qr);
         qr.orderByDesc("create_time");
 
@@ -37,19 +37,19 @@ public class PssRschConfServiceImpl extends ServiceImpl<PssRschConfDao, PssRschC
         return new PageUtils(page);
     }
 
-    private void addQueryCondition(Map<String, Object> params,String con,String con_cloum ,String queryType,QueryWrapper qr){
-        Object o=params.get(con);
-        if(o!=null&& StringUtils.isNotBlank(o.toString())){
-            if ("like".equals(queryType)){
-                qr.like(con_cloum,o.toString());
+
+    private void addQueryCondition(Map<String, Object> params, String con, String con_cloum, String queryType, QueryWrapper qr) {
+        Object o = params.get(con);
+        if (o != null && StringUtils.isNotBlank(o.toString())) {
+            if ("like".equals(queryType)) {
+                qr.like(con_cloum, o.toString());
             }
-            if ("eq".equals(queryType)){
-                qr.eq(con_cloum,o.toString());
+            if ("eq".equals(queryType)) {
+                qr.eq(con_cloum, o.toString());
             }
 
         }
     }
-
 
 
 }

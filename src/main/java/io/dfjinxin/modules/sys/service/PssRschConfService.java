@@ -16,5 +16,8 @@ import java.util.Map;
 public interface PssRschConfService extends IService<PssRschConfEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+//    //所有调度列表
+//    PageUtils queryPageList();
 }
 

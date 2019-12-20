@@ -50,6 +50,8 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
     @Override
     public PssRptConfDto saveOrUpdate(PssRptConfDto dto) {
         PssRptConfEntity entity = PssRptConfEntity.toEntity(dto);
+        entity.setRptStatus("0");
+        entity.setStatCode("中国");
         super.saveOrUpdate(entity);
         if ("1".equals(entity.getRptType())) {
             PssRptInfoEntity prie=new PssRptInfoEntity();
@@ -70,7 +72,7 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
 
 
         //根据调度配置id获取配置信息
-        PssRschConfEntity pe= pssRschConfService.getById(entity.getRschConfEntity().getRschId());
+        PssRschConfEntity pe= pssRschConfService.getById(entity.getRschId());
 
         //根据调度配置建立定时任务
         ScheduleJobEntity sb=new ScheduleJobEntity();
