@@ -93,7 +93,7 @@ public class PssRptConfDto implements Serializable {
     /**
      * 附件路径  人工报告使用
      */
-    @ApiModelProperty(value = "备注", name = "rptAttachmentPath", required = false)
+    @ApiModelProperty(value = "附件路径", name = "rptAttachmentPath", required = false)
 
     private String rptAttachmentPath;
     /**
