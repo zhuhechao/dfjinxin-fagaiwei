@@ -83,19 +83,22 @@ public class PssAnalyInfoController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "analyName", value = "分析名称", required = false, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "analyWay", value = "分析类型名称", required = false, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "datasetId", value = "数据集id", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "datasetId", value = "数据集id", required = false, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "bussType", value = "业务类型", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "pageIndex", value = "页码", required = false, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "返回数据量", required = false, dataType = "Int", paramType = "query")
     })
     public R query(@RequestParam(value = "analyName", required = false) String analyName,
                    @RequestParam(value = "analyWay", required = false) String analyWay,
                    @RequestParam(value = "datasetId", required = false) Integer datasetId,
+                   @RequestParam(value = "bussType", required = true) Integer bussType,
                    @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
                    @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize) {
         Map<String, Object> params = new HashMap() {{
             put("analyName", analyName);
             put("analyWay", analyWay);
             put("datasetId", datasetId);
+            put("bussType", bussType);
             put("pageIndex", pageIndex);
             put("pageSize", pageSize);
         }};

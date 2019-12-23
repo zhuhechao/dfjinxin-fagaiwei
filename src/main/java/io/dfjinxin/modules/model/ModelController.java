@@ -12,6 +12,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,8 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -44,11 +43,14 @@ public class ModelController extends AbstractClientController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ModelController.class);
 
-    //测试环境
-//    private static String pythonHost = "http://10.1.3.239:8092";
-    //生产环境
-    private static String pythonHost = "http://172.20.10.207:8092";
+    @Value("${python.url2}")
+    private String pythonHost;
+
     private HttpClientSupport httpClientSupport = HttpClientSupport.getInstance(pythonHost);
+
+    public HttpClientSupport httpClientSupport() {
+        return HttpClientSupport.getInstance(pythonHost);
+    }
 
 //    @RequestMapping(path = "/nlp/test", method = {RequestMethod.GET})
 //    @ResponseBody
@@ -73,8 +75,7 @@ public class ModelController extends AbstractClientController {
         }
         JSONObject jsonObj = JSON.parseObject(response);
         if (jsonObj.getInteger("code") == 0) {
-//            Object data = jsonObj.containsKey("data") ? jsonObj.get("data") : null;
-            Object data = jsonObj.containsKey("algorithm_list") ? jsonObj.get("algorithm_list") : null;
+            Object data = jsonObj.containsKey("data") ? jsonObj.get("data") : null;
             return R.ok().put("data", data);
         }
         return R.error().put("msg", jsonObj.containsKey("msg") ? jsonObj.getString("msg") : "");
@@ -111,18 +112,15 @@ public class ModelController extends AbstractClientController {
         outputStream.flush();
     }
 
-    private Map<String, Object> getParameter(HttpServletRequest request) {
-        Map<String, Object> params = new HashMap<>();
-        Enumeration<String> allNames = request.getParameterNames();
-        while (allNames.hasMoreElements()) {
-            String paramName = allNames.nextElement();
-            params.put(paramName, request.getParameter(paramName));
-        }
-        return params;
-    }
+//    private Map<String, Object> getParameter(HttpServletRequest request) {
+//        Map<String, Object> params = new HashMap<>();
+//        Enumeration<String> allNames = request.getParameterNames();
+//        while (allNames.hasMoreElements()) {
+//            String paramName = allNames.nextElement();
+//            params.put(paramName, request.getParameter(paramName));
+//        }
+//        return params;
+//    }
 
-    @Override
-    public HttpClientSupport httpClientSupport() {
-        return this.httpClientSupport;
-    }
+
 }

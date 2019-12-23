@@ -187,10 +187,10 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         }
 
         if (queryHive) {
-            int hiveCount = getHiveCount();
+//            int hiveCount = getHiveCount();
             int tengxunCount = getProgrammeDistribution();
             //step1,实时预览-总量(万）
-            retMap.put("commTotal", hiveCount + tengxunCount);
+            retMap.put("commTotal", /*hiveCount +*/ tengxunCount);
         }
 
         Map<String, Object> lineDateMap = new HashMap<>();

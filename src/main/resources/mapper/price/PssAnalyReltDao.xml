@@ -39,6 +39,7 @@
         left join pss_analy_info pai on pai.analy_id = par.analy_id
         LEFT JOIN pss_dataset_info pdi ON pdi.data_set_id = pai.data_set_id
         WHERE par.run_status = 0
+        and pai.buss_type = #{param.bussType}
         <if test="param.analyWay != null and param.analyWay.trim() != ''">
             AND pai.analy_way = #{param.analyWay}
         </if>

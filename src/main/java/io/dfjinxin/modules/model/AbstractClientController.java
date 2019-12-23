@@ -30,7 +30,9 @@ public abstract class AbstractClientController {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public abstract HttpClientSupport httpClientSupport();
+    protected HttpClientSupport httpClientSupport(){
+        return null;
+    }
 
     public String clientRequest(HttpServletRequest request, boolean useJson) throws IOException, URISyntaxException, ServletException {
         String serviceUrl = checkServiceUrl(request);
@@ -103,7 +105,7 @@ public abstract class AbstractClientController {
         return builder.toString();
     }
 
-    private Map<String, Object> getParameter(HttpServletRequest request) {
+    protected Map<String, Object> getParameter(HttpServletRequest request) {
         Map<String, Object> params = new HashMap<>();
         Enumeration<String> allNames = request.getParameterNames();
         while (allNames.hasMoreElements()) {
