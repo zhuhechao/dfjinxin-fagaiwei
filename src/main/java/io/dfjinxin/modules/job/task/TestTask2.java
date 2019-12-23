@@ -109,7 +109,7 @@ public class TestTask2 implements ITask {
 		prie.setCrteTime(new Date());
 		prie.setRptFile("");
 		prie.setRptPath(reportResult.substring(reportResult.lastIndexOf("\\reportResult")));
-		prie.setRptStatus("1");
+		prie.setRptStatus("0");
 		pssRptInfoService.saveOrUpdate(prie);
 
 
