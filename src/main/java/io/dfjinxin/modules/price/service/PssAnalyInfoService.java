@@ -21,12 +21,12 @@ public interface PssAnalyInfoService extends IService<PssAnalyInfoEntity> {
 
     PssAnalyInfoDto saveOrUpdate(PssAnalyInfoDto dto);
 
-    PageUtils queryPage(Map<String, Object> params);
+//    PageUtils queryPage(Map<String, Object> params);
 
     List<PssAnalyInfoEntity> getAnalyInfo(Map<String, Object> params);
 
-    List<PssAnalyReltEntity> getAnalyWayByBussType(Integer bussType);
+    List<PssAnalyInfoEntity> getAnalyWayByBussType(Integer bussType);
 
-    List<PssDatasetInfoEntity> getDataSetByAnalyWay(String analyWay);
+//    List<PssDatasetInfoEntity> getDataSetByAnalyWay(String analyWay);
 }
 

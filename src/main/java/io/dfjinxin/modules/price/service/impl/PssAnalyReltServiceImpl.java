@@ -19,7 +19,7 @@ public class PssAnalyReltServiceImpl extends ServiceImpl<PssAnalyReltDao, PssAna
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         Page page = new Page((Integer) params.get("pageIndex"), (Integer) params.get("pageSize"));
-        page = (Page) super.baseMapper.queryPage(page, params);
+        page = super.baseMapper.queryPage(page, params);
         return new PageUtils(page);
     }
 
@@ -29,5 +29,10 @@ public class PssAnalyReltServiceImpl extends ServiceImpl<PssAnalyReltDao, PssAna
     @Override
     public List<PssAnalyReltEntity> getList(Map<String, Object> params ) {
         return pssAnalyReltDao.getList(params);
+    }
+
+    @Override
+    public PssAnalyReltEntity selectByAnalyId(Integer analyId) {
+        return baseMapper.selectByAnalyId(analyId);
     }
 }

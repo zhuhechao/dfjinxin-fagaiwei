@@ -187,10 +187,10 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         }
 
         if (queryHive) {
-//            int hiveCount = getHiveCount();
-//            int tengxunCount = getProgrammeDistribution();
+            int hiveCount = getHiveCount();
+            int tengxunCount = getProgrammeDistribution();
             //step1,实时预览-总量(万）
-            retMap.put("commTotal", 0/*hiveCount +*/ /*tengxunCount*/);
+            retMap.put("commTotal", hiveCount + tengxunCount);
         }
 
         Map<String, Object> lineDateMap = new HashMap<>();
@@ -686,7 +686,6 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         }
 
         if (data.isEmpty()) return 0;
-
         for (Map<String, Object> map : data) {
             if (map.containsKey("tol")) {
                 totalCount += (Long) map.get("tol");

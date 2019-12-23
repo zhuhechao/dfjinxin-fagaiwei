@@ -301,8 +301,10 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         }
         //查询该3类商品下4类商品所有指标类型
         String sql = "select pss_comm_total.comm_id from pss_comm_total where data_flag=0 and parent_code=" + commId;
+        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
         QueryWrapper where2 = new QueryWrapper();
         where2.inSql("comm_id", sql);
+        where2.eq("date", lastDayStr);
         where2.groupBy("index_type");
         List<WpBaseIndexValEntity> baseIndexValEntityList = wpBaseIndexValDao.selectList(where2);
 
@@ -316,6 +318,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
             QueryWrapper where3 = new QueryWrapper();
             where3.inSql("comm_id", sql);
             where3.eq("index_type", type);
+            where3.eq("date", lastDayStr);
             where3.groupBy("comm_id");
             List<WpBaseIndexValEntity> baseIndexInfoEntities = wpBaseIndexValDao.selectList(where3);
             KpiTypeEnum typeEnum = KpiTypeEnum.getbyType(type);
@@ -324,7 +327,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                     List<WpBaseIndexValEntity> priList = null;
                     for (PssCommTotalEntity entity : commLevel3) {
                         if (commLevel2.getCommName().equals(entity.getCommName())) {
-                            priList = doIndexInfo(baseIndexInfoEntities, type);
+                            priList = doIndexInfo(baseIndexInfoEntities, type, lastDayStr);
                         }
                     }
                     Map priMap = new HashMap();
@@ -332,38 +335,38 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                     resultList.add(priMap);
                     continue;
                 case Ccl://流通
-                    List<KpiInfoDto> cclList = doIndexInfo(baseIndexInfoEntities, type);
+                    List<KpiInfoDto> cclList = doIndexInfo(baseIndexInfoEntities, type, lastDayStr);
                     Map cclMap = new HashMap();
                     cclMap.put(type, cclList);
                     resultList.add(cclMap);
                     continue;
                 case Csp://消费
-                    List<KpiInfoDto> cspList = doIndexInfo(baseIndexInfoEntities, type);
+                    List<KpiInfoDto> cspList = doIndexInfo(baseIndexInfoEntities, type, lastDayStr);
                     Map cspMap = new HashMap();
                     cspMap.put(type, cspList);
                     resultList.add(cspMap);
                     continue;
                 case Cst://成本收益
-                    List<KpiInfoDto> cstList = doIndexInfo(baseIndexInfoEntities, type);
+                    List<KpiInfoDto> cstList = doIndexInfo(baseIndexInfoEntities, type, lastDayStr);
                     Map cstMap = new HashMap();
                     cstMap.put(type, cstList);
                     resultList.add(cstMap);
                     continue;
                 case Prd://生产
-                    List<KpiInfoDto> prdList = doIndexInfo(baseIndexInfoEntities, type);
+                    List<KpiInfoDto> prdList = doIndexInfo(baseIndexInfoEntities, type, lastDayStr);
                     Map<String, List<KpiInfoDto>> prdMap = new HashMap();
                     prdMap.put(type, prdList);
                     resultList.add(prdMap);
                     continue;
                     //贸易
                 case Trd:
-                    List<KpiInfoDto> trdList = doIndexInfo(baseIndexInfoEntities, type);
+                    List<KpiInfoDto> trdList = doIndexInfo(baseIndexInfoEntities, type, lastDayStr);
                     Map<String, List<KpiInfoDto>> trdMap = new HashMap();
                     trdMap.put(type, trdList);
                     resultList.add(trdMap);
                     continue;
                 case Mtl://气象
-                    List<KpiInfoDto> mtlList = doIndexInfo(baseIndexInfoEntities, type);
+                    List<KpiInfoDto> mtlList = doIndexInfo(baseIndexInfoEntities, type, lastDayStr);
                     Map<String, List<KpiInfoDto>> mtlMap = new HashMap();
                     mtlMap.put(type, mtlList);
                     resultList.add(mtlMap);
@@ -498,13 +501,14 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
      * @Author: z.h.c
      * @Date: 2019/11/11 17:47
      */
-    private List doIndexInfo(List<WpBaseIndexValEntity> commIdList, final String type) {
+    private List doIndexInfo(List<WpBaseIndexValEntity> commIdList, final String type, final String date) {
         List<KpiInfoDto> list = new ArrayList<>();
         for (WpBaseIndexValEntity indexEntity : commIdList) {
             QueryWrapper where2 = new QueryWrapper();
             where2.eq("comm_id", indexEntity.getCommId());
             where2.eq("index_type", type);
-            where2.orderByDesc("date");
+//            where2.orderByDesc("date");
+            where2.eq("date", date);
             where2.last("limit 0,1");
             WpBaseIndexValEntity indexValEntity = wpBaseIndexValDao.selectOne(where2);
             if (indexValEntity == null) {

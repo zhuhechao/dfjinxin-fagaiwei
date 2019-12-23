@@ -33,14 +33,14 @@ public class PssAnalyInfoServiceImpl extends ServiceImpl<PssAnalyInfoDao, PssAna
     public PssAnalyInfoDto saveOrUpdate(PssAnalyInfoDto dto) {
         PssAnalyInfoEntity entity = PssAnalyInfoEntity.toEntity(dto);
 
-        if(dto.getAnalyId()==null){
+        if (dto.getAnalyId() == null) {
             Map map = new CaseInsensitiveMap();
-            map.put("analyName",dto.getAnalyName());
-            map.put("analyWay",dto.getAnalyWay());
-            map.put("datasetId",dto.getDataSetId());
-            map.put("remarks",dto.getRemarks());
-            List<PssAnalyInfoEntity>list = getAnalyInfo(map);
-            if(list!=null && list.size()>0) {
+            map.put("analyName", dto.getAnalyName());
+            map.put("analyWay", dto.getAnalyWay());
+            map.put("datasetId", dto.getDataSetId());
+            map.put("remarks", dto.getRemarks());
+            List<PssAnalyInfoEntity> list = getAnalyInfo(map);
+            if (list != null && list.size() > 0) {
                 entity.setAnalyId(list.get(0).getAnalyId());
                 dto.setAnalyId(list.get(0).getAnalyId());
             }
@@ -56,43 +56,21 @@ public class PssAnalyInfoServiceImpl extends ServiceImpl<PssAnalyInfoDao, PssAna
             put("analyName", "analy_Name");
             put("analyId", "analy_Id");
             put("bussType", "buss_Type");
-            put("dataSetId","data_Set_Id");
-            put("analyWay","analy_way");
+            put("dataSetId", "data_Set_Id");
+            put("analyWay", "analy_way");
         }
     };
 
     @Override
-    public PageUtils queryPage(Map<String, Object> params) {
-        IPage<PssAnalyInfoEntity> page = null;
-// this.page(
-//                new Query<PssAnalyInfoEntity>().getPage(params),
-//                new QueryWrapper<PssAnalyInfoEntity>()
-//        );
-        QueryWrapper where = new QueryWrapper();
-
-        for(Map.Entry<String, Object> m:params.entrySet()){
-            where.eq(keyTransMap.get(m.getKey()), m.getValue());
-        }
-        page = this.page(new Query<PssAnalyInfoEntity>().getPage(params),where);
-        return new PageUtils(page);
-    }
-
-    @Override
-    public List<PssAnalyReltEntity> getAnalyWayByBussType(Integer bussType) {
+    public List<PssAnalyInfoEntity> getAnalyWayByBussType(Integer bussType) {
         if (bussType == null) {
             return null;
         }
-        QueryWrapper where = new QueryWrapper();
+        QueryWrapper<PssAnalyInfoEntity> where = new QueryWrapper();
+        where.select("analy_way");
         where.eq("buss_type", bussType);
+        where.groupBy("analy_way");
         return baseMapper.selectList(where);
-    }
-
-    @Override
-    public List<PssDatasetInfoEntity> getDataSetByAnalyWay(String analyWay) {
-        if(StringUtils.isBlank(analyWay)){
-            return null;
-        }
-        return pssDatasetInfoDao.getDataSetByAnalyWay(analyWay);
     }
 
     @Override

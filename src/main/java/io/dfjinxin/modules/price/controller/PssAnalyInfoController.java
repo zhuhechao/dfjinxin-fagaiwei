@@ -6,7 +6,6 @@ import com.alibaba.fastjson.parser.Feature;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.common.utils.python.PythonApiUtils;
-import io.dfjinxin.modules.analyse.service.WpBaseIndexInfoService;
 import io.dfjinxin.modules.price.dto.PssAnalyInfoDto;
 import io.dfjinxin.modules.price.entity.PssAnalyInfoEntity;
 import io.dfjinxin.modules.price.entity.PssAnalyReltEntity;
@@ -15,23 +14,21 @@ import io.dfjinxin.modules.price.service.PssAnalyInfoService;
 import io.dfjinxin.modules.price.service.PssAnalyReltService;
 import io.dfjinxin.modules.price.service.PssDatasetInfoService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -42,25 +39,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("price/pssanalyinfo")
 @Api(tags = "分析信息")
-@Configuration
 public class PssAnalyInfoController {
 
-    //    @Value("${ssh.user}")
-//    private String userName = "root";
-//    @Value("${ssh.host}")
-//    private String host="10.1.3.239";
-//
-//    @Value("${ssh.pass}")
-//    private String pass = "123456";
-//
-//    @Value("${ssh.port}")
-//    private int port = 22;
+    private static final Logger logger = LoggerFactory.getLogger(PssAnalyInfoController.class);
 
     @Value("${python.url}")
     private String url;
-
-
-    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private PssAnalyInfoService pssAnalyInfoService;
@@ -69,33 +53,57 @@ public class PssAnalyInfoController {
     private PssAnalyReltService pssAnalyReltService;
 
     @Autowired
-    private WpBaseIndexInfoService wpBaseIndexInfoService;
-
-    @Autowired
     private PssDatasetInfoService pssDatasetInfoService;
 
     /**
-     * 列表
+     * @Desc: 相关性分析&因果分析-查询
+     * @Param: [params]
+     * @Return: io.dfjinxin.common.utils.R
+     * @Author: z.h.c
+     * @Date: 2019/12/20 13:50
      */
-    @GetMapping("/list")
-    @RequiresPermissions("price:pssanalyinfo:list")
-    public R list(@RequestParam Map<String, Object> params) {
-        PageUtils page = pssAnalyInfoService.queryPage(params);
+//    @GetMapping("/list")
+//    @ApiOperation(value = "相关性分析&因果分析-分页查询", notes = "")
+//    public R list(@RequestParam(required = false) Map<String, Object> params) {
+//        PageUtils page = pssAnalyInfoService.queryPage(params);
+//
+//        return R.ok().put("page", page);
+//    }
+
+
+    /**
+    * @Desc:  相关性分析&因果分析-分页查询
+    * @Param: [analyName, analyWay, datasetId, pageIndex, pageSize]
+    * @Return: io.dfjinxin.common.utils.R
+    * @Author: z.h.c
+    * @Date: 2019/12/20 16:05
+    */
+    @GetMapping("/queryPage")
+    @ApiOperation("相关性分析&因果分析-分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "analyName", value = "分析名称", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "analyWay", value = "分析类型名称", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "datasetId", value = "数据集id", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "pageIndex", value = "页码", required = false, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "返回数据量", required = false, dataType = "Int", paramType = "query")
+    })
+    public R query(@RequestParam(value = "analyName", required = false) String analyName,
+                   @RequestParam(value = "analyWay", required = false) String analyWay,
+                   @RequestParam(value = "datasetId", required = false) Integer datasetId,
+                   @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
+                   @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize) {
+        Map<String, Object> params = new HashMap() {{
+            put("analyName", analyName);
+            put("analyWay", analyWay);
+            put("datasetId", datasetId);
+            put("pageIndex", pageIndex);
+            put("pageSize", pageSize);
+        }};
+        PageUtils page = pssAnalyReltService.queryPage(params);
 
         return R.ok().put("page", page);
     }
 
-
-    /**
-     * 信息
-     */
-    @GetMapping("/info/{analyId}")
-    @RequiresPermissions("price:pssanalyinfo:info")
-    public R info(@PathVariable("analyId") Integer analyId) {
-        PssAnalyInfoEntity pssAnalyInfo = pssAnalyInfoService.getById(analyId);
-
-        return R.ok().put("pssAnalyInfo", pssAnalyInfo);
-    }
 
     /**
      * 运行相关性分析
@@ -136,6 +144,7 @@ public class PssAnalyInfoController {
             if (list != null && list.size() > 0)
                 relt.setReltId(list.get(0).getReltId());
 
+            relt.setRunTime(new Date());
             pssAnalyReltService.saveOrUpdate(relt);
             Map data = new LinkedHashMap();
             data.put("pva", relt.getPvalue());
@@ -156,7 +165,6 @@ public class PssAnalyInfoController {
         pssDatasetInfoEntity.setIndeVar(indeIds.toJSONString());
         pssDatasetInfoService.setPssDatasetInfoIndeName(pssDatasetInfoEntity);
         JSONObject jsonObject = new JSONObject();
-//        String url = "http://10.1.3.239:8082/";
         if (pssDatasetInfoEntity != null) {
 
             String[] id = {""};
@@ -401,14 +409,21 @@ public class PssAnalyInfoController {
     }
 
 
+    /**
+     * @Desc: 根据业务类型查询分析类型
+     * @Param: [bussType]
+     * @Return: io.dfjinxin.common.utils.R
+     * @Author: z.h.c
+     * @Date: 2019/12/20 15:55
+     */
     @GetMapping("/bussType/{bussType}")
     @ApiOperation(value = "根据业务类型查询分析类型", notes = "1:相关性分析;2:因果分析")
     public R getAnalyWayByBussType(@PathVariable("bussType") Integer bussType) {
-        List<PssAnalyReltEntity> analyWayList = pssAnalyInfoService.getAnalyWayByBussType(bussType);
-        return R.ok().put("data", analyWayList);
+        List<PssAnalyInfoEntity> analyWayByBussType = pssAnalyInfoService.getAnalyWayByBussType(bussType);
+        return R.ok().put("data", analyWayByBussType);
     }
 
-    @GetMapping("/analyWay/{AnalyWay}")
+   /* @GetMapping("/analyWay/{AnalyWay}")
     @ApiOperation(value = "根据分析类型查询该类型的结果集")
     public R getDataSetByAnalyWay(@PathVariable("AnalyWay") String AnalyWay) {
         List<PssDatasetInfoEntity> dataSetList = pssAnalyInfoService.getDataSetByAnalyWay(AnalyWay);
@@ -416,6 +431,6 @@ public class PssAnalyInfoController {
             pssDatasetInfoService.setPssDatasetInfoIndeName(pssDatasetInfoEntity);
         }
         return R.ok().put("data", dataSetList);
-    }
+    }*/
 
 }

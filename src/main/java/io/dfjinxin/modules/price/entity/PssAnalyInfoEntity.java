@@ -1,7 +1,9 @@
 package io.dfjinxin.modules.price.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dfjinxin.modules.price.dto.PssAnalyInfoDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -67,6 +69,14 @@ public class PssAnalyInfoEntity implements Serializable {
 
     @ApiModelProperty(value = "业务类型", name = "bussType", required = true)
     private Integer bussType;
+
+    @TableField(exist = false)
+    private String dataSetName;
+
+    @TableField(exist = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date runTime;
+
 
     public static PssAnalyInfoEntity toEntity(PssAnalyInfoDto from) {
         if (null == from) {
