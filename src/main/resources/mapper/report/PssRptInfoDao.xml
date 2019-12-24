@@ -19,5 +19,45 @@
         <result property="delTime" column="del_time"/>
     </resultMap>
 
+    <!--列表展示-->
+    <select id="queryPage" parameterType="java.util.Map" resultMap="pssRptInfoMap">
+        SELECT rpi.rpt_id, rpi.comm_id, rpi.rpt_name, rpi.rpt_type, rpi.rpt_freq,
+        rpi.area_code, rpi.crte_time, rpi.comm_name
+        FROM
+        pss_rpt_info rpi
+        <include refid="rptInfoWhere"></include>
+    </select>
+
+
+
+    <!-- 条件查询 -->
+    <sql id="rptInfoWhere">
+        <where>
+            <!--报告类型-->
+            <if test="param.rptType!= null and param.rptType!= '' ">
+                rpt_type = #{param.rptType}
+            </if>
+            <!--报告频度-->
+            <if test="param.rptFreq!= null and param.rptFreq!= '' ">
+                AND rpt_freq = #{param.rptFreq}
+            </if>
+            <!--开始时间-->
+            <if test="param.minCrteTime!= null">
+                AND crte_time >= #{param.minCrteTime}
+            </if>
+            <!--结束时间-->
+            <if test="param.maxCrteTime!= null">
+                AND crte_time &lt;= #{param.maxCrteTime}
+            </if>
+            <!--报告状态-->
+            <if test="param.rptStatus!= null and param.rptStatus!= '' ">
+                AND rpt_status = #{param.rptStatus}
+            </if>
+        </where>
+
+    </sql>
+
+
+
 
 </mapper>

@@ -1,5 +1,6 @@
 package io.dfjinxin.modules.report.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.dfjinxin.common.utils.DateTools;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
@@ -20,18 +21,8 @@ public class PssRptInfoServiceImpl extends ServiceImpl<PssRptInfoDao, PssRptInfo
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        QueryWrapper qr=new QueryWrapper<PssRptInfoEntity>();
-        addQueryCondition(params,"rschName","rsch_name","like",qr);
-        addQueryCondition(params,"crteTime","crte_time","between",qr);
-        addQueryCondition(params,"rschFreq","rpt_freq","eq",qr);
-        addQueryCondition(params,"rptStatus","rpt_status","eq",qr);
-        qr.orderByDesc("crte_time");
-
-        IPage<PssRptInfoEntity> page = this.page(
-                new Query<PssRptInfoEntity>().getPage(params),
-                qr
-        );
-
+        Page page = new Page((Integer) params.get("pageIndex"), (Integer) params.get("pageSize"));
+        page = (Page) super.baseMapper.queryPage(page, params);
         return new PageUtils(page);
     }
 
