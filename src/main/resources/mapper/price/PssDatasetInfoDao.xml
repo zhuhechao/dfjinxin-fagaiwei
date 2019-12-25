@@ -3,11 +3,11 @@
 
 <mapper namespace="io.dfjinxin.modules.price.dao.PssDatasetInfoDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="io.dfjinxin.modules.price.entity.PssDatasetInfoEntity" id="pssDatasetInfoMap">
         <result property="dataSetId" column="data_set_id"/>
         <result property="dataSetName" column="data_set_name"/>
-        <result property="indeVar" column="inde_var" />
+        <result property="indeVar" column="inde_var"/>
         <result property="dataTime" column="data_time"/>
         <result property="dataSetType" column="data_set_type"/>
         <result property="dataSetEngName" column="data_set_eng_name"/>
@@ -21,5 +21,17 @@
         WHERE pai.analy_way =#{analyWay}
     </select>
 
+    <select id="queryByPage" resultMap="pssDatasetInfoMap">
+        SELECT
+        data_set_id,
+        data_set_name,
+        data_set_type,
+        inde_var, data_time,
+        data_set_eng_name
+        FROM pss_dataset_info WHERE 1=1
+        <if test="param.dataSetName!= null and param.dataSetName.trim() !=''">
+            AND data_set_name = #{param.dataSetName}
+        </if>
+    </select>
 
 </mapper>

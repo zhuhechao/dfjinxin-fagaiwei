@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.dfjinxin.modules.model.dao.ModelInfoDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.dfjinxin.modules.model.entity.ModelInfoEntity" id="modelInfoMap">
+        <result property="modelId" column="model_id"/>
+        <result property="modelName" column="model_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="operator" column="operator"/>
+        <result property="orgId" column="org_id"/>
+        <result property="algorithm" column="algorithm"/>
+        <result property="predictType" column="predict_type"/>
+        <result property="predictTimeType" column="predict_time_type"/>
+        <result property="isShow" column="is_show"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="queryByPage" resultMap="modelInfoMap">
+        SELECT m.* FROM model_info m
+        WHERE m.is_show=1
+        <if test="param.modelName != null and param.modelName != '' ">
+            AND m.model_name like concat('%', #{param.modelName},'%')
+        </if>
+        <if test="param.algorithm != null and param.algorithm != '' ">
+            AND m.algorithm = #{param.algorithm}
+        </if>
+        <if test="param.predictTimeType != null and param.predictTimeType != '' ">
+            AND m.predict_time_type = #{param.predictTimeType}
+        </if>
+        order by update_time desc
+    </select>
+
+
+</mapper>

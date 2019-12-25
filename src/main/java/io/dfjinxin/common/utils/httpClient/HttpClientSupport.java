@@ -1,5 +1,6 @@
 package io.dfjinxin.common.utils.httpClient;
 
+import com.alibaba.fastjson.JSONObject;
 import io.dfjinxin.common.utils.json.JsonSupport;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -86,6 +87,8 @@ public class HttpClientSupport {
     }
 
     public CloseableHttpResponse sendPostByJson(String url, Map<String, Object> params) throws IOException {
+        logger.info("the model python url:{}", url);
+        logger.info("the reqparams:{}", JSONObject.toJSONString(params));
         HttpPost httpPost = new HttpPost(url);
         return sendPutOrPostByJson(httpPost, params);
     }
@@ -106,7 +109,6 @@ public class HttpClientSupport {
     }
 
     private CloseableHttpResponse sendPutOrPostByJson(HttpEntityEnclosingRequestBase putOrPost, Map<String, Object> params) throws IOException {
-
         String sendJson = JsonSupport.objectToJsonWithoutFormatter(params);
 //        String sendJson = params.toString();
         String targetJson = JsonSupport.formatString(sendJson);

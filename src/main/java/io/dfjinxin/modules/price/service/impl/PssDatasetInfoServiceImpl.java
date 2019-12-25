@@ -5,7 +5,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.modules.analyse.dao.WpBaseIndexInfoDao;
 import io.dfjinxin.modules.analyse.dao.WpMcroIndexInfoDao;
 import io.dfjinxin.modules.analyse.entity.WpBaseIndexInfoEntity;
@@ -29,6 +31,16 @@ import java.util.Map;
 @Service("pssDatasetInfoService")
 public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, PssDatasetInfoEntity> implements PssDatasetInfoService {
 
+    @Autowired
+    WpBaseIndexInfoService wpBaseIndexInfoService;
+    @Autowired
+    WpMcroIndexInfoService wpMcroIndexInfoService;
+
+    @Autowired
+    WpBaseIndexInfoDao wpBaseIndexInfoDao;
+    @Autowired
+    WpMcroIndexInfoDao wpMcroIndexInfoDao;
+
     @Override
     public List<PssDatasetInfoEntity> listAll() {
         return baseMapper.selectList(new QueryWrapper());
@@ -40,16 +52,6 @@ public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, Ps
         pssDatasetInfoEntity.setDataSetId(id);
         return baseMapper.selectById(pssDatasetInfoEntity);
     }
-
-    @Autowired
-    WpBaseIndexInfoService wpBaseIndexInfoService;
-    @Autowired
-    WpMcroIndexInfoService wpMcroIndexInfoService;
-
-    @Autowired
-    WpBaseIndexInfoDao wpBaseIndexInfoDao;
-    @Autowired
-    WpMcroIndexInfoDao wpMcroIndexInfoDao;
 
     @Override
     public void setPssDatasetInfoIndeName(PssDatasetInfoEntity pssDatasetInfoEntity) {
@@ -129,5 +131,12 @@ public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, Ps
             });
         }
         return res;
+    }
+
+    @Override
+    public PageUtils queryByPage(Map<String, Object> params) {
+        Page page = new Page((Integer) params.get("pageIndex"), (Integer) params.get("pageSize"));
+        page = super.baseMapper.queryByPage(page, params);
+        return new PageUtils(page);
     }
 }

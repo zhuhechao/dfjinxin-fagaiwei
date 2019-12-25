@@ -1,4 +1,4 @@
-package io.dfjinxin.modules.model;
+package io.dfjinxin.modules.model.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -38,7 +38,7 @@ import java.util.Map;
 //@RequestMapping()
 @MultipartConfig
 @RestController
-@Api(tags = "模型管理 Api")
+@Api(tags = "模型管理-调用python Api")
 public class ModelController extends AbstractClientController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ModelController.class);
@@ -51,14 +51,6 @@ public class ModelController extends AbstractClientController {
     public HttpClientSupport httpClientSupport() {
         return HttpClientSupport.getInstance(pythonHost);
     }
-
-//    @RequestMapping(path = "/nlp/test", method = {RequestMethod.GET})
-//    @ResponseBody
-//    @CrossOrigin(allowCredentials = "true")
-//    public String nlpTestRequest() throws IOException {
-//        LOG.debug("get is runnning......");
-//        return JsonSupport.makeJsonResultStr(JsonResult.RESULT.SUCCESS, "YYY", null, null);
-//    }
 
     @ApiOperation(value = "模型管理-调用python接口适配", notes = "调用方式:域名/model/python接口地址;eg:www.localhosst:8081/fagaiwei_api/model/x")
 //    @RequestMapping(path = "/model/**", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT})
@@ -88,7 +80,8 @@ public class ModelController extends AbstractClientController {
         URIBuilder uriBuilder = new URIBuilder(new StringBuilder()
                 .append(pythonHost).append(serviceUrl).toString());
 
-        Map<String, Object> paramMap = getParameter(request);
+//        Map<String, Object> paramMap = getParameter(request);
+        Map<String, Object> paramMap = getPostJsonParameter(request);
 
         for (String paramKey : paramMap.keySet()) {
             uriBuilder.addParameter(paramKey, String.valueOf(paramMap.get(paramKey)));
@@ -111,16 +104,4 @@ public class ModelController extends AbstractClientController {
         }
         outputStream.flush();
     }
-
-//    private Map<String, Object> getParameter(HttpServletRequest request) {
-//        Map<String, Object> params = new HashMap<>();
-//        Enumeration<String> allNames = request.getParameterNames();
-//        while (allNames.hasMoreElements()) {
-//            String paramName = allNames.nextElement();
-//            params.put(paramName, request.getParameter(paramName));
-//        }
-//        return params;
-//    }
-
-
 }

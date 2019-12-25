@@ -1,5 +1,6 @@
-package io.dfjinxin.modules.model;
+package io.dfjinxin.modules.model.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import io.dfjinxin.common.utils.httpClient.HttpClientSupport;
@@ -18,6 +19,7 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,7 +32,7 @@ public abstract class AbstractClientController {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected HttpClientSupport httpClientSupport(){
+    protected HttpClientSupport httpClientSupport() {
         return null;
     }
 
@@ -40,7 +42,9 @@ public abstract class AbstractClientController {
         String sendMethod = request.getMethod();
         logger.info("python req url:{}", serviceUrl);
         logger.info("python req method:{}", sendMethod);
-        logger.info("python req params:{}", getParameter(request));
+        logger.info("python req context-type:{}", request.getContentType());
+        Map<String, Object> reqParams = getPostJsonParameter(request);
+        logger.info("python req params:{}", JSONObject.toJSONString(reqParams));
         if (!Strings.isNullOrEmpty(sendMethod)) {
             if (request instanceof MultipartHttpServletRequest) {//有文件上传
                 MultipartHttpServletRequest muliRequest = (MultipartHttpServletRequest) request;
@@ -64,16 +68,13 @@ public abstract class AbstractClientController {
                 }
 
                 Map parameters = getParameter(request);
-
                 response = httpClientSupport().sendPostWithFile(serviceUrl, parameters, fileMap);
 
             } else {
-
-                logger.debug("send url is =====>{}", serviceUrl);
                 if ("get".equalsIgnoreCase(sendMethod)) {
                     response = httpClientSupport().sendRequest(serviceUrl, getParameter(request), RequestMethod.GET, useJson);
-                } else if ("post".equalsIgnoreCase(sendMethod)) {
-                    response = httpClientSupport().sendRequest(serviceUrl, getParameter(request), RequestMethod.POST, useJson);
+                } else if ("post".equalsIgnoreCase(sendMethod)) {//目前只用了post请求
+                    response = httpClientSupport().sendRequest(serviceUrl, reqParams, RequestMethod.POST, useJson);
                 } else if ("put".equalsIgnoreCase(sendMethod)) {
                     response = httpClientSupport().sendRequest(serviceUrl, getParamesWithPutDelete(request), RequestMethod.PUT, useJson);
                 } else if ("delete".equalsIgnoreCase(sendMethod)) {
@@ -81,7 +82,6 @@ public abstract class AbstractClientController {
                 }
 
             }
-
             logger.debug("python res json is ======>{}", response);
 
         }
@@ -113,6 +113,32 @@ public abstract class AbstractClientController {
             params.put(paramName, request.getParameter(paramName));
         }
         return params;
+    }
+
+    /**
+     * @Desc: 获取post方式json格式请求参数
+     * @Param: [request]
+     * @Return: java.util.Map<java.lang.String, java.lang.Object>
+     * @Author: z.h.c
+     * @Date: 2019/12/24 16:54
+     */
+    protected Map<String, Object> getPostJsonParameter(HttpServletRequest request) {
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new InputStreamReader(request.getInputStream(), StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String line = null;
+        StringBuilder sb = new StringBuilder();
+        try {
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return JSONObject.parseObject(sb.toString());
     }
 
     private Map getParamesWithPutDelete(HttpServletRequest request) {

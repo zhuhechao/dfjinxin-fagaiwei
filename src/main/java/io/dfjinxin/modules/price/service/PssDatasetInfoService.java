@@ -1,10 +1,12 @@
 package io.dfjinxin.modules.price.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.modules.price.dto.DataSetIndexInfoDto;
 import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -20,5 +22,7 @@ public interface PssDatasetInfoService extends IService<PssDatasetInfoEntity> {
     void setPssDatasetInfoIndeName(PssDatasetInfoEntity pssDatasetInfoEntity);
 
     List<DataSetIndexInfoDto> getIndexInfoByDataSetIndeVal(String indeVal);
+
+    PageUtils queryByPage(Map<String, Object> params);
 }
 
