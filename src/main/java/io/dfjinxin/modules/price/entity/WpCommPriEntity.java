@@ -2,6 +2,8 @@ package io.dfjinxin.modules.price.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.dfjinxin.common.validator.CustomDoubleSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -24,6 +26,7 @@ public class WpCommPriEntity implements Serializable {
 
 	private Integer indexId;
 
+	@JsonSerialize(using = CustomDoubleSerializer.class)
 	private BigDecimal value;
 
 	private String unit;

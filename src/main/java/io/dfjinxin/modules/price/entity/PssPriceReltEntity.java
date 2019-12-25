@@ -32,7 +32,7 @@ public class PssPriceReltEntity implements Serializable {
     /**
      *
      */
-    private Integer modId;
+    private String modId;
     /**
      *
      */
