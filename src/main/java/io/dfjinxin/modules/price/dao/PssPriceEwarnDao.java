@@ -41,7 +41,7 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
     List<Map<Integer, Object>> countEwarn(@Param("dateStr") String dateStr);
 
     @Select("select pl.comm_name,pl.comm_id,pn.ewarn_date, pn.pri_range from pss_price_ewarn pn " +
-            "LEFT JOIN (select * from pss_comm_total pl where pl.parent_code=#{params.commId}) pl " +
+            "LEFT JOIN (select * from pss_comm_total pl where pl.comm_id=#{params.commId}) pl " +
             "on pn.comm_id=pl.comm_id " +
             "where pn.ewarn_date between STR_TO_DATE(#{params.beginYestarday},'%Y-%m-%d %H:%i:%S') " +
             " and STR_TO_DATE(#{params.endYestarday},'%Y-%m-%d %H:%i:%S') " +

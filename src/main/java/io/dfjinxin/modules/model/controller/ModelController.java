@@ -12,10 +12,13 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -46,6 +49,12 @@ public class ModelController extends AbstractClientController {
     @Value("${python.url2}")
     private String pythonHost;
 
+    @Autowired
+    private HttpServletRequest request;
+
+//    @Autowired
+//    private HttpServletResponse response;
+
     private HttpClientSupport httpClientSupport = HttpClientSupport.getInstance(pythonHost);
 
     public HttpClientSupport httpClientSupport() {
@@ -56,11 +65,20 @@ public class ModelController extends AbstractClientController {
 //    @RequestMapping(path = "/model/**", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT})
     @PostMapping("/model/**")
     @CrossOrigin(allowCredentials = "true")
-    public R nlpRequest(HttpServletRequest request) throws IOException, URISyntaxException, ServletException {
+    public R nlpRequest() {
         LOG.info("---模型管理调用python  开始---");
         LOG.info("模型管理-调用python 请求信息*****");
         LOG.info("模型管理 python host:{}", pythonHost);
-        String response = clientRequest(request, true);
+        String response = null;
+        try {
+            response = clientRequest(request, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (ServletException e) {
+            e.printStackTrace();
+        }
         LOG.info("-模型管理调用python返回结果:{}", response);
         if (StringUtils.isEmpty(response)) {
             return R.error("模型管理-调用python失败!");
@@ -74,7 +92,7 @@ public class ModelController extends AbstractClientController {
     }
 
     @PostMapping("/download/**")
-    public void download(HttpServletRequest request, HttpServletResponse response) throws IOException, URISyntaxException {
+    public void download() throws IOException, URISyntaxException {
         String serviceUrl = checkServiceUrl(request).replace("download", "model");
 
         URIBuilder uriBuilder = new URIBuilder(new StringBuilder()
@@ -91,10 +109,13 @@ public class ModelController extends AbstractClientController {
 
         InputStream serviceResponseStream = serviceResponse.getEntity().getContent();
 
+        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+//        HttpServletRequest request = servletRequestAttributes.getRequest();
+        HttpServletResponse response = servletRequestAttributes.getResponse();
+
         for (Header header : serviceResponse.getAllHeaders()) {
             response.setHeader(header.getName(), header.getValue());
         }
-
         OutputStream outputStream = response.getOutputStream();
 
         byte[] buf = new byte[8192];

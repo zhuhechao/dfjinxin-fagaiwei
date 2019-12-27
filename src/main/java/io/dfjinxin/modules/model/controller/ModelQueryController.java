@@ -26,7 +26,7 @@ import java.util.Map;
  */
 
 @RestController
-@RequestMapping("model")
+@RequestMapping("moxing")
 @Api(tags = "模型管理-查询")
 public class ModelQueryController {
 
