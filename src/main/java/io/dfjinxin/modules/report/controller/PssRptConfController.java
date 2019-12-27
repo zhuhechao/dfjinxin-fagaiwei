@@ -121,13 +121,4 @@ public class PssRptConfController {
     }
 
 
-    //文件路径和文件名称的接口
-    @GetMapping("/queryRptNameAndPath")
-    @ApiOperation("所有文件和路径列表")
-    public R queryRschList() {
-        List<PssRptConfEntity> page = pssRptConfService.list();
-
-        return R.ok().put("page", page);
-    }
-
 }
