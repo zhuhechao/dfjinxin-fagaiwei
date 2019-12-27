@@ -102,6 +102,25 @@ public class SysRoleController extends AbstractController {
 		return R.ok();
 	}
 
+	/**
+	 * 功能权限
+	 * @param role
+	 * @return
+	 */
+	@PostMapping("/authority")
+	@RequiresPermissions("sys:role:authority")
+	@ApiOperation("新增或者修改角色")
+	public R roleMenu(@RequestBody SysRoleEntity role){
+		int rid= role.getRoleId();
+		List<Integer> mids= role.getMenuIdList();
+		try {
+			sysRoleMenuService.saveOrUpdate(rid,mids);
+		}catch (Exception e){
+			return R.error("功能权限操作失败!");
+		}
+		return R.ok();
+	}
+
 	@GetMapping("/checkRolePerm")
 	@RequiresPermissions("sys:role:checkRolePerm")
 	@ApiOperation("新增或者修改角色对权限进行验证")

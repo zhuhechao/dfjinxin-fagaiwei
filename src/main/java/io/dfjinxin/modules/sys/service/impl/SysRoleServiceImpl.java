@@ -115,6 +115,12 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 		List<Map<String, Object>> result = new ArrayList<>();
 		priDefMap.forEach((k, v) -> result.add(pri4RoleMap.getOrDefault(k, v)));
 
+		for(Map<String,Object> map : result){
+			 Object rid= map.get("role_id");
+		     if(rid == null || rid == ""){
+		     	map.put("role_id","");
+			 }
+		}
 
 		return R.ok().put("data",result);
 	}

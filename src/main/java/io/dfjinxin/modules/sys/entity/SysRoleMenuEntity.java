@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 角色与菜单对应关系
@@ -36,5 +37,15 @@ public class SysRoleMenuEntity implements Serializable {
 	 * 菜单ID
 	 */
 	private int menuId;
+
+	/**
+	 * 创建时间
+	 */
+	private Date creDate;
+
+	/**
+	 * 更新时间
+	 */
+	private Date updDate;
 	
 }
