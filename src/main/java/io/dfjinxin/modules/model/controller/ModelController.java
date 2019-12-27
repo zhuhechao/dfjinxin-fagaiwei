@@ -71,14 +71,19 @@ public class ModelController extends AbstractClientController {
         LOG.info("模型管理 python host:{}", pythonHost);
         String response = null;
         try {
-            response = clientRequest(request, true);
+            response = super.clientRequest(request, true);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {
             e.printStackTrace();
         } catch (ServletException e) {
             e.printStackTrace();
+        } finally {
+            String pyApi = super.checkServiceUrl(request);
+            LOG.error("模型管理-调用py-{}接口异常:{}", pyApi);
+            R.error("模型管理-调用py-[" + pyApi + "]接口失败!");
         }
+
         LOG.info("-模型管理调用python返回结果:{}", response);
         if (StringUtils.isEmpty(response)) {
             return R.error("模型管理-调用python失败!");
