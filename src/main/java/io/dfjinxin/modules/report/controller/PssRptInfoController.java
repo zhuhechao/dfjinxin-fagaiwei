@@ -161,7 +161,7 @@ public class PssRptInfoController {
     }
 
 
-    @PostMapping("/preview")
+    @GetMapping("/preview")
     public void preview(@RequestParam(value = "fileType") String fileType,
                         @RequestParam(value = "infoId") String infoId) throws Exception {
         PssRptInfoEntity prie = pssRptInfoService.getById(infoId);

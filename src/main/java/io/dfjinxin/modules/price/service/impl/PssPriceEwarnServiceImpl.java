@@ -844,7 +844,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             yearTongBi = yearAvg.divide(lastYearAvg, 2, RoundingMode.HALF_UP);
         }
 
-        retMap.put("currPrice", lastDayPrice);
+        retMap.put("currPrice", lastDayPrice.setScale(2,RoundingMode.HALF_UP));
         retMap.put("monthAvg", monthAvg);
         retMap.put("yearAvg", yearAvg);
         retMap.put("unit", unit);

@@ -26,22 +26,5 @@ public class PssRptInfoServiceImpl extends ServiceImpl<PssRptInfoDao, PssRptInfo
         return new PageUtils(page);
     }
 
-    private void addQueryCondition(Map<String, Object> params,String con,String con_cloum ,String queryType,QueryWrapper qr){
-        Object o=params.get(con);
-        if(o!=null&& StringUtils.isNotBlank(o.toString())){
-            if ("like".equals(queryType)){
-                qr.like(con_cloum,o.toString());
-            }
-            if ("eq".equals(queryType)){
-                qr.eq(con_cloum,o.toString());
-            }
-            if ("between".equals(queryType)){
-                String startTime=o.toString() +"00:00:00";
-                String endTime=o.toString() +"23:59:59";
-                qr.between(con_cloum, DateTools.toDateByForm(startTime,"yyyy-MM-dd HH:mm:ss"),DateTools.toDateByForm(endTime,"yyyy-MM-dd HH:mm:ss"));
-            }
-
-        }
-    }
 
 }
