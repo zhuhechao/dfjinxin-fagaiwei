@@ -11,6 +11,9 @@
         <result property="dataTime" column="data_time"/>
         <result property="dataSetType" column="data_set_type"/>
         <result property="dataSetEngName" column="data_set_eng_name"/>
+        <result property="shape" column="shape"/>
+        <result property="userId" column="user_id"/>
+        <result property="userRealName" column="user_real_name"/>
     </resultMap>
 
     <select id="getDataSetByAnalyWay" resultMap="pssDatasetInfoMap">
@@ -23,14 +26,20 @@
 
     <select id="queryByPage" resultMap="pssDatasetInfoMap">
         SELECT
-        data_set_id,
-        data_set_name,
-        data_set_type,
-        inde_var, data_time,
-        data_set_eng_name
-        FROM pss_dataset_info WHERE 1=1
+        dset.data_set_id,
+        dset.data_set_name,
+        dset.data_set_type,
+        dset.inde_var,
+        dset.data_time,
+        dset.data_set_eng_name,
+        dset.user_id,
+        dset.shape,
+        us.user_real_name
+        FROM pss_dataset_info dset
+        left join pss_user_info us on us.user_id = dset.user_id
+        WHERE us.user_status =1
         <if test="param.dataSetName!= null and param.dataSetName.trim() !=''">
-            AND data_set_name = #{param.dataSetName}
+            AND dset.data_set_name = #{param.dataSetName}
         </if>
     </select>
 
