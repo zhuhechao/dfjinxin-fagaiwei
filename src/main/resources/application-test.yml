@@ -11,7 +11,7 @@ hive:
     #  公司测试环境
     user: hdfs
     password:
-    url: jdbc:hive2://10.1.3.238:10000/zhjg
+    url: jdbc:hive2://10.1.3.238:10000/
     driver-class-name: org.apache.hive.jdbc.HiveDriver
     filters: stat
     initialSize: 2

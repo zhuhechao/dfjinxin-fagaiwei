@@ -10,7 +10,7 @@ mysql:
 hive:
     user: hdfs
     password:
-    url: jdbc:hive2://172.20.10.63:10000/zhjg
+    url: jdbc:hive2://172.20.10.63:10000/
     driver-class-name: org.apache.hive.jdbc.HiveDriver
     filters: stat
     initialSize: 2

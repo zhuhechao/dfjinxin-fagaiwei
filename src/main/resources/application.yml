@@ -25,11 +25,11 @@ spring:
 
 app:
   path:
-    work-dir: ${user.home}/fagaiwei
-    userDir: ${user.dir}/fagaiwei
-    module:
-      report: ${user.dir}/fagaiwei/report
-      reportResult: ${user.dir}/fagaiwei/reportResult
+    work-dir: /zhjg/app/fagaiwei_app
+    userDir: /zhjg/app/fagaiwei_app
+    module:   ##${user.dir}/ 把他去掉
+      report: /zhjg/app/fagaiwei_app/report
+      reportResult: /zhjg/app/fagaiwei_app/reportResult
     temp: /temp
     upload: /upload
 

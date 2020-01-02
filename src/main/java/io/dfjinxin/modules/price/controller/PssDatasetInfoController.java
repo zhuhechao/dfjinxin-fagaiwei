@@ -100,10 +100,10 @@ public class PssDatasetInfoController extends AbstractController {
         }
 
         JSONObject jsonObj = JSON.parseObject(result);
-        String code = jsonObj.containsKey("code")? jsonObj.getString("code"):null;
+        String code = jsonObj.containsKey("code") ? jsonObj.getString("code") : null;
         if ("succ".equals(code)) {
-            String tableName = jsonObj.containsKey("name")? jsonObj.getString("name"):null;
-            String shape = jsonObj.containsKey("shape")? jsonObj.getString("shape"):null;
+            String tableName = jsonObj.containsKey("name") ? jsonObj.getString("name") : null;
+            String shape = jsonObj.containsKey("shape") ? jsonObj.getString("shape") : null;
             entity.setDataSetEngName(tableName);
             entity.setShape(shape);
 //            entity.setUserId(super.getUserId());
@@ -138,7 +138,9 @@ public class PssDatasetInfoController extends AbstractController {
         entity.setCommIndevalPath(entity.getCommIndevalPath());
         entity.setMacroIndevalPath(entity.getMacroIndevalPath());
         entity.setDataTime(new Date());
-        entity.setUserId(super.getUserId());
+        //TODO
+//        entity.setUserId(super.getUserId());
+        entity.setUserId("1");
         pssDatasetInfoService.updateById(entity);
         return R.ok();
     }
@@ -158,7 +160,9 @@ public class PssDatasetInfoController extends AbstractController {
             return R.error("数据集-" + dataSetId + ",不存在!");
         }
 
-        hiveService.dropTable(entity.getDataSetEngName());
+        //数据集所在库名
+        final String databaseName = "zhjg_dataset.";
+        hiveService.dropTable(databaseName + entity.getDataSetEngName());
         pssDatasetInfoService.removeById(dataSetId);
         return R.ok();
     }
