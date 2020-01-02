@@ -249,7 +249,7 @@ public class TestTask2 implements ITask {
 		//生成第二张图片
 
 		//下属规格涨跌幅 图形所需数据
-		params.clear();params.put("commId",58);
+		params.clear();params.put("commId",pe.getCommId());
 		params.put("beginYestarday", DateUtils.format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),-1)));
 		params.put("endYestarday", DateUtils.format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),-1))+" 23:59:59 ");
 		//下属规格涨跌幅数据
