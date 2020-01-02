@@ -2,6 +2,7 @@ package io.dfjinxin.modules.sys.entity;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,5 +10,5 @@ import java.util.List;
  */
 @Data
 public class MenuParams {
-    private List<Integer> ids;
+    private ArrayList<Integer> ids;
 }

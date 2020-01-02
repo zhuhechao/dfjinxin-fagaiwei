@@ -48,5 +48,7 @@ public interface SysRoleService extends IService<SysRoleEntity> {
 	//删除角色时校验
 	R checkPermInfo(ArrayList<Integer> roles);
 
+	SysRoleEntity getRoleById(String roleId);
+
 
 }

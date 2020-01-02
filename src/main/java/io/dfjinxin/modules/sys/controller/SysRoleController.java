@@ -13,6 +13,7 @@ import io.dfjinxin.common.utils.Constant;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.common.validator.ValidatorUtils;
+import io.dfjinxin.modules.sys.entity.MenuParams;
 import io.dfjinxin.modules.sys.entity.SysRoleEntity;
 import io.dfjinxin.modules.sys.service.SysRoleMenuService;
 import io.dfjinxin.modules.sys.service.SysRoleService;
@@ -54,7 +55,16 @@ public class SysRoleController extends AbstractController {
 		return R.ok().put("page", page);
 	}
 
-
+	/**
+	 * 菜单信息
+	 */
+	@ApiOperation("获取指定角色信息")
+	@GetMapping("/roleInf")
+	@RequiresPermissions("sys:role:roleInf")
+	public R roleInfo(@RequestParam("roleId") String roleId){
+		SysRoleEntity role = sysRoleService.getRoleById(roleId);
+		return R.ok().put("role", role);
+	}
 
 
 	/**
@@ -63,8 +73,8 @@ public class SysRoleController extends AbstractController {
 	@PostMapping("/delete")
 	@RequiresPermissions("sys:role:delete")
 	@ApiOperation("删除角色")
-	public R delete(@RequestBody Map<String,Object> roleIds){
-		ArrayList<Integer> roles= (ArrayList<Integer>) roleIds.get("roleIds");
+	public R delete(@RequestBody MenuParams roleIds){
+		ArrayList<Integer> roles=  roleIds.getIds();
 		sysRoleService.deleteBatch(roles);
 
 		return R.ok();
@@ -109,7 +119,7 @@ public class SysRoleController extends AbstractController {
 	 */
 	@PostMapping("/authority")
 	@RequiresPermissions("sys:role:authority")
-	@ApiOperation("新增或者修改角色")
+	@ApiOperation("功能权限")
 	public R roleMenu(@RequestBody SysRoleEntity role){
 		int rid= role.getRoleId();
 		List<Integer> mids= role.getMenuIdList();
