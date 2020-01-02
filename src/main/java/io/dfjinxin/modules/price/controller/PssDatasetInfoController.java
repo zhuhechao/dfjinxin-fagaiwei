@@ -9,6 +9,7 @@ import io.dfjinxin.modules.hive.service.HiveService;
 import io.dfjinxin.modules.price.dao.PssDatasetInfoDao;
 import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
 import io.dfjinxin.modules.price.service.PssDatasetInfoService;
+import io.dfjinxin.modules.sys.controller.AbstractController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
@@ -29,7 +30,7 @@ import java.util.List;
 @RestController
 @RequestMapping("price/pssdatasetinfo")
 @Api(tags = "数据集信息")
-public class PssDatasetInfoController {
+public class PssDatasetInfoController extends AbstractController {
 
     @Autowired
     private PssDatasetInfoService pssDatasetInfoService;
@@ -99,10 +100,15 @@ public class PssDatasetInfoController {
         }
 
         JSONObject jsonObj = JSON.parseObject(result);
-        String code = jsonObj.getString("code");
-        String tableName = jsonObj.getString("data");
-        if ("succ".equals(code) && StringUtils.isNotEmpty(tableName)) {
+        String code = jsonObj.containsKey("code")? jsonObj.getString("code"):null;
+        if ("succ".equals(code)) {
+            String tableName = jsonObj.containsKey("name")? jsonObj.getString("name"):null;
+            String shape = jsonObj.containsKey("shape")? jsonObj.getString("shape"):null;
             entity.setDataSetEngName(tableName);
+            entity.setShape(shape);
+//            entity.setUserId(super.getUserId());
+            //TODO
+            entity.setUserId("2");
             pssDatasetInfoService.save(entity);
             LOG.info("数据集创建-成功!");
             return R.ok();
@@ -132,6 +138,7 @@ public class PssDatasetInfoController {
         entity.setCommIndevalPath(entity.getCommIndevalPath());
         entity.setMacroIndevalPath(entity.getMacroIndevalPath());
         entity.setDataTime(new Date());
+        entity.setUserId(super.getUserId());
         pssDatasetInfoService.updateById(entity);
         return R.ok();
     }

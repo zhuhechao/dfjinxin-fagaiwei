@@ -21,10 +21,10 @@ public class PssRptTemplateEntity implements Serializable {
     private Integer tempId;
 
     //模板名称
-    private String tempName;
+    private String rptName;
 
     //模板路径
-    private String tempPath;
+    private String rptPath;
 
 
 

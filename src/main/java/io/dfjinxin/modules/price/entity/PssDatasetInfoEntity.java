@@ -44,7 +44,14 @@ public class PssDatasetInfoEntity implements Serializable {
 	 */
 	private String dataSetEngName;
 
+	/**
+	 * hive表数据集的行、列数
+	 */
+	private String shape;
+
 	private String indeVar;
+
+	private String userId;
 
 	private String commIndevalPath;
 
@@ -57,6 +64,12 @@ public class PssDatasetInfoEntity implements Serializable {
 
 	@TableField(exist = false)
 	private String indeName;
+
+	/**
+	 * 创建数据集用户名
+	 */
+	@TableField(exist = false)
+	private String userRealName;
 
 
 	public static PssDatasetInfoEntity toEntity(PssDatasetInfoDto from) {
