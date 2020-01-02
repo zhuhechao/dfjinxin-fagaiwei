@@ -147,7 +147,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		List<Map<String, Object>> m7 = new ArrayList<>();
 		List<Map<String, Object>> m8 = new ArrayList<>();
 		List<Map<String, Object>> tmp = new ArrayList<>();
-	  if(list.size()<0 || list == null){
+	  if(list.size()<=0 || list == null){
 	  	return new ArrayList<>();
 	  }
 	  tmp.addAll(list);
