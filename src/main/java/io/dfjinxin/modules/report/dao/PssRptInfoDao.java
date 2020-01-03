@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,4 +21,10 @@ import java.util.Map;
 public interface PssRptInfoDao extends BaseMapper<PssRptInfoEntity> {
 
     IPage<PssRptInfoEntity> queryPage(Page page, @Param("param") Map<String, Object> map);
+
+    /**
+     * 分析报告单独接口
+     * @return
+     */
+    List<PssRptInfoEntity> queryRptName(@Param("map") Map<String,Object> params);
 }
