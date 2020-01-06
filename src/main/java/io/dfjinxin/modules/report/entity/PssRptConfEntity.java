@@ -56,6 +56,10 @@ public class PssRptConfEntity implements Serializable {
 	//商品名称
 	private String commName;
 
+	//模板id
+	private Integer tempId;
+
+
 	/**
 	 * 统计区域代码
 	 */
@@ -98,6 +102,10 @@ public class PssRptConfEntity implements Serializable {
 	 *  人工报告使用 :附件名称
 	 */
 	private String rptAttachmentName;
+
+
+	private PssRptTemplateEntity rptTemplateEntity = new PssRptTemplateEntity();
+
 
 	public static PssRptConfEntity toEntity(PssRptConfDto from) {
 		if (null == from) {

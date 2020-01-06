@@ -4,7 +4,6 @@ server:
     uri-encoding: UTF-8
     max-threads: 1000
     min-spare-threads: 30
-  host: 10.1.1.134
   port: 8081
   connection-timeout: 5000ms
   servlet:
@@ -27,8 +26,8 @@ spring:
 
 app:
   path:
-    work-dir: \zhjg\app\fagaiwei_app
-    userDir: \zhjg\app\fagaiwei_app
+    work-dir: /zhjg/app/fagaiwei_app
+    userDir: /zhjg/app/fagaiwei_app
     module:   ##${user.dir}/ 把他去掉
       report: /zhjg/app/fagaiwei_app/report
       reportResult: /zhjg/app/fagaiwei_app/reportResult
