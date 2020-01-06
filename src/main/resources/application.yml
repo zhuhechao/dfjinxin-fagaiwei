@@ -4,6 +4,7 @@ server:
     uri-encoding: UTF-8
     max-threads: 1000
     min-spare-threads: 30
+  host: 10.1.1.134
   port: 8081
   connection-timeout: 5000ms
   servlet:
@@ -12,7 +13,7 @@ server:
 spring:
   # 环境 dev|test|prod
   profiles:
-    active: @profileActive@
+    active: test
   # jackson时间格式化
   jackson:
     time-zone: GMT+8
@@ -25,8 +26,8 @@ spring:
 
 app:
   path:
-    work-dir: /zhjg/app/fagaiwei_app
-    userDir: /zhjg/app/fagaiwei_app
+    work-dir: \zhjg\app\fagaiwei_app
+    userDir: \zhjg\app\fagaiwei_app
     module:   ##${user.dir}/ 把他去掉
       report: /zhjg/app/fagaiwei_app/report
       reportResult: /zhjg/app/fagaiwei_app/reportResult
