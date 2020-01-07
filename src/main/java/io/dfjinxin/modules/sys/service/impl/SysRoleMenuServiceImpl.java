@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class SysRoleMenuServiceImpl extends ServiceImpl<SysRoleMenuDao, SysRoleM
 		ArrayList<Integer> list = new ArrayList<>();
 		list.add(roleId);
 		deleteBatch(list);
-
+		Date now = new Date();
 		if(menuIdList.size() == 0){
 			return ;
 		}
@@ -48,6 +49,9 @@ public class SysRoleMenuServiceImpl extends ServiceImpl<SysRoleMenuDao, SysRoleM
 			SysRoleMenuEntity sysRoleMenuEntity = new SysRoleMenuEntity();
 			sysRoleMenuEntity.setMenuId(menuId);
 			sysRoleMenuEntity.setRoleId(roleId);
+			sysRoleMenuEntity.setCreDate(now);
+			sysRoleMenuEntity.setUpdDate(now);
+
 			this.save(sysRoleMenuEntity);
 		}
 	}

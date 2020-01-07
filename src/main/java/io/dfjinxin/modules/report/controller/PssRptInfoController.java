@@ -4,10 +4,7 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import io.dfjinxin.config.propertie.AppProperties;
 import io.swagger.annotations.Api;
@@ -23,6 +20,7 @@ import io.dfjinxin.modules.report.service.PssRptInfoService;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 
@@ -78,6 +76,28 @@ public class PssRptInfoController {
         }};
         PageUtils pageOne = pssRptInfoService.queryPage(params);
         return R.ok().put("page", pageOne);
+    }
+
+
+    //所有分析报告单独接口
+    @GetMapping("/queryRptName")
+    @ApiOperation("所有分析报告单独接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "commId", value = "传参商品报告和所有的商品报告文件", required = false, dataType = "Integer", paramType = "query"),
+    })
+    public R queryRptName(
+            @RequestParam(value = "commId", required = false) Integer commId
+    ) {
+        Map<String, Object> params = new HashMap() {{
+            put("commId", commId);
+        }};
+        List<PssRptInfoEntity> page = pssRptInfoService.queryRptName(params);
+        for (int i = 0; i < page.size(); i++) {
+            String rptName = page.get(i).getRptName().substring(0, page.get(i).getRptName().lastIndexOf("."));
+            page.get(i).setRptName(rptName);
+        }
+
+        return R.ok().put("page", page);
     }
 
 

@@ -143,77 +143,164 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		List<Map<String, Object>> m1 = new ArrayList<>();
 		List<Map<String, Object>> m2 = new ArrayList<>();
 		List<Map<String, Object>> m3 = new ArrayList<>();
-        for(Map<String, Object> data:list){
-			if((int)data.get("pare_menu_id") != 1 && (int)data.get("menu_type")==2) {
-				Map<String, Object> map = new HashMap<>();
+		List<Map<String, Object>> m6 = new ArrayList<>();
+		List<Map<String, Object>> m7 = new ArrayList<>();
+		List<Map<String, Object>> m8 = new ArrayList<>();
+		List<Map<String, Object>> tmp = new ArrayList<>();
+	  if(list.size()<=0 || list == null){
+	  	return new ArrayList<>();
+	  }
+	  tmp.addAll(list);
+	  menusMap(list,tmp);
 
+		for(Map<String, Object> data:list){
+       	if((int)data.get("pare_menu_id")==0){
+       		break;
+		}
+
+		if(Integer.parseInt((String) data.get("parent"))==0){
+       		data.put("depth",0);
+		}
+		if(Integer.parseInt((String) data.get("parent"))==1){
+			data.put("depth",1);
+			buildChildren(data,list);
+		}
+	   }
+        for(Map<String, Object> data:list){
+			if((int)data.get("depth") == 3) {
+				Map<String, Object> map = new HashMap<>();
+				List<Map<String, Object>> lt = new ArrayList<>();
+				String pr = (String) data.get("menu_router");
+				int i= pr.lastIndexOf("/");
+				map.put("path",pr.substring(i));
+				map.put("component","Layout");
+				map.put("redirect",pr);
+//				map.put("name",upperCase(pr.substring(i+1)));
+				Map<String, Object>  m4 = new HashMap<>();
+				m4.put("title",data.get("menu_name"));
+				m4.put("icon","'dashboard'");
+				map.put("meta",m4);
+				map.put("children",lt);
+				map.put("pare_menu_id",data.get("pare_menu_id"));
+				map.put("menu_id",data.get("menu_id"));
+				m6.add(map);
+			}else if((int)data.get("depth") == 2){
+				List<Map<String, Object>> lt = new ArrayList<>();
+				Map<String, Object> map = new HashMap<>();
+				String pr = (String) data.get("menu_router");
+				int i= pr.lastIndexOf("/");
+				if(i==0){
+					map.put("path",pr.substring(1));
+				}else {
+					map.put("path",pr.substring(1,i));
+				}
+				if(i==0){
+					map.put("component","() => import('@/views"+pr.substring(1)+"')");
+				}else {
+					map.put("component","() => import('@/views"+pr.substring(1,i)+"')");
+				}
+
+				map.put("redirect",pr);
+				Map<String, Object>  m4 = new HashMap<>();
+				m4.put("title",data.get("menu_name"));
+				map.put("meta",m4);
+				map.put("children",lt);
+				map.put("pare_menu_id",data.get("pare_menu_id"));
+				map.put("menu_id",data.get("menu_id"));
+				m3.add(map);
+			}else if((int) data.get("depth") == 1 && (int) data.get("pare_menu_id")!= 1) {
+				Map<String, Object> map = new HashMap<>();
+				List<Map<String, Object>> lt = new ArrayList<>();
+				String pr = (String) data.get("menu_router");
+				int i= pr.lastIndexOf("/");
+				map.put("path",pr.substring(i));
+				map.put("component","() => import('@/views"+pr+"')");
+				Map<String, Object>  m4 = new HashMap<>();
+				m4.put("title",data.get("menu_name"));
+				map.put("meta",m4);
+				map.put("children",lt);
+				map.put("pare_menu_id",data.get("pare_menu_id"));
+				map.put("menu_id",data.get("menu_id"));
+				m2.add(map);
+			}else if((int) data.get("depth") == 1 && (int) data.get("pare_menu_id")== 1) {
+				Map<String, Object> map = new HashMap<>();
+				List<Map<String, Object>> lt = new ArrayList<>();
+				String pr = (String) data.get("menu_router");
+				int i= pr.lastIndexOf("/");
+				map.put("path",pr.substring(i+1));
+				map.put("component","Layout");
+				map.put("redirect",pr);
+				Map<String, Object>  m4 = new HashMap<>();
+				m4.put("title",data.get("menu_name"));
+				m4.put("icon","");
+				map.put("meta",m4);
+				map.put("children",lt);
+				map.put("pare_menu_id",data.get("pare_menu_id"));
+				map.put("menu_id",data.get("menu_id"));
+				m1.add(map);
+			}else if((int) data.get("depth") == 0 && (int) data.get("pare_menu_id")!= 1) {
+				Map<String, Object> map = new HashMap<>();
 				String pr = (String) data.get("menu_router");
 				int i= pr.lastIndexOf("/");
 				map.put("path",pr.substring(i+1));
 				map.put("name",upperCase(pr.substring(i+1)));
+				map.put("component","() => import('@/views"+pr+"')");
 				Map<String, Object>  m4 = new HashMap<>();
 				m4.put("title",data.get("menu_name"));
 				map.put("meta",m4);
-				map.put("component","() => import('@/views"+pr+"')");
 				map.put("pare_menu_id",data.get("pare_menu_id"));
 				map.put("menu_id",data.get("menu_id"));
-				m3.add(map);
-			}else if( (int)data.get("pare_menu_id") != 1 && (int)data.get("menu_type")==1){
-				List<Map<String, Object>> lt = new ArrayList<>();
-				Map<String, Object> map = new HashMap<>();
-				String pr = (String) data.get("menu_router");
-				int i= pr.lastIndexOf("/");
-				map.put("path",pr.substring(i+1));
-				Map<String, Object>  m4 = new HashMap<>();
-				m4.put("title",data.get("menu_name"));
-				map.put("meta",m4);
-				map.put("component","() => import('@/views"+pr+"')");
-				map.put("pare_menu_id",data.get("pare_menu_id"));
-				map.put("menu_id",data.get("menu_id"));
-				map.put("children",lt);
-				m2.add(map);
-			}else {
+				m7.add(map);
+			}else if((int) data.get("depth") == 0 && (int) data.get("pare_menu_id")== 1) {
 				Map<String, Object> map = new HashMap<>();
 				List<Map<String, Object>> lt = new ArrayList<>();
 				String pr = (String) data.get("menu_router");
 				int i= pr.lastIndexOf("/");
+				if(i==0){
+					map.put("path",pr.substring(1));
+				}else {
+					map.put("path",pr.substring(1,i));
+				}
+				map.put("component","Layout");
+				map.put("redirect",pr);
 				Map<String, Object>  m4 = new HashMap<>();
+				Map<String, Object>  m5 = new HashMap<>();
+				m5.put("path",pr.substring(i+1));
+				if(i==0){
+					m5.put("component","() => import('@/views/"+pr.substring(1)+"')");
+				}else {
+					m5.put("component","() => import('@/views/"+pr.substring(1,i)+"')");
+				}
 				m4.put("title",data.get("menu_name"));
 				m4.put("icon","example");
-				map.put("meta",m4);
-				map.put("path",pr.substring(0,i));
-				map.put("component", "Layout");
-				map.put("redirect",pr);
+				m5.put("meta",m4);
+				lt.add(m5);
+				map.put("children",lt);
 				map.put("pare_menu_id",data.get("pare_menu_id"));
 				map.put("menu_id",data.get("menu_id"));
-				map.put("children",lt);
-				m1.add(map);
+				m8.add(map);
 			}
 		}
+       //m6 4级 m1 1级  m8 0 级
+		updateMap(m2,m7);
+		updateMap(m3,m2);
+		updateMap(m3,m7);
+		updateMap(m6,m7);
+		updateMap(m6,m3);
+        updateMap(m1,m7);
+        m1.addAll(m6);
+        m1.addAll(m8);
 
-		updateMap(m2,m3);
-		updateMap(m1,m3);
-		updateMap(m1,m2);
+
 
 		for(Map<String,Object> dt: m1){
 			int flg=(int)dt.get("pare_menu_id");
-			List<Map<String,Object>> lt= (List<Map<String, Object>>) dt.get("children");
-			String pr = (String) dt.get("redirect");
-			int i= pr.lastIndexOf("/");
-			if(lt.size()==0 && flg==0){
-				Map<String, Object> map = new HashMap<>();
-				map.put("path",pr.substring(i+1));
-				map.put("component","() => import('@/views"+pr.substring(0,i)+"')");
-				Map<String,Object> mt= (Map<String, Object>) dt.get("meta");
-				dt.remove("meta");
-				map.put("meta",mt);
-				lt.add(map);
-			}
-			if(flg==0){
+			if(flg==1){
 				dt.remove("pare_menu_id");
 				dt.remove("menu_id");
 			}
 		}
+
 		return  m1;
 	}
 
@@ -251,6 +338,55 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				role.add(Integer.parseInt(rid));
 			}
 			sysUserEntity.setRoles(role);
+		}
+	}
+
+	private void buildChildren(Map<String,Object> mbean,List<Map<String,Object>> menus){
+		int mid= (int) mbean.get("menu_id");
+		int dth = (int) mbean.get("depth");
+		for(Map<String,Object> dt : menus){
+			if((int)dt.get("pare_menu_id")== mid && Integer.parseInt((String) dt.get("parent"))==1){
+             mbean.put("depth",dth+1);
+            for(Map<String,Object> data : menus){
+            	 if((int)dt.get("menu_id")== (int)data.get("pare_menu_id") && Integer.parseInt((String) data.get("parent"))== 1){
+					int dthh = (int) mbean.get("depth");
+					mbean.put("depth",dthh+1);
+				}
+			}
+			}
+		}
+	}
+
+	private void menusMap(List<Map<String,Object>> list,List<Map<String,Object>> tmap){
+		int fl = 1;
+		for(int j=0;j<list.size();j++){
+			int pid= (int) list.get(j).get("pare_menu_id");
+			int mmid= (int) list.get(j).get("menu_id");
+			Object m = list.get(j);
+			for(Map<String,Object> dt:tmap){
+				int mid = (int) dt.get("menu_id");
+				if(pid ==1 ){
+					fl = 0;
+					break;
+				}
+				if(mmid == mid){
+					continue;
+				}
+				if( pid == mid){
+					fl = 0;
+					break;
+				}
+			}
+			if(fl != 0){
+				list.remove(m);
+				return;
+			}
+		}
+
+		if(fl != 0){
+			List<Map<String, Object>> tmp = new ArrayList<>();
+			tmp.addAll(list);
+			menusMap(list,tmp);
 		}
 	}
 

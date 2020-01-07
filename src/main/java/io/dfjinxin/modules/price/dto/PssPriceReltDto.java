@@ -1,5 +1,8 @@
 package io.dfjinxin.modules.price.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.dfjinxin.common.validator.CustomDoubleSerializer;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -30,7 +33,7 @@ public class PssPriceReltDto implements Serializable {
     /**
      *
      */
-    private Integer modId;
+    private String modId;
 
     /**
      * 模型名称
@@ -66,6 +69,7 @@ public class PssPriceReltDto implements Serializable {
     /**
      *
      */
+    @JsonSerialize(using = CustomDoubleSerializer.class)
     private BigDecimal forePrice;
     /**
      *
@@ -74,8 +78,11 @@ public class PssPriceReltDto implements Serializable {
     /**
      *
      */
+
+    @JsonSerialize(using = CustomDoubleSerializer.class)
     private BigDecimal reviPrice;
 
+    @JsonSerialize(using = CustomDoubleSerializer.class)
     private BigDecimal realPrice;
     /**
      *

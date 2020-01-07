@@ -71,14 +71,19 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
     @Transactional(rollbackFor = Exception.class)
     public void addOrUpdate(SysRoleEntity role) {
  		 int roleId = role.getRoleId();
+ 		 Date date = new Date();
+ 		 Timestamp ts = new Timestamp(date.getTime());
  		 List<Integer> menus= role.getMenuIdList();
- 		 if(menus.size()>0){
+ 		 if(menus !=null && menus.size()>0){
 			 String ms= StringUtils.join(menus.toArray(),",");
 			 role.setMenuIds(ms);
 		 }
 		if(roleId ==0 ){
+ 		 	role.setCreDate(ts);
+ 		 	role.setUpdDate(ts);
 			baseMapper.save(role);
 		}else {
+			role.setUpdDate(ts);
 			baseMapper.updateRole(role);
 		}
     }
@@ -115,6 +120,12 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 		List<Map<String, Object>> result = new ArrayList<>();
 		priDefMap.forEach((k, v) -> result.add(pri4RoleMap.getOrDefault(k, v)));
 
+		for(Map<String,Object> map : result){
+			 Object rid= map.get("role_id");
+		     if(rid == null || rid == ""){
+		     	map.put("role_id","");
+			 }
+		}
 
 		return R.ok().put("data",result);
 	}
@@ -164,6 +175,13 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 			return R.error(1,"当前指定的角色已经被使用，不能删除！");
 		}
 		return R.ok();
+	}
+
+	@Override
+	public SysRoleEntity getRoleById(String roleId) {
+		Map<String,Object> map = new HashMap<>();
+		map.put("roleId",roleId);
+		return baseMapper.queryRole(map);
 	}
 
 }

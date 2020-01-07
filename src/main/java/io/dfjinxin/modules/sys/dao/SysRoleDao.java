@@ -33,6 +33,11 @@ public interface SysRoleDao extends BaseMapper<SysRoleEntity> {
 	 * 获取部门信息--分页
 	 */
 	IPage<SysRoleEntity> queryRole(Page page, @Param("m") Map<String, Object> m);
+
+	/**
+	 * 获取指定角色信息
+	 */
+	SysRoleEntity queryRole(@Param("m") Map<String, Object> m);
 	
 	/**
 	 * 查询用户创建的角色ID列表

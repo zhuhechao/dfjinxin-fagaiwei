@@ -84,53 +84,64 @@ public class PssDataSourcesController {
     /**
      * 修改
      */
-    @GetMapping("/updateDataSources")
+    @PostMapping("/updateDataSources")
     @ApiOperation(value = "数据源管理-修改")
     public R updateDataSources(@RequestBody PssDataSourcesEntity dataSourcesEntity) {
 
         Connection conn = null;
         ResultSet showDatabases = null;
+        String dataAddress = dataSourcesEntity.getDataAddress();
+        String dataPort = dataSourcesEntity.getDataPort();
+        String dataName = dataSourcesEntity.getDataName();
+        String userName = dataSourcesEntity.getUserName();
+        String password = dataSourcesEntity.getPassword();
+        //1是oracle连接
+        if ("1".equals(dataSourcesEntity.getDataType())) {
+            dataSourcesEntity.setAccessState(1);
+            dataSourcesService.save(dataSourcesEntity);
+            return R.error("连接数据源失败，请修改重试");
 
-        try {
-            String url = "jdbc:" + dataSourcesEntity.getDataType() + "://" + dataSourcesEntity.getDataAddress() + ":"
-                    + dataSourcesEntity.getDataPort() + "/" + dataSourcesEntity.getDataName();
-            Class.forName("com." + dataSourcesEntity.getDataType() + ".jdbc.Driver");
-            //2.获得数据连接
-            conn = DriverManager.getConnection(url, dataSourcesEntity.getUserName(), dataSourcesEntity.getPassword());
-            //3.使用数据库的连接创建声明
-            Statement stmt = conn.createStatement();
-            //4.使用声明执行SQL语句
-            showDatabases = stmt.executeQuery("SHOW DATABASES");
+        } else {
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                String url = "jdbc:mysql://" + dataAddress + ":" + dataPort + "/" + dataName;
+                //2.获得数据连接
+                conn = DriverManager.getConnection(url, userName, password);
+                //3.使用数据库的连接创建声明
+                Statement stmt = conn.createStatement();
+                //4.使用声明执行SQL语句
+                showDatabases = stmt.executeQuery("SHOW DATABASES");
 
-            //5、读取数据库的信息
-            if (showDatabases.next()) {
-                while (showDatabases.next()) {
-                    //所有的库名
-                    showDatabases.getString("Database");
+                //5、读取数据库的信息
+                if (showDatabases.next()) {
+                    while (showDatabases.next()) {
+                        //所有的库名
+                        showDatabases.getString("Database");
 
+                    }
                 }
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (conn != null) {
-                dataSourcesService.updateById(dataSourcesEntity);
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (conn != null) {
+                    dataSourcesService.updateById(dataSourcesEntity);
+                    try {
+                        conn.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    return R.error("发送请求连接信息有误，修改失败");
                 }
-            } else {
-                return R.error("发送请求连接信息有误，修改失败");
-            }
-            if (showDatabases != null) {
-                try {
-                    showDatabases.close();
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                if (showDatabases != null) {
+                    try {
+                        showDatabases.close();
+                    } catch (SQLException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -141,58 +152,68 @@ public class PssDataSourcesController {
     /**
      * 保存
      */
-    @GetMapping("/saveDataSources")
+    @PostMapping("/saveDataSources")
     @ApiOperation(value = "数据源管理-增加")
     public R saveDataSources(@RequestBody PssDataSourcesEntity dataSourcesEntity) {
 
         Connection conn = null;
         ResultSet showDatabases = null;
+        String dataAddress = dataSourcesEntity.getDataAddress();
+        String dataPort = dataSourcesEntity.getDataPort();
+        String dataName = dataSourcesEntity.getDataName();
+        String userName = dataSourcesEntity.getUserName();
+        String password = dataSourcesEntity.getPassword();
+        //1是oracle连接
+        if ("1".equals(dataSourcesEntity.getDataType())) {
+            dataSourcesEntity.setAccessState(1);
+            dataSourcesService.save(dataSourcesEntity);
+            return R.error("连接数据源失败，请修改重试");
 
-        try {
-            String url = "jdbc:" + dataSourcesEntity.getDataType() + "://" + dataSourcesEntity.getDataAddress() + ":"
-                    + dataSourcesEntity.getDataPort() + "/" + dataSourcesEntity.getDataName();
-            Class.forName("com." + dataSourcesEntity.getDataType() + ".jdbc.Driver");
-            //2.获得数据连接
-            conn = DriverManager.getConnection(url, dataSourcesEntity.getUserName(), dataSourcesEntity.getPassword());
-            //3.使用数据库的连接创建声明
-            Statement stmt = conn.createStatement();
-            //4.使用声明执行SQL语句
-            showDatabases = stmt.executeQuery("SHOW DATABASES");
+        } else {
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                String url = "jdbc:mysql://" + dataAddress + ":" + dataPort + "/" + dataName;
+                conn = DriverManager.getConnection(url, userName, password);
 
-            //5、读取数据库的信息
-            if (showDatabases.next()) {
+                //3.使用数据库的连接创建声明
+                Statement stmt = conn.createStatement();
+                //4.使用声明执行SQL语句
+                showDatabases = stmt.executeQuery("SHOW DATABASES");
+                //5、读取数据库的信息
                 while (showDatabases.next()) {
                     //所有的库名
                     showDatabases.getString("Database");
-
                 }
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (conn != null) {
-                dataSourcesService.save(dataSourcesEntity);
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (conn != null) {
+                    dataSourcesEntity.setAccessState(0);
+                    dataSourcesService.save(dataSourcesEntity);
+                    R.ok("连接成功");
+                    try {
+                        conn.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    dataSourcesEntity.setAccessState(1);
+                    dataSourcesService.save(dataSourcesEntity);
+                    R.error("连接数据源失败，请修改重试");
                 }
-            } else {
-                return R.error("发送请求连接信息有误，保存失败");
-            }
-            if (showDatabases != null) {
-                try {
-                    showDatabases.close();
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                if (showDatabases != null) {
+                    try {
+                        showDatabases.close();
+                    } catch (SQLException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
             }
         }
         return R.ok();
     }
-
 
 }

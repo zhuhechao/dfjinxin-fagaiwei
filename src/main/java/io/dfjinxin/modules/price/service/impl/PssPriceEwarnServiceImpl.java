@@ -187,10 +187,10 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         }
 
         if (queryHive) {
-//            int hiveCount = getHiveCount();
+            int hiveCount = getHiveCount();
             int tengxunCount = getProgrammeDistribution();
             //step1,实时预览-总量(万）
-            retMap.put("commTotal", /*hiveCount +*/ tengxunCount);
+            retMap.put("commTotal", hiveCount + tengxunCount);
         }
 
         Map<String, Object> lineDateMap = new HashMap<>();
@@ -669,8 +669,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
      * @Date: 2019/11/12 18:40
      */
     private int getHiveCount() {
-        final String sql_1 = "select count(*) tol from wp_base_index_val t";
-        final String sql_2 = "select count(*) tol from wp_macro_index_val t";
+        final String sql_1 = "select count(*) tol from zhjg.wp_base_index_val t";
+        final String sql_2 = "select count(*) tol from zhjg.wp_macro_index_val t";
 
         List<String> sqlList = new ArrayList<>();
         sqlList.add(sql_1);
@@ -844,7 +844,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             yearTongBi = yearAvg.divide(lastYearAvg, 2, RoundingMode.HALF_UP);
         }
 
-        retMap.put("currPrice", lastDayPrice);
+        retMap.put("currPrice", lastDayPrice.setScale(2, RoundingMode.HALF_UP));
         retMap.put("monthAvg", monthAvg);
         retMap.put("yearAvg", yearAvg);
         retMap.put("unit", unit);
