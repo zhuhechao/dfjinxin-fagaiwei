@@ -13,6 +13,7 @@ import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import io.dfjinxin.modules.price.service.PssCommConfService;
 import io.dfjinxin.modules.price.service.PssCommTotalService;
 import io.dfjinxin.modules.report.dao.PssRptConfDao;
+import io.dfjinxin.modules.report.dao.PssRptInfoDao;
 import io.dfjinxin.modules.report.dto.PssRptConfDto;
 import io.dfjinxin.modules.report.entity.PssRptConfEntity;
 import io.dfjinxin.modules.report.entity.PssRptInfoEntity;
@@ -24,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.Map;
 
@@ -39,6 +41,9 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
     @Autowired
     private ScheduleJobService scheduleJobService;
 
+    @Resource
+    private PssRptConfDao pssRptConfDao;
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         Page page = new Page((Integer) params.get("pageIndex"), (Integer) params.get("pageSize"));
@@ -52,7 +57,7 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
         PssRptConfEntity entity = PssRptConfEntity.toEntity(dto);
         entity.setRptStatus("0");
         entity.setStatCode("中国");
-        super.saveOrUpdate(entity);
+        pssRptConfDao.saveRptConf(entity);
         if ("1".equals(entity.getRptType())) {
             PssRptInfoEntity prie=new PssRptInfoEntity();
             //保存商品信息
