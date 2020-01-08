@@ -22,7 +22,7 @@ public class PssDataSourcesEntity {
     private String dataName;
 
     //数据源类型
-    private String dataType;
+    private Integer dataType;
 
     //实例名
     private String exampleName;

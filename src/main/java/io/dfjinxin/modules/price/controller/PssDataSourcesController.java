@@ -40,13 +40,13 @@ public class PssDataSourcesController {
             @ApiImplicitParam(name = "pageIndex", value = "页码", required = false, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "返回数据集", required = false, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "dataName", value = "数据源名称", required = false, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "dataType", value = "数据源类型", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "dataType", value = "数据源类型", required = false, dataType = "Integer", paramType = "query"),
     })
     public R queryDataSourcesList(
             @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
             @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize,
             @RequestParam(value = "dataName", required = false) String dataName,
-            @RequestParam(value = "dataType", required = false) String dataType
+            @RequestParam(value = "dataType", required = false) Integer dataType
     ) {
         Map<String, Object> params = new HashMap() {{
             put("pageIndex", pageIndex);
