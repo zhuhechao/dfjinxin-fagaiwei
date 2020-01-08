@@ -87,7 +87,7 @@ public class PssDataSourcesController {
     @PostMapping("/updateDataSources")
     @ApiOperation(value = "数据源管理-修改")
     public R updateDataSources(@RequestBody PssDataSourcesEntity dataSourcesEntity) {
-
+        boolean message = false;
         Connection conn = null;
         ResultSet showDatabases = null;
         String dataAddress = dataSourcesEntity.getDataAddress();
@@ -97,10 +97,7 @@ public class PssDataSourcesController {
         String password = dataSourcesEntity.getPassword();
         //1是oracle连接
         if ("1".equals(dataSourcesEntity.getDataType())) {
-            dataSourcesEntity.setAccessState(1);
-            dataSourcesService.save(dataSourcesEntity);
-            return R.error("连接数据源失败，请修改重试");
-
+            return R.error();
         } else {
             try {
                 Class.forName("com.mysql.jdbc.Driver");
@@ -127,13 +124,14 @@ public class PssDataSourcesController {
             } finally {
                 if (conn != null) {
                     dataSourcesService.updateById(dataSourcesEntity);
+                    message = true;
                     try {
                         conn.close();
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
                 } else {
-                    return R.error("发送请求连接信息有误，修改失败");
+                    return R.error();
                 }
                 if (showDatabases != null) {
                     try {
@@ -145,7 +143,9 @@ public class PssDataSourcesController {
                 }
             }
         }
-        return R.ok();
+        HashMap map = new HashMap<>();
+        map.put("message",message);
+        return R.ok(map);
     }
 
 
@@ -155,25 +155,24 @@ public class PssDataSourcesController {
     @PostMapping("/saveDataSources")
     @ApiOperation(value = "数据源管理-增加")
     public R saveDataSources(@RequestBody PssDataSourcesEntity dataSourcesEntity) {
-
+        boolean message = false;
         Connection conn = null;
         ResultSet showDatabases = null;
         String dataPort = dataSourcesEntity.getDataPort();
         String dataName = dataSourcesEntity.getDataName();
         String userName = dataSourcesEntity.getUserName();
         String password = dataSourcesEntity.getPassword();
+        String dataAddress = dataSourcesEntity.getDataAddress();
         //1是oracle连接
         if (dataSourcesEntity.getDataType() == 1) {
             dataSourcesEntity.setAccessState(1);
             dataSourcesService.save(dataSourcesEntity);
-            return R.error("连接数据源失败，请修改重试");
-
+            return R.error();
         } else {
             try {
                 Class.forName("com.mysql.jdbc.Driver");
-                String url = "jdbc:mysql://10.1.0.139" +  ":" + dataPort + "/" + dataName;
+                String url = "jdbc:mysql://" +dataAddress+  ":" + dataPort + "/" + dataName;
                 conn = DriverManager.getConnection(url, userName, password);
-
                 //3.使用数据库的连接创建声明
                 Statement stmt = conn.createStatement();
                 //4.使用声明执行SQL语句
@@ -191,14 +190,14 @@ public class PssDataSourcesController {
                 if (conn != null) {
                     dataSourcesEntity.setAccessState(0);
                     dataSourcesService.save(dataSourcesEntity);
-                    R.ok("连接成功");
+                    message = true;
                     try {
                         conn.close();
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
                 } else {
-                    R.error("连接数据源失败，请修改重试");
+                    R.error();
                 }
                 if (showDatabases != null) {
                     try {
@@ -210,7 +209,9 @@ public class PssDataSourcesController {
                 }
             }
         }
-        return R.ok();
+        HashMap map = new HashMap<>();
+        map.put("message",message);
+        return R.ok(map);
     }
 
 }

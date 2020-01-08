@@ -25,6 +25,10 @@
         data_name,
         data_type,
         example_name,
+        userName,
+        password,
+        dataAddress,
+        dataPort,
         data_remark,
         access_state
         FROM
