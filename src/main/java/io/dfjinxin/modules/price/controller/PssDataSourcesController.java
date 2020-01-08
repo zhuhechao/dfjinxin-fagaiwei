@@ -158,13 +158,12 @@ public class PssDataSourcesController {
 
         Connection conn = null;
         ResultSet showDatabases = null;
-        String dataAddress = dataSourcesEntity.getDataAddress();
         String dataPort = dataSourcesEntity.getDataPort();
         String dataName = dataSourcesEntity.getDataName();
         String userName = dataSourcesEntity.getUserName();
         String password = dataSourcesEntity.getPassword();
         //1是oracle连接
-        if ("1".equals(dataSourcesEntity.getDataType())) {
+        if (dataSourcesEntity.getDataType() == 1) {
             dataSourcesEntity.setAccessState(1);
             dataSourcesService.save(dataSourcesEntity);
             return R.error("连接数据源失败，请修改重试");
@@ -172,7 +171,7 @@ public class PssDataSourcesController {
         } else {
             try {
                 Class.forName("com.mysql.jdbc.Driver");
-                String url = "jdbc:mysql://" + dataAddress + ":" + dataPort + "/" + dataName;
+                String url = "jdbc:mysql://10.1.0.139" +  ":" + dataPort + "/" + dataName;
                 conn = DriverManager.getConnection(url, userName, password);
 
                 //3.使用数据库的连接创建声明
@@ -199,8 +198,6 @@ public class PssDataSourcesController {
                         e.printStackTrace();
                     }
                 } else {
-                    dataSourcesEntity.setAccessState(1);
-                    dataSourcesService.save(dataSourcesEntity);
                     R.error("连接数据源失败，请修改重试");
                 }
                 if (showDatabases != null) {
