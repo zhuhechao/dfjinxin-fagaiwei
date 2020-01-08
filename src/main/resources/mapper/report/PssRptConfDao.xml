@@ -23,8 +23,9 @@
         <result property="revStatus" column="rev_status"/>
         <result property="rptTemplateName" column="rpt_template_name"/>
         <result property="rptAttachmentName" column="rpt_attachment_name"/>
-        <result property="rptTemplateEntity.tempId" column="temp_id"/>
+        <result property="tempId" column="temp_id"/>
     </resultMap>
+
 
 
     <!--列表展示-->
@@ -53,13 +54,5 @@
         </where>
 
     </sql>
-
-
-
-    <insert id="saveRptConf" parameterType="io.dfjinxin.modules.report.entity.PssRptConfEntity">
-        INSERT INTO pss_rpt_conf ( comm_id, rpt_name, rpt_type, rpt_freq, rpt_date,
-        stat_code, crte_date, comm_name, rsch_id, rvew_remarks, temp_id )
-        VALUES (#{commId},#{rptName},#{rptType},#{rptFreq},#{rptDate}, #{statCode}, #{crteDate}, #{commName}, #{rschId}, #{rvewRemarks}, #{rptTemplateEntity.tempId})
-    </insert>
 
 </mapper>

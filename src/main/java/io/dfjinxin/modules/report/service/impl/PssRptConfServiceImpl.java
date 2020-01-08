@@ -17,8 +17,10 @@ import io.dfjinxin.modules.report.dao.PssRptInfoDao;
 import io.dfjinxin.modules.report.dto.PssRptConfDto;
 import io.dfjinxin.modules.report.entity.PssRptConfEntity;
 import io.dfjinxin.modules.report.entity.PssRptInfoEntity;
+import io.dfjinxin.modules.report.entity.PssRptTemplateEntity;
 import io.dfjinxin.modules.report.service.PssRptConfService;
 import io.dfjinxin.modules.report.service.PssRptInfoService;
+import io.dfjinxin.modules.report.service.PssRptTemplateService;
 import io.dfjinxin.modules.sys.entity.PssRschConfEntity;
 import io.dfjinxin.modules.sys.service.PssRschConfService;
 import org.apache.commons.lang.StringUtils;
@@ -40,6 +42,8 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
     private PssCommTotalService pssCommTotalService;
     @Autowired
     private ScheduleJobService scheduleJobService;
+    @Autowired
+    private PssRptTemplateService pssRptTemplateService;
 
     @Resource
     private PssRptConfDao pssRptConfDao;
@@ -57,7 +61,10 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
         PssRptConfEntity entity = PssRptConfEntity.toEntity(dto);
         entity.setRptStatus("0");
         entity.setStatCode("中国");
-        pssRptConfDao.saveRptConf(entity);
+        PssRptTemplateEntity rptTemplate = pssRptTemplateService.getById(dto.getTempId());
+        entity.setTempId(rptTemplate.getTempId());
+        entity.setRptPath(rptTemplate.getRptPath());
+        super.saveOrUpdate(entity);
         if ("1".equals(entity.getRptType())) {
             PssRptInfoEntity prie=new PssRptInfoEntity();
             //保存商品信息

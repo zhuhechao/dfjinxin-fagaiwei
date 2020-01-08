@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 import io.dfjinxin.modules.report.dto.PssRptConfDto;
-import io.dfjinxin.modules.sys.entity.PssRschConfEntity;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
@@ -102,10 +101,6 @@ public class PssRptConfEntity implements Serializable {
 	 *  人工报告使用 :附件名称
 	 */
 	private String rptAttachmentName;
-
-
-	private PssRptTemplateEntity rptTemplateEntity = new PssRptTemplateEntity();
-
 
 	public static PssRptConfEntity toEntity(PssRptConfDto from) {
 		if (null == from) {
