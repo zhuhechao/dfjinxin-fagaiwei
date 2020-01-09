@@ -87,65 +87,9 @@ public class PssDataSourcesController {
     @PostMapping("/updateDataSources")
     @ApiOperation(value = "数据源管理-修改")
     public R updateDataSources(@RequestBody PssDataSourcesEntity dataSourcesEntity) {
-        boolean message = false;
-        Connection conn = null;
-        ResultSet showDatabases = null;
-        String dataAddress = dataSourcesEntity.getDataAddress();
-        String dataPort = dataSourcesEntity.getDataPort();
-        String dataName = dataSourcesEntity.getDataName();
-        String userName = dataSourcesEntity.getUserName();
-        String password = dataSourcesEntity.getPassword();
-        //1是oracle连接
-        if ("1".equals(dataSourcesEntity.getDataType())) {
-            return R.error();
-        } else {
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-                String url = "jdbc:mysql://" + dataAddress + ":" + dataPort + "/" + dataName;
-                //2.获得数据连接
-                conn = DriverManager.getConnection(url, userName, password);
-                //3.使用数据库的连接创建声明
-                Statement stmt = conn.createStatement();
-                //4.使用声明执行SQL语句
-                showDatabases = stmt.executeQuery("SHOW DATABASES");
+        dataSourcesService.updateById(dataSourcesEntity);
 
-                //5、读取数据库的信息
-                if (showDatabases.next()) {
-                    while (showDatabases.next()) {
-                        //所有的库名
-                        showDatabases.getString("Database");
-
-                    }
-                }
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                if (conn != null) {
-                    dataSourcesService.updateById(dataSourcesEntity);
-                    message = true;
-                    try {
-                        conn.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    return R.error();
-                }
-                if (showDatabases != null) {
-                    try {
-                        showDatabases.close();
-                    } catch (SQLException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        HashMap map = new HashMap<>();
-        map.put("message",message);
-        return R.ok(map);
+        return R.ok();
     }
 
 
@@ -155,63 +99,8 @@ public class PssDataSourcesController {
     @PostMapping("/saveDataSources")
     @ApiOperation(value = "数据源管理-增加")
     public R saveDataSources(@RequestBody PssDataSourcesEntity dataSourcesEntity) {
-        boolean message = false;
-        Connection conn = null;
-        ResultSet showDatabases = null;
-        String dataPort = dataSourcesEntity.getDataPort();
-        String dataName = dataSourcesEntity.getDataName();
-        String userName = dataSourcesEntity.getUserName();
-        String password = dataSourcesEntity.getPassword();
-        String dataAddress = dataSourcesEntity.getDataAddress();
-        //1是oracle连接
-        if (dataSourcesEntity.getDataType() == 1) {
-            dataSourcesEntity.setAccessState(1);
-            dataSourcesService.save(dataSourcesEntity);
-            return R.error();
-        } else {
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-                String url = "jdbc:mysql://" +dataAddress+  ":" + dataPort + "/" + dataName;
-                conn = DriverManager.getConnection(url, userName, password);
-                //3.使用数据库的连接创建声明
-                Statement stmt = conn.createStatement();
-                //4.使用声明执行SQL语句
-                showDatabases = stmt.executeQuery("SHOW DATABASES");
-                //5、读取数据库的信息
-                while (showDatabases.next()) {
-                    //所有的库名
-                    showDatabases.getString("Database");
-                }
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                if (conn != null) {
-                    dataSourcesEntity.setAccessState(0);
-                    dataSourcesService.save(dataSourcesEntity);
-                    message = true;
-                    try {
-                        conn.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    R.error();
-                }
-                if (showDatabases != null) {
-                    try {
-                        showDatabases.close();
-                    } catch (SQLException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        HashMap map = new HashMap<>();
-        map.put("message",message);
-        return R.ok(map);
+        dataSourcesService.save(dataSourcesEntity);
+        return R.ok();
     }
 
 }
