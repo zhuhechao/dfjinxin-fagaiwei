@@ -24,5 +24,7 @@ public interface PssDatasetInfoService extends IService<PssDatasetInfoEntity> {
     List<DataSetIndexInfoDto> getIndexInfoByDataSetIndeVal(String indeVal);
 
     PageUtils queryByPage(Map<String, Object> params);
+
+    List<PssDatasetInfoEntity> getDataSetList();
 }
 

@@ -43,7 +43,8 @@ public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, Ps
 
     @Override
     public List<PssDatasetInfoEntity> listAll() {
-        return baseMapper.selectList(new QueryWrapper());
+//        return baseMapper.selectList(new QueryWrapper());
+        return baseMapper.getDataSetList();
     }
 
     @Override
@@ -138,5 +139,10 @@ public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, Ps
         Page page = new Page((Integer) params.get("pageIndex"), (Integer) params.get("pageSize"));
         page = super.baseMapper.queryByPage(page, params);
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<PssDatasetInfoEntity> getDataSetList() {
+        return baseMapper.getDataSetList();
     }
 }

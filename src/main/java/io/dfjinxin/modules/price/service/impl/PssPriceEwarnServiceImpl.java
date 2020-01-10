@@ -21,6 +21,7 @@ import io.dfjinxin.modules.price.entity.*;
 import io.dfjinxin.modules.price.service.PssCommConfService;
 import io.dfjinxin.modules.price.service.PssCommTotalService;
 import io.dfjinxin.modules.price.service.PssPriceEwarnService;
+import io.dfjinxin.modules.price.service.WpUpdateInfoService;
 import io.dfjinxin.modules.yuqing.TengXunYuQing;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -68,8 +69,10 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     PssCommTotalService pssCommTotalService;
     @Autowired
     WpBaseIndexValService wpBaseIndexValService;
+    //    @Autowired
+//    private HiveService hiveService;
     @Autowired
-    private HiveService hiveService;
+    private WpUpdateInfoService wpUpdateInfoService;
 
     @Value("${tengxun.path}")
     private String path;
@@ -186,11 +189,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             rateValDtos.add(rateValDto);
         }
 
+        //统计数据总量
         if (queryHive) {
-            int hiveCount = getHiveCount();
+            Long hiveCount = wpUpdateInfoService.getEverydayInfoTotal();
             int tengxunCount = getProgrammeDistribution();
             //step1,实时预览-总量(万）
-            retMap.put("commTotal", hiveCount + tengxunCount);
+            retMap.put("commTotal", hiveCount.intValue() + tengxunCount);
         }
 
         Map<String, Object> lineDateMap = new HashMap<>();
@@ -668,31 +672,31 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
      * @Author: z.h.c
      * @Date: 2019/11/12 18:40
      */
-    private int getHiveCount() {
-        final String sql_1 = "select count(*) tol from zhjg.wp_base_index_val t";
-        final String sql_2 = "select count(*) tol from zhjg.wp_macro_index_val t";
-
-        List<String> sqlList = new ArrayList<>();
-        sqlList.add(sql_1);
-        sqlList.add(sql_2);
-
-        Long totalCount = 0L;
-        List<Map<String, Object>> data = new ArrayList<>();
-        for (String sql : sqlList) {
-            List<Map<String, Object>> res = hiveService.selectData(sql);
-            if (!res.isEmpty()) {
-                data.add(res.get(0));
-            }
-        }
-
-        if (data.isEmpty()) return 0;
-        for (Map<String, Object> map : data) {
-            if (map.containsKey("tol")) {
-                totalCount += (Long) map.get("tol");
-            }
-        }
-        return totalCount.intValue();
-    }
+//    private int getHiveCount() {
+//        final String sql_1 = "select count(*) tol from zhjg.wp_base_index_val t";
+//        final String sql_2 = "select count(*) tol from zhjg.wp_macro_index_val t";
+//
+//        List<String> sqlList = new ArrayList<>();
+//        sqlList.add(sql_1);
+//        sqlList.add(sql_2);
+//
+//        Long totalCount = 0L;
+//        List<Map<String, Object>> data = new ArrayList<>();
+//        for (String sql : sqlList) {
+//            List<Map<String, Object>> res = hiveService.selectData(sql);
+//            if (!res.isEmpty()) {
+//                data.add(res.get(0));
+//            }
+//        }
+//
+//        if (data.isEmpty()) return 0;
+//        for (Map<String, Object> map : data) {
+//            if (map.containsKey("tol")) {
+//                totalCount += (Long) map.get("tol");
+//            }
+//        }
+//        return totalCount.intValue();
+//    }
 
     /**
      * @Desc: 腾讯接口
