@@ -40,13 +40,13 @@ public class PssDataSourcesController {
             @ApiImplicitParam(name = "pageIndex", value = "页码", required = false, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "返回数据集", required = false, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "dataName", value = "数据源名称", required = false, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "dataType", value = "数据源类型", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "dataType", value = "数据源类型", required = false, dataType = "Integer", paramType = "query"),
     })
     public R queryDataSourcesList(
             @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
             @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize,
             @RequestParam(value = "dataName", required = false) String dataName,
-            @RequestParam(value = "dataType", required = false) String dataType
+            @RequestParam(value = "dataType", required = false) Integer dataType
     ) {
         Map<String, Object> params = new HashMap() {{
             put("pageIndex", pageIndex);
@@ -87,64 +87,8 @@ public class PssDataSourcesController {
     @PostMapping("/updateDataSources")
     @ApiOperation(value = "数据源管理-修改")
     public R updateDataSources(@RequestBody PssDataSourcesEntity dataSourcesEntity) {
+        dataSourcesService.updateById(dataSourcesEntity);
 
-        Connection conn = null;
-        ResultSet showDatabases = null;
-        String dataAddress = dataSourcesEntity.getDataAddress();
-        String dataPort = dataSourcesEntity.getDataPort();
-        String dataName = dataSourcesEntity.getDataName();
-        String userName = dataSourcesEntity.getUserName();
-        String password = dataSourcesEntity.getPassword();
-        //1是oracle连接
-        if ("1".equals(dataSourcesEntity.getDataType())) {
-            dataSourcesEntity.setAccessState(1);
-            dataSourcesService.save(dataSourcesEntity);
-            return R.error("连接数据源失败，请修改重试");
-
-        } else {
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-                String url = "jdbc:mysql://" + dataAddress + ":" + dataPort + "/" + dataName;
-                //2.获得数据连接
-                conn = DriverManager.getConnection(url, userName, password);
-                //3.使用数据库的连接创建声明
-                Statement stmt = conn.createStatement();
-                //4.使用声明执行SQL语句
-                showDatabases = stmt.executeQuery("SHOW DATABASES");
-
-                //5、读取数据库的信息
-                if (showDatabases.next()) {
-                    while (showDatabases.next()) {
-                        //所有的库名
-                        showDatabases.getString("Database");
-
-                    }
-                }
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                if (conn != null) {
-                    dataSourcesService.updateById(dataSourcesEntity);
-                    try {
-                        conn.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    return R.error("发送请求连接信息有误，修改失败");
-                }
-                if (showDatabases != null) {
-                    try {
-                        showDatabases.close();
-                    } catch (SQLException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
         return R.ok();
     }
 
@@ -155,64 +99,7 @@ public class PssDataSourcesController {
     @PostMapping("/saveDataSources")
     @ApiOperation(value = "数据源管理-增加")
     public R saveDataSources(@RequestBody PssDataSourcesEntity dataSourcesEntity) {
-
-        Connection conn = null;
-        ResultSet showDatabases = null;
-        String dataAddress = dataSourcesEntity.getDataAddress();
-        String dataPort = dataSourcesEntity.getDataPort();
-        String dataName = dataSourcesEntity.getDataName();
-        String userName = dataSourcesEntity.getUserName();
-        String password = dataSourcesEntity.getPassword();
-        //1是oracle连接
-        if ("1".equals(dataSourcesEntity.getDataType())) {
-            dataSourcesEntity.setAccessState(1);
-            dataSourcesService.save(dataSourcesEntity);
-            return R.error("连接数据源失败，请修改重试");
-
-        } else {
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-                String url = "jdbc:mysql://" + dataAddress + ":" + dataPort + "/" + dataName;
-                conn = DriverManager.getConnection(url, userName, password);
-
-                //3.使用数据库的连接创建声明
-                Statement stmt = conn.createStatement();
-                //4.使用声明执行SQL语句
-                showDatabases = stmt.executeQuery("SHOW DATABASES");
-                //5、读取数据库的信息
-                while (showDatabases.next()) {
-                    //所有的库名
-                    showDatabases.getString("Database");
-                }
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                if (conn != null) {
-                    dataSourcesEntity.setAccessState(0);
-                    dataSourcesService.save(dataSourcesEntity);
-                    R.ok("连接成功");
-                    try {
-                        conn.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    dataSourcesEntity.setAccessState(1);
-                    dataSourcesService.save(dataSourcesEntity);
-                    R.error("连接数据源失败，请修改重试");
-                }
-                if (showDatabases != null) {
-                    try {
-                        showDatabases.close();
-                    } catch (SQLException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
+        dataSourcesService.save(dataSourcesEntity);
         return R.ok();
     }
 

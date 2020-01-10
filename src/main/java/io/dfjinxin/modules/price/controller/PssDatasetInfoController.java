@@ -104,10 +104,13 @@ public class PssDatasetInfoController extends AbstractController {
         if ("succ".equals(code)) {
             String tableName = jsonObj.containsKey("name") ? jsonObj.getString("name") : null;
             String shape = jsonObj.containsKey("shape") ? jsonObj.getString("shape") : null;
+            String indevar = jsonObj.containsKey("exist_ids") ? jsonObj.getString("exist_ids") : null;
             entity.setDataSetEngName(tableName);
             entity.setShape(shape);
-//            entity.setUserId(super.getUserId());
+            entity.setIndeVar(indevar);
+
             //TODO
+            //entity.setUserId(super.getUserId());
             entity.setUserId("2");
             pssDatasetInfoService.save(entity);
             LOG.info("数据集创建-成功!");
@@ -177,7 +180,7 @@ public class PssDatasetInfoController extends AbstractController {
     @GetMapping("/getDataSetList")
     @ApiOperation("数据集页面-获取已创建的数据集列表")
     public R getDataSetList() {
-        return R.ok().put("data", pssDatasetInfoService.list());
+        return R.ok().put("data", pssDatasetInfoService.getDataSetList());
     }
 
     /**

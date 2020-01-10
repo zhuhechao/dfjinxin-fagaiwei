@@ -24,4 +24,8 @@ public interface PssDatasetInfoDao extends BaseMapper<PssDatasetInfoEntity> {
 
     Page queryByPage(Page page, @Param("param") Map map);
 
+    @Select("SELECT *\n" +
+            "FROM pss_dataset_info where data_set_eng_name is not null\n" +
+            "and data_set_eng_name <> ''")
+    List<PssDatasetInfoEntity> getDataSetList();
 }

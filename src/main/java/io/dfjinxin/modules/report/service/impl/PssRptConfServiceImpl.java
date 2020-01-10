@@ -17,8 +17,10 @@ import io.dfjinxin.modules.report.dao.PssRptInfoDao;
 import io.dfjinxin.modules.report.dto.PssRptConfDto;
 import io.dfjinxin.modules.report.entity.PssRptConfEntity;
 import io.dfjinxin.modules.report.entity.PssRptInfoEntity;
+import io.dfjinxin.modules.report.entity.PssRptTemplateEntity;
 import io.dfjinxin.modules.report.service.PssRptConfService;
 import io.dfjinxin.modules.report.service.PssRptInfoService;
+import io.dfjinxin.modules.report.service.PssRptTemplateService;
 import io.dfjinxin.modules.sys.entity.PssRschConfEntity;
 import io.dfjinxin.modules.sys.service.PssRschConfService;
 import org.apache.commons.lang.StringUtils;
@@ -40,6 +42,8 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
     private PssCommTotalService pssCommTotalService;
     @Autowired
     private ScheduleJobService scheduleJobService;
+    @Autowired
+    private PssRptTemplateService pssRptTemplateService;
 
     @Resource
     private PssRptConfDao pssRptConfDao;
@@ -57,11 +61,19 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
         PssRptConfEntity entity = PssRptConfEntity.toEntity(dto);
         entity.setRptStatus("0");
         entity.setStatCode("中国");
-        pssRptConfDao.saveRptConf(entity);
+
+        if (dto.getTempId() != null) {
+            PssRptTemplateEntity rptTemplate = pssRptTemplateService.getById(dto.getTempId());
+            entity.setTempId(rptTemplate.getTempId());
+            entity.setRptPath(rptTemplate.getRptPath());
+            super.saveOrUpdate(entity);
+        } else {
+            super.saveOrUpdate(entity);
+        }
         if ("1".equals(entity.getRptType())) {
-            PssRptInfoEntity prie=new PssRptInfoEntity();
+            PssRptInfoEntity prie = new PssRptInfoEntity();
             //保存商品信息
-            PssCommTotalEntity pte=pssCommTotalService.getById(entity.getCommId());
+            PssCommTotalEntity pte = pssCommTotalService.getById(entity.getCommId());
             prie.setCommId(pte.getCommId());
             prie.setCommName(pte.getCommName());
             prie.setRptType("1");
@@ -77,30 +89,29 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
 
 
         //根据调度配置id获取配置信息
-        PssRschConfEntity pe= pssRschConfService.getById(entity.getRschId());
+        PssRschConfEntity pe = pssRschConfService.getById(entity.getRschId());
 
         //根据调度配置建立定时任务
-        ScheduleJobEntity sb=new ScheduleJobEntity();
-         //根据调度配置频率设置 job中的cron表达式
+        ScheduleJobEntity sb = new ScheduleJobEntity();
+        //根据调度配置频率设置 job中的cron表达式
         // :D, 周：W,旬：TD， 月频:M,  季频:Q,  年频:Y，指定日期:SP
-        String cron="";
-        String mi="01",hh="01";//1点1分钟0秒开始执行
-        if(pe.getExecTime()!=null){//没有指定执行时间
-             hh=new DateTime(pe.getExecTime()).getHour()+"";
-             mi=new DateTime(pe.getExecTime()).getMinute()+"";
-          }
-        String smh="0 "+(mi.equals("")?"01":mi)+" "+(hh.equals("")?"01":hh);
-        if ("D".equals(pe.getRschFreq())){
-            cron=smh+" * * ? *";//一号开始每天执行一次
-        }else if ("W".equals(pe.getRschFreq())){
-             cron=smh+" ? * MON";  //每周一 HH点MI分钟0秒开始执行
-        }else if ("TD".equals(pe.getRschFreq())){
-            cron=smh+" 1/10 * ? *";//一号开始每10天执行一次
-        }else if ("M".equals(pe.getRschFreq())){
-            cron=smh+" 1 1/1 ?";// 从  1 日开始,每 1 月执行一次
+        String cron = "";
+        String mi = "01", hh = "01";//1点1分钟0秒开始执行
+        if (pe.getExecTime() != null) {//没有指定执行时间
+            hh = new DateTime(pe.getExecTime()).getHour() + "";
+            mi = new DateTime(pe.getExecTime()).getMinute() + "";
         }
-        else if ("Y".equals(pe.getRschFreq())){
-            cron=smh+" 1 1 ? *";// 从  1 日开始,每 1 月执行一次
+        String smh = "0 " + (mi.equals("") ? "01" : mi) + " " + (hh.equals("") ? "01" : hh);
+        if ("D".equals(pe.getRschFreq())) {
+            cron = smh + " * * ? *";//一号开始每天执行一次
+        } else if ("W".equals(pe.getRschFreq())) {
+            cron = smh + " ? * MON";  //每周一 HH点MI分钟0秒开始执行
+        } else if ("TD".equals(pe.getRschFreq())) {
+            cron = smh + " 1/10 * ? *";//一号开始每10天执行一次
+        } else if ("M".equals(pe.getRschFreq())) {
+            cron = smh + " 1 1/1 ?";// 从  1 日开始,每 1 月执行一次
+        } else if ("Y".equals(pe.getRschFreq())) {
+            cron = smh + " 1 1 ? *";// 从  1 日开始,每 1 月执行一次
         }
         sb.setCronExpression(cron);
         sb.setExecTime(pe.getExecTime());
@@ -108,7 +119,7 @@ public class PssRptConfServiceImpl extends ServiceImpl<PssRptConfDao, PssRptConf
         sb.setStatus(0);
         sb.setRemark(pe.getRschRemark());
         sb.setCreateTime(new Date());
-        sb.setParams(entity.getRptId()+"");
+        sb.setParams(entity.getRptId() + "");
         sb.setBeanName("testTask2");
         scheduleJobService.saveJob(sb);
 

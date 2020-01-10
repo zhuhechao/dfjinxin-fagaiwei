@@ -22,6 +22,4 @@ public interface PssRptConfDao extends BaseMapper<PssRptConfEntity> {
 
     IPage<PssRptConfEntity> queryPage(Page page, @Param("param") Map<String, Object> map);
 
-
-    void saveRptConf(PssRptConfEntity entity);
 }
