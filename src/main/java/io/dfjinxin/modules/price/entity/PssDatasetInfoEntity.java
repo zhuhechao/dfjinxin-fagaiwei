@@ -56,6 +56,10 @@ public class PssDatasetInfoEntity implements Serializable {
 	private String commIndevalPath;
 
 	private String macroIndevalPath;
+	/**
+	 * 日期，创建数据集成功之后，预测后可能增加该值
+	 */
+	private String dateFeature;
 
 	/**
 	 *

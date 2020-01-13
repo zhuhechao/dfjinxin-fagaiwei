@@ -59,5 +59,28 @@
 
 
 
+    <!--分析报告单独接口-->
+    <select id="queryRptName" parameterType="java.lang.Integer" resultMap="pssRptInfoMap">
+        SELECT rpi.rpt_id, rpi.comm_id, rpi.rpt_name, rpi.crte_time, rpi.comm_name, rpi.rpt_freq, rpi.rpt_type,
+         rpi.area_code, rpi.rpt_path, rpi.rpt_status, rpi.rpt_file, rpi.del_time
+        FROM
+        pss_rpt_info rpi
+        <include refid="rptInfoWhere2"></include>
+    </select>
+
+    <!-- 条件查询 -->
+    <sql id="rptInfoWhere2">
+        <where>
+            <!--报告类型-->
+            <if test="map.commId!= null and map.commId!= '' ">
+                comm_id = #{map.commId}
+            </if>
+        </where>
+
+    </sql>
+
+
+
+
 
 </mapper>

@@ -14,7 +14,7 @@ import com.alibaba.fastjson.JSONObject;
 import sun.misc.BASE64Decoder;
 
 public class EchartsUtil {
-    private static String url = "http://localhost:6666";
+    private static String url = "http://10.1.1.134:6666";
     private static final String SUCCESS_CODE = "1";
 
     public static String generateEchartsBase64(String option) throws ClientProtocolException, IOException {

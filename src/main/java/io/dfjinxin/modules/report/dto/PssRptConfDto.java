@@ -1,6 +1,8 @@
 package io.dfjinxin.modules.report.dto;
 
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import io.dfjinxin.modules.report.entity.PssRptTemplateEntity;
 import io.dfjinxin.modules.sys.entity.PssRschConfEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -48,8 +50,6 @@ public class PssRptConfDto implements Serializable {
     @ApiModelProperty(value = "调度配置id 类型为自动  时有值 手动时为空", name = "rschId", required = true)
     private Integer rschId;
 
-    //调度的实体类
-    private PssRschConfEntity rschConfEntity = new PssRschConfEntity();
 
     /**
      * 报告日期
@@ -115,4 +115,7 @@ public class PssRptConfDto implements Serializable {
     @ApiModelProperty(value = "人工报告使用 :附件名称 文件上传后返回", name = "rptAttachmentName", required = false)
 
     private String rptAttachmentName;
+
+    @ApiModelProperty(value = "模板id", name = "tempId", required = false)
+    private Integer tempId;
 }

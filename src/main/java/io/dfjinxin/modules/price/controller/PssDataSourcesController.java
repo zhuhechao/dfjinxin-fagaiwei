@@ -40,13 +40,13 @@ public class PssDataSourcesController {
             @ApiImplicitParam(name = "pageIndex", value = "页码", required = false, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "返回数据集", required = false, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "dataName", value = "数据源名称", required = false, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "dataType", value = "数据源类型", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "dataType", value = "数据源类型", required = false, dataType = "Integer", paramType = "query"),
     })
     public R queryDataSourcesList(
             @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
             @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize,
             @RequestParam(value = "dataName", required = false) String dataName,
-            @RequestParam(value = "dataType", required = false) String dataType
+            @RequestParam(value = "dataType", required = false) Integer dataType
     ) {
         Map<String, Object> params = new HashMap() {{
             put("pageIndex", pageIndex);
@@ -84,56 +84,11 @@ public class PssDataSourcesController {
     /**
      * 修改
      */
-    @GetMapping("/updateDataSources")
+    @PostMapping("/updateDataSources")
     @ApiOperation(value = "数据源管理-修改")
     public R updateDataSources(@RequestBody PssDataSourcesEntity dataSourcesEntity) {
+        dataSourcesService.updateById(dataSourcesEntity);
 
-        Connection conn = null;
-        ResultSet showDatabases = null;
-
-        try {
-            String url = "jdbc:" + dataSourcesEntity.getDataType() + "://" + dataSourcesEntity.getDataAddress() + ":"
-                    + dataSourcesEntity.getDataPort() + "/" + dataSourcesEntity.getDataName();
-            Class.forName("com." + dataSourcesEntity.getDataType() + ".jdbc.Driver");
-            //2.获得数据连接
-            conn = DriverManager.getConnection(url, dataSourcesEntity.getUserName(), dataSourcesEntity.getPassword());
-            //3.使用数据库的连接创建声明
-            Statement stmt = conn.createStatement();
-            //4.使用声明执行SQL语句
-            showDatabases = stmt.executeQuery("SHOW DATABASES");
-
-            //5、读取数据库的信息
-            if (showDatabases.next()) {
-                while (showDatabases.next()) {
-                    //所有的库名
-                    showDatabases.getString("Database");
-
-                }
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (conn != null) {
-                dataSourcesService.updateById(dataSourcesEntity);
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                return R.error("发送请求连接信息有误，修改失败");
-            }
-            if (showDatabases != null) {
-                try {
-                    showDatabases.close();
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        }
         return R.ok();
     }
 
@@ -141,58 +96,11 @@ public class PssDataSourcesController {
     /**
      * 保存
      */
-    @GetMapping("/saveDataSources")
+    @PostMapping("/saveDataSources")
     @ApiOperation(value = "数据源管理-增加")
     public R saveDataSources(@RequestBody PssDataSourcesEntity dataSourcesEntity) {
-
-        Connection conn = null;
-        ResultSet showDatabases = null;
-
-        try {
-            String url = "jdbc:" + dataSourcesEntity.getDataType() + "://" + dataSourcesEntity.getDataAddress() + ":"
-                    + dataSourcesEntity.getDataPort() + "/" + dataSourcesEntity.getDataName();
-            Class.forName("com." + dataSourcesEntity.getDataType() + ".jdbc.Driver");
-            //2.获得数据连接
-            conn = DriverManager.getConnection(url, dataSourcesEntity.getUserName(), dataSourcesEntity.getPassword());
-            //3.使用数据库的连接创建声明
-            Statement stmt = conn.createStatement();
-            //4.使用声明执行SQL语句
-            showDatabases = stmt.executeQuery("SHOW DATABASES");
-
-            //5、读取数据库的信息
-            if (showDatabases.next()) {
-                while (showDatabases.next()) {
-                    //所有的库名
-                    showDatabases.getString("Database");
-
-                }
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (conn != null) {
-                dataSourcesService.save(dataSourcesEntity);
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                return R.error("发送请求连接信息有误，保存失败");
-            }
-            if (showDatabases != null) {
-                try {
-                    showDatabases.close();
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        }
+        dataSourcesService.save(dataSourcesEntity);
         return R.ok();
     }
-
 
 }

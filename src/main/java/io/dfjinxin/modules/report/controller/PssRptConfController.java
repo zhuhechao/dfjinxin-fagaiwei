@@ -62,17 +62,14 @@ public class PssRptConfController {
 
 
 
-
     /**
      * 信息
      */
     @GetMapping("/info/{rptId}")
-    @RequiresPermissions("report:pssrptconf:info")
-    @ApiOperation("报告配置信息查询")
-    @ApiImplicitParams({@ApiImplicitParam(name = "rptId", value = "主键id", required = true, dataType = "Long", paramType = "query")
-    })
-    public R info(@PathVariable("rptId") Long rptId){
-		PssRptConfEntity pssRptConf = pssRptConfService.getById(rptId);
+    @RequiresPermissions("report:pssrptinfo:info")
+    @ApiOperation("报告运行信息获取")
+    public R info(@PathVariable("rptId") Long rptId) {
+        PssRptConfEntity pssRptConf = pssRptConfService.getById(rptId);
 
         return R.ok().put("pssRptConf", pssRptConf);
     }

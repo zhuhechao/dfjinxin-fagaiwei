@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 import io.dfjinxin.modules.report.dto.PssRptConfDto;
-import io.dfjinxin.modules.sys.entity.PssRschConfEntity;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
@@ -55,6 +54,10 @@ public class PssRptConfEntity implements Serializable {
 
 	//商品名称
 	private String commName;
+
+	//模板id
+	private Integer tempId;
+
 
 	/**
 	 * 统计区域代码

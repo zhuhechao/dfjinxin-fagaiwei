@@ -23,12 +23,14 @@
         <result property="revStatus" column="rev_status"/>
         <result property="rptTemplateName" column="rpt_template_name"/>
         <result property="rptAttachmentName" column="rpt_attachment_name"/>
+        <result property="tempId" column="temp_id"/>
     </resultMap>
+
 
 
     <!--列表展示-->
     <select id="queryPage" parameterType="java.util.Map" resultMap="pssRptConfMap">
-        SELECT rpt.rpt_id, rpt.comm_id, rpt.rpt_name, rpt.rpt_type, rpt.rpt_freq, rpt.rpt_date,
+        SELECT rpt.rpt_id, rpt.comm_id, rpt.rpt_name, rpt.rpt_type, rpt.rpt_freq, rpt.rpt_date, rpt.temp_id,
         rpt.stat_code, rpt.crte_date, rpt.comm_name, rpt.rsch_id, rpt.rvew_remarks, rsch.rsch_name
         FROM
         pss_rpt_conf rpt
@@ -49,9 +51,9 @@
             <if test="param.rptFreq!= null and param.rptFreq!= '' ">
                 AND rpt_freq = #{param.rptFreq}
             </if>
+                AND stat_code != 1
         </where>
 
     </sql>
-
 
 </mapper>
