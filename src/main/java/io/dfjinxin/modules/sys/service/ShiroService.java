@@ -33,7 +33,7 @@ public interface ShiroService {
      */
     SysUserEntity queryUser(String userId);
 
-    SysUserEntity queryUserByName(String userName);
+    SysUserEntity queryUserByName(SysUserEntity userName);
 
     void removeUserDBCache(String userName);
 

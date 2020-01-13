@@ -42,7 +42,7 @@ public interface SysUserDao extends BaseMapper<SysUserEntity> {
 	/**
 	 * 根据用户名，查询系统用户
 	 */
-	SysUserEntity queryByUserName(@Param(value = "username") String username);
+	SysUserEntity queryByUserName(SysUserEntity sysUserEntity);
 
 	/**
 	 * 根据用户名删除用户

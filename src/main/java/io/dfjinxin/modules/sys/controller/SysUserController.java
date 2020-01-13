@@ -24,11 +24,14 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.ArrayUtils;
 import io.dfjinxin.common.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -80,8 +83,14 @@ public class SysUserController extends AbstractController {
 	@SysLog("修改用户")
 	@PostMapping("/update")
 	@RequiresPermissions("sys:user:update")
-	public R update(@RequestBody SysUserEntity user){
-		sysUserService.update(user);
+	public R update(@RequestBody  SysUserEntity user){
+      if(user.getUserId() == null || user.getUserId().equals("")){
+	  String userId= Long.toString(new Date().getTime());
+	  user.setUserId(userId);
+	  sysUserService.saveUser(user);
+      }else {
+      sysUserService.update(user);
+	  }
 		return R.ok();
 	}
 

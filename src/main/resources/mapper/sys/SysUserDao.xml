@@ -34,8 +34,8 @@
 	</select>
 
     <!--根据用户名称查询用户信息-->
-    <select id="queryByUserName" resultType="io.dfjinxin.modules.sys.entity.SysUserEntity">
-		select * from pss_user_info where user_name = #{username}
+    <select id="queryByUserName" parameterType="io.dfjinxin.modules.sys.entity.SysUserEntity" resultType="io.dfjinxin.modules.sys.entity.SysUserEntity">
+		select * from pss_user_info where user_name = #{userName} AND  user_pass = #{userPass}
 	</select>
 
     <!--根据用户ID查询用户信息-->
@@ -51,6 +51,7 @@
 		pui.crte_date,
 		pui.upd_date,
 		ud.dep_name,
+		ud.dep_id,
 		GROUP_CONCAT(ur.role_name) role_name,
 		GROUP_CONCAT(ur.role_id) role_id
 		FROM
@@ -81,31 +82,31 @@
     </select>
 
     <!--新增 用户-->
-    <insert id="insertUserData" parameterType="io.dfjinxin.modules.sys.entity.SysUserEntity">
-		INSERT INTO pss_user_info(
-		  user_id,
-		  user_name,
-		  user_pass,
-		  user_real_name,
-		  mbl_phone_no,
-		  fix_tphone_no,
-		  email,
-		  user_status,
-		  crte_date,
-		  upd_date
-      )VALUES (
-      #{userId},
-      #{userName},
-      #{userPass},
-      #{userRealName},
-      #{mblPhoneNo},
-      #{fixTphoneNo},
-      #{email},
-      #{userStatus},
-      CURRENT_TIMESTAMP(),
-      CURRENT_TIMESTAMP()
-      )
-	</insert>
+    <!--<insert id="insertUserData" parameterType="io.dfjinxin.modules.sys.entity.SysUserEntity">-->
+		<!--INSERT INTO pss_user_info(-->
+		  <!--user_id,-->
+		  <!--user_name,-->
+		  <!--user_pass,-->
+		  <!--user_real_name,-->
+		  <!--mbl_phone_no,-->
+		  <!--fix_tphone_no,-->
+		  <!--email,-->
+		  <!--user_status,-->
+		  <!--crte_date,-->
+		  <!--upd_date-->
+      <!--)VALUES (-->
+      <!--#{userId},-->
+      <!--#{userName},-->
+      <!--#{userPass},-->
+      <!--#{userRealName},-->
+      <!--#{mblPhoneNo},-->
+      <!--#{fixTphoneNo},-->
+      <!--#{email},-->
+      <!--#{userStatus},-->
+      <!--CURRENT_TIMESTAMP(),-->
+      <!--CURRENT_TIMESTAMP()-->
+      <!--)-->
+	<!--</insert>-->
 
     <!--更新用户数据-->
     <!--<update id="updateUserData" parameterType="io.dfjinxin.modules.sys.entity.SysUserEntity">-->
@@ -123,6 +124,22 @@
 		<!--WHERE-->
 		<!--user_id = #{userId}-->
 	<!--</update>-->
+	<insert id="insertUserData" parameterType="io.dfjinxin.modules.sys.entity.SysUserEntity" statementType="CALLABLE">
+		{CALL CREATE_USER(
+		  #{userId,mode=IN},
+		  #{depId,mode=IN},
+		  #{userName,mode=IN},
+		  #{userRealName,mode=IN},
+		  #{mblPhoneNo,mode=IN},
+		  #{userPass,mode=IN},
+		  #{email,mode=IN},
+		  #{userStatus,mode=IN},
+		  #{roleId,mode=IN},
+		  #{error_no,jdbcType=INTEGER,mode=OUT}
+        )
+
+		}
+	</insert>
 
 	<update id="updateUserData" parameterType="io.dfjinxin.modules.sys.entity.SysUserEntity" statementType="CALLABLE">
 		{CALL UPDATE_USER(

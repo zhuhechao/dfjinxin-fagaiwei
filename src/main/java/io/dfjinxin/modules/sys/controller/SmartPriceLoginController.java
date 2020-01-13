@@ -56,15 +56,23 @@ public class SmartPriceLoginController extends AbstractController {
 
     @GetMapping(value = {"/login", "/login/{userName}"})
     @ApiOperation("发改登陆接口")
-    public R Login(@RequestParam(value = "id_token", required = false) String id_token, @PathVariable(value = "userName", required = false) String userName) {
+    public R Login(@RequestParam(value = "id_token", required = false) String id_token, @PathVariable(value = "userName", required = false) String userName,@RequestParam(value = "userPass", required = false) String userPass) {
+        SysUserEntity entity = new SysUserEntity();
         if (Strings.isNullOrEmpty(id_token)) {
-            SysUserEntity sysUserEntity = sysUserService.queryByUserName(userName);
+            entity.setUserName(userName);
+            entity.setUserPass(userPass);
+            SysUserEntity sysUserEntity = sysUserService.queryByUserName(entity);
             if (sysUserEntity == null) {
                 return R.error("该用户不存在！");
             } else {
-                String userId = sysUserEntity.getUserId();
-                return this.mockLogin(userId);
-            }
+                    List<Map<String,Object>> menus= sysUserService.getUserPerm(sysUserEntity.getUserId());
+                    R    createResult = sysUserTokenService.createToken(sysUserEntity.getUserId());
+                    // Object token = createResult.get("token");
+                    //  SecurityUtils.getSubject().login(new OAuth2Token(String.valueOf(token), sysUserEntity));
+                    createResult.put("menu",menus);
+                    return createResult;
+                }
+
         }
         logger.info("Validate ca form data==> {}", id_token);
         String publicKey = "{\"kty\":\"RSA\",\"kid\":\"7835635588759989719\",\"alg\":\"RS256\",\"n\":\"nDSjqFpp1JOt15SW7r12kOY0ah5-yay_q9JTIqEfBYT4hzuUTegQVaNri7SfprmMG66K_PFCAn1Sei7CQx6Q4kuDVmUr2aFW2_LFSUvg-_hxOmOGrACJvuQ_s1ElNlYlfRGDcc9ZvHhlhE0QSHytOKekqUfJuXz-rwhuzMMBLD0NbOkzIG3zjUgbNI0rUz421fKExhV_Jm4OzM7BkOxZ1TQTP4zC28wbt8kOCoJPOsr8VPZBPe0z9wQKz5iy6WzG0quOQrGfiTvVIVFdgVyu4_r33XtTDUqGRdRrllLP8W7_40RN8tCoJ4mKhkvuJPt28b8Zny9rAI7BHw6uS0mDuw\",\"e\":\"AQAB\"}";
@@ -85,7 +93,9 @@ public class SmartPriceLoginController extends AbstractController {
             //判断自己系统中是否存在该用户
             String uid = user.getSub();
             System.out.println("获取发改用户信息"+uid+"+++++++++"+ user.getName()+"+++"+user.getUsername()+"++++++++");
-            SysUserEntity sysUserEntity = sysUserService.queryByUserName(uid);
+            entity.setUserName(uid);
+            entity.setUserPass("99ec41f1dc48f4c6a018b688411b456d");
+            SysUserEntity sysUserEntity = sysUserService.queryByUserName(entity);
             if (sysUserEntity != null) {
              List<Map<String,Object>> menus= sysUserService.getUserPerm(sysUserEntity.getUserId());
             R    createResult = sysUserTokenService.createToken(sysUserEntity.getUserId());

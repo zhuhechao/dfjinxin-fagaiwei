@@ -60,8 +60,8 @@ public class ShiroServiceImpl extends ServiceImpl<SysUserTokenDao, SysUserTokenE
     }
 
     @Override
-    public SysUserEntity queryUserByName(String userName) {
-        return sysUserDao.queryByUserName(userName);
+    public SysUserEntity queryUserByName(SysUserEntity entity) {
+        return sysUserDao.queryByUserName(entity);
     }
 
     @Override
