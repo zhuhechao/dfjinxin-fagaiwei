@@ -69,7 +69,13 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void addOrUpdate(SysRoleEntity role) {
+    public R addOrUpdate(SysRoleEntity role) {
+		 R r=checkPerm(role);
+		Integer ft= (Integer) r.get("code");
+		String msg= (String) r.get("msg");
+		if(ft == 1){
+			return R.error(1,msg);
+		}else {
  		 int roleId = role.getRoleId();
  		 Date date = new Date();
  		 Timestamp ts = new Timestamp(date.getTime());
@@ -86,19 +92,30 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 			role.setUpdDate(ts);
 			baseMapper.updateRole(role);
 		}
+		return R.ok();
     }
+	}
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteBatch(ArrayList<Integer> roleIds) {
-        //删除角色
-		List<Integer> rids = new ArrayList<>();
-		for(int data:roleIds){
-			rids.add(data);
-		}
-        this.removeByIds(rids);
-		//删除角色与菜单关联
-       sysRoleMenuService.deleteBatch(roleIds);
+    public R deleteBatch(ArrayList<Integer> roleIds) {
+		 R r= checkPermInfo(roleIds);
+		 Integer ft= (Integer) r.get("code");
+		 String ms= (String) r.get("msg");
+		 if(ft == 1){
+		 	return R.error(1,ms);
+		 }else {
+			 //删除角色
+			 List<Integer> rids = new ArrayList<>();
+			 for(int data:roleIds){
+				 rids.add(data);
+			 }
+			 this.removeByIds(rids);
+			 //删除角色与菜单关联
+			 sysRoleMenuService.deleteBatch(roleIds);
+			 return R.ok();
+		 }
+
 
     }
 
@@ -160,9 +177,9 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 			}else if(roleId != 0 && re.size()>1){
 				R.error(1,"角色名称已存在！");
 			}
-		   if(rt == 1 && !rs.contains(1)){
+		   if(rt == 1 && !rs.contains(2)){
                return R.error(1,"该角色未分配系统管理员权限！");
-		   }else if(rt !=1 && rs.contains(1)){
+		   }else if(rt !=1 && rs.contains(2)){
 		   	return  R.error(1,"改角色不应分配系统管理员角色！");
 		   }
           return R.ok();

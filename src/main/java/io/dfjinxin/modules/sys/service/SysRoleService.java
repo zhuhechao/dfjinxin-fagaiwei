@@ -29,9 +29,9 @@ public interface SysRoleService extends IService<SysRoleEntity> {
 	PageUtils queryPage(Map<String, Object> params);
 
 
-	void addOrUpdate(SysRoleEntity role);
+	R addOrUpdate(SysRoleEntity role);
 
-	void deleteBatch(ArrayList<Integer> roleIds);
+	R deleteBatch(ArrayList<Integer> roleIds);
 
 	//角色功能权限
 	public R rolePerm(String roleId);

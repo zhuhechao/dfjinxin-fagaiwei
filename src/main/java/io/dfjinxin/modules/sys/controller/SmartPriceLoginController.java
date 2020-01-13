@@ -5,6 +5,7 @@ import com.idsmanager.dingdang.jwt.DingdangUserRetriever;
 import io.dfjinxin.common.utils.MD5Utils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.common.utils.ShiroUtils;
+import io.dfjinxin.modules.sys.oauth2.OAuth2Token;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import io.dfjinxin.modules.sys.entity.SysRoleEntity;
@@ -54,26 +55,10 @@ public class SmartPriceLoginController extends AbstractController {
 
 
 
-    @GetMapping(value = {"/login", "/login/{userName}"})
+    @GetMapping(value = "/login")
     @ApiOperation("发改登陆接口")
     public R Login(@RequestParam(value = "id_token", required = false) String id_token, @PathVariable(value = "userName", required = false) String userName,@RequestParam(value = "userPass", required = false) String userPass) {
         SysUserEntity entity = new SysUserEntity();
-        if (Strings.isNullOrEmpty(id_token)) {
-            entity.setUserName(userName);
-            entity.setUserPass(userPass);
-            SysUserEntity sysUserEntity = sysUserService.queryByUserName(entity);
-            if (sysUserEntity == null) {
-                return R.error("该用户不存在！");
-            } else {
-                    List<Map<String,Object>> menus= sysUserService.getUserPerm(sysUserEntity.getUserId());
-                    R    createResult = sysUserTokenService.createToken(sysUserEntity.getUserId());
-                    // Object token = createResult.get("token");
-                    //  SecurityUtils.getSubject().login(new OAuth2Token(String.valueOf(token), sysUserEntity));
-                    createResult.put("menu",menus);
-                    return createResult;
-                }
-
-        }
         logger.info("Validate ca form data==> {}", id_token);
         String publicKey = "{\"kty\":\"RSA\",\"kid\":\"7835635588759989719\",\"alg\":\"RS256\",\"n\":\"nDSjqFpp1JOt15SW7r12kOY0ah5-yay_q9JTIqEfBYT4hzuUTegQVaNri7SfprmMG66K_PFCAn1Sei7CQx6Q4kuDVmUr2aFW2_LFSUvg-_hxOmOGrACJvuQ_s1ElNlYlfRGDcc9ZvHhlhE0QSHytOKekqUfJuXz-rwhuzMMBLD0NbOkzIG3zjUgbNI0rUz421fKExhV_Jm4OzM7BkOxZ1TQTP4zC28wbt8kOCoJPOsr8VPZBPe0z9wQKz5iy6WzG0quOQrGfiTvVIVFdgVyu4_r33XtTDUqGRdRrllLP8W7_40RN8tCoJ4mKhkvuJPt28b8Zny9rAI7BHw6uS0mDuw\",\"e\":\"AQAB\"}";
         //验证签名及解密
@@ -97,12 +82,8 @@ public class SmartPriceLoginController extends AbstractController {
             entity.setUserPass("99ec41f1dc48f4c6a018b688411b456d");
             SysUserEntity sysUserEntity = sysUserService.queryByUserName(entity);
             if (sysUserEntity != null) {
-             List<Map<String,Object>> menus= sysUserService.getUserPerm(sysUserEntity.getUserId());
-            R    createResult = sysUserTokenService.createToken(sysUserEntity.getUserId());
-               // Object token = createResult.get("token");
-              //  SecurityUtils.getSubject().login(new OAuth2Token(String.valueOf(token), sysUserEntity));
-              createResult.put("menu",menus);
-                return createResult;
+             R res= loginValid(sysUserEntity);
+                return res;
             } else {
                 logger.error("智慧价格系统不存在该用户:{}", retriever);
                 return R.error("智慧价格系统用户查找失败");
@@ -114,18 +95,34 @@ public class SmartPriceLoginController extends AbstractController {
         }
     }
 
-    @Value("${ca.valid}")
+    @PostMapping("/login/{userName}")
+    @ApiOperation("发改登陆接口")
+    public R Login( @PathVariable(value = "userName", required = false) String userName,HttpServletRequest request) {
+          String userPass= request.getHeader("userPass");
+          if(userPass!=null && !userPass.equals("") ){
+            SysUserEntity entity = new SysUserEntity();
+            entity.setUserName(userName);
+            entity.setUserPass(userPass);
+            SysUserEntity sysUserEntity = sysUserService.queryByUserName(entity);
+            if (sysUserEntity == null) {
+                return R.error(1,"该用户不存在！");
+            } else {
+              return   loginValid(sysUserEntity);
+            }
+          }else {
+              return R.error(1,"没有有效的密码信息！");
+          }
+    }
+
+        @Value("${ca.valid}")
     private boolean caVaid;
 
-    @GetMapping("/ca/logout")
+    @GetMapping("/logout")
     @ApiOperation("发改登出接口")
-    public Map<String, Object> logout() {
-
-        if (caVaid) {
+    public R logout() {
             sysUserTokenService.logout(ShiroUtils.getUserEntity().getUserId());
             SecurityUtils.getSubject().logout();
-        }
-        return R.ok();
+            return R.ok();
     }
 
     @GetMapping("/goToService")
@@ -238,6 +235,20 @@ public class SmartPriceLoginController extends AbstractController {
             map.put("code", 0);
         }
         return R.ok(map);
+    }
+
+    private R loginValid(SysUserEntity sysUserEntity){
+        List<Map<String,Object>> menus= sysUserService.getUserPerm(sysUserEntity.getUserId());
+        R    createResult = sysUserTokenService.createToken(sysUserEntity.getUserId());
+        Object token = createResult.get("token");
+        Map<String,Object> map = new HashMap<>();
+        map.put("userId",sysUserEntity.getUserId());
+        map.put("userName",sysUserEntity.getUserName());
+        map.put("userRealName",sysUserEntity.getUserRealName());
+        SecurityUtils.getSubject().login(new OAuth2Token(String.valueOf(token), sysUserEntity));
+        createResult.put("menu",menus);
+        createResult.put("userInfo",map);
+        return createResult;
     }
 
 }

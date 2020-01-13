@@ -75,9 +75,9 @@ public class SysRoleController extends AbstractController {
 	@ApiOperation("删除角色")
 	public R delete(@RequestBody MenuParams roleIds){
 		ArrayList<Integer> roles=  roleIds.getIds();
-		sysRoleService.deleteBatch(roles);
+		R r= sysRoleService.deleteBatch(roles);
 
-		return R.ok();
+		return r;
 	}
 
 	/**
@@ -108,8 +108,8 @@ public class SysRoleController extends AbstractController {
 	@RequiresPermissions("sys:role:info")
 	@ApiOperation("新增或者修改角色")
 	public R addOrUpdate(@RequestBody SysRoleEntity role){
-		sysRoleService.addOrUpdate(role);
-		return R.ok();
+		R r= sysRoleService.addOrUpdate(role);
+		return r;
 	}
 
 	/**

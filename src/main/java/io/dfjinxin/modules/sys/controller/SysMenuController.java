@@ -102,6 +102,13 @@ public class SysMenuController {
 	@PostMapping("/saveOrUpdate")
 	@RequiresPermissions("sys:menu:save")
 	public R save(@RequestBody SysMenuEntity menu){
+		  R r= verifyForm(menu);
+		  Integer ft = (Integer) r.get("code");
+		  String msg = (String) r.get("msg");
+		  if(ft == 1){
+		  	return  R.error(1,msg);
+		  }
+
         if( menu.getMenuId() ==0){
 			sysMenuService.save(menu);
 		}else {
