@@ -42,9 +42,9 @@ public interface SysUserService extends IService<SysUserEntity> {
 	List<Integer> queryAllMenuId(String userId);
 
 	/**
-	 * 根据用户名，查询系统用户
+	 * 根据用户信息，查询系统用户
 	 */
-	SysUserEntity queryByUserName(String username);
+	SysUserEntity queryByUserName(SysUserEntity sysUserEntity);
 
 	/**
 	 * 保存用户

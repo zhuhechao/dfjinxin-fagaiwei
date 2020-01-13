@@ -86,19 +86,23 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 	}
 
 	@Override
-	public SysUserEntity queryByUserName(String username) {
+	public SysUserEntity queryByUserName(SysUserEntity sysUserEntity) {
 
-		return sysUserDao.queryByUserName(username);
+		return sysUserDao.queryByUserName(sysUserEntity);
 	}
 
 	@Override
-	@Transactional
 	public void saveUser(SysUserEntity user) {
 		Date date = new Date();
 		//sha256加密,暂不需要
 //		String salt = RandomStringUtils.randomAlphanumeric(20);
 //		user.setUserPass(new Sha256Hash(user.getUserPass(), salt).toHex());
 //		user.setSalt(salt);
+		List<Integer> list = user.getRoles();
+		String role= StringUtils.join(list.toArray(),",");
+		user.setRoleId(role);
+		user.setError_no(0);
+		user.setUserPass("99ec41f1dc48f4c6a018b688411b456d");
 		sysUserDao.insertUserData(user);
 
 	}

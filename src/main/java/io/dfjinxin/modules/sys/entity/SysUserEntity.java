@@ -14,10 +14,12 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dfjinxin.common.validator.group.AddGroup;
 import io.dfjinxin.common.validator.group.UpdateGroup;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,7 +33,8 @@ import java.util.Date;
 @TableName("pss_user_info")
 public class SysUserEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
+
 	/**
 	 * 用户ID
 	 */
@@ -42,7 +45,7 @@ public class SysUserEntity implements Serializable {
 	/**
 	 * 用户密码
 	 */
-	private  String userPass;
+	private  String userPass ;
 
 	/**
 	 * 用户真实名称
@@ -69,7 +72,7 @@ public class SysUserEntity implements Serializable {
 	 * 邮箱
 	 */
 	@NotBlank(message="邮箱不能为空", groups = {AddGroup.class, UpdateGroup.class})
-	@Email(message="邮箱格式不正确", groups = {AddGroup.class, UpdateGroup.class})
+	@Pattern(regexp = "^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\\.[a-zA-Z0-9]{2,6}$",message = "不满足邮箱正则表达式")
 	private String email;
 
 

@@ -1,7 +1,13 @@
-DROP PROCEDURE IF EXISTS UPDATE_USER;
+DROP PROCEDURE IF EXISTS CREATE_USER;
 DELIMITER //
-CREATE PROCEDURE UPDATE_USER(
-   IN P_USER_ID VARCHAR(20)
+CREATE PROCEDURE CREATE_USER(
+   IN P_USER_ID VARCHAR(50)
+	 ,IN P_DEP_ID VARCHAR(50)
+	 ,IN P_USER_NAME VARCHAR(60)
+	 ,IN P_USER_RELA_NAME VARCHAR(100)
+	 ,IN P_MBL_PHONE_NO VARCHAR(100)
+	 ,IN P_USER_PASS VARCHAR(60)
+	 ,IN P_EMAIL VARCHAR(80)
    ,IN P_USER_STATUS INT
 	 ,IN ROLES VARCHAR(200)
 	 ,OUT ERROR_NO INT
@@ -14,12 +20,38 @@ CREATE PROCEDURE UPDATE_USER(
 
 	 START TRANSACTION;
 
-	 UPDATE pss_user_info
-	 SET
-	   user_status = P_USER_STATUS,
-		 upd_date = CURRENT_TIMESTAMP
-	 WHERE
-	 user_id = P_USER_ID ;
+	 INSERT INTO pss_user_info(
+	 user_id ,
+	 user_pass,
+	 user_name,
+	 user_real_name,
+	 mbl_phone_no,
+	 email,
+	 user_status,
+	 crte_date,
+	 upd_date
+	 )
+	 VALUES(
+	 P_USER_ID,
+	 P_USER_PASS,
+	 P_USER_NAME,
+	 P_USER_RELA_NAME,
+	 P_MBL_PHONE_NO,
+	 P_EMAIL,
+	 P_USER_STATUS,
+	 CURRENT_TIMESTAMP ,
+	CURRENT_TIMESTAMP
+	 );
+
+	 DELETE  FROM pss_user_dep_rela WHERE user_id = P_USER_ID;
+
+   INSERT INTO pss_user_dep_rela(
+	 user_id,
+	 dep_id
+	 )VALUES(
+	 P_USER_ID,
+	 P_DEP_ID
+	 );
 
 	 DELETE  FROM pss_user_role_rela WHERE user_id = P_USER_ID ;
 
