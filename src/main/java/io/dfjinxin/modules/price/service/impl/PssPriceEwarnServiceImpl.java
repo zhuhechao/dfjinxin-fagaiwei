@@ -191,10 +191,11 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
         //统计数据总量
         if (queryHive) {
-            Long hiveCount = wpUpdateInfoService.getEverydayInfoTotal();
+            Long tableRecordCount = wpUpdateInfoService.getEverydayInfoTotal();
+            long baseCount = tableRecordCount == null ? 0 : tableRecordCount.longValue();
             int tengxunCount = getProgrammeDistribution();
             //step1,实时预览-总量(万）
-            retMap.put("commTotal", hiveCount.intValue() + tengxunCount);
+            retMap.put("commTotal", baseCount + tengxunCount);
         }
 
         Map<String, Object> lineDateMap = new HashMap<>();

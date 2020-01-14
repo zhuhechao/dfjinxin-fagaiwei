@@ -23,9 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service("pssDatasetInfoService")
@@ -144,5 +142,57 @@ public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, Ps
     @Override
     public List<PssDatasetInfoEntity> getDataSetList() {
         return baseMapper.getDataSetList();
+    }
+
+    /**
+     * @Desc: 转换数据集的val&name值
+     * @Param: [pssDatasetInfoEntity]
+     * @Return: void
+     * @Author: z.h.c
+     * @Date: 2020/1/13 16:51
+     */
+    @Override
+    public void converValAndName(PssDatasetInfoEntity entity) {
+
+        String dateFeature = entity.getDateFeature();
+        List<String> dateFeatureList = new ArrayList<>();
+        if (StringUtils.isNotEmpty(dateFeature)) {
+            dateFeatureList = Arrays.asList(dateFeature);
+        }
+
+        String indeVar = entity.getIndeVar();
+        JSONObject indeNameObj = JSON.parseObject(indeVar);
+        Map<String, Object> map = new HashMap<>();
+        map.put("comm_table", indeNameObj.containsKey("comm_table") ? getIndexNameById("comm", indeNameObj.getString("comm_table")) : new ArrayList<String>());
+        map.put("macro_table", indeNameObj.containsKey("macro_table") ? getIndexNameById("macro", indeNameObj.getString("macro_table")) : new ArrayList<String>());
+        map.put("date_feature", dateFeatureList);
+        entity.setIndeName(JSONObject.toJSONString(map));
+        map.clear();
+
+        JSONObject indeVarObj = JSON.parseObject(indeVar);
+        map.put("comm_table", indeVarObj.containsKey("comm_table") ? indeVarObj.getString("comm_table") : new ArrayList<String>());
+        map.put("macro_table", indeVarObj.containsKey("macro_table") ? indeVarObj.getString("macro_table") : new ArrayList<String>());
+        map.put("date_feature", dateFeatureList);
+        entity.setIndeVar(JSONObject.toJSONString(map));
+    }
+
+    private List<String> getIndexNameById(String type, String indexList) {
+
+        List<String> names = new ArrayList<>();
+        indexList = indexList.replace("[", "");
+        indexList = indexList.replace("]", "");
+
+        if ("comm".equals(type)) {
+            QueryWrapper<WpBaseIndexInfoEntity> where = new QueryWrapper<>();
+            where.inSql("index_id", indexList);
+            List<WpBaseIndexInfoEntity> entities = wpBaseIndexInfoDao.selectList(where);
+            entities.forEach(en -> names.add(en.getIndexName()));
+        } else {
+            QueryWrapper<WpMcroIndexInfoEntity> where2 = new QueryWrapper<>();
+            where2.inSql("index_id", indexList);
+            List<WpMcroIndexInfoEntity> entities = wpMcroIndexInfoDao.selectList(where2);
+            entities.forEach(en -> names.add(en.getIndexName()));
+        }
+        return names;
     }
 }

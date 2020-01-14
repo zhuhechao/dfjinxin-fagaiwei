@@ -56,28 +56,12 @@ public class PssAnalyInfoController {
     private PssDatasetInfoService pssDatasetInfoService;
 
     /**
-     * @Desc: 相关性分析&因果分析-查询
-     * @Param: [params]
+     * @Desc: 相关性分析&因果分析-分页查询
+     * @Param: [analyName, analyWay, datasetId, pageIndex, pageSize]
      * @Return: io.dfjinxin.common.utils.R
      * @Author: z.h.c
-     * @Date: 2019/12/20 13:50
+     * @Date: 2019/12/20 16:05
      */
-//    @GetMapping("/list")
-//    @ApiOperation(value = "相关性分析&因果分析-分页查询", notes = "")
-//    public R list(@RequestParam(required = false) Map<String, Object> params) {
-//        PageUtils page = pssAnalyInfoService.queryPage(params);
-//
-//        return R.ok().put("page", page);
-//    }
-
-
-    /**
-    * @Desc:  相关性分析&因果分析-分页查询
-    * @Param: [analyName, analyWay, datasetId, pageIndex, pageSize]
-    * @Return: io.dfjinxin.common.utils.R
-    * @Author: z.h.c
-    * @Date: 2019/12/20 16:05
-    */
     @GetMapping("/queryPage")
     @ApiOperation("相关性分析&因果分析-分页查询")
     @ApiImplicitParams({
@@ -105,6 +89,13 @@ public class PssAnalyInfoController {
         PageUtils page = pssAnalyReltService.queryPage(params);
 
         return R.ok().put("page", page);
+    }
+
+    @PostMapping("/runGeneral2")
+    @ApiOperation("运行")
+    public R runGeneral2(@RequestBody PssAnalyInfoDto dto) {
+        Map data = pssAnalyReltService.runGenera(dto);
+        return R.ok().put("data", data);
     }
 
 
@@ -228,6 +219,7 @@ public class PssAnalyInfoController {
             } else if (pssAnalyInfoDto.getAnalyWay().equals("路径分析")) {
                 jsonObject.put("table", pssDatasetInfoEntity.getDataSetEngName());
                 jsonObject.put("indepVar", concatIds);
+                //只能有一个值，要区分宏观、非宏观
                 jsonObject.put("depeVar", "b_" + pssAnalyInfoDto.getDepeVar());
                 r = callPython(url + "pathAna", jsonObject);
             } else {//一般相关性分析
