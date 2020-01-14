@@ -199,9 +199,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 					map.put("path",pr.substring(1,i));
 				}
 				if(i==0){
-					map.put("component","() => import('@/views"+pr.substring(1)+"')");
+					map.put("component",pr.substring(1));
 				}else {
-					map.put("component","() => import('@/views"+pr.substring(1,i)+"')");
+					map.put("component",pr.substring(1,i));
 				}
 
 				map.put("redirect",pr);
@@ -218,7 +218,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				String pr = (String) data.get("menu_router");
 				int i= pr.lastIndexOf("/");
 				map.put("path",pr.substring(i));
-				map.put("component","() => import('@/views"+pr+"')");
+				map.put("component",pr.substring(1));
 				Map<String, Object>  m4 = new HashMap<>();
 				m4.put("title",data.get("menu_name"));
 				map.put("meta",m4);
@@ -248,7 +248,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				int i= pr.lastIndexOf("/");
 				map.put("path",pr.substring(i+1));
 				map.put("name",upperCase(pr.substring(i+1)));
-				map.put("component","() => import('@/views"+pr+"')");
+				map.put("component",pr.substring(1));
 				Map<String, Object>  m4 = new HashMap<>();
 				m4.put("title",data.get("menu_name"));
 				map.put("meta",m4);
@@ -271,9 +271,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				Map<String, Object>  m5 = new HashMap<>();
 				m5.put("path",pr.substring(i+1));
 				if(i==0){
-					m5.put("component","() => import('@/views/"+pr.substring(1)+"')");
+					m5.put("component",pr.substring(1));
 				}else {
-					m5.put("component","() => import('@/views/"+pr.substring(1,i)+"')");
+					m5.put("component",pr.substring(1,i));
 				}
 				m4.put("title",data.get("menu_name"));
 				m4.put("icon","example");

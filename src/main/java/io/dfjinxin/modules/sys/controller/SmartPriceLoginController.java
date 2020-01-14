@@ -95,10 +95,9 @@ public class SmartPriceLoginController extends AbstractController {
         }
     }
 
-    @PostMapping("/login/{userName}")
+    @GetMapping("/login/{userName}")
     @ApiOperation("发改登陆接口")
-    public R Login( @PathVariable(value = "userName", required = false) String userName,HttpServletRequest request) {
-          String userPass= request.getHeader("userPass");
+    public R Login( @PathVariable(value = "userName", required = false) String userName,@RequestParam(value = "userPass") String userPass) {
           if(userPass!=null && !userPass.equals("") ){
             SysUserEntity entity = new SysUserEntity();
             entity.setUserName(userName);
@@ -245,7 +244,7 @@ public class SmartPriceLoginController extends AbstractController {
         map.put("userId",sysUserEntity.getUserId());
         map.put("userName",sysUserEntity.getUserName());
         map.put("userRealName",sysUserEntity.getUserRealName());
-        SecurityUtils.getSubject().login(new OAuth2Token(String.valueOf(token), sysUserEntity));
+       // SecurityUtils.getSubject().login(new OAuth2Token(String.valueOf(token), sysUserEntity));
         createResult.put("menu",menus);
         createResult.put("userInfo",map);
         return createResult;
