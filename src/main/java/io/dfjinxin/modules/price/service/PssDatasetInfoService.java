@@ -26,5 +26,7 @@ public interface PssDatasetInfoService extends IService<PssDatasetInfoEntity> {
     PageUtils queryByPage(Map<String, Object> params);
 
     List<PssDatasetInfoEntity> getDataSetList();
+
+    void converValAndName(PssDatasetInfoEntity pssDatasetInfoEntity);
 }
 

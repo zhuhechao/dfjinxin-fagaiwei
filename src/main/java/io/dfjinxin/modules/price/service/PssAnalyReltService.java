@@ -3,6 +3,7 @@ package io.dfjinxin.modules.price.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.modules.price.dao.PssAnalyReltDao;
+import io.dfjinxin.modules.price.dto.PssAnalyInfoDto;
 import io.dfjinxin.modules.price.entity.PssAnalyReltEntity;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -24,5 +25,7 @@ public interface PssAnalyReltService extends IService<PssAnalyReltEntity> {
     List<PssAnalyReltEntity> getList(Map<String, Object> params);
 
     PssAnalyReltEntity selectByAnalyId(@Param("analyId") Integer analyId);
+
+    Map runGenera(PssAnalyInfoDto dto);
 }
 

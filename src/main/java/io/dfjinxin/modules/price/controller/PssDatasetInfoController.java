@@ -48,14 +48,16 @@ public class PssDatasetInfoController extends AbstractController {
 
     /**
      * 列表
+     * modify by zhc 2020.1.14
      */
     @GetMapping("/listAll")
     @ApiOperation("返回所有数据集")
     public R listAll() {
         List<PssDatasetInfoEntity> list = pssDatasetInfoService.listAll();
-        for (PssDatasetInfoEntity pssDatasetInfoEntity : list) {
+        /*for (PssDatasetInfoEntity pssDatasetInfoEntity : list) {
             pssDatasetInfoService.setPssDatasetInfoIndeName(pssDatasetInfoEntity);
-        }
+        }*/
+        list.forEach(entity -> pssDatasetInfoService.converValAndName(entity));
         return R.ok().put("list", list);
     }
 
