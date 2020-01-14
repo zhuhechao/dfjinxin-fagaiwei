@@ -135,8 +135,8 @@ public class SmartPriceLoginController extends AbstractController {
 //            user = request.getParameter("token");
 //        }
         String user= "79362e48e37283a7cdea0825e2614375";
+
         SysUserTokenEntity tokenEntity = shiroService.queryByToken(user);
-        Long dd= System.currentTimeMillis()+30000;
         String token = null;
         String sep = null;
         if (!Strings.isNullOrEmpty(urlParm)) {
@@ -145,7 +145,7 @@ public class SmartPriceLoginController extends AbstractController {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-            token = (String) generateToken.applyToken(user,dd).get("jwt");
+            token =  MD5Utils.getMD5(user);
         }
 
         String url = urlParm.concat(sep + "very_token=" + token);

@@ -18,6 +18,7 @@ import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
 import io.dfjinxin.modules.sys.dao.SysUserDao;
 import io.dfjinxin.modules.sys.dao.SysUserRoleDao;
+import io.dfjinxin.modules.sys.entity.MenuHiddenEnum;
 import io.dfjinxin.modules.sys.entity.SysUserEntity;
 import io.dfjinxin.modules.sys.service.SysRoleService;
 import io.dfjinxin.modules.sys.service.SysUserRoleService;
@@ -176,7 +177,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				List<Map<String, Object>> lt = new ArrayList<>();
 				String pr = (String) data.get("menu_router");
 				int i= pr.lastIndexOf("/");
-				map.put("path",pr.substring(i));
+				map.put("path",pr.substring(0,i));
 				map.put("component","Layout");
 				map.put("redirect",pr);
 //				map.put("name",upperCase(pr.substring(i+1)));
@@ -217,7 +218,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				List<Map<String, Object>> lt = new ArrayList<>();
 				String pr = (String) data.get("menu_router");
 				int i= pr.lastIndexOf("/");
-				map.put("path",pr.substring(i));
+				map.put("path",pr.substring(i+1));
 				map.put("component",pr.substring(1));
 				Map<String, Object>  m4 = new HashMap<>();
 				m4.put("title",data.get("menu_name"));
@@ -231,7 +232,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				List<Map<String, Object>> lt = new ArrayList<>();
 				String pr = (String) data.get("menu_router");
 				int i= pr.lastIndexOf("/");
-				map.put("path",pr.substring(i+1));
+				map.put("path",pr.substring(0,i));
 				map.put("component","Layout");
 				map.put("redirect",pr);
 				Map<String, Object>  m4 = new HashMap<>();
@@ -246,12 +247,20 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				Map<String, Object> map = new HashMap<>();
 				String pr = (String) data.get("menu_router");
 				int i= pr.lastIndexOf("/");
-				map.put("path",pr.substring(i+1));
+				MenuHiddenEnum menuHiddenEnum = MenuHiddenEnum.getbyType(pr);
+				if(menuHiddenEnum !=null){
+					map.put("path",menuHiddenEnum.getValue());
+					map.put("hidden",true);
+				}else {
+					map.put("path",pr.substring(i+1));
+				}
 				map.put("name",upperCase(pr.substring(i+1)));
 				map.put("component",pr.substring(1));
 				Map<String, Object>  m4 = new HashMap<>();
 				m4.put("title",data.get("menu_name"));
 				map.put("meta",m4);
+
+
 				map.put("pare_menu_id",data.get("pare_menu_id"));
 				map.put("menu_id",data.get("menu_id"));
 				m7.add(map);
@@ -261,9 +270,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				String pr = (String) data.get("menu_router");
 				int i= pr.lastIndexOf("/");
 				if(i==0){
-					map.put("path",pr.substring(1));
+					map.put("path",pr);
 				}else {
-					map.put("path",pr.substring(1,i));
+					map.put("path",pr.substring(0,i));
 				}
 				map.put("component","Layout");
 				map.put("redirect",pr);
