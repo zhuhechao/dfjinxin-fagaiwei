@@ -123,12 +123,13 @@ public class SysRoleController extends AbstractController {
 	public R roleMenu(@RequestBody SysRoleEntity role){
 		int rid= role.getRoleId();
 		List<Integer> mids= role.getMenuIdList();
+		int tid = role.getRoleTypeId();
 		try {
-			sysRoleMenuService.saveOrUpdate(rid,mids);
+			return	sysRoleMenuService.saveOrUpdate(rid,tid,mids);
 		}catch (Exception e){
 			return R.error("功能权限操作失败!");
 		}
-		return R.ok();
+
 	}
 
 	@GetMapping("/checkRolePerm")

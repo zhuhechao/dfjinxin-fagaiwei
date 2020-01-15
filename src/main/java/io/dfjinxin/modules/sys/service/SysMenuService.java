@@ -11,6 +11,7 @@ package io.dfjinxin.modules.sys.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.common.utils.PageUtils;
+import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.sys.entity.GovRootMenuEntity;
 import io.dfjinxin.modules.sys.entity.SysMenuEntity;
 
@@ -70,5 +71,7 @@ public interface SysMenuService extends IService<SysMenuEntity> {
 	 * @return
 	 */
 	SysMenuEntity getById(int menuId);
+
+	R checkMenuInfo(SysMenuEntity sysMenuEntity);
 
 }

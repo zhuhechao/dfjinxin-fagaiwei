@@ -161,13 +161,12 @@
 
 	<!--获取指定用户的可访问的菜单-->
 	<select id="getUserPerm" resultType="map">
-      SELECT m.menu_id,m.pare_menu_id ,m.menu_name,m.menu_url,m.menu_icon_url,m.menu_router,m.menu_type,m.parent
-		FROM ( SELECT DISTINCT pmenu.menu_id,pmenu.menu_url,pmenu.menu_type,pmenu.menu_name,pmenu.menu_router,pmenu.pare_menu_id,pmenu.menu_icon_url,pmenu.menu_state, (CASE  WHEN parent != 'Null' THEN '1' ELSE '0' END ) parent FROM (
+      SELECT m.menu_id,m.pare_menu_id ,m.menu_name,m.menu_url,m.menu_icon_url,m.menu_router,m.menu_type,m.menu_order,m.parent
+		FROM ( SELECT DISTINCT pmenu.menu_id,pmenu.menu_url,pmenu.menu_type,pmenu.menu_name,pmenu.menu_router,pmenu.pare_menu_id,pmenu.menu_icon_url,pmenu.menu_state,pmenu.menu_order, (CASE  WHEN parent != 'Null' THEN '1' ELSE '0' END ) parent FROM (
 SELECT  pmi.*,pm.menu_id parent   FROM pss_menu_info pmi LEFT JOIN pss_menu_info pm ON pmi.menu_id = pm.pare_menu_id
 ) pmenu WHERE menu_state = 1 AND menu_id !=1) m
 		JOIN pss_role_perm_info p ON m.menu_id = p.menu_id
 		JOIN (SELECT pur.role_id  FROM pss_user_info pui JOIN pss_user_role_rela pur ON pui.user_id = pur.user_id WHERE pui.user_id = #{userId})  r ON p.role_id = r.role_id
-		ORDER BY  m.menu_id
     </select>
 
 </mapper>

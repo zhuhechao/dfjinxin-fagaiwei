@@ -17,18 +17,21 @@ import com.google.common.reflect.ClassPath;
 import io.dfjinxin.common.utils.Constant;
 import io.dfjinxin.common.utils.MapUtils;
 import io.dfjinxin.common.utils.PageUtils;
+import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.sys.dao.SysMenuDao;
 import io.dfjinxin.modules.sys.entity.GovRootMenuEntity;
 import io.dfjinxin.modules.sys.entity.SysMenuEntity;
 import io.dfjinxin.modules.sys.entity.SysRoleEntity;
 import io.dfjinxin.modules.sys.service.SysMenuService;
 import io.dfjinxin.modules.sys.service.SysRoleMenuService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -98,6 +101,62 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuDao, SysMenuEntity> i
 	public SysMenuEntity getById(int menuId) {
 		return sysMenuDao.getMenuById(menuId);
 	}
+
+
+	/**
+	 * 验证参数是否正确
+	 */
+	@Override
+	public R checkMenuInfo(SysMenuEntity menu) {
+			String menuName = menu.getMenuName();
+			int menuId = menu.getMenuId();
+			if(menuName !=null && !menuName.equals("")){
+				Map<String,Object> map = new HashMap<>();
+				map.put("menu_name",menuName);
+				List<SysMenuEntity> re =  baseMapper.selectByMap(map);
+				int sid = 0;
+				if(re.size()>0){
+					sid = re.get(0).getMenuId();
+				}
+				if(menuId == 0 && re.size()>0){
+					return R.error(1,"菜单名称重复");
+				}else if(menuId != 0 && sid!=0 &&  sid != menuId){
+					return R.error(1,"角色名称已存在！");
+				}
+			}else {
+				return R.error(1,"菜单名称不能为空");
+			}
+
+			if(menu.getMenuId()!=1 && menu.getPareMenuId() ==0){
+				return R.error(1,"上级菜单不能为空");
+			}
+
+			//菜单
+			if(menu.getMenuType() != Constant.MenuType.BUTTON.getValue()){
+				if(StringUtils.isBlank(menu.getMenuRouter())){
+					return R.error(1,"菜单路由不能为空");
+				}
+			}
+
+			//上级菜单类型
+			int parentType = Constant.MenuType.CATALOG.getValue();
+			if(menu.getPareMenuId() != 0){
+				SysMenuEntity parentMenu = sysMenuDao.getMenuById(menu.getPareMenuId());
+				parentType = parentMenu.getMenuType();
+			}
+
+			//目录、菜单
+			if(menu.getMenuType() == Constant.MenuType.CATALOG.getValue() ||
+					menu.getMenuType() == Constant.MenuType.MENU.getValue()){
+				if(parentType != Constant.MenuType.CATALOG.getValue()){
+					return R.error(1,"上级菜单只能为目录类型");
+				}
+				return R.ok();
+			}
+
+			return R.ok();
+		}
+
 
 	public List<Integer> queryAllMenuId(int userId) {
 		return baseMapper.queryAllMenuId(userId);

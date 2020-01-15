@@ -9,6 +9,7 @@
 package io.dfjinxin.modules.sys.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.sys.entity.SysRoleMenuEntity;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import java.util.Map;
  */
 public interface SysRoleMenuService extends IService<SysRoleMenuEntity> {
 	
-	void saveOrUpdate(int roleId, List<Integer> menuIdList);
+	R saveOrUpdate(int roleId, int roleTypeId, List<Integer> menuIdList);
 	
 	/**
 	 * 根据角色ID，获取菜单ID列表

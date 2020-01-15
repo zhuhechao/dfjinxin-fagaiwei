@@ -91,6 +91,11 @@ public class SysMenuEntity implements Serializable {
 	 */
     private String menuRouter;
 
+	/**
+	 * 菜单展示排序
+	 */
+	private int menuOrder;
+
 	@TableField(exist = false)
 	private List<SysMenuEntity> list;
 

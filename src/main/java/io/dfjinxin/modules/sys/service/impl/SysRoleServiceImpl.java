@@ -144,6 +144,8 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 			 }
 		}
 
+
+
 		return R.ok().put("data",result);
 	}
 
@@ -169,19 +171,29 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 			int roleId = r.getRoleId();
 		    List<Integer> rs = r.getMenuIdList();
 		    int rt = r.getRoleTypeId();
-			Map<String,Object> map = new HashMap<>();
-		    map.put("role_name",roleName);
-		    List<SysRoleEntity> re =  baseMapper.selectByMap(map);
-			if(roleId == 0 && re.size()>0){
-				return R.error(1,"角色名称重复");
-			}else if(roleId != 0 && re.size()>1){
-				R.error(1,"角色名称已存在！");
+		    if(roleName !=null && !roleName.equals("")){
+				Map<String,Object> map = new HashMap<>();
+				map.put("role_name",roleName);
+				List<SysRoleEntity> re =  baseMapper.selectByMap(map);
+				int sid = 0;
+				if(re.size()>0){
+					sid = re.get(0).getRoleId();
+				}
+				if(roleId == 0 && re.size()>0){
+					return R.error(1,"角色名称重复");
+				}else if(roleId != 0 && sid!=0 &&  sid != roleId){
+					R.error(1,"角色名称已存在！");
+				}
 			}
-		   if(rt == 1 && !rs.contains(2)){
-               return R.error(1,"该角色未分配系统管理员权限！");
-		   }else if(rt !=1 && rs.contains(2)){
-		   	return  R.error(1,"改角色不应分配系统管理员角色！");
-		   }
+
+			if(roleId !=0 && rs!=null){
+				if(rt == 1 && !rs.contains(2)){
+					return R.error(1,"该角色未分配系统管理员权限！");
+				}else if(rt !=1 && rs.contains(2)){
+					return  R.error(1,"该角色不应分配系统管理员角色！");
+				}
+			}
+
           return R.ok();
 	}
 

@@ -4,6 +4,7 @@
 <mapper namespace="io.dfjinxin.modules.sys.dao.SysMenuDao">
 	<sql id ='where'>
 		 pui.menu_type != 3
+		AND pui.menu_id != 1
 		<if test="m.menuId != null and m.menuId != '' and !'null'.equals(m.menuId)"><![CDATA[
 	       and pui.menu_id = #{m.menuId}
 	    ]]></if>
@@ -28,13 +29,13 @@
 	</select>
 
   <select id="queryMenu" resultType="io.dfjinxin.modules.sys.entity.SysMenuEntity">
-	 SELECT pui.menu_id,pui.pare_menu_id,pui.menu_name,pui.menu_router,pui.menu_type,pui.menu_url,pui.menu_icon_url,pui.menu_state,pui.cre_date,pui.upd_date,(CASE WHEN pui.menu_type = 1 THEN '目录' WHEN pui.menu_type = 2 THEN '菜单' ELSE '按钮' END ) menuTypeName,pmi.menu_name pareMenuName
+	 SELECT pui.menu_id,pui.pare_menu_id,pui.menu_name,pui.menu_router,pui.menu_type,pui.menu_url,pui.menu_icon_url,pui.menu_state,pui.cre_date,pui.upd_date,pui.menu_order,(CASE WHEN pui.menu_type = 1 THEN '目录' WHEN pui.menu_type = 2 THEN '菜单' ELSE '按钮' END ) menuTypeName,pmi.menu_name pareMenuName
      FROM pss_menu_info pui
      LEFT JOIN pss_menu_info pmi ON pui.pare_menu_id = pmi.menu_id
 	  <where>
 		  <include refid="where"/>
 	  </where>
-	  ORDER BY pui.menu_state DESC
+	  ORDER BY pui.menu_order, pui.menu_state DESC
   </select>
 
 	<!--菜单信息下拉框-->

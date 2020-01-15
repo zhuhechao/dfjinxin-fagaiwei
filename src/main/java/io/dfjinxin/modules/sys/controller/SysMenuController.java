@@ -25,10 +25,7 @@ import io.dfjinxin.common.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 系统菜单
@@ -102,7 +99,7 @@ public class SysMenuController {
 	@PostMapping("/saveOrUpdate")
 	@RequiresPermissions("sys:menu:save")
 	public R save(@RequestBody SysMenuEntity menu){
-		  R r= verifyForm(menu);
+		  R r= sysMenuService.checkMenuInfo(menu);
 		  Integer ft = (Integer) r.get("code");
 		  String msg = (String) r.get("msg");
 		  if(ft == 1){
@@ -148,53 +145,6 @@ public class SysMenuController {
 		return R.ok().put("menu", menu);
 	}
 
-	/*
-	 * 菜单信息验证
-	 */
-	@ApiOperation("验证菜单信息")
-	@PostMapping("/checkMenu")
-	@RequiresPermissions("sys:menu:checkMenu")
-	public R checkMenu(@RequestBody SysMenuEntity menu){
-		//数据校验
-		return verifyForm(menu);
 
-	}
 
-	/**
-	 * 验证参数是否正确
-	 */
-	private R verifyForm(SysMenuEntity menu){
-		if(StringUtils.isBlank(menu.getMenuName())){
-			return R.error(1,"菜单名称不能为空");
-		}
-
-		if(menu.getMenuId()!=1 && menu.getPareMenuId() ==0){
-			return R.error(1,"上级菜单不能为空");
-		}
-
-		//菜单
-		if(menu.getMenuType() != Constant.MenuType.BUTTON.getValue()){
-			if(StringUtils.isBlank(menu.getMenuRouter())){
-				return R.error(1,"菜单路由不能为空");
-			}
-		}
-
-		//上级菜单类型
-		int parentType = Constant.MenuType.CATALOG.getValue();
-		if(menu.getPareMenuId() != 0){
-			SysMenuEntity parentMenu = sysMenuService.getById(menu.getPareMenuId());
-			parentType = parentMenu.getMenuType();
-		}
-
-		//目录、菜单
-		if(menu.getMenuType() == Constant.MenuType.CATALOG.getValue() ||
-				menu.getMenuType() == Constant.MenuType.MENU.getValue()){
-			if(parentType != Constant.MenuType.CATALOG.getValue()){
-				return R.error(1,"上级菜单只能为目录类型");
-			}
-			return R.ok();
-		}
-
-		return R.ok();
-	}
 }

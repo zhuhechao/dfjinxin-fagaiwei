@@ -259,6 +259,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				map.put("children",lt);
 				map.put("pare_menu_id",data.get("pare_menu_id"));
 				map.put("menu_id",data.get("menu_id"));
+				map.put("menu_order",data.get("menu_order"));
 				m8.add(map);
 			}
 		}
@@ -272,15 +273,16 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
         m1.addAll(m6);
         m1.addAll(m8);
 
-
-
+		Collections.sort(m1,new MapComparatorDesc());
 		for(Map<String,Object> dt: m1){
 			int flg=(int)dt.get("pare_menu_id");
 			if(flg==1){
 				dt.remove("pare_menu_id");
 				dt.remove("menu_id");
+				dt.remove("menu_order");
 			}
 		}
+
 
 		return  m1;
 	}
@@ -391,7 +393,21 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		map.put("children",lt);
 		map.put("pare_menu_id",data.get("pare_menu_id"));
 		map.put("menu_id",data.get("menu_id"));
+		map.put("menu_order",data.get("menu_order"));
 		m.add(map);
+	}
+
+	private static class MapComparatorDesc implements Comparator<Map<String,Object>>{
+
+		@Override
+		public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+			Integer v1 = Integer.valueOf(o1.get("menu_order").toString()) ;
+			Integer v2 = Integer.valueOf(o2.get("menu_order").toString()) ;
+			if(v2 !=null){
+				return v2.compareTo(v1);
+			}
+			return 0;
+		}
 	}
 
 }
