@@ -8,8 +8,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 
- * 
+ *
+ *
  * @author bourne
  * @email kuibobo@gmail.com
  * @date 2019-09-02 17:03:24
@@ -20,32 +20,32 @@ public class PssAnalyReltEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 *
 	 */
 	@TableId
 	private Integer reltId;
 	/**
-	 * 
+	 *
 	 */
-	private String analyId;
+	private Integer analyId;
 	/**
-	 * 
+	 *
 	 */
 	private Date analyTime;
 	/**
-	 * 
+	 *
 	 */
 	private String reltName;
 	/**
-	 * 
+	 *
 	 */
 	private String analyWay;
 	/**
-	 * 
+	 *
 	 */
 	private String basVar;
 	/**
-	 * 
+	 *
 	 */
 	private String tarVar;
 
@@ -53,11 +53,11 @@ public class PssAnalyReltEntity implements Serializable {
 
 	private Integer runStatus;
 	/**
-	 * 
+	 *
 	 */
 	private String analyCoe;
 	/**
-	 * 
+	 *
 	 */
 	private String pvalue;
 
@@ -65,7 +65,7 @@ public class PssAnalyReltEntity implements Serializable {
 		if(pssAnalyInfoEntity==null)
 			return;
 		if(pssAnalyInfoEntity.getAnalyId()!=null)
-			this.setAnalyId(pssAnalyInfoEntity.getAnalyId().toString());
+			this.setAnalyId(pssAnalyInfoEntity.getAnalyId());
 		this.setAnalyWay(pssAnalyInfoEntity.getAnalyWay());
 		this.setAnalyTime(new Date());
 		this.setReltName(pssAnalyInfoEntity.getAnalyName());

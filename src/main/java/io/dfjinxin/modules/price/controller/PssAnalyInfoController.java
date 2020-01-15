@@ -6,6 +6,7 @@ import com.alibaba.fastjson.parser.Feature;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.common.utils.python.PythonApiUtils;
+import io.dfjinxin.modules.price.dto.AnalyReqDto;
 import io.dfjinxin.modules.price.dto.PssAnalyInfoDto;
 import io.dfjinxin.modules.price.entity.PssAnalyInfoEntity;
 import io.dfjinxin.modules.price.entity.PssAnalyReltEntity;
@@ -91,10 +92,17 @@ public class PssAnalyInfoController {
         return R.ok().put("page", page);
     }
 
-    @PostMapping("/runGeneral2")
-    @ApiOperation("运行")
-    public R runGeneral2(@RequestBody PssAnalyInfoDto dto) {
-        Map data = pssAnalyReltService.runGenera(dto);
+    /**
+    * @Desc:  相亲性&因果分析
+    * @Param: [dto]
+    * @Return: io.dfjinxin.common.utils.R
+    * @Author: z.h.c
+    * @Date: 2020/1/15 13:16
+    */
+    @PostMapping("/execAnaly")
+    @ApiOperation("运行分析new")
+    public R execAnaly(@RequestBody AnalyReqDto dto) {
+        Map<String, Object> data = pssAnalyReltService.runGenera(dto);
         return R.ok().put("data", data);
     }
 

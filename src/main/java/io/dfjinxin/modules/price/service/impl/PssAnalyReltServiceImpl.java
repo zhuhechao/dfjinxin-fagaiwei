@@ -2,21 +2,19 @@ package io.dfjinxin.modules.price.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.parser.Feature;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.common.utils.python.PythonApiUtils;
+import io.dfjinxin.modules.price.dao.PssAnalyInfoDao;
 import io.dfjinxin.modules.price.dao.PssAnalyReltDao;
-import io.dfjinxin.modules.price.dto.PssAnalyInfoDto;
+import io.dfjinxin.modules.price.dto.AnalyReqDto;
 import io.dfjinxin.modules.price.entity.PssAnalyInfoEntity;
 import io.dfjinxin.modules.price.entity.PssAnalyReltEntity;
 import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
-import io.dfjinxin.modules.price.service.PssAnalyInfoService;
 import io.dfjinxin.modules.price.service.PssAnalyReltService;
 import io.dfjinxin.modules.price.service.PssDatasetInfoService;
-import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +40,7 @@ public class PssAnalyReltServiceImpl extends ServiceImpl<PssAnalyReltDao, PssAna
     private PssAnalyReltDao pssAnalyReltDao;
 
     @Autowired
-    private PssAnalyInfoService pssAnalyInfoService;
+    private PssAnalyInfoDao pssAnalyInfoDao;
 
     @Autowired
     private PssDatasetInfoService pssDatasetInfoService;
@@ -72,78 +70,105 @@ public class PssAnalyReltServiceImpl extends ServiceImpl<PssAnalyReltDao, PssAna
      * @Date: 2020/1/14 10:36
      */
     @Override
-    public Map runGenera(PssAnalyInfoDto dto) {
+    public Map runGenera(AnalyReqDto dto) {
+
+        logger.info("分析-开始***");
+        logger.info("分析-req params:{}", dto);
         PssDatasetInfoEntity pssDatasetInfoEntity = pssDatasetInfoService.getPssDatasetInfoById(dto.getDataSetId());
         if (pssDatasetInfoEntity == null) return R.error("数据集," + dto.getDataSetId() + " 不存在!");
 
+        JSONObject indeValJsonObj = JSONObject.parseObject(dto.getIndeVar());
+        JSONObject depValJsonObj = JSONObject.parseObject(dto.getDepeVar());
+        final String engName = pssDatasetInfoEntity.getDataSetEngName();
         String retStr = "";
         JSONObject jsonObject = new JSONObject();
-        if ("偏相关性分析".equals(dto.getAnalyWay())) {
-            jsonObject.put("table", pssDatasetInfoEntity.getDataSetEngName());
-            jsonObject.put("indepVar", dto.getIndeVar());
+        Map<String, Object> result = new HashMap<>();
+        final String analyWag = dto.getAnalyWay();
+        PssAnalyInfoEntity infoEntity = new PssAnalyInfoEntity();
+        if ("偏相关性分析".equals(analyWag)) {
+            jsonObject.put("table", engName);
+            jsonObject.put("indepVar", indeValJsonObj);
             retStr = this.callPython(url + "pCorAna", jsonObject);
-        } else if ("格兰杰".equals(dto.getAnalyWay())) {
-            jsonObject.put("table", pssDatasetInfoEntity.getDataSetEngName());
-            jsonObject.put("indepVar", dto.getIndeVar());
-            jsonObject.put("depeVar", dto.getDepeVar());
-            retStr = this.callPython(url + "grangerAna", jsonObject);
-        } else if (dto.getAnalyWay().equals("路径分析")) {
-            jsonObject.put("table", pssDatasetInfoEntity.getDataSetEngName());
-            jsonObject.put("indepVar", dto.getIndeVar());
-            //只能有一个值，要区分宏观、非宏观
-            jsonObject.put("depeVar", dto.getDepeVar());
-            retStr = this.callPython(url + "pathAna", jsonObject);
-        } else {//一般相关性分析
-            jsonObject.put("table", pssDatasetInfoEntity.getDataSetEngName());
-            jsonObject.put("indepVar", dto.getIndeVar());
+            result = this.converPythonResult(analyWag, retStr);
+            infoEntity.setBussType(1);
+        } else if ("一般相关性分析".equals(analyWag)) {//一般相关性分析
+            jsonObject.put("table", engName);
+            jsonObject.put("indepVar", indeValJsonObj);
             retStr = this.callPython(url + "CorAna", jsonObject);
+            result = this.converPythonResult(analyWag, retStr);
+            infoEntity.setBussType(1);
+        } else if ("路径分析".equals(analyWag)) {
+            jsonObject.put("table", engName);
+            jsonObject.put("indepVar", indeValJsonObj);
+            //depeVar,只能有一个值，要区分宏观、非宏观
+            jsonObject.put("depeVar", depValJsonObj);
+            retStr = this.callPython(url + "pathAna", jsonObject);
+            result = this.converPythonResult(analyWag, retStr);
+            infoEntity.setBussType(2);
+        } else if ("格兰杰".equals(dto.getAnalyWay())) {
+            jsonObject.put("table", engName);
+            jsonObject.put("indepVar", indeValJsonObj);
+            jsonObject.put("depeVar", depValJsonObj);
+            retStr = this.callPython(url + "grangerAna", jsonObject);
+            result = this.converPythonResult(analyWag, retStr);
+            infoEntity.setBussType(2);
         }
-        JSONObject jsonRet = JSONObject.parseObject(retStr);
 
-        String code = jsonRet.containsKey("code") ? jsonRet.getString("code") : "";
-        if (code == null || !"succ".equals(code)) {
-            return null;
-        }
+        String code = (String) result.getOrDefault("code", "");
+        if (!"succ".equals(code)) return null;
 
-        JSONObject jsonData = jsonRet.containsKey("data") ? jsonRet.getJSONObject("data") : null;
+        String indeVal = jsonObject.getString("indepVar");
+        String depeVar = jsonObject.getString("depeVar");
+        infoEntity.setAnalyName(dto.getAnalyName());
+        infoEntity.setAnalyWay(dto.getAnalyWay());
+        infoEntity.setDataSetId(pssDatasetInfoEntity.getDataSetId());
+        infoEntity.setIndeVar(indeVal);
+        infoEntity.setDepeVar(depeVar);
+        infoEntity.setCrteTime(new Date());
+        infoEntity.setRemarks(dto.getRemarks());
+        pssAnalyInfoDao.insert(infoEntity);
+        int keyId = infoEntity.getAnalyId();
 
-        pssAnalyInfoService.saveOrUpdate(dto);
         PssAnalyReltEntity relt = new PssAnalyReltEntity();
-        relt.analyInfoToRelEnt(PssAnalyInfoEntity.toEntity(dto));
-        if (null != jsonObject.get("pValue")) {
-            Object jsonArray = JSONArray.parse(jsonObject.get("pValue").toString(), Feature.OrderedField);
-            relt.setPvalue(jsonArray.toString());
-        }
-        if (null != jsonObject.get("coe")) {
-            Object jsonArray = JSONArray.parse(jsonObject.get("coe").toString(), Feature.OrderedField);
-            relt.setAnalyCoe(jsonArray.toString());
-        }
-        PssAnalyInfoEntity p = PssAnalyInfoEntity.toEntity(dto);
-        Map map = new CaseInsensitiveMap();
-
-        if (dto.getAnalyId() != null)
-            map.put("analyId", dto.getAnalyId());
-        else {
-            map.put("analyName", relt.getReltName());
-            map.put("analyWay", relt.getAnalyWay());
-            map.put("datasetId", dto.getDataSetId());
-            map.put("remarks", dto.getRemarks());
-            map.put("indeVar", p.getIndeVar());
-            map.put("depeVar", dto.getDepeVar());
-        }
-        List<PssAnalyReltEntity> list = this.getList(map);
-        if (list != null && list.size() > 0)
-            relt.setReltId(list.get(0).getReltId());
-
+        relt.setReltName(dto.getAnalyName());
+        relt.setAnalyWay(dto.getAnalyWay());
+        relt.setBasVar(indeVal);
+        relt.setTarVar(depeVar);
+        relt.setAnalyId(keyId);
+        relt.setAnalyCoe(result.getOrDefault("coe", "").toString());
+        relt.setPvalue(result.getOrDefault("pva", "").toString());
+        relt.setAnalyTime(new Date());
         relt.setRunTime(new Date());
-        this.saveOrUpdate(relt);
-        Map data = new LinkedHashMap();
-        data.put("pva", relt.getPvalue());
-        if (!StringUtils.isEmpty(relt.getAnalyCoe()))
-            data.put("coe", relt.getAnalyCoe());
+        relt.setRunStatus(0);
+        this.save(relt);
+        logger.info("分析-结束***");
+        result.remove("code");
+        return result;
+    }
 
+    private Map<String, Object> converPythonResult(String analyWay, String retStr) {
+        Map<String, Object> result = new HashMap<>();
+        if (StringUtils.isEmpty(retStr)) {
+            result.put("code", "");
+            return result;
+        }
 
-        return data;
+        JSONObject jsonObj = JSONObject.parseObject(retStr);
+        String code = jsonObj.containsKey("code") ? jsonObj.getString("code") : "";
+        result.put("code", code);
+        if (!"succ".equals(code)) {
+            return result;
+        }
+
+        if ("格兰杰".equals(analyWay)) {
+            JSONArray jsonArray = jsonObj.containsKey("data") ? jsonObj.getJSONArray("data") : null;
+            result.put("pva", jsonArray);
+        } else {
+            JSONObject dataObj = jsonObj.containsKey("data") ? jsonObj.getJSONObject("data") : null;
+            result.put("coe", dataObj.containsKey("coe") ? dataObj.get("coe") : null);
+            result.put("pva", dataObj.containsKey("pva") ? dataObj.get("pva") : null);
+        }
+        return result;
     }
 
     /**
