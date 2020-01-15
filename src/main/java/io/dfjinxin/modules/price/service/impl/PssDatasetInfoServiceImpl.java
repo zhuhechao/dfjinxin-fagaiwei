@@ -156,8 +156,9 @@ public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, Ps
 
         String dateFeature = entity.getDateFeature();
         List<String> dateFeatureList = new ArrayList<>();
-        if (StringUtils.isNotEmpty(dateFeature)) {
-            dateFeatureList = Arrays.asList(dateFeature);
+        if(StringUtils.isNotEmpty(dateFeature)){
+            String[] strArr = dateFeature.split(",");
+            dateFeatureList = Arrays.asList(strArr);
         }
 
         String indeVar = entity.getIndeVar();
@@ -170,8 +171,8 @@ public class PssDatasetInfoServiceImpl extends ServiceImpl<PssDatasetInfoDao, Ps
         map.clear();
 
         JSONObject indeVarObj = JSON.parseObject(indeVar);
-        map.put("comm_table", indeVarObj.containsKey("comm_table") ? indeVarObj.getString("comm_table") : new ArrayList<String>());
-        map.put("macro_table", indeVarObj.containsKey("macro_table") ? indeVarObj.getString("macro_table") : new ArrayList<String>());
+        map.put("comm_table", indeVarObj.containsKey("comm_table") ? indeVarObj.get("comm_table") : new ArrayList<String>());
+        map.put("macro_table", indeVarObj.containsKey("macro_table") ? indeVarObj.get("macro_table") : new ArrayList<String>());
         map.put("date_feature", dateFeatureList);
         entity.setIndeVar(JSONObject.toJSONString(map));
     }

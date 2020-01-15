@@ -2,12 +2,9 @@ package io.dfjinxin.modules.price.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.common.utils.PageUtils;
-import io.dfjinxin.modules.price.dao.PssAnalyReltDao;
-import io.dfjinxin.modules.price.dto.PssAnalyInfoDto;
+import io.dfjinxin.modules.price.dto.AnalyReqDto;
 import io.dfjinxin.modules.price.entity.PssAnalyReltEntity;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +23,6 @@ public interface PssAnalyReltService extends IService<PssAnalyReltEntity> {
 
     PssAnalyReltEntity selectByAnalyId(@Param("analyId") Integer analyId);
 
-    Map runGenera(PssAnalyInfoDto dto);
+    Map runGenera(AnalyReqDto dto);
 }
 

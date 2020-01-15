@@ -7,18 +7,18 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
- *
- *
- * @author bourne
- * @email kuibobo@gmail.com
- * @date 2019-09-03 16:47:42
- */
+* @Desc:  价格分析请求dto
+* @Param:
+* @Return:
+* @Author: z.h.c
+* @Date: 2020/1/15 10:15
+*/
 @Data
 @Accessors(chain = true)
-public class PssAnalyInfoDto implements Serializable {
+public class AnalyReqDto implements Serializable {
 
-    @ApiModelProperty(value = "分析ID", name = "analyId", required = true)
-    private Integer analyId;
+//    @ApiModelProperty(value = "分析ID", name = "analyId", required = false)
+//    private Integer analyId;
 
     @ApiModelProperty(value = "数据集id", name = "dataSetId", required = true)
     private Integer dataSetId;
@@ -33,11 +33,12 @@ public class PssAnalyInfoDto implements Serializable {
     private String analyWay;
 
     @ApiModelProperty(value = "变量", name = "vars", required = true)
-    private String[] indeVar;
+    private String indeVar;
 
     @ApiModelProperty(value="他变量" ,name="depeVar",required = false)
     private String depeVar;
 
+    //相关性分析:1,因果分析：2
     @ApiModelProperty(value="业务类型" ,name="bussType",required = true)
     private Integer bussType;
 

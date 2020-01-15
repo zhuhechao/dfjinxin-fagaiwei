@@ -67,6 +67,7 @@ public class PssAnalyInfoEntity implements Serializable {
     @ApiModelProperty(value = "创建时间", name = "crteTime", required = true)
     private Date crteTime;
 
+    // 1:相关性，2：因果
     @ApiModelProperty(value = "业务类型", name = "bussType", required = true)
     private Integer bussType;
 
