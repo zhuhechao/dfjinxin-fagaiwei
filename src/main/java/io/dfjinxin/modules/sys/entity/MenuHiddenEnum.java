@@ -8,7 +8,14 @@ import lombok.Data;
  */
 public enum MenuHiddenEnum {
     ModelCre("/modelDesign/modelManage/createModel","/modelDesign/createModel"),
-    ModelMap("/modelDesign/modelManage/modelMapping","/modelDesign/modelMapping");
+    ModelMap("/modelDesign/modelManage/modelMapping","/modelDesign/modelMapping"),
+    PriceWatch("/pricewatch/pricewarning","dashboard"),
+    PublicSystem("/pubilcsystem/index","example"),
+    OnLine("/onlineSurveySystem/index","eye"),
+    AnalyReport("/analysereportconfig/reportproduceconfig","eye-open"),
+    ModelAdmin("/modeladmin/datapretreatment","form"),
+    DataSourceManagement("/datasourcemanagement/datasourcemanagement","nested"),
+    SysConfig("/sysconfig/usersconfig","user");
 
     private String key, value;
     MenuHiddenEnum(String key,String value){

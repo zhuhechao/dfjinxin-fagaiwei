@@ -173,22 +173,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 	   }
         for(Map<String, Object> data:list){
 			if((int)data.get("depth") == 3) {
-				Map<String, Object> map = new HashMap<>();
-				List<Map<String, Object>> lt = new ArrayList<>();
-				String pr = (String) data.get("menu_router");
-				int i= pr.lastIndexOf("/");
-				map.put("path",pr.substring(0,i));
-				map.put("component","Layout");
-				map.put("redirect",pr);
-//				map.put("name",upperCase(pr.substring(i+1)));
-				Map<String, Object>  m4 = new HashMap<>();
-				m4.put("title",data.get("menu_name"));
-				m4.put("icon","'dashboard'");
-				map.put("meta",m4);
-				map.put("children",lt);
-				map.put("pare_menu_id",data.get("pare_menu_id"));
-				map.put("menu_id",data.get("menu_id"));
-				m6.add(map);
+				levelOneMenu(m6,data);
 			}else if((int)data.get("depth") == 2){
 				List<Map<String, Object>> lt = new ArrayList<>();
 				Map<String, Object> map = new HashMap<>();
@@ -228,39 +213,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				map.put("menu_id",data.get("menu_id"));
 				m2.add(map);
 			}else if((int) data.get("depth") == 1 && (int) data.get("pare_menu_id")== 1) {
-				Map<String, Object> map = new HashMap<>();
-				List<Map<String, Object>> lt = new ArrayList<>();
-				String pr = (String) data.get("menu_router");
-				int i= pr.lastIndexOf("/");
-				map.put("path",pr.substring(0,i));
-				map.put("component","Layout");
-				map.put("redirect",pr);
-				Map<String, Object>  m4 = new HashMap<>();
-				m4.put("title",data.get("menu_name"));
-				m4.put("icon","");
-				map.put("meta",m4);
-				map.put("children",lt);
-				map.put("pare_menu_id",data.get("pare_menu_id"));
-				map.put("menu_id",data.get("menu_id"));
-				m1.add(map);
+				levelOneMenu(m1,data);
 			}else if((int) data.get("depth") == 0 && (int) data.get("pare_menu_id")!= 1) {
 				Map<String, Object> map = new HashMap<>();
 				String pr = (String) data.get("menu_router");
 				int i= pr.lastIndexOf("/");
-				MenuHiddenEnum menuHiddenEnum = MenuHiddenEnum.getbyType(pr);
-				if(menuHiddenEnum !=null){
-					map.put("path",menuHiddenEnum.getValue());
-					map.put("hidden",true);
-				}else {
-					map.put("path",pr.substring(i+1));
-				}
+				map.put("path",pr.substring(i+1));
 				map.put("name",upperCase(pr.substring(i+1)));
 				map.put("component",pr.substring(1));
 				Map<String, Object>  m4 = new HashMap<>();
 				m4.put("title",data.get("menu_name"));
 				map.put("meta",m4);
-
-
 				map.put("pare_menu_id",data.get("pare_menu_id"));
 				map.put("menu_id",data.get("menu_id"));
 				m7.add(map);
@@ -285,7 +248,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 					m5.put("component",pr.substring(1,i));
 				}
 				m4.put("title",data.get("menu_name"));
-				m4.put("icon","example");
+				MenuHiddenEnum menuHiddenEnum = MenuHiddenEnum.getbyType(pr);
+				if(menuHiddenEnum !=null ){
+					m4.put("icon",menuHiddenEnum.getValue());
+				}else {
+					m4.put("icon","");
+				}
 				m5.put("meta",m4);
 				lt.add(m5);
 				map.put("children",lt);
@@ -401,6 +369,29 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 			tmp.addAll(list);
 			menusMap(list,tmp);
 		}
+	}
+
+	private void levelOneMenu(List<Map<String, Object>> m,Map<String,Object> data){
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String, Object>> lt = new ArrayList<>();
+		String pr = (String) data.get("menu_router");
+		int i= pr.lastIndexOf("/");
+		map.put("path",pr.substring(0,i));
+		map.put("component","Layout");
+		map.put("redirect",pr);
+		Map<String, Object>  m4 = new HashMap<>();
+		m4.put("title",data.get("menu_name"));
+		MenuHiddenEnum menuHiddenEnum = MenuHiddenEnum.getbyType(pr);
+		if(menuHiddenEnum !=null ){
+			m4.put("icon",menuHiddenEnum.getValue());
+		}else {
+			m4.put("icon","");
+		}
+		map.put("meta",m4);
+		map.put("children",lt);
+		map.put("pare_menu_id",data.get("pare_menu_id"));
+		map.put("menu_id",data.get("menu_id"));
+		m.add(map);
 	}
 
 }
