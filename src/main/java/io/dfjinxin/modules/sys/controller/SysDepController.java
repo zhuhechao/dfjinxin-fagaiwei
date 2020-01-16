@@ -7,6 +7,8 @@ import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.common.validator.ValidatorUtils;
 import io.dfjinxin.common.validator.group.UpdateGroup;
+import io.dfjinxin.modules.sys.entity.DepParams;
+import io.dfjinxin.modules.sys.entity.MenuParams;
 import io.dfjinxin.modules.sys.entity.SysDepEntity;
 import io.dfjinxin.modules.sys.entity.SysUserEntity;
 import io.dfjinxin.modules.sys.service.SysDepService;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -49,8 +52,14 @@ public class SysDepController  extends AbstractController{
     @PostMapping("/save")
     @RequiresPermissions("sys:dep:save")
     public R saveDep(@RequestBody SysDepEntity dep){
-        if(!dep.getDepId().equals("")|| dep.getDepId() != null){
+        if(!dep.getDepId().equals("")&& dep.getDepId() != null){
             sysDepService.updateById(dep);
+        }else {
+            List<SysDepEntity> list = new ArrayList<>();
+            String depId= Long.toString(new Date().getTime());
+            dep.setDepId(depId);
+            list.add(dep);
+            sysDepService.addDeps(list);
         }
         return R.ok() ;
     }
@@ -84,15 +93,9 @@ public class SysDepController  extends AbstractController{
     @ApiOperation("批量删除部门")
     @PostMapping("/delete")
     @RequiresPermissions("sys:dep:delete")
-    public R delete(@RequestBody String[] depIds){
+    public R delete(@RequestBody DepParams depIds){
 
-//		if(ArrayUtils.contains(userIds, getUserId())){
-//			return R.error("当前用户不能删除");
-//		}
-        List<String> list = new ArrayList<>();
-       for(String dep : depIds){
-           list.add(dep);
-       }
+         List<String> list=  depIds.getIds();
         sysDepService.removeByIds(list);
 
         return R.ok();

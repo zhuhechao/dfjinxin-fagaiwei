@@ -121,7 +121,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuDao, SysMenuEntity> i
 				if(menuId == 0 && re.size()>0){
 					return R.error(1,"菜单名称重复");
 				}else if(menuId != 0 && sid!=0 &&  sid != menuId){
-					return R.error(1,"角色名称已存在！");
+					return R.error(1,"菜单名称已存在！");
 				}
 			}else {
 				return R.error(1,"菜单名称不能为空");

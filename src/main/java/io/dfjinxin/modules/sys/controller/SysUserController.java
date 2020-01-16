@@ -15,6 +15,8 @@ import io.dfjinxin.common.utils.R;
 import io.dfjinxin.common.validator.ValidatorUtils;
 import io.dfjinxin.common.validator.group.AddGroup;
 import io.dfjinxin.common.validator.group.UpdateGroup;
+import io.dfjinxin.modules.sys.entity.DepParams;
+import io.dfjinxin.modules.sys.entity.MenuParams;
 import io.dfjinxin.modules.sys.entity.SysUserEntity;
 import io.dfjinxin.modules.sys.service.SysUserRoleService;
 import io.dfjinxin.modules.sys.service.SysUserService;
@@ -31,6 +33,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -100,8 +103,9 @@ public class SysUserController extends AbstractController {
 	@SysLog("删除用户")
 	@PostMapping("/delete")
 	@RequiresPermissions("sys:user:delete")
-	public R delete(@RequestBody String[] userIds){
-
+	public R delete(@RequestBody DepParams depIds){
+		ArrayList<String> ids = depIds.getIds();
+         String[] userIds = ids.toArray(new String[ids.size()]);
 //		if(ArrayUtils.contains(userIds, getUserId())){
 //			return R.error("当前用户不能删除");
 //		}

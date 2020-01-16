@@ -30,7 +30,7 @@ public class SysDepServiceImpl extends ServiceImpl<SysDepDao, SysDepEntity> impl
   private SysDepDao sysDepDao;
 
   @Override
-    public void addDeps(ArrayList<SysDepEntity> depEntities) {
+    public void addDeps(List<SysDepEntity> depEntities) {
           sysDepDao.addDeps(depEntities);
     }
 

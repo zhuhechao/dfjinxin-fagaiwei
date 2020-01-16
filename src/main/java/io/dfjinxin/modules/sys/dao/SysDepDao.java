@@ -31,7 +31,7 @@ public interface SysDepDao extends BaseMapper<SysDepEntity> {
     /**
      * 新增部门信息
      */
-    void addDeps(ArrayList<SysDepEntity> list);
+    void addDeps(List<SysDepEntity> list);
 
     /**
      * 用户管理部门信息下拉框

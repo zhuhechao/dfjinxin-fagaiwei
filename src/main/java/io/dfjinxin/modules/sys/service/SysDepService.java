@@ -15,7 +15,7 @@ public interface SysDepService extends IService<SysDepEntity> {
     /**
      * 批量新增部门信息
      */
-    void addDeps(ArrayList<SysDepEntity> depEntities);
+    void addDeps(List<SysDepEntity> depEntities);
 
     /**
      * 查询部门信息
