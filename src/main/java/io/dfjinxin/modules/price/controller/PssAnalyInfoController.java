@@ -93,7 +93,7 @@ public class PssAnalyInfoController {
     }
 
     /**
-    * @Desc:  相亲性&因果分析
+    * @Desc:  相关性&因果分析
     * @Param: [dto]
     * @Return: io.dfjinxin.common.utils.R
     * @Author: z.h.c
