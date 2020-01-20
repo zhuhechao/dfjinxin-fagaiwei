@@ -36,8 +36,8 @@ public class SysDepServiceImpl extends ServiceImpl<SysDepDao, SysDepEntity> impl
 
   @Override
   public PageUtils queryPage(Map<String, Object> params) {
-    long no = params.containsKey("page") ? Long.valueOf(params.get("page").toString()) : 1;
-    long limit = params.containsKey("limit") ? Long.valueOf(params.get("limit").toString()) : 10;
+    long no = params.containsKey("pageIndex") ? Long.valueOf(params.get("pageIndex").toString()) : 1;
+    long limit = params.containsKey("pageSize") ? Long.valueOf(params.get("pageSize").toString()) : 10;
     IPage<SysDepEntity> page = baseMapper.queryDep(new Page<>(no, limit), params);
     List<SysDepEntity> list = page.getRecords();
     for(SysDepEntity map:list){

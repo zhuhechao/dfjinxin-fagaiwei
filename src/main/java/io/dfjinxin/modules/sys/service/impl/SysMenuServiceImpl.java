@@ -115,14 +115,14 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuDao, SysMenuEntity> i
 				map.put("menu_name",menuName);
 				List<SysMenuEntity> re =  baseMapper.selectByMap(map);
 				int sid = 0;
-				if(re.size()>0){
-					sid = re.get(0).getMenuId();
-				}
-				if(menuId == 0 && re.size()>0){
-					return R.error(1,"菜单名称重复");
-				}else if(menuId != 0 && sid!=0 &&  sid != menuId){
-					return R.error(1,"菜单名称已存在！");
-				}
+//				if(re.size()>0){
+//					sid = re.get(0).getMenuId();
+//				}
+//				if(menuId == 0 && re.size()>0){
+//					return R.error(1,"菜单名称重复");
+//				}else if(menuId != 0 && sid!=0 &&  sid != menuId){
+//					return R.error(1,"菜单名称已存在！");
+//				}
 			}else {
 				return R.error(1,"菜单名称不能为空");
 			}
@@ -193,8 +193,8 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuDao, SysMenuEntity> i
 
 	@Override
 	public PageUtils queryPage(Map<String, Object> params) {
-		long no = params.containsKey("page") ? Long.valueOf(params.get("page").toString()) : 1;
-		long limit = params.containsKey("limit") ? Long.valueOf(params.get("limit").toString()) : 10;
+		long no = params.containsKey("pageIndex") ? Long.valueOf(params.get("pageIndex").toString()) : 1;
+		long limit = params.containsKey("pageSize") ? Long.valueOf(params.get("pageSize").toString()) : 10;
 		IPage<SysMenuEntity> page = baseMapper.queryMenu(new Page<>(no, limit), params);
 		List<SysMenuEntity> list = page.getRecords();
 		for(SysMenuEntity map:list){

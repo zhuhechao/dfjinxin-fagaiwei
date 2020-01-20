@@ -59,8 +59,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 
    @Override
 	public PageUtils queryUserList(Map<String, Object> params) {
-		long no = params.containsKey("page") ? Long.valueOf(params.get("page").toString()) : 1;
-		long limit = params.containsKey("limit") ? Long.valueOf(params.get("limit").toString()) : 10;
+		long no = params.containsKey("pageIndex") ? Long.valueOf(params.get("pageIndex").toString()) : 1;
+		long limit = params.containsKey("pageSize") ? Long.valueOf(params.get("pageSize").toString()) : 10;
 		IPage<SysUserEntity> page = baseMapper.queryUserList(new Page<>(no, limit), params);
 		List<SysUserEntity> list = page.getRecords();
 		for(SysUserEntity map:list){
@@ -151,6 +151,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		List<Map<String, Object>> m6 = new ArrayList<>();
 		List<Map<String, Object>> m7 = new ArrayList<>();
 		List<Map<String, Object>> m8 = new ArrayList<>();
+		List<Map<String, Object>> m9 = new ArrayList<>();
+		List<Map<String, Object>> md = new ArrayList<>();
 		List<Map<String, Object>> tmp = new ArrayList<>();
 	  if(list.size()<=0 || list == null){
 	  	return new ArrayList<>();
@@ -197,6 +199,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				map.put("children",lt);
 				map.put("pare_menu_id",data.get("pare_menu_id"));
 				map.put("menu_id",data.get("menu_id"));
+				map.put("menu_order",data.get("menu_order"));
 				m3.add(map);
 			}else if((int) data.get("depth") == 1 && (int) data.get("pare_menu_id")!= 1) {
 				Map<String, Object> map = new HashMap<>();
@@ -211,6 +214,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				map.put("children",lt);
 				map.put("pare_menu_id",data.get("pare_menu_id"));
 				map.put("menu_id",data.get("menu_id"));
+				map.put("menu_order",data.get("menu_order"));
 				m2.add(map);
 			}else if((int) data.get("depth") == 1 && (int) data.get("pare_menu_id")== 1) {
 				levelOneMenu(m1,data);
@@ -226,6 +230,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				map.put("meta",m4);
 				map.put("pare_menu_id",data.get("pare_menu_id"));
 				map.put("menu_id",data.get("menu_id"));
+				map.put("menu_order",data.get("menu_order"));
 				m7.add(map);
 			}else if((int) data.get("depth") == 0 && (int) data.get("pare_menu_id")== 1) {
 				Map<String, Object> map = new HashMap<>();
@@ -263,16 +268,23 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				m8.add(map);
 			}
 		}
-       //m6 4级 m1 1级  m8 0 级
+       //m6 3级 m3 2级 m2深度为1不是1级菜单 m1深度为1并且是1级菜单 m7深度为0不是1级菜单   m8 深度为0且1级菜单
+		CopyMaps(m9,m2);
+		CopyMaps(m9,m7);
+		CopyMaps(md,m7);
+		CopyMaps(md,m3);
+		Collections.sort(m7,new MapComparatorDesc());
 		updateMap(m2,m7);
-		updateMap(m3,m2);
-		updateMap(m3,m7);
-		updateMap(m6,m7);
-		updateMap(m6,m3);
+		Collections.sort(m2,new MapComparatorDesc());
+		Collections.sort(m9,new MapComparatorDesc());
+		updateMap(m3,m9);
+		Collections.sort(m3,new MapComparatorDesc());
+		Collections.sort(md,new MapComparatorDesc());
+		updateMap(m6,md);
+		Collections.sort(m6,new MapComparatorDesc());
         updateMap(m1,m7);
         m1.addAll(m6);
         m1.addAll(m8);
-
 		Collections.sort(m1,new MapComparatorDesc());
 		for(Map<String,Object> dt: m1){
 			int flg=(int)dt.get("pare_menu_id");
@@ -304,6 +316,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 						List<Map<String, Object>> lt = (List<Map<String, Object>>) d.get("children");
 						dt.remove("pare_menu_id");
 						dt.remove("menu_id");
+						dt.remove("menu_order");
 						lt.add(dt);
 						d.put("children", lt);
 					}
@@ -407,6 +420,21 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				return v2.compareTo(v1);
 			}
 			return 0;
+		}
+	}
+
+	private void  CopyMaps(List<Map<String,Object>> m1,List<Map<String,Object>> m2){
+		if(m2.size()>0) {
+			for (Map<String, Object> map : m2) {
+				Map<String, Object> pm = new HashMap<>();
+				Iterator it= map.entrySet().iterator();
+				while (it.hasNext()){
+					Map.Entry entry = (Map.Entry) it.next();
+					String key = (String) entry.getKey();
+					pm.put( key,map.get(key) != null ? map.get(key):"");
+				}
+				m1.add(pm);
+			}
 		}
 	}
 

@@ -167,6 +167,7 @@ SELECT  pmi.*,pm.menu_id parent   FROM pss_menu_info pmi LEFT JOIN pss_menu_info
 ) pmenu WHERE menu_state = 1 AND menu_id !=1) m
 		JOIN pss_role_perm_info p ON m.menu_id = p.menu_id
 		JOIN (SELECT pur.role_id  FROM pss_user_info pui JOIN pss_user_role_rela pur ON pui.user_id = pur.user_id WHERE pui.user_id = #{userId})  r ON p.role_id = r.role_id
+		ORDER BY  m.menu_order DESC
     </select>
 
 </mapper>
