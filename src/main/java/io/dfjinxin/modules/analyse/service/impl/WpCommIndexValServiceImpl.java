@@ -242,7 +242,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                 } else {
                     //计算非价格指标类型
                     List<WpBaseIndexValEntity> noPriceValList = wpBaseIndexValDao.queryNoPriceByIndexType(comm.getCommId(), type.getIndexType());
-                    if (noPriceValList != null && noPriceValList.size() > 0) {
+                    if (!noPriceValList.isEmpty()) {
 
                         where3.eq("comm_id", noPriceValList.get(0).getCommId());
                         PssCommTotalEntity commTotalEntity = pssCommTotalDao.selectOne(where3);
@@ -289,7 +289,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         where.eq("comm_id", commId);
         PssCommTotalEntity commLevel2 = pssCommTotalDao.selectOne(where);
         if (commLevel2 == null) {
-            return null;
+            return new ArrayList<>();
         }
         //获取该3类商品下的所有4类商品
         QueryWrapper where1 = new QueryWrapper();
@@ -297,7 +297,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         where1.eq("parent_code", commId);
         List<PssCommTotalEntity> commLevel3 = pssCommTotalDao.selectList(where1);
         if (commLevel3 == null) {
-            return null;
+            return new ArrayList<>();
         }
         //查询该3类商品下4类商品所有指标类型
         String sql = "select pss_comm_total.comm_id from pss_comm_total where data_flag=0 and parent_code=" + commId;
@@ -333,44 +333,44 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                     Map priMap = new HashMap();
                     priMap.put(type, priList);
                     resultList.add(priMap);
-                    continue;
+                    break;
                 case Ccl://流通
                     List<KpiInfoDto> cclList = doIndexInfo(baseIndexInfoEntities, type, lastDayStr);
                     Map cclMap = new HashMap();
                     cclMap.put(type, cclList);
                     resultList.add(cclMap);
-                    continue;
+                    break;
                 case Csp://消费
                     List<KpiInfoDto> cspList = doIndexInfo(baseIndexInfoEntities, type, lastDayStr);
                     Map cspMap = new HashMap();
                     cspMap.put(type, cspList);
                     resultList.add(cspMap);
-                    continue;
+                    break;
                 case Cst://成本收益
                     List<KpiInfoDto> cstList = doIndexInfo(baseIndexInfoEntities, type, lastDayStr);
                     Map cstMap = new HashMap();
                     cstMap.put(type, cstList);
                     resultList.add(cstMap);
-                    continue;
+                    break;
                 case Prd://生产
                     List<KpiInfoDto> prdList = doIndexInfo(baseIndexInfoEntities, type, lastDayStr);
                     Map<String, List<KpiInfoDto>> prdMap = new HashMap();
                     prdMap.put(type, prdList);
                     resultList.add(prdMap);
-                    continue;
+                    break;
                     //贸易
                 case Trd:
                     List<KpiInfoDto> trdList = doIndexInfo(baseIndexInfoEntities, type, lastDayStr);
                     Map<String, List<KpiInfoDto>> trdMap = new HashMap();
                     trdMap.put(type, trdList);
                     resultList.add(trdMap);
-                    continue;
+                    break;
                 case Mtl://气象
                     List<KpiInfoDto> mtlList = doIndexInfo(baseIndexInfoEntities, type, lastDayStr);
                     Map<String, List<KpiInfoDto>> mtlMap = new HashMap();
                     mtlMap.put(type, mtlList);
                     resultList.add(mtlMap);
-                    continue;
+                    break;
                 default:
             }
         }
@@ -385,7 +385,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
      * @Date: 2019/12/16 16:47
      */
     private List<WpBaseIndexValEntity> converHuanBi(List<WpBaseIndexValEntity> valList) {
-        if (valList.isEmpty()) return null;
+        if (valList.isEmpty()) return new ArrayList<>();
 
         //昨天最新价格
         WpBaseIndexValEntity lastDayPrice = valList.get(0);
@@ -516,7 +516,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
             }
 
             PssCommTotalEntity commTotalEntity = pssCommTotalDao.selectById(indexValEntity.getCommId());
-            StringBuffer sb = new StringBuffer(commTotalEntity.getCommName());
+            StringBuilder sb = new StringBuilder(commTotalEntity.getCommName());
             sb.append("-");
             sb.append(indexValEntity.getIndexName());
             sb.append("-");
@@ -536,7 +536,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
 
     private Map<String, Object> queryCommByLevelCode0(PssCommTotalEntity levelCode0) {
         if (levelCode0 == null || levelCode0.getCommId() == null) {
-            return null;
+            return new HashMap<>();
         }
         //根据0类查询1类
         QueryWrapper where1 = new QueryWrapper();

@@ -48,13 +48,11 @@ public class PssDataSourcesController {
             @RequestParam(value = "dataName", required = false) String dataName,
             @RequestParam(value = "dataType", required = false) Integer dataType
     ) {
-        Map<String, Object> params = new HashMap() {{
-            put("pageIndex", pageIndex);
-            put("pageSize", pageSize);
-
-            put("dataName", dataName);
-            put("dataType", dataType);
-        }};
+        Map<String, Object> params = new HashMap();
+        params.put("pageIndex", pageIndex);
+        params.put("pageSize", pageSize);
+        params.put("dataName", dataName);
+        params.put("dataType", dataType);
         PageUtils pageOne = dataSourcesService.queryPage(params);
         return R.ok().put("page", pageOne);
     }

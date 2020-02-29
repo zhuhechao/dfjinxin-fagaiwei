@@ -30,17 +30,17 @@ public class WpAsciiInfoController {
     private WpAsciiInfoService wpAsciiInfoService;
 
     /**
-    * @Desc:  根据码表codeId
-    * @Param: [CodeId]
-    * @Return: io.dfjinxin.common.utils.R
-    * @Author: z.h.c
-    * @Date: 2019/11/14 9:31
-    */
+     * @Desc: 根据码表codeId
+     * @Param: [CodeId]
+     * @Return: io.dfjinxin.common.utils.R
+     * @Author: z.h.c
+     * @Date: 2019/11/14 9:31
+     */
     @GetMapping("/getAsciiByCode/{CodeId}")
     @ApiOperation("根据码表codeId,查询类型信息")
-    public R getInfoByCodeId(@PathVariable("CodeId") String CodeId) {
+    public R getInfoByCodeId(@PathVariable("CodeId") String codeId) {
 
-        List<WpAsciiInfoEntity> list = wpAsciiInfoService.getInfoByCodeId(CodeId);
+        List<WpAsciiInfoEntity> list = wpAsciiInfoService.getInfoByCodeId(codeId);
         return R.ok().put("data", list);
     }
 

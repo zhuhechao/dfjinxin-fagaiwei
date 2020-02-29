@@ -50,7 +50,7 @@ public class PssPriceReltServiceImpl extends ServiceImpl<PssPriceReltDao, PssPri
     }
 
     @Override
-    public Map<String, Object> detail(Long id, String startDate, String endDate) {
+    public Map<String, Object> detail(Long id,String foreType, String startDate, String endDate) {
 
         PssPriceReltEntity entity = baseMapper.selectById(id);
         if (entity == null) return null;
@@ -67,7 +67,7 @@ public class PssPriceReltServiceImpl extends ServiceImpl<PssPriceReltDao, PssPri
         //表格数据
         map.put("dataGrid", dto);
         //折线图根据频度统计
-        String foreType = entity.getForeType();
+//        String foreType = entity.getForeType();
         List<PssPriceReltEntity> reltEntities = this.jiaGeYuCeLineCharts(foreType, entity.getCommId(), startDate, endDate);
         Map<String, Object> lineChartsMap = convertLineCharts(reltEntities);
         if (!lineChartsMap.isEmpty()) {

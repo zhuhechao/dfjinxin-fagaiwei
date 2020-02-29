@@ -5,6 +5,7 @@ import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.modules.price.service.WpCommPriService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,10 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 
-
 /**
- *
- *
  * @author z.h.c
  * @email z.h.c@126.com
  * @date 2019-08-27 17:23:11
@@ -29,9 +27,9 @@ public class WpCommPriController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @GetMapping("/list")
     @RequiresPermissions("price:wpcommpri:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = wpCommPriService.queryPage(params);
 
         return R.ok().put("page", page);

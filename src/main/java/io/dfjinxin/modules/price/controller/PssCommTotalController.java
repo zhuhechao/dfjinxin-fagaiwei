@@ -3,7 +3,6 @@ package io.dfjinxin.modules.price.controller;
 import io.dfjinxin.common.dto.PssCommTotalDto;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
-import io.dfjinxin.common.validator.ValidatorUtils;
 import io.dfjinxin.modules.price.entity.PssCommConfEntity;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import io.dfjinxin.modules.price.service.PssCommConfService;
@@ -15,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

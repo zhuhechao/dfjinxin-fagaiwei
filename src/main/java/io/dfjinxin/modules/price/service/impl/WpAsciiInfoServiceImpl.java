@@ -4,6 +4,7 @@ import io.dfjinxin.modules.price.service.WpAsciiInfoService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,9 +35,9 @@ public class WpAsciiInfoServiceImpl extends ServiceImpl<WpAsciiInfoDao, WpAsciiI
     public List<WpAsciiInfoEntity> getInfoByCodeId(String params) {
 
         if (StringUtils.isBlank(params)) {
-            return null;
+            return new ArrayList<>();
         }
-        StringBuffer sql = new StringBuffer("select code_id from wp_ascii_info where code_id = '");
+        StringBuilder sql = new StringBuilder("select code_id from wp_ascii_info where code_id = '");
         sql.append(params);
         sql.append("'");
         QueryWrapper queryWrapper = new QueryWrapper();

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import io.dfjinxin.modules.price.dao.PssCommConfDao;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class PssCommConfServiceImpl extends ServiceImpl<PssCommConfDao, PssCommC
     @Override
     public List<PssCommConfEntity> getCommConfByParms(Integer commId, List<Integer> ewarnIds, List<Integer> indexIds) {
         if (commId == null || ewarnIds == null || indexIds == null) {
-            return null;
+            return new ArrayList<>();
         }
         QueryWrapper where = new QueryWrapper();
         where.eq("comm_id", commId);

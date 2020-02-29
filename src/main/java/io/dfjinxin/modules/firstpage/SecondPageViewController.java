@@ -53,8 +53,8 @@ public class SecondPageViewController {
         List<Map<String, Object>> list = wpBaseIndexValService.secondPageIndexType(commId);
         Map<String, Object> resMap = new HashMap<>();
         for (Map<String, Object> var : list) {
-            for (String key : var.keySet()) {
-                resMap.put(key, var.get(key));
+            for (Map.Entry<String, Object> entry : var.entrySet()) {
+                resMap.put(entry.getKey(), entry.getValue());
             }
         }
 
@@ -93,14 +93,13 @@ public class SecondPageViewController {
             @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize
 
     ) {
-        Map<String, Object> params = new HashMap() {{
-            put("indexType", indexType);
-            put("startDate", startDate);
-            put("endDate", endDate);
-            put("commId", commId);
-            put("pageIndex", pageIndex);
-            put("pageSize", pageSize);
-        }};
+        Map<String, Object> params = new HashMap();
+        params.put("indexType", indexType);
+        params.put("startDate", startDate);
+        params.put("endDate", endDate);
+        params.put("commId", commId);
+        params.put("pageIndex", pageIndex);
+        params.put("pageSize", pageSize);
         PageUtils page = wpBaseIndexValService.queryPageByDate(params);
         List<PssCommTotalEntity> type4commList = wpBaseIndexValService.queryCommListByCommId(commId, indexType);
         return R.ok().put("page", page).put("type4CommList", type4commList);
@@ -128,13 +127,12 @@ public class SecondPageViewController {
                                        @RequestParam(value = "startDate") String startDate,
                                        @RequestParam(value = "endDate") String endDate) {
 
-        Map<String, Object> params = new HashMap() {{
-            put("indexType", indexType);
-            put("indexId", indexId);
-            put("startDate", startDate);
-            put("endDate", endDate);
-            put("commId", commId);
-        }};
+        Map<String, Object> params = new HashMap();
+        params.put("indexType", indexType);
+        params.put("indexId", indexId);
+        params.put("startDate", startDate);
+        params.put("endDate", endDate);
+        params.put("commId", commId);
         Map<String, Object> map = wpBaseIndexValService.queryLineChartByCondition(params);
 
         return R.ok().put("data", map);
@@ -149,7 +147,7 @@ public class SecondPageViewController {
     })
     public R getProvinceMapByCommId(@PathVariable("commId") Integer commId,
                                     @RequestParam(value = "indexType") String indexType,
-                                    @RequestParam(value = "date",required = false) String date) {
+                                    @RequestParam(value = "date", required = false) String date) {
         List<WpBaseIndexValEntity> provinceMap = wpBaseIndexValService.getProvinceMapByCommId(commId, indexType, date);
 
         return R.ok().put("data", provinceMap);

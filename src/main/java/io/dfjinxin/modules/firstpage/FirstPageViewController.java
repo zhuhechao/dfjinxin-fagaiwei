@@ -20,7 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("price/first")
-@Api(tags = "首页展示")
+@Api(tags = "First page-首页展示")
 public class FirstPageViewController {
 
     @Autowired

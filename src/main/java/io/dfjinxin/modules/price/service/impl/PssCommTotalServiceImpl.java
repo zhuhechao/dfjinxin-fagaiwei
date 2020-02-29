@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.dfjinxin.common.dto.PssCommTotalDto;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
-import io.dfjinxin.modules.price.dao.PssCommConfDao;
 import io.dfjinxin.modules.price.dao.PssCommTotalDao;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import io.dfjinxin.modules.price.service.PssCommTotalService;
@@ -108,7 +107,7 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
             where1.eq("data_flag", "0");
             List<PssCommTotalEntity> commType0 = baseMapper.selectList(where1);
             List<PssCommTotalEntity> resultList2 = new ArrayList();
-            Map<String, PssCommTotalEntity> map = new HashMap<>();
+//            Map<String, PssCommTotalEntity> map = new HashMap<>();
             Integer totalCount = 0;
             for (PssCommTotalEntity entity : commType0) {
                 Map<String, Object> temp = getCommEwarnByType_1(entity, pssCommTotalDto);
@@ -333,7 +332,7 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
     public List<PssCommTotalEntity> getSubCommByCommId(Integer commId) {
 
         if (commId == null) {
-            return null;
+            return new ArrayList<>();
         }
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("parent_code", commId);
@@ -366,7 +365,7 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
      */
     private Map<String, Object> getCommEwarnByType_1(PssCommTotalEntity levelCode0, PssCommTotalDto dto) {
         if (levelCode0 == null || levelCode0.getCommId() == null) {
-            return null;
+            return new HashMap<>();
         }
         //根据1类查询2类
         QueryWrapper where2 = new QueryWrapper();
@@ -410,7 +409,7 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
      */
     private Map<String, Object> getCommInfoByType_1(PssCommTotalEntity levelCode0, PssCommTotalDto dto) {
         if (levelCode0 == null || levelCode0.getCommId() == null) {
-            return null;
+            return new HashMap<>();
         }
         //根据1类查询2类
         QueryWrapper where2 = new QueryWrapper();
@@ -467,7 +466,7 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
     private List<PssCommTotalEntity> selectCommListByCommId(Integer commId, Integer levelCode) {
 
         if (commId == null) {
-            return null;
+            return new ArrayList<>();
         }
         QueryWrapper where1 = new QueryWrapper();
         where1.eq("data_flag", "0");

@@ -2,21 +2,16 @@ package io.dfjinxin.modules.price.service.impl;
 
 import com.aliyun.oss.common.utils.CaseInsensitiveMap;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import io.dfjinxin.common.utils.PageUtils;
-import io.dfjinxin.common.utils.Query;
 import io.dfjinxin.modules.price.dao.PssAnalyInfoDao;
 import io.dfjinxin.modules.price.dao.PssDatasetInfoDao;
 import io.dfjinxin.modules.price.dto.PssAnalyInfoDto;
 import io.dfjinxin.modules.price.entity.PssAnalyInfoEntity;
-import io.dfjinxin.modules.price.entity.PssAnalyReltEntity;
-import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
 import io.dfjinxin.modules.price.service.PssAnalyInfoService;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +35,7 @@ public class PssAnalyInfoServiceImpl extends ServiceImpl<PssAnalyInfoDao, PssAna
             map.put("datasetId", dto.getDataSetId());
             map.put("remarks", dto.getRemarks());
             List<PssAnalyInfoEntity> list = getAnalyInfo(map);
-            if (list != null && list.size() > 0) {
+            if (!list.isEmpty()) {
                 entity.setAnalyId(list.get(0).getAnalyId());
                 dto.setAnalyId(list.get(0).getAnalyId());
             }
@@ -51,20 +46,20 @@ public class PssAnalyInfoServiceImpl extends ServiceImpl<PssAnalyInfoDao, PssAna
         return PssAnalyInfoEntity.toData(entity);
     }
 
-    static Map keyTransMap = new CaseInsensitiveMap<String>() {
-        {
-            put("analyName", "analy_Name");
-            put("analyId", "analy_Id");
-            put("bussType", "buss_Type");
-            put("dataSetId", "data_Set_Id");
-            put("analyWay", "analy_way");
-        }
-    };
+//    static Map keyTransMap = new CaseInsensitiveMap<String>() {
+//        {
+//            put("analyName", "analy_Name");
+//            put("analyId", "analy_Id");
+//            put("bussType", "buss_Type");
+//            put("dataSetId", "data_Set_Id");
+//            put("analyWay", "analy_way");
+//        }
+//    };
 
     @Override
     public List<PssAnalyInfoEntity> getAnalyWayByBussType(Integer bussType) {
         if (bussType == null) {
-            return null;
+            return new ArrayList<>();
         }
         QueryWrapper<PssAnalyInfoEntity> where = new QueryWrapper();
         where.select("analy_way");
