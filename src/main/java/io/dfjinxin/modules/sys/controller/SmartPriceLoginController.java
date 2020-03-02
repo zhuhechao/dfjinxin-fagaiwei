@@ -6,6 +6,7 @@ import io.dfjinxin.common.utils.MD5Utils;
 import io.dfjinxin.common.utils.R;
 import io.dfjinxin.common.utils.ShiroUtils;
 import io.dfjinxin.modules.sys.oauth2.OAuth2Token;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import io.dfjinxin.modules.sys.entity.SysRoleEntity;
@@ -112,8 +113,7 @@ public class SmartPriceLoginController extends AbstractController {
               return R.error(1,"没有有效的密码信息！");
           }
     }
-
-        @Value("${ca.valid}")
+    @Value("${ca.valid}")
     private boolean caVaid;
 
     @GetMapping("/logout")
@@ -126,17 +126,17 @@ public class SmartPriceLoginController extends AbstractController {
 
     @GetMapping("/goToService")
     @ApiOperation("集成系统跳转")
-    public R goToService(@RequestParam(value = "urlParm") String urlParm) throws IOException {
+    public R goToService(@RequestParam(value = "urlParm") String urlParm,HttpServletRequest request) throws IOException {
         GenerateToken generateToken = new GenerateToken();
-        //String user = request.getHeader("token");
+        String user = request.getHeader("token");
 
        // 如果header中不存在token，则从参数中获取token
-//        if(StringUtils.isBlank(user)){
-//            user = request.getParameter("token");
-//        }
-        String user= "79362e48e37283a7cdea0825e2614375";
+        if(StringUtils.isBlank(user)){
+            user = request.getParameter("token");
+        }
+       // String user= "79362e48e37283a7cdea0825e2614375";
 
-        SysUserTokenEntity tokenEntity = shiroService.queryByToken(user);
+       // SysUserTokenEntity tokenEntity = shiroService.queryByToken(user);
         String token = null;
         String sep = null;
         if (!Strings.isNullOrEmpty(urlParm)) {
@@ -244,7 +244,7 @@ public class SmartPriceLoginController extends AbstractController {
         map.put("userId",sysUserEntity.getUserId());
         map.put("userName",sysUserEntity.getUserName());
         map.put("userRealName",sysUserEntity.getUserRealName());
-       // SecurityUtils.getSubject().login(new OAuth2Token(String.valueOf(token), sysUserEntity));
+       SecurityUtils.getSubject().login(new OAuth2Token(String.valueOf(token), sysUserEntity));
         createResult.put("menu",menus);
         createResult.put("userInfo",map);
         return createResult;

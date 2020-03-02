@@ -4,7 +4,7 @@
  *
  *
  *
- *//*
+ */
 
 
 package io.dfjinxin.config;
@@ -25,12 +25,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-*/
 /**
  * Shiro配置
  *
  * @author Mark sunlightcs@gmail.com
- *//*
+ */
 
 @Configuration
 @ConditionalOnProperty(prefix = "ca", name = "valid", havingValue = "true", matchIfMissing = true)
@@ -58,17 +57,14 @@ public class ShiroConfig {
 
         filterMap.put("/index.html", "anon");
 
-        filterMap.put("/sys/**", "anon");
         filterMap.put("/zhjg/synch/**", "anon");
         filterMap.put("/zhjg/synch", "anon");
         filterMap.put("/zhjg/jwt", "anon");
         filterMap.put("/swagger/**", "anon");
         filterMap.put("/zhjg/login/**", "anon");
         filterMap.put("/zhjg/login", "anon");
-        filterMap.put("/zhjg/goToService/**", "anon");
-        filterMap.put("/zhjg/goToService", "anon");
         filterMap.put("/zhjg/verifyToken/**", "anon");
-        filterMap.put("/test/**", "anon");
+         //filterMap.put("/test/**", "anon");
 
         filterMap.put("/swagger-ui.html", "anon");
         filterMap.put("/swagger-resources/**", "anon");
@@ -94,4 +90,4 @@ public class ShiroConfig {
     }
 
 }
-*/
+

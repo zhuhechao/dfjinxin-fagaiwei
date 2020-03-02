@@ -4,7 +4,7 @@
  *
  *
  *
- *//*
+ */
 
 
 package io.dfjinxin.config;
@@ -17,13 +17,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
-*/
+
 /**
  * Filter配置
- *
  * @author Mark sunlightcs@gmail.com
- *//*
-
+ */
 
 @Configuration
 @ConditionalOnProperty(prefix = "ca", name = "valid", havingValue = "true", matchIfMissing = true)
@@ -43,8 +41,5 @@ public class FilterConfig {
         registration.addUrlPatterns("/*");
         return registration;
     }
-
-
-
 }
-*/
+
