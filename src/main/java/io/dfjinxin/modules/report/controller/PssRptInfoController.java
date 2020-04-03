@@ -156,7 +156,7 @@ public class PssRptInfoController {
         InputStream input = null;
         OutputStream out = null;
         Path imageP = Paths.get(new StringBuilder()
-                .append(appProperties.getPath().getUserDir())
+                //.append(appProperties.getPath().getUserDir())
                 .append(prie.getRptPath(), 0, prie.getRptPath().lastIndexOf("\\"))
                 .append("/image/").append(infoId).append("/word/media/").append(imageName).toString());
         input = new FileInputStream(imageP.toString());
@@ -185,7 +185,8 @@ public class PssRptInfoController {
     public void preview(@RequestParam(value = "fileType") String fileType,
                         @RequestParam(value = "infoId") String infoId) throws Exception {
         PssRptInfoEntity prie = pssRptInfoService.getById(infoId);
-        Path p = Paths.get(appProperties.getPath().getUserDir(), prie.getRptPath());
+        Path p = Paths.get(//appProperties.getPath().getUserDir(),
+                prie.getRptPath());
         InputStream input = null;
         OutputStream out = null;
         if ("html".equals(fileType)) {

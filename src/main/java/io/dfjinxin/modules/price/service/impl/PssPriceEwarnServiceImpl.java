@@ -315,7 +315,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         Date endDate = (Date) params.get("endDate");
         String commId = params.get("commId") + "";
         qw.eq("comm_id", commId);
-        qw.between("ewarn_date", startDate, endDate);
+       // qw.between("ewarn_date", startDate, endDate);
         qw.orderByAsc("ewarn_date");
         return getBaseMapper().selectList(qw);
     }

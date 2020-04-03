@@ -81,10 +81,17 @@ public class TestTask2 implements ITask {
 		//以模板的名称为底层子文件夹
 		String reportResultPath=new StringBuilder()
 				.append(appProperties.getPath().getModule().getReportresult())
-				.append(pe.getRptPath().substring(temPath.lastIndexOf("\\"),temPath.indexOf("."))).append("/")
+				//linux 路径
+				.append(temPath.substring(temPath.lastIndexOf("/"),temPath.indexOf("."))).append("/")
+				//win 路径   .append(temPath.substring(temPath.lastIndexOf("\\")+1,temPath.indexOf("."))).append("\\")
+
 				.append(ymd)
+				//linux 路径
 				.append("/").toString();
-		reportResultPath= Paths.get(reportResultPath)+"\\";
+				//win 路径    .append("\\").toString();
+		//linux 路径
+		reportResultPath= Paths.get(reportResultPath)+"/";
+		//win 路径 reportResultPath= Paths.get(reportResultPath)+"\\";
 		new File(reportResultPath).mkdirs();
 
 
@@ -96,7 +103,10 @@ public class TestTask2 implements ITask {
 		String reportResult=generateReportDocx(pe,reportResultPath,reportImagePath,ymd);
 
 		String rptResultName=new StringBuilder()
-				.append(pe.getRptName().substring(0,pe.getRptName().indexOf("."))).append("-")
+				//去除userdir
+				//.append(pe.getRptName().substring(0,pe.getRptName().indexOf("."))).append("-")
+				.append(pe.getRptName()).append("-")
+
 				.append(ymd).append(".docx").toString();
 		//记录运行报告信息
 		PssRptInfoEntity prie=new PssRptInfoEntity();
@@ -108,7 +118,10 @@ public class TestTask2 implements ITask {
 		prie.setRptFreq(pe.getRptFreq());
 		prie.setCrteTime(new Date());
 		prie.setRptFile("");
-		prie.setRptPath(reportResult.substring(reportResult.lastIndexOf("\\reportResult")));
+		//去除userdir
+		//prie.setRptPath(reportResult.substring(reportResult.lastIndexOf("/reportResult")));
+		//prie.setRptPath(reportResult.substring(reportResult.lastIndexOf("\\reportResult")));
+		prie.setRptPath(reportResult);
 		prie.setRptStatus("1");
 		pssRptInfoService.saveOrUpdate(prie);
 
@@ -148,11 +161,14 @@ public class TestTask2 implements ITask {
 
 	//根据模板替换变量生成报告
 	private String generateReportDocx( PssRptConfEntity pe,String reportResultPath,String[] reportImagePath,String ymd) throws Exception {
-		String sourcePath=appProperties.getPath().getUserDir()+pe.getRptPath();
+		String sourcePath=//appProperties.getPath().getUserDir()+
+				pe.getRptPath();
 
 		String subFilePath=new StringBuilder()
 				.append(reportResultPath)
-				.append(pe.getRptName().substring(0,pe.getRptName().indexOf("."))).append("-")
+				//去除userdir
+				//.append(pe.getRptName().substring(0,pe.getRptName().indexOf("."))).append("-")
+				.append(pe.getRptName()).append("-")
 				.append(ymd).append(".docx").toString();
 
 
@@ -238,7 +254,7 @@ public class TestTask2 implements ITask {
 
 		// 生成option字符串
 		String option = FreemarkerUtil.generateString("report1.ftl", "/template", datas);
-
+		logger.error("Echart服务地址----------"+EchartsUtil.url);
 		// 根据option参数
 		String base64 = EchartsUtil.generateEchartsBase64(option);
 

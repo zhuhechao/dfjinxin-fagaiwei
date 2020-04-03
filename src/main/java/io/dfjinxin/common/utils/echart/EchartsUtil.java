@@ -11,10 +11,14 @@ import org.apache.http.client.ClientProtocolException;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.misc.BASE64Decoder;
 
 public class EchartsUtil {
-    private static String url = "http://10.1.1.134:6666";
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    public static String url = "http://172.20.10.109:6666";
+    //public static String url = "http://localhost:6666";
     private static final String SUCCESS_CODE = "1";
 
     public static String generateEchartsBase64(String option) throws ClientProtocolException, IOException {
