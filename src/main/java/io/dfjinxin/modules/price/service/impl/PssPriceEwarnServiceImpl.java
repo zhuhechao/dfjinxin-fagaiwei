@@ -725,14 +725,14 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         String res = null;
         try {
             res = HttpUtil.doPostJson(url, jsonStr);
-            logger.info("res:{}", res);
+//            logger.info("res:{}", res);
         } catch (Exception e) {
             logger.error("call-getProgrammeDistribution信息-异常:{}", e);
             return 0;
         }
 
         Object result = TengXunYuQing.converResult(res);
-        logger.info("the result:{}", result);
+//        logger.info("the result:{}", result);
         int totalContentCnt = 0;
         if (result != null) {
             try {
