@@ -159,6 +159,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
         List<PssPriceEwarnEntity> yestDayMaxPricEwarnList = new ArrayList<>();
         QueryWrapper where1 = new QueryWrapper();
+        where1.select("comm_id", lastDayStr);
         where1.eq("date(ewarn_date)", lastDayStr);
         where1.groupBy("comm_id");
         List<PssPriceEwarnEntity> priceEwarnList = pssPriceEwarnDao.selectList(where1);
@@ -200,6 +201,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
         Map<String, Object> lineDateMap = new HashMap<>();
         QueryWrapper<PssPriceEwarnEntity> queryWrapper = new QueryWrapper();
+        queryWrapper.select("ewarn_level");
         queryWrapper.groupBy("ewarn_level");
         List<PssPriceEwarnEntity> ewarnLevelList = pssPriceEwarnDao.selectList(queryWrapper);
 
@@ -723,14 +725,14 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         String res = null;
         try {
             res = HttpUtil.doPostJson(url, jsonStr);
-            logger.info("res:{}", res);
+//            logger.info("res:{}", res);
         } catch (Exception e) {
             logger.error("call-getProgrammeDistribution信息-异常:{}", e);
             return 0;
         }
 
         Object result = TengXunYuQing.converResult(res);
-        logger.info("the result:{}", result);
+//        logger.info("the result:{}", result);
         int totalContentCnt = 0;
         if (result != null) {
             try {

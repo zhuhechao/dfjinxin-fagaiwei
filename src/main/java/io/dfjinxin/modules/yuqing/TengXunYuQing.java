@@ -92,7 +92,7 @@ public class TengXunYuQing {
             return R.error("调用腾讯接口-getHeatTrend异常");
         }
         Object result = converResult(res);
-        logger.info("the result:{}", result);
+//        logger.info("the result:{}", result);
         return R.ok().put("data", result);
     }
 
@@ -141,7 +141,7 @@ public class TengXunYuQing {
             return R.error("调用腾讯接口-getHeatTop异常");
         }
         Object result = converResult(res);
-        logger.info("the result:{}", result);
+//        logger.info("the result:{}", result);
         return R.ok().put("data", result);
     }
 
@@ -195,7 +195,7 @@ public class TengXunYuQing {
             return R.error("调用腾讯接口-queryStatisticsWarningContent异常");
         }
         Object result = converResult(res);
-        logger.info("the result:{}", result);
+//        logger.info("the result:{}", result);
         return R.ok().put("data", result);
     }
 
@@ -241,7 +241,7 @@ public class TengXunYuQing {
             return R.error("调用腾讯接口-getTopUrlInfo异常");
         }
         Object result = converResult(res);
-        logger.info("the result:{}", result);
+//        logger.info("the result:{}", result);
         return R.ok().put("data", result);
     }
 
@@ -266,7 +266,7 @@ public class TengXunYuQing {
     }
 
     public static Object converResult(String jsonStr) {
-        logger.info("call tengxun api,the respose is:{}", jsonStr);
+//        logger.info("call tengxun api,the respose is:{}", jsonStr);
         JSONObject jsonObj = JSON.parseObject(jsonStr);
         Integer code = jsonObj.getInteger("code");
         if (code == 0) {

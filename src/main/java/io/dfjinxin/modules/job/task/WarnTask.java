@@ -43,7 +43,8 @@ public class WarnTask implements ITask {
     private PssPriceEwarnService pssPriceEwarnService;
     @Autowired
     private WpCommPriOrgService wpCommPriOrgService;
-
+    @Autowired
+    private WpAsciiInfoService wpAsciiInfoService;
     @Override
     public void run(String params) throws Exception {
         String[] ids = params.split("@");
@@ -156,14 +157,31 @@ public class WarnTask implements ITask {
 
     //价格涨跌幅所属级别判断
     private String ewarnLevelResult(BigDecimal b1, PssEwarnConfEntity pe) {
+        List<WpAsciiInfoEntity> elvs= wpAsciiInfoService.getInfoByCodeId("70");
+        int redEwarn=0;int orangeEwarn=0;int yeloEwarn=0;int greenEwarn=0;
+       for (WpAsciiInfoEntity item:elvs) {
+           if ("红色预警".equals(item.getCodeName())) {
+               redEwarn = item.getCodeId().intValue();
+           }
+           if ("橙色预警".equals(item.getCodeName())) {
+               orangeEwarn = item.getCodeId().intValue();
+           }
+           if ("黄色预警".equals(item.getCodeName())) {
+               yeloEwarn = item.getCodeId().intValue();
+           }
+           if ("绿色预警".equals(item.getCodeName())) {
+               greenEwarn = item.getCodeId().intValue();
+           }
+
+       }
         //红色预警
-        if (b1.compareTo(pe.getEwarnLlmtRed()) >= 0 && b1.compareTo(pe.getEwarnUlmtRed()) <= 0) return "71";
+        if (b1.compareTo(pe.getEwarnLlmtRed()) >= 0 && b1.compareTo(pe.getEwarnUlmtRed()) <= 0) return redEwarn+"";
             //橙色预警
-        else if (b1.compareTo(pe.getEwarnLlmtOrange()) >= 0 && b1.compareTo(pe.getEwarnUlmtOrange()) <= 0) return "72";
+        else if (b1.compareTo(pe.getEwarnLlmtOrange()) >= 0 && b1.compareTo(pe.getEwarnUlmtOrange()) <= 0) return orangeEwarn+"";
             //黄色预警
-        else if (b1.compareTo(pe.getEwarnLlmtYellow()) >= 0 && b1.compareTo(pe.getEwarnUlmtYellow()) <= 0) return "73";
+        else if (b1.compareTo(pe.getEwarnLlmtYellow()) >= 0 && b1.compareTo(pe.getEwarnUlmtYellow()) <= 0) return yeloEwarn+"";
             //绿色预警
-        else if (b1.compareTo(pe.getEwarnLlmtGreen()) >= 0 && b1.compareTo(pe.getEwarnUlmtGreen()) <= 0) return "74";
-        else return null;
+        else if (b1.compareTo(pe.getEwarnLlmtGreen()) >= 0 && b1.compareTo(pe.getEwarnUlmtGreen()) <= 0) return greenEwarn+"";
+        else return greenEwarn+"";
     }
 }
