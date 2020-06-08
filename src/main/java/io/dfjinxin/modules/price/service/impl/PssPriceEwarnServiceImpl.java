@@ -159,7 +159,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
         List<PssPriceEwarnEntity> yestDayMaxPricEwarnList = new ArrayList<>();
         QueryWrapper where1 = new QueryWrapper();
-        where1.select("date(ewarn_date)", lastDayStr);
+        where1.select("comm_id", lastDayStr);
         where1.eq("date(ewarn_date)", lastDayStr);
         where1.groupBy("comm_id");
         List<PssPriceEwarnEntity> priceEwarnList = pssPriceEwarnDao.selectList(where1);

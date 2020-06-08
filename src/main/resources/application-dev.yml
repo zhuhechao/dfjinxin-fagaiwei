@@ -3,7 +3,7 @@ spring:
         include: db
 
 mysql:
-      url: jdbc:mysql://localhost:3306/zhjg_0224?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&zeroDateTimeBehavior=convertToNull
+      url: jdbc:mysql://192.168.80.133:3306/zhjg-prod-0608?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&zeroDateTimeBehavior=convertToNull
       username: root
       password: root
 
