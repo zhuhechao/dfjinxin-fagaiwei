@@ -10,6 +10,7 @@ import io.dfjinxin.modules.analyse.dao.WpBaseIndexValDao;
 import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
 import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
 import io.dfjinxin.modules.analyse.service.WpPubOmService;
+import io.dfjinxin.modules.job.task.WarnTask;
 import io.dfjinxin.modules.price.controller.PssDatasetInfoController;
 import io.dfjinxin.modules.price.entity.PssDatasetInfoEntity;
 import io.dfjinxin.modules.price.service.PssPriceEwarnService;
@@ -42,6 +43,17 @@ public class SysMenuServiceImplTest {
 
     @Autowired
     private WpBaseIndexValDao wpBaseIndexValDao;
+    @Autowired
+    WarnTask warnTask;
+
+    @Test
+    public void run(){
+        try {
+            warnTask.run("ewarnId:54@commConfId:145");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void pssPriceEwarnService() {

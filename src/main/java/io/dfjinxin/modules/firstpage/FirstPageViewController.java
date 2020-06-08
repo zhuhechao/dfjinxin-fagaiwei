@@ -32,7 +32,7 @@ public class FirstPageViewController {
     @GetMapping("/view")
     @ApiOperation("首页-商品预警详细")
     public R firstpage() {
-        Map<String, Object> map = pssPriceEwarnService.firstPageView(true);
+        Map<String, Object> map = pssPriceEwarnService.firstPageView(false);
 
         return R.ok().put("data", map);
     }
