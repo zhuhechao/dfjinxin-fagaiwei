@@ -235,7 +235,7 @@ public class TengXunYuQing {
         String res = null;
         try {
             res = HttpUtil.doPostJson(url, jsonStr);
-            logger.info("res:{}", res);
+//            logger.info("res:{}", res);
         } catch (Exception e) {
             logger.error("call-topurl信息-异常:{}", e);
             return R.error("调用腾讯接口-getTopUrlInfo异常");
@@ -365,7 +365,7 @@ public class TengXunYuQing {
         map.put(112, 491);
         map.put(113, 492);
         map.put(295, 493);
-        return map.get(commId);
+        return map.getOrDefault(commId, 0);
     }
 
 

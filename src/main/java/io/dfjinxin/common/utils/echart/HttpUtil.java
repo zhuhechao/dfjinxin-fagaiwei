@@ -22,7 +22,7 @@ import org.apache.http.util.EntityUtils;
 public class HttpUtil {
 
     public static String post(String url, Map<String, String> params, String charset)
-            throws ClientProtocolException, IOException {
+            throws IOException {
         String responseEntity = "";
 
         // 创建CloseableHttpClient对象
@@ -69,7 +69,6 @@ public class HttpUtil {
     public static String doPostJson(String url, String json) throws Exception {
         // 创建Httpclient对象
 
-        System.out.println("json:" + json);
         CloseableHttpClient httpClient = HttpClients.createDefault();
         CloseableHttpResponse response = null;
         String resultString = "";
