@@ -27,7 +27,7 @@ public class CustomDoubleSerializer extends JsonSerializer {
         if (null == value) {
             gen.writeNull();
         } else {
-            final String pattern = ".##";
+            final String pattern = "#.##";
             final DecimalFormat myFormatter = new DecimalFormat(pattern);
             final String output = myFormatter.format(value);
             gen.writeNumber(output);
