@@ -64,6 +64,7 @@ public class ShiroConfig {
         filterMap.put("/zhjg/login/**", "anon");
         filterMap.put("/zhjg/login", "anon");
         filterMap.put("/zhjg/verifyToken/**", "anon");
+        filterMap.put("/zhjg/screeLogin", "anon");
          //filterMap.put("/test/**", "anon");
 
         filterMap.put("/swagger-ui.html", "anon");

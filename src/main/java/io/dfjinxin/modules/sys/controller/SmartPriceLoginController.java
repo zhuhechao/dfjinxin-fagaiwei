@@ -54,6 +54,9 @@ public class SmartPriceLoginController extends AbstractController {
     @Autowired
     private CacheManager cacheManager;
 
+    @Value("${rsp-server.url}")
+    private String rspUrl;
+
 
 
     @GetMapping(value = "/login")
@@ -113,6 +116,30 @@ public class SmartPriceLoginController extends AbstractController {
               return R.error(1,"没有有效的密码信息！");
           }
     }
+
+    //大屏展示--登录接口
+    @GetMapping("/screeLogin")
+    @ApiOperation("大屏登陆接口")
+    public R largeScreenLogin(HttpServletRequest request) {
+        String serverName = request.getServerName();
+        if(serverName.equals(rspUrl)){
+        SysUserEntity entity = new SysUserEntity();
+        entity.setUserName("fgw");
+        entity.setUserPass("99ec41f1dc48f4c6a018b688411b456d");
+        SysUserEntity sysUserEntity = sysUserService.queryByUserName(entity);
+        if (sysUserEntity != null) {
+            R res= loginValid(sysUserEntity);
+            R r = R.ok().put("token", res.get("token"));
+            return r;
+        } else {
+            return R.error("智慧价格系统用户查找失败");
+        }
+        }else {
+            logger.error("非法请求:{}", serverName);
+            return R.error("ip认证失败");
+        }
+    }
+
     @Value("${ca.valid}")
     private boolean caVaid;
 
