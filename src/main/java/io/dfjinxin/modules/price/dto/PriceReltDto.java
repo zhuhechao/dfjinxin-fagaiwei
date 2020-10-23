@@ -15,11 +15,15 @@ import java.util.Date;
 @Data
 public class PriceReltDto {
     private Long id;
+
+    private Integer commId;
+
+    private String foreType;
     //预测价格
     private BigDecimal forePrice;
     //修正价格
     private BigDecimal reviPrice;
-//    实际价格
+    //    实际价格
     private BigDecimal realPrice;
 
     //修正时间

@@ -58,6 +58,8 @@ public class PssPriceReltServiceImpl extends ServiceImpl<PssPriceReltDao, PssPri
         Map<String, Object> map = new HashMap<>();
         PriceReltDto dto = new PriceReltDto();
         dto.setId(entity.getId());
+        dto.setCommId(entity.getCommId());
+        dto.setForeType(entity.getForeType());
         dto.setDataDate(entity.getDataDate());
         dto.setReviDate(entity.getReviTime());
         dto.setForePrice(entity.getForePrice());
