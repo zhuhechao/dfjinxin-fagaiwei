@@ -79,5 +79,3 @@ dfjinxin-fast
  **新增将项目打成war包配置文件**
 - 执行命令
 - mvn clean package -Dmaven.test.skip=true -f pom4war.xml
-
-add by chx 1024
