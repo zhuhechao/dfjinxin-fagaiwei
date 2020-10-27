@@ -70,7 +70,7 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
             "  and val.index_type = #{indexType}\n" +
             "  and tol.data_flag = 0\n" +
             "  and val.date = #{lastDayStr}\n" +
-            "  and (area_name like '%省' or area_name like '%自治区')\n")
+            "  and (area_name like '%省' or area_name like '%自治区' or area_name like '%市')\n")
     List<WpBaseIndexValEntity> getProvinceMapByCommId(
             @Param("commId") Integer commId,
             @Param("lastDayStr") String lastDayStr,
