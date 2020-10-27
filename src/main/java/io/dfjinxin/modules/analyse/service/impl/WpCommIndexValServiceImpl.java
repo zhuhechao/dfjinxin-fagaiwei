@@ -452,11 +452,24 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         WpBaseIndexValEntity last = valEntities.get(1);
         Double firstVal = first.getValue();
         Double lastVal = last.getValue();
-        Double tempVal = firstVal - lastVal;
-        Double tongBi = tempVal / lastVal * 100;
-        DecimalFormat df = new DecimalFormat("#.00");
-        first.setTongBi(df.format(tongBi) + "%");
-        valEntities.set(0, first);
+        if(lastVal == 0){
+            first.setTongBi("0%");
+            valEntities.set(0, first);
+        }else{
+            Double tempVal = firstVal - lastVal;
+            Double tongBi = tempVal / lastVal * 100;
+            DecimalFormat df = new DecimalFormat("#.00");
+            DecimalFormat df2 = new DecimalFormat("0.00");
+            if(tongBi < 0 & tongBi >-1){
+                first.setTongBi(df2.format(tongBi) + "%");
+            }else if (tongBi >0 & tongBi <1){
+                first.setTongBi(df2.format(tongBi) + "%");
+            }else{
+                first.setTongBi(df.format(tongBi) + "%");
+            }
+            valEntities.set(0, first);
+        }
+
         return valEntities;
     }
 
