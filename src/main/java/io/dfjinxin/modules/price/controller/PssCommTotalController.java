@@ -49,6 +49,8 @@ public class PssCommTotalController {
     @PostMapping("/queryPageList")
     @ApiOperation("商品预警配置-查询")
     public R queryPageList(@RequestBody(required = false) PssCommTotalDto params) {
+
+
         LOG.info("商品预警配置-查询,请求参数:{}", params);
         params.startNumber();
         PageUtils page = pssCommTotalService.queryPageList(params);
