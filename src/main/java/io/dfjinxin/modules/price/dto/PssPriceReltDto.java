@@ -21,6 +21,7 @@ import java.util.Date;
 @Accessors(chain = true)
 public class PssPriceReltDto implements Serializable {
 
+    private Integer id;
     /**
      *
      */

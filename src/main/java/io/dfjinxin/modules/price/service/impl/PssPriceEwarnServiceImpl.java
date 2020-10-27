@@ -447,8 +447,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         //规格品列表
         List<PssCommTotalEntity> type4CommList = pssCommTotalService.getSubCommByCommId(commId);
         //step4,全国价格走势 规格品指标类型是价格、区域是全国的、上月昨天到昨天的数据
-        List<String> quanGuoFrequenceList = this.getFrequenceByWhere(lastMonthDayStr, lastDayStr, "全国");
-        map.put("quanGuoJiaGeZouShi", this.convertQuYujiaGeByJiaGeZhiBiao(quanGuoFrequenceList, type4CommList, "全国", lastMonthDayStr, lastDayStr));
+        List<String> quanGuoFrequenceList = this.getFrequenceByWhere(lastMonthDayStr, lastDayStr, "中国");
+        map.put("quanGuoJiaGeZouShi", this.convertQuYujiaGeByJiaGeZhiBiao(quanGuoFrequenceList, type4CommList, "中国", lastMonthDayStr, lastDayStr));
 
         //step5,区域价格分布 规格品指标类型是价格、区域是各省份、自治区的、昨天到上月昨天的数据
         List<String> quYuFrequenceList = this.getFrequenceByWhere(null, lastDayStr, null);
@@ -544,7 +544,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         } else {
             where5.between("date", startDate, endDate);
         }
-        if ("全国".equals(areaName)) {
+        if ("中国".equals(areaName)) {
             where5.eq("area_name", areaName);
         } else {
             where5.and(wrapper -> wrapper.likeLeft("area_name", "省").or().likeLeft("area_name", "自治区"));
@@ -573,7 +573,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         }
         where5.eq("index_type", "价格");
         where5.eq("frequence", frequence);
-        if ("全国".equals(areaName)) {
+        if ("中国".equals(areaName)) {
             where5.eq("area_name", areaName);
         } else {
             where5.and(wrapper -> wrapper.likeLeft("area_name", "省").or().likeLeft("area_name", "自治区"));
