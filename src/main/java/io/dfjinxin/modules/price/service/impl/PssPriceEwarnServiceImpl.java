@@ -2,6 +2,7 @@ package io.dfjinxin.modules.price.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
@@ -163,7 +165,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
         List<PssPriceEwarnEntity> yestDayMaxPricEwarnList = new ArrayList<>();
         String lastDayStr = null;
-        for(int x = 1;x <= 30;x ++){
+        for (int x = 1; x <= 30; x++) {
             lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -x));
 
             QueryWrapper where1 = new QueryWrapper();
@@ -176,7 +178,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 List<PssPriceEwarnEntity> entities = pssPriceEwarnDao.queryPriceEwarnByDate(entity.getCommId(), lastDayStr);
                 yestDayMaxPricEwarnList.add(entities.get(0));
             }
-            if(!yestDayMaxPricEwarnList.isEmpty()){
+            if (!yestDayMaxPricEwarnList.isEmpty()) {
                 break;
             }
         }
@@ -552,6 +554,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         return new ArrayList<>();
     }
 
+
     /**
      * @Desc: 根据时间区间、区域类型查询 频度类型
      * @Param: [startDate, endDate, areaName]
@@ -772,6 +775,90 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     }
 
     /**
+     * @Desc: 查询pss_price_ewarn表最近一月涨跌比率
+     * @Param: [ewarnTypeId, asList, startDate, endDate]
+     * @Return: java.util.Map<java.lang.String, java.lang.Object>
+     * @Author: z.h.c
+     * @Date: 2020/10/28 21:28
+     */
+    @Override
+    public Map<String, Object> queryIndexLineData2(Integer ewarnTypeId, List<Integer> indexIds, String startDate, String endDate) {
+        if (ewarnTypeId == null || indexIds.isEmpty()) return null;
+
+        Map<String, Object> resuMap = new HashMap<>();
+        for (int indexId : indexIds) {
+            WpBaseIndexInfoEntity wpBaseIndexInfoEntity = wpBaseIndexInfoService.getById(indexId);
+            if (wpBaseIndexInfoEntity == null) return null;
+            String sourceName = ObjectUtils.isEmpty(wpBaseIndexInfoEntity.getSourceName()) ? null : wpBaseIndexInfoEntity.getSourceName();
+            Integer commId = ObjectUtils.isEmpty(wpBaseIndexInfoEntity.getCommId()) ? null : wpBaseIndexInfoEntity.getCommId();
+
+            if (StringUtils.isEmpty(startDate) && StringUtils.isEmpty(endDate)) {
+                endDate = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));//昨天时间
+                startDate = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -30));//一个月前时间
+            }
+
+
+//            List<PssPriceEwarnEntity> pssPriceEwarnEntities = this.lambdaQuery()
+//                    .eq(PssPriceEwarnEntity::getCommId, commId)
+//                    .eq(PssPriceEwarnEntity::getEwarnTypeId, ewarnTypeId)
+//                    .eq(PssPriceEwarnEntity::getPricTypeId, indexId)
+//                    .between(PssPriceEwarnEntity::getEwarnDate, startDate, endDate)
+//                    .last("group by date(ewarn_date)")
+//                    .list();
+
+            List<PssPriceEwarnEntity> pssPriceEwarnEntities = this.pssPriceEwarnDao.queryPriceRangeByDate(commId, ewarnTypeId, indexId, startDate, endDate);
+
+            if (!ObjectUtils.isEmpty(pssPriceEwarnEntities)) {
+                StringBuilder commName = new StringBuilder(pssPriceEwarnEntities.get(0).getCommName());
+                if (!StringUtils.isEmpty(sourceName)) {
+                    commName.append("&").append(sourceName);
+                }
+                resuMap.put(commName.toString(), pssPriceEwarnEntities);
+            }
+
+//            QueryWrapper<PssPriceEwarnEntity> where = new QueryWrapper();
+//            where.eq("ewarn_type_id", ewarnTypeId);
+//            where.eq("Pric_type_id", indexId);
+//            where.eq("comm_id", commId);
+//            where.orderByAsc("ewarn_date");
+//            if (StringUtils.isNotEmpty(startDate) && StringUtils.isNotEmpty(endDate)) {
+//                where.between("ewarn_date", startDate, endDate);
+//            } else {
+//                String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));//昨天时间
+//                String last30DayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -30));//一个月前时间
+//                where.between("ewarn_date", last30DayStr, lastDayStr);
+//            }
+
+
+//            //常规预警
+//            if (ewarnTypeId == 18) {
+//                List<PssPriceEwarnEntity> list = pssPriceEwarnDao.selectList(where);
+//                if (!ObjectUtils.isEmpty(list)) {
+//                    StringBuilder indexName = new StringBuilder(list.get(0).getCommName());
+//                    if (!StringUtils.isEmpty(sourceName)) {
+//                        indexName.append("&").append(sourceName);
+//                    }
+//                    resuMap.put(indexName.toString(), list);
+//                }
+//            }
+//            //非常规预警
+//            if (ewarnTypeId == 19) {
+//                List<PssPriceEwarnEntity> list = pssPriceEwarnDao.selectList(where);
+//                if (!ObjectUtils.isEmpty(list)) {
+//                    StringBuilder indexName = new StringBuilder(list.get(0).getCommName());
+//                    if (!StringUtils.isEmpty(sourceName)) {
+//                        indexName.append("&").append(sourceName);
+//                    }
+//                    resuMap.put(indexName.toString(), list);
+//                }
+//            }
+        }
+
+        return resuMap;
+    }
+
+
+    /**
      * 根据预警类型&指标 查询指标值
      *
      * @Desc:
@@ -830,7 +917,6 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         }
 
         return resuMap;
-
     }
 
     /**

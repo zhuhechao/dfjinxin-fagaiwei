@@ -42,5 +42,6 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
 
     List<PssPriceReltEntity> jiaGeYuCe(String foreType, Integer commId);
 
+    Map<String, Object> queryIndexLineData2(Integer ewarnTypeId, List<Integer> asList, String startDate, String endDate);
 }
 
