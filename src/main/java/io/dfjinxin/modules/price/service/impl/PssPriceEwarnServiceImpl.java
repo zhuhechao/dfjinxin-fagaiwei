@@ -11,7 +11,9 @@ import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
 import io.dfjinxin.common.utils.echart.HttpUtil;
 import io.dfjinxin.modules.analyse.dao.WpBaseIndexValDao;
+import io.dfjinxin.modules.analyse.entity.WpBaseIndexInfoEntity;
 import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
+import io.dfjinxin.modules.analyse.service.WpBaseIndexInfoService;
 import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
 import io.dfjinxin.modules.hive.service.HiveService;
 import io.dfjinxin.modules.price.dao.*;
@@ -29,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -73,6 +76,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 //    private HiveService hiveService;
     @Autowired
     private WpUpdateInfoService wpUpdateInfoService;
+    @Autowired
+    private WpBaseIndexInfoService wpBaseIndexInfoService;
 
     @Value("${tengxun.path}")
     private String path;
@@ -774,18 +779,33 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 where.between("data_time", last30DayStr, lastDayStr);
             }
 
+            WpBaseIndexInfoEntity wpBaseIndexInfoEntity = wpBaseIndexInfoService.getById(indexId);
+            String sourceName = "";
+            if (!ObjectUtils.isEmpty(wpBaseIndexInfoEntity)) {
+                sourceName = ObjectUtils.isEmpty(wpBaseIndexInfoEntity.getSourceName()) ? null : wpBaseIndexInfoEntity.getSourceName();
+            }
+
+
             //常规预警
             if (ewarnTypeId == 18) {
                 List<WpCommPriEntity> list = wpCommPriDao.selectList(where);
-                if (list != null && list.size() > 1) {
-                    resuMap.put(list.get(0).getIndexName(), list);
+                if (!ObjectUtils.isEmpty(list)) {
+                    StringBuilder indexName = new StringBuilder(list.get(0).getIndexName());
+                    if (!StringUtils.isEmpty(sourceName)) {
+                        indexName.append("&").append(sourceName);
+                    }
+                    resuMap.put(indexName.toString(), list);
                 }
             }
             //非常规预警
             if (ewarnTypeId == 19) {
                 List<WpCommPriOrgEntity> list = wpCommPriOrgDao.selectList(where);
-                if (list != null && list.size() > 1) {
-                    resuMap.put(list.get(0).getIndexName(), list);
+                if (!ObjectUtils.isEmpty(list)) {
+                    StringBuilder indexName = new StringBuilder(list.get(0).getIndexName());
+                    if (!StringUtils.isEmpty(sourceName)) {
+                        indexName.append("&").append(sourceName);
+                    }
+                    resuMap.put(indexName.toString(), list);
                 }
             }
         }

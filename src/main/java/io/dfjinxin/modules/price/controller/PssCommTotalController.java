@@ -43,7 +43,6 @@ public class PssCommTotalController {
     @ApiOperation("商品配置-获取商品类型&商品大类")
     public R getCommType() {
 
-        //add by zhc 1027
         Map<String, List<PssCommTotalEntity>> result = pssCommTotalService.queryCommType();
         return R.ok().put("data", result);
     }
@@ -51,8 +50,6 @@ public class PssCommTotalController {
     @PostMapping("/queryPageList")
     @ApiOperation("商品预警配置-查询")
     public R queryPageList(@RequestBody(required = false) PssCommTotalDto params) {
-
-        //测试2
 
         LOG.info("商品预警配置-查询,请求参数:{}", params);
         params.startNumber();
