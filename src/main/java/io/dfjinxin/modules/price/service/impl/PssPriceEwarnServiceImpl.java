@@ -571,7 +571,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         if ("中国".equals(areaName)) {
             where5.eq("area_name", areaName);
         } else {
-            where5.and(wrapper -> wrapper.likeLeft("area_name", "省").or().likeLeft("area_name", "自治区"));
+            where5.and(wrapper -> wrapper.likeLeft("area_name", "省").or().likeLeft("area_name", "自治区").or().likeLeft("area_name", "市"));
         }
         where5.groupBy("frequence");
         List<WpBaseIndexValEntity> entities = wpBaseIndexValDao.selectList(where5);
@@ -600,7 +600,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         if ("中国".equals(areaName)) {
             where5.eq("area_name", areaName);
         } else {
-            where5.and(wrapper -> wrapper.likeLeft("area_name", "省").or().likeLeft("area_name", "自治区"));
+            where5.and(wrapper -> wrapper.likeLeft("area_name", "省").or().likeLeft("area_name", "自治区").or().likeLeft("area_name", "市"));
         }
         where5.orderByAsc("date");
         return wpBaseIndexValDao.selectList(where5);
