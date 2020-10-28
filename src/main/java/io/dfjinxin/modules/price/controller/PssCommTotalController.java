@@ -42,6 +42,8 @@ public class PssCommTotalController {
     @GetMapping("/getCommType")
     @ApiOperation("商品配置-获取商品类型&商品大类")
     public R getCommType() {
+
+        //add by zhc 1027
         Map<String, List<PssCommTotalEntity>> result = pssCommTotalService.queryCommType();
         return R.ok().put("data", result);
     }

@@ -155,40 +155,22 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     @Override
     public Map<String, Object> firstPageView(boolean queryHive) {
         Map<String, Object> retMap = new HashMap<>();
-        List<PssPriceEwarnEntity> yestDayMaxPricEwarnList = new ArrayList<>();
-        String lastDayStr = null;
-        for(int x = 1;x <= 30;x ++){
-            lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -x));
 
-            QueryWrapper where1 = new QueryWrapper();
-            where1.select("comm_id", lastDayStr);
-            where1.eq("date(ewarn_date)", lastDayStr);
-            where1.groupBy("comm_id");
-            List<PssPriceEwarnEntity> priceEwarnList = pssPriceEwarnDao.selectList(where1);
-            //根据分组id,查询当前日期前一天的数据
-            for (PssPriceEwarnEntity entity : priceEwarnList) {
-                List<PssPriceEwarnEntity> entities = pssPriceEwarnDao.queryPriceEwarnByDate(entity.getCommId(), lastDayStr);
-                yestDayMaxPricEwarnList.add(entities.get(0));
+        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
+        List<PssPriceEwarnEntity> yestDayMaxPricEwarnList = new ArrayList<>();
+        QueryWrapper where1 = new QueryWrapper();
+        where1.select("comm_id", lastDayStr);
+        where1.eq("date(ewarn_date)", lastDayStr);
+        where1.groupBy("comm_id");
+        List<PssPriceEwarnEntity> priceEwarnList = pssPriceEwarnDao.selectList(where1);
+        //根据分组id,查询当前日期前一天的数据
+        for (PssPriceEwarnEntity entity : priceEwarnList) {
+            List<PssPriceEwarnEntity> entities = pssPriceEwarnDao.queryPriceEwarnByDate(entity.getCommId(), lastDayStr);
+            if (entities.isEmpty()) {
+                continue;
             }
-            if(!yestDayMaxPricEwarnList.isEmpty()){
-                break;
-            }
+            yestDayMaxPricEwarnList.add(entities.get(0));
         }
-//        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
-//        List<PssPriceEwarnEntity> yestDayMaxPricEwarnList = new ArrayList<>();
-//        QueryWrapper where1 = new QueryWrapper();
-//        where1.select("comm_id", lastDayStr);
-//        where1.eq("date(ewarn_date)", lastDayStr);
-//        where1.groupBy("comm_id");
-//        List<PssPriceEwarnEntity> priceEwarnList = pssPriceEwarnDao.selectList(where1);
-//        //根据分组id,查询当前日期前一天的数据
-//        for (PssPriceEwarnEntity entity : priceEwarnList) {
-//            List<PssPriceEwarnEntity> entities = pssPriceEwarnDao.queryPriceEwarnByDate(entity.getCommId(), lastDayStr);
-//            if (entities.isEmpty()) {
-//                continue;
-//            }
-//            yestDayMaxPricEwarnList.add(entities.get(0));
-//        }
 
         List<RateValDto> rateValDtos = new ArrayList<>();
         List<PssPriceEwarnEntity> ewanInfoList = new ArrayList<>();
@@ -335,7 +317,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         Date endDate = (Date) params.get("endDate");
         String commId = params.get("commId") + "";
         qw.eq("comm_id", commId);
-       // qw.between("ewarn_date", startDate, endDate);
+        // qw.between("ewarn_date", startDate, endDate);
         qw.orderByAsc("ewarn_date");
         return getBaseMapper().selectList(qw);
     }
