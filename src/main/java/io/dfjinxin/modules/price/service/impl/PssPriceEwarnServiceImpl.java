@@ -162,26 +162,27 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     @Override
     public Map<String, Object> firstPageView(boolean queryHive) {
         Map<String, Object> retMap = new HashMap<>();
-
+        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
         List<PssPriceEwarnEntity> yestDayMaxPricEwarnList = new ArrayList<>();
-        String lastDayStr = null;
-        for (int x = 1; x <= 30; x++) {
-            lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -x));
-
+        List<Integer> list = new ArrayList<>();
+        for(int x = 1;x <= 30;x++) {
+            String lastDayStr2 = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -x));
             QueryWrapper where1 = new QueryWrapper();
-            where1.select("comm_id", lastDayStr);
-            where1.eq("date(ewarn_date)", lastDayStr);
+            where1.select("comm_id", lastDayStr2);
+            where1.eq("date(ewarn_date)", lastDayStr2);
             where1.groupBy("comm_id");
             List<PssPriceEwarnEntity> priceEwarnList = pssPriceEwarnDao.selectList(where1);
             //根据分组id,查询当前日期前一天的数据
             for (PssPriceEwarnEntity entity : priceEwarnList) {
-                List<PssPriceEwarnEntity> entities = pssPriceEwarnDao.queryPriceEwarnByDate(entity.getCommId(), lastDayStr);
-                yestDayMaxPricEwarnList.add(entities.get(0));
-            }
-            if (!yestDayMaxPricEwarnList.isEmpty()) {
-                break;
+                if(!list.contains(entity.getCommId())){
+                    List<PssPriceEwarnEntity> entities = pssPriceEwarnDao.queryPriceEwarnByDate(entity.getCommId(), lastDayStr2);
+                    list.add(entity.getCommId());
+                    yestDayMaxPricEwarnList.add(entities.get(0));
+                }
             }
         }
+
+
 //        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
 //        List<PssPriceEwarnEntity> yestDayMaxPricEwarnList = new ArrayList<>();
 //        QueryWrapper where1 = new QueryWrapper();
