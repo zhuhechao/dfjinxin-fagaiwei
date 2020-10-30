@@ -2,6 +2,7 @@ package io.dfjinxin.modules.price.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,7 +12,9 @@ import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
 import io.dfjinxin.common.utils.echart.HttpUtil;
 import io.dfjinxin.modules.analyse.dao.WpBaseIndexValDao;
+import io.dfjinxin.modules.analyse.entity.WpBaseIndexInfoEntity;
 import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
+import io.dfjinxin.modules.analyse.service.WpBaseIndexInfoService;
 import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
 import io.dfjinxin.modules.hive.service.HiveService;
 import io.dfjinxin.modules.price.dao.*;
@@ -29,6 +32,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -73,6 +78,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 //    private HiveService hiveService;
     @Autowired
     private WpUpdateInfoService wpUpdateInfoService;
+    @Autowired
+    private WpBaseIndexInfoService wpBaseIndexInfoService;
 
     @Value("${tengxun.path}")
     private String path;
@@ -155,22 +162,42 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     @Override
     public Map<String, Object> firstPageView(boolean queryHive) {
         Map<String, Object> retMap = new HashMap<>();
-
         String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
         List<PssPriceEwarnEntity> yestDayMaxPricEwarnList = new ArrayList<>();
-        QueryWrapper where1 = new QueryWrapper();
-        where1.select("comm_id", lastDayStr);
-        where1.eq("date(ewarn_date)", lastDayStr);
-        where1.groupBy("comm_id");
-        List<PssPriceEwarnEntity> priceEwarnList = pssPriceEwarnDao.selectList(where1);
-        //根据分组id,查询当前日期前一天的数据
-        for (PssPriceEwarnEntity entity : priceEwarnList) {
-            List<PssPriceEwarnEntity> entities = pssPriceEwarnDao.queryPriceEwarnByDate(entity.getCommId(), lastDayStr);
-            if (entities.isEmpty()) {
-                continue;
+        List<Integer> list = new ArrayList<>();
+        for(int x = 1;x <= 30;x++) {
+            String lastDayStr2 = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -x));
+            QueryWrapper where1 = new QueryWrapper();
+            where1.select("comm_id", lastDayStr2);
+            where1.eq("date(ewarn_date)", lastDayStr2);
+            where1.groupBy("comm_id");
+            List<PssPriceEwarnEntity> priceEwarnList = pssPriceEwarnDao.selectList(where1);
+            //根据分组id,查询当前日期前一天的数据
+            for (PssPriceEwarnEntity entity : priceEwarnList) {
+                if(!list.contains(entity.getCommId())){
+                    List<PssPriceEwarnEntity> entities = pssPriceEwarnDao.queryPriceEwarnByDate(entity.getCommId(), lastDayStr2);
+                    list.add(entity.getCommId());
+                    yestDayMaxPricEwarnList.add(entities.get(0));
+                }
             }
-            yestDayMaxPricEwarnList.add(entities.get(0));
         }
+
+
+//        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));
+//        List<PssPriceEwarnEntity> yestDayMaxPricEwarnList = new ArrayList<>();
+//        QueryWrapper where1 = new QueryWrapper();
+//        where1.select("comm_id", lastDayStr);
+//        where1.eq("date(ewarn_date)", lastDayStr);
+//        where1.groupBy("comm_id");
+//        List<PssPriceEwarnEntity> priceEwarnList = pssPriceEwarnDao.selectList(where1);
+//        //根据分组id,查询当前日期前一天的数据
+//        for (PssPriceEwarnEntity entity : priceEwarnList) {
+//            List<PssPriceEwarnEntity> entities = pssPriceEwarnDao.queryPriceEwarnByDate(entity.getCommId(), lastDayStr);
+//            if (entities.isEmpty()) {
+//                continue;
+//            }
+//            yestDayMaxPricEwarnList.add(entities.get(0));
+//        }
 
         List<RateValDto> rateValDtos = new ArrayList<>();
         List<PssPriceEwarnEntity> ewanInfoList = new ArrayList<>();
@@ -528,6 +555,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         return new ArrayList<>();
     }
 
+
     /**
      * @Desc: 根据时间区间、区域类型查询 频度类型
      * @Param: [startDate, endDate, areaName]
@@ -547,7 +575,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         if ("中国".equals(areaName)) {
             where5.eq("area_name", areaName);
         } else {
-            where5.and(wrapper -> wrapper.likeLeft("area_name", "省").or().likeLeft("area_name", "自治区"));
+            where5.and(wrapper -> wrapper.likeLeft("area_name", "省").or().likeLeft("area_name", "自治区").or().likeLeft("area_name", "市"));
         }
         where5.groupBy("frequence");
         List<WpBaseIndexValEntity> entities = wpBaseIndexValDao.selectList(where5);
@@ -576,7 +604,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         if ("中国".equals(areaName)) {
             where5.eq("area_name", areaName);
         } else {
-            where5.and(wrapper -> wrapper.likeLeft("area_name", "省").or().likeLeft("area_name", "自治区"));
+            where5.and(wrapper -> wrapper.likeLeft("area_name", "省").or().likeLeft("area_name", "自治区").or().likeLeft("area_name", "市"));
         }
         where5.orderByAsc("date");
         return wpBaseIndexValDao.selectList(where5);
@@ -748,6 +776,90 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     }
 
     /**
+     * @Desc: 查询pss_price_ewarn表最近一月涨跌比率
+     * @Param: [ewarnTypeId, asList, startDate, endDate]
+     * @Return: java.util.Map<java.lang.String, java.lang.Object>
+     * @Author: z.h.c
+     * @Date: 2020/10/28 21:28
+     */
+    @Override
+    public Map<String, Object> queryIndexLineData2(Integer ewarnTypeId, List<Integer> indexIds, String startDate, String endDate) {
+        if (ewarnTypeId == null || indexIds.isEmpty()) return null;
+
+        Map<String, Object> resuMap = new HashMap<>();
+        for (int indexId : indexIds) {
+            WpBaseIndexInfoEntity wpBaseIndexInfoEntity = wpBaseIndexInfoService.getById(indexId);
+            if (wpBaseIndexInfoEntity == null) return null;
+            String sourceName = ObjectUtils.isEmpty(wpBaseIndexInfoEntity.getSourceName()) ? null : wpBaseIndexInfoEntity.getSourceName();
+            Integer commId = ObjectUtils.isEmpty(wpBaseIndexInfoEntity.getCommId()) ? null : wpBaseIndexInfoEntity.getCommId();
+
+            if (StringUtils.isEmpty(startDate) && StringUtils.isEmpty(endDate)) {
+                endDate = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));//昨天时间
+                startDate = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -30));//一个月前时间
+            }
+
+
+//            List<PssPriceEwarnEntity> pssPriceEwarnEntities = this.lambdaQuery()
+//                    .eq(PssPriceEwarnEntity::getCommId, commId)
+//                    .eq(PssPriceEwarnEntity::getEwarnTypeId, ewarnTypeId)
+//                    .eq(PssPriceEwarnEntity::getPricTypeId, indexId)
+//                    .between(PssPriceEwarnEntity::getEwarnDate, startDate, endDate)
+//                    .last("group by date(ewarn_date)")
+//                    .list();
+
+            List<PssPriceEwarnEntity> pssPriceEwarnEntities = this.pssPriceEwarnDao.queryPriceRangeByDate(commId, ewarnTypeId, indexId, startDate, endDate);
+
+            if (!ObjectUtils.isEmpty(pssPriceEwarnEntities)) {
+                StringBuilder commName = new StringBuilder(pssPriceEwarnEntities.get(0).getCommName());
+                if (!StringUtils.isEmpty(sourceName)) {
+                    commName.append("&").append(sourceName);
+                }
+                resuMap.put(commName.toString(), pssPriceEwarnEntities);
+            }
+
+//            QueryWrapper<PssPriceEwarnEntity> where = new QueryWrapper();
+//            where.eq("ewarn_type_id", ewarnTypeId);
+//            where.eq("Pric_type_id", indexId);
+//            where.eq("comm_id", commId);
+//            where.orderByAsc("ewarn_date");
+//            if (StringUtils.isNotEmpty(startDate) && StringUtils.isNotEmpty(endDate)) {
+//                where.between("ewarn_date", startDate, endDate);
+//            } else {
+//                String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));//昨天时间
+//                String last30DayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -30));//一个月前时间
+//                where.between("ewarn_date", last30DayStr, lastDayStr);
+//            }
+
+
+//            //常规预警
+//            if (ewarnTypeId == 18) {
+//                List<PssPriceEwarnEntity> list = pssPriceEwarnDao.selectList(where);
+//                if (!ObjectUtils.isEmpty(list)) {
+//                    StringBuilder indexName = new StringBuilder(list.get(0).getCommName());
+//                    if (!StringUtils.isEmpty(sourceName)) {
+//                        indexName.append("&").append(sourceName);
+//                    }
+//                    resuMap.put(indexName.toString(), list);
+//                }
+//            }
+//            //非常规预警
+//            if (ewarnTypeId == 19) {
+//                List<PssPriceEwarnEntity> list = pssPriceEwarnDao.selectList(where);
+//                if (!ObjectUtils.isEmpty(list)) {
+//                    StringBuilder indexName = new StringBuilder(list.get(0).getCommName());
+//                    if (!StringUtils.isEmpty(sourceName)) {
+//                        indexName.append("&").append(sourceName);
+//                    }
+//                    resuMap.put(indexName.toString(), list);
+//                }
+//            }
+        }
+
+        return resuMap;
+    }
+
+
+    /**
      * 根据预警类型&指标 查询指标值
      *
      * @Desc:
@@ -774,24 +886,38 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 where.between("data_time", last30DayStr, lastDayStr);
             }
 
+            WpBaseIndexInfoEntity wpBaseIndexInfoEntity = wpBaseIndexInfoService.getById(indexId);
+            String sourceName = "";
+            if (!ObjectUtils.isEmpty(wpBaseIndexInfoEntity)) {
+                sourceName = ObjectUtils.isEmpty(wpBaseIndexInfoEntity.getSourceName()) ? null : wpBaseIndexInfoEntity.getSourceName();
+            }
+
+
             //常规预警
             if (ewarnTypeId == 18) {
                 List<WpCommPriEntity> list = wpCommPriDao.selectList(where);
-                if (list != null && list.size() > 1) {
-                    resuMap.put(list.get(0).getIndexName(), list);
+                if (!ObjectUtils.isEmpty(list)) {
+                    StringBuilder indexName = new StringBuilder(list.get(0).getIndexName());
+                    if (!StringUtils.isEmpty(sourceName)) {
+                        indexName.append("&").append(sourceName);
+                    }
+                    resuMap.put(indexName.toString(), list);
                 }
             }
             //非常规预警
             if (ewarnTypeId == 19) {
                 List<WpCommPriOrgEntity> list = wpCommPriOrgDao.selectList(where);
-                if (list != null && list.size() > 1) {
-                    resuMap.put(list.get(0).getIndexName(), list);
+                if (!ObjectUtils.isEmpty(list)) {
+                    StringBuilder indexName = new StringBuilder(list.get(0).getIndexName());
+                    if (!StringUtils.isEmpty(sourceName)) {
+                        indexName.append("&").append(sourceName);
+                    }
+                    resuMap.put(indexName.toString(), list);
                 }
             }
         }
 
         return resuMap;
-
     }
 
     /**

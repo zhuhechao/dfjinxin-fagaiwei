@@ -75,16 +75,16 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "  and date(ppe.ewarn_date) between #{startDateStr} and #{endDateStr}\n" +
             "group by ppe.ewarn_level")
     List<Map<String, Object>> getEwarnCountByType1CommId(@Param("commId") Integer commId,
-                                                   @Param("startDateStr") String startDateStr,
-                                                   @Param("endDateStr") String endDateStr);
+                                                         @Param("startDateStr") String startDateStr,
+                                                         @Param("endDateStr") String endDateStr);
 
     /**
-    * @Desc:  统计在指定时间内全部商品的各预警级别的总数
-    * @Param: [startDateStr, endDateStr]
-    * @Return: java.util.Map<java.lang.String,java.lang.Object>
-    * @Author: z.h.c
-    * @Date: 2019/11/21 16:17
-    */
+     * @Desc: 统计在指定时间内全部商品的各预警级别的总数
+     * @Param: [startDateStr, endDateStr]
+     * @Return: java.util.Map<java.lang.String, java.lang.Object>
+     * @Author: z.h.c
+     * @Date: 2019/11/21 16:17
+     */
     @Select("select case ppe.ewarn_level\n" +
             "           when 71 then 'red'\n" +
             "           when 72 then 'orange'\n" +
@@ -99,15 +99,15 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "  and date(ppe.ewarn_date) between #{startDateStr} and #{endDateStr}\n" +
             "group by ppe.ewarn_level")
     List<Map<String, Object>> getEwarnCount(@Param("startDateStr") String startDateStr,
-                                      @Param("endDateStr") String endDateStr);
+                                            @Param("endDateStr") String endDateStr);
 
     /**
-    * @Desc:  大屏-统计昨天涨幅排在前3名的，商品指定时间的价格信息
-    * @Param: [commId, last180DayStr, lastDayStr]
-    * @Return: java.util.List<io.dfjinxin.modules.price.entity.PssPriceEwarnEntity>
-    * @Author: z.h.c
-    * @Date: 2019/11/21 17:24
-    */
+     * @Desc: 大屏-统计昨天涨幅排在前3名的，商品指定时间的价格信息
+     * @Param: [commId, last180DayStr, lastDayStr]
+     * @Return: java.util.List<io.dfjinxin.modules.price.entity.PssPriceEwarnEntity>
+     * @Author: z.h.c
+     * @Date: 2019/11/21 17:24
+     */
     @Select("select ppe.*, comm.comm_name\n" +
             "from pss_price_ewarn ppe\n" +
             "         left join pss_comm_total comm\n" +
@@ -118,7 +118,7 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
     List<PssPriceEwarnEntity> getFirst3EwarnInfo(Integer commId, String last180DayStr, String lastDayStr);
 
     /**
-     * @Desc:  大屏-统计昨天涨幅排在前3名的，商品指定时间的价格信息，支持按一级目录过滤
+     * @Desc: 大屏-统计昨天涨幅排在前3名的，商品指定时间的价格信息，支持按一级目录过滤
      * @Param: [commId, last180DayStr, lastDayStr, rootId]
      * @Return: java.util.List<io.dfjinxin.modules.price.entity.PssPriceEwarnEntity>
      * @Author: z.l.c
@@ -135,8 +135,22 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "  and date(ppe.ewarn_date) between #{last180DayStr} and #{lastDayStr}\n" +
             "<if test='rootId!=null  '> " +
             "  and comm3.comm_id=#{rootId}" +
-            "</if>"+
+            "</if>" +
             "order by date(ppe.ewarn_date) asc\n" +
             "</script>")
     List<PssPriceEwarnEntity> getFirst3EwarnInfoNew(Integer commId, String last180DayStr, String lastDayStr, String rootId);
+
+    @Select("SELECT ppw.*,pct.comm_name\n" +
+            "FROM pss_price_ewarn ppw\n" +
+            "left join pss_comm_total pct on ppw.comm_id=pct.comm_id\n" +
+            "WHERE ppw.comm_id = #{commId}\n" +
+            "  AND ppw.ewarn_type_id = #{ewarnTypeId}\n" +
+            "  AND ppw.pric_type_id = #{pricTypeId}\n" +
+            "  AND date(ppw.ewarn_date) BETWEEN #{startDate} AND #{endDate}\n" +
+            "GROUP BY date(ppw.ewarn_date)")
+    List<PssPriceEwarnEntity> queryPriceRangeByDate(Integer commId,
+                                                    Integer ewarnTypeId,
+                                                    Integer pricTypeId,
+                                                    String startDate,
+                                                    String endDate);
 }

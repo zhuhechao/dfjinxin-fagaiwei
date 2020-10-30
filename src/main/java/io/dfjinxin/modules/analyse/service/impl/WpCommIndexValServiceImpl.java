@@ -488,7 +488,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         where2.eq("index_type", indexType);
         where2.eq("date", dateStr);
         if ("价格".equals(indexType)) {
-            where2.and(wrapper -> wrapper.likeLeft("area_name", "省").or().likeLeft("area_name", "自治区"));
+            where2.and(wrapper -> wrapper.likeLeft("area_name", "省").or().likeLeft("area_name", "自治区").or().likeLeft("area_name", "市"));
         }
         if ("生产".equals(indexType)) {
             where2.and(wrapper -> wrapper.like("index_name", "产量"));
