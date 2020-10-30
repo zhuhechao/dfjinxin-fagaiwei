@@ -78,7 +78,14 @@ public class PssPriceEwarnController {
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate
     ) {
-        Map<String, Object> data = pssPriceEwarnService.queryIndexLineData(ewarnTypeId, Arrays.asList(indexIds), startDate, endDate);
+
+//        Map<String, Object> data = pssPriceEwarnService.queryIndexLineData(ewarnTypeId, Arrays.asList(indexIds), startDate, endDate);
+
+        /**
+         * add by zhc 2020.10.28
+         * 查询pss_price_ewarn表最近一月涨跌比率
+         */
+        Map<String, Object> data = pssPriceEwarnService.queryIndexLineData2(ewarnTypeId, Arrays.asList(indexIds), startDate, endDate);
         return R.ok().put("data", data);
     }
 

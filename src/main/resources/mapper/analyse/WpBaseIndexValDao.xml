@@ -71,7 +71,7 @@
         select * from wp_base_index_val wiv
         where index_type = #{indexType}
         and comm_id= #{commId}
-        and area_name='全国'
+        and area_name='中国'
         and date <![CDATA[ <= ]]> #{date}
         limit 0,30
     </select>
@@ -81,7 +81,7 @@
         FROM wp_base_index_val
         where index_type = '价格'
         and comm_id= #{commId}
-        and area_name !='全国'
+        and area_name !='中国'
         and date = #{date}
         GROUP BY area_name
     </select>
@@ -90,7 +90,7 @@
         select * from wp_base_index_val wiv
         where index_type = #{indexType}
         and comm_id= #{commId}
-        and area_name='全国'
+        and area_name='中国'
         order by date desc
         limit 0,2
     </select>

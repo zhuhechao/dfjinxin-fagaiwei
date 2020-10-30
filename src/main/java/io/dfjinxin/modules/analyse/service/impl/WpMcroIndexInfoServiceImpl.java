@@ -112,7 +112,7 @@ public class WpMcroIndexInfoServiceImpl extends ServiceImpl<WpMcroIndexInfoDao, 
         QueryWrapper<WpMcroIndexInfoEntity> where = new QueryWrapper();
         where.select("frequence");
         where.eq("index_flag", 0);
-        where.eq("area_name", "全国");
+        where.eq("area_name", "中国");
         where.eq("index_type", indexType);
         where.groupBy("frequence");
         List<WpMcroIndexInfoEntity> frequences = baseMapper.selectList(where);
@@ -122,7 +122,7 @@ public class WpMcroIndexInfoServiceImpl extends ServiceImpl<WpMcroIndexInfoDao, 
             QueryWrapper<WpMcroIndexInfoEntity> where2 = new QueryWrapper();
             where2.select("index_id");
             where2.eq("index_flag", 0);
-            where2.eq("area_name", "全国");
+            where2.eq("area_name", "中国");
             where2.eq("index_type", indexType);
             where2.eq("frequence", frequence.getFrequence());
             List<WpMcroIndexInfoEntity> indexIds = baseMapper.selectList(where2);
@@ -130,7 +130,7 @@ public class WpMcroIndexInfoServiceImpl extends ServiceImpl<WpMcroIndexInfoDao, 
             indexIds.forEach(indexId -> {
                 QueryWrapper<WpMcroIndexValEntity> where3 = new QueryWrapper();
                 where3.eq("frequence", frequence.getFrequence());
-                where3.eq("area_name", "全国");
+                where3.eq("area_name", "中国");
                 where3.eq("index_id", indexId.getIndexId());
                 where3.orderByDesc("date");
                 if ("月".equals(frequence.getFrequence())) {
@@ -172,7 +172,7 @@ public class WpMcroIndexInfoServiceImpl extends ServiceImpl<WpMcroIndexInfoDao, 
         QueryWrapper<WpMcroIndexInfoEntity> where = new QueryWrapper();
         where.select("index_type");
         where.eq("index_flag", 0);
-        where.eq("area_name", "全国");
+        where.eq("area_name", "中国");
         where.groupBy("index_type");
         return baseMapper.selectMaps(where);
     }

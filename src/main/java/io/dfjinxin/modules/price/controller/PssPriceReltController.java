@@ -72,12 +72,12 @@ public class PssPriceReltController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "dateFrom", value = "开始时间", required = false, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "dateTo", value = "结束时间", required = false, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "foreType", value = "预测类型", required = true, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "foreType", value = "预测类型", required = false, dataType = "String", paramType = "query"),
     })
     public R detail(@PathVariable("id") Long id,
                     @RequestParam(value = "dateFrom", required = false) String dateFrom,
                     @RequestParam(value = "dateTo", required = false) String dateTo,
-                    @RequestParam(value = "foreType", required = true) String foreType) {
+                    @RequestParam(value = "foreType", required = false) String foreType) {
         Map<String, Object> map = pssPriceReltService.detail(id, foreType, dateFrom, dateTo);
         return R.ok().put("data", map);
     }
