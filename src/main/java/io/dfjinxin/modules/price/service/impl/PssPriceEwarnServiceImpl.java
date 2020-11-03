@@ -960,7 +960,10 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
         BigDecimal lastPriceTongBi = zero;
         if (last2DayPrice.compareTo(zero) == 1) {
-            lastPriceTongBi = lastDayPrice.divide(last2DayPrice, 2, RoundingMode.HALF_UP);
+            BigDecimal result1 = lastDayPrice.subtract(last2DayPrice);
+            BigDecimal result2 = result1.divide(last2DayPrice, 6, RoundingMode.HALF_UP);
+            BigDecimal result3 = result2.multiply(new BigDecimal(100));
+            lastPriceTongBi = result3.setScale(2,BigDecimal.ROUND_HALF_UP);
         }
         //当前价格同比
 
@@ -969,12 +972,18 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
         BigDecimal mouthTongBi = zero;
         if (lastMonthAvg.compareTo(zero) == 1) {
-            mouthTongBi = monthAvg.divide(lastMonthAvg, 2, RoundingMode.HALF_UP);
+            BigDecimal result1 = monthAvg.subtract(lastMonthAvg);
+            BigDecimal result2 = result1.divide(lastMonthAvg, 6, RoundingMode.HALF_UP);
+            BigDecimal result3 = result2.multiply(new BigDecimal(100));
+            mouthTongBi = result3.setScale(2,BigDecimal.ROUND_HALF_UP);
         }
 
         BigDecimal yearTongBi = zero;
         if (lastYearAvg.compareTo(zero) == 1) {
-            yearTongBi = yearAvg.divide(lastYearAvg, 2, RoundingMode.HALF_UP);
+            BigDecimal result1 = yearAvg.subtract(lastYearAvg);
+            BigDecimal result2 = result1.divide(lastYearAvg, 6, RoundingMode.HALF_UP);
+            BigDecimal result3 = result2.multiply(new BigDecimal(100));
+            yearTongBi = result3.setScale(2,BigDecimal.ROUND_HALF_UP);
         }
 
         retMap.put("currPrice", lastDayPrice.setScale(2, RoundingMode.HALF_UP));
