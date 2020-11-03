@@ -1133,18 +1133,24 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         map.put("lastDayPrice", lastDayPrice);
         map.put("last2DayPrice", last2DayPrice);
         map.put("unit", unit);
-
-//        long diffDay = DateUtils.getMonthDiffDay();
-        BigDecimal mouthAvg = mouthTotalPrice.divide(new BigDecimal(30), 2, RoundingMode.HALF_UP);
-        map.put("monthAvg", mouthAvg);
-
+        if(mouthPriceList != null && mouthPriceList.size() > 0) {
+            BigDecimal mouthAvg = mouthTotalPrice.divide(new BigDecimal(mouthPriceList.size()), 2, RoundingMode.HALF_UP);
+            map.put("monthAvg", mouthAvg);
+        }else {
+            BigDecimal mouthAvg =new BigDecimal(0);
+            map.put("monthAvg", mouthAvg);
+        }
         BigDecimal yearTotalPrice = new BigDecimal(0);
-//        long yearDiffDay = DateUtils.getYearDiffDay();
         for (WpCommPriDto entity : yearPriceList) {
             yearTotalPrice = yearTotalPrice.add(entity.getValue());
         }
-        BigDecimal yearAvg = yearTotalPrice.divide(new BigDecimal(365), 2, RoundingMode.HALF_UP);
-        map.put("yearAvg", yearAvg);
+        if(yearPriceList != null && yearPriceList.size() > 0) {
+            BigDecimal yearAvg = yearTotalPrice.divide(new BigDecimal(yearPriceList.size()), 2, RoundingMode.HALF_UP);
+            map.put("yearAvg", yearAvg);
+        }else {
+            BigDecimal yearAvg = new BigDecimal(0);
+            map.put("yearAvg", yearAvg);
+        }
         return map;
     }
 
