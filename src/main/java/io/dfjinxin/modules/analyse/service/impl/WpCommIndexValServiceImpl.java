@@ -74,8 +74,8 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         if (comm == null || indexType == null || indexId == null) return null;
 
         String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));//昨天时间
-        String lastWeekDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -7));//一个月前时间
-        String startDate = params.containsKey("startDate") ? (String) params.get("startDate") : lastWeekDayStr;
+        String lastMonthDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -30));//一个月前时间
+        String startDate = params.containsKey("startDate") ? (String) params.get("startDate") : lastMonthDayStr;
         String endDate = params.containsKey("endDate") ? (String) params.get("endDate") : lastDayStr;
 
         QueryWrapper where5 = new QueryWrapper();
