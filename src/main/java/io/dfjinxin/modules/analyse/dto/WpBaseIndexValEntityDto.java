@@ -1,6 +1,7 @@
 package io.dfjinxin.modules.analyse.dto;
 
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -59,6 +60,7 @@ public class WpBaseIndexValEntityDto implements Serializable {
 	/**
 	 *
 	 */
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
 	private Date date;
 
 	private String commName;
