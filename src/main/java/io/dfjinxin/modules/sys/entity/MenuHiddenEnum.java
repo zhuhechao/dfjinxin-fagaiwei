@@ -16,10 +16,11 @@ public enum MenuHiddenEnum {
     ModelAdmin("/modeladmin/datapretreatment","form"),
     DataSourceManagement("/datasourcemanagement/datasourcemanagement","nested"),
     SysConfig("/sysconfig/usersconfig","user"),
-    AsyncRouter("/secondpage/index","table"),
+    AsyncRouter("/secondpage","table"),
     WarningShow("/warningshow/index","tree"),
-    Analyses("/analyses/index","eye"),
-    Divine("/divine/index","example");
+   // Analyses("/analyses/index","eye"),
+    Divine("/divine/index","example"),
+    DubleAnaly("/priceanalyse/censusanalyse/multidimensionalanalyse/index","eye");
 
     private String key, value;
     MenuHiddenEnum(String key,String value){
