@@ -33,6 +33,9 @@ public interface WpBaseIndexValService extends IService<WpBaseIndexValEntity> {
 
     PageUtils queryPageByDate(Map<String, Object> params);
 
+    List<Map<String, Object>> downloadByDate(Map<String, Object> params);
+
+
     Map<String, Object> queryLineChartByCondition(Map<String, Object> params);
 
     List<PssCommTotalEntity> queryCommListByCommId(Integer commId,String indexType);

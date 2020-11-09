@@ -105,6 +105,37 @@ public class SecondPageViewController {
         return R.ok().put("page", page).put("type4CommList", type4commList);
     }
 
+    /**
+     * @Desc: 二级页面(商品总览) -根据3类商品、时间区域、指标类型分页查询规格品指标信息
+     * @Param: [commId, indexType, startDate, endDate, pageIndex, pageSize]
+     * @Return: io.dfjinxin.common.utils.R
+     * @Author: z.h.c
+     * @Date: 2019/11/29 12:20
+     */
+    @GetMapping("/indexType/download/{commId}")
+    @ApiOperation(value = "二级页面(商品总览)-根据3类商品、时间区域、指标类型分页查询规格品指标信息",
+            notes = "根据3级商品id 获取指定时间、指标类型规格品指标信息 eg:58")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "indexType", value = "指标类型", required = true, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "startDate", value = "开始时间", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "endDate", value = "结束时间", required = false, dataType = "String", paramType = "query"),
+    })
+    public R downloadValByDate(
+            @PathVariable("commId") Integer commId,
+            @RequestParam(value = "indexType", required = true) String indexType,
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate
+    ) {
+        Map<String, Object> params = new HashMap();
+        params.put("indexType", indexType);
+        params.put("startDate", startDate);
+        params.put("endDate", endDate);
+        params.put("commId", commId);
+        List<Map<String, Object>> page = wpBaseIndexValService.downloadByDate(params);
+        return R.ok().put("page", page);
+    }
+
+
 
     /**
      * @Desc: 二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称、时间区域统计规格品各频度下各区域的指标信息

@@ -37,6 +37,13 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
 
     IPage<PssPriceReltEntity> queryPageByDate(Page page, @Param("param") Map map);
 
+    @Select("select val.*,total.comm_name from wp_base_index_val val \n" +
+            "left join pss_comm_total total on val.comm_id = total.comm_id \n" +
+            "where val.comm_id in (select comm_id from pss_comm_total \n" +
+            "where data_flag=0 and parent_code = #{param.commId}) \n" +
+            "and val.index_type = #{param.indexType} AND val.date >= #{param.startDate} AND val.date <= #{param.endDate} ")
+    List<Map<String, Object>> downloadByDate(@Param("param") Map map);
+
     @Select("SELECT val.*,tol.comm_name\n" +
             "FROM wp_base_index_val val\n" +
             "left join pss_comm_total tol on val.comm_id=tol.comm_id\n" +
@@ -50,8 +57,9 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
             @Param("commId") Integer commId,
             @Param("lastDayStr") String lastDayStr);
 
-    @Select("SELECT tol.*\n" +
-            "            FROM pss_comm_total tol\n" +
+    @Select("SELECT tol.comm_id,tol.comm_name,tol.parent_code,tol.level_code,tol.data_flag,\n" +
+            "\t\t\t\t\t\t\t\ttol.create_time\n" +
+            "                        FROM pss_comm_total tol\n" +
             "            left join wp_base_index_val val on val.comm_id=tol.comm_id\n" +
             "            WHERE val.comm_id IN (select pss_comm_total.comm_id\n" +
             "                              FROM pss_comm_total\n" +

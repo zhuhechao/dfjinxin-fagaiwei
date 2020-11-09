@@ -143,14 +143,10 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
     @Select("SELECT ppw.*,pct.comm_name\n" +
             "FROM pss_price_ewarn ppw\n" +
             "left join pss_comm_total pct on ppw.comm_id=pct.comm_id\n" +
-            "WHERE ppw.comm_id = #{commId}\n" +
-            "  AND ppw.ewarn_type_id = #{ewarnTypeId}\n" +
-            "  AND ppw.pric_type_id = #{pricTypeId}\n" +
-            "  AND date(ppw.ewarn_date) BETWEEN #{startDate} AND #{endDate}\n" +
+            "WHERE ppw.comm_id = #{p.commId}\n" +
+            "  AND ppw.ewarn_type_id = #{p.ewarnTypeId}\n" +
+            "  AND ppw.pric_type_id = #{p.pricTypeId}\n" +
+            "  AND date(ppw.ewarn_date) BETWEEN #{p.startDate} AND #{p.endDate}\n" +
             "GROUP BY date(ppw.ewarn_date)")
-    List<PssPriceEwarnEntity> queryPriceRangeByDate(Integer commId,
-                                                    Integer ewarnTypeId,
-                                                    Integer pricTypeId,
-                                                    String startDate,
-                                                    String endDate);
+    List<PssPriceEwarnEntity> queryPriceRangeByDate(@Param("p") Map<String, Object> mp);
 }

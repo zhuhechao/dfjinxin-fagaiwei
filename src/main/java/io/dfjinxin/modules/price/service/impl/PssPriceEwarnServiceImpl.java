@@ -792,7 +792,6 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             if (wpBaseIndexInfoEntity == null) return null;
             String sourceName = ObjectUtils.isEmpty(wpBaseIndexInfoEntity.getSourceName()) ? null : wpBaseIndexInfoEntity.getSourceName();
             Integer commId = ObjectUtils.isEmpty(wpBaseIndexInfoEntity.getCommId()) ? null : wpBaseIndexInfoEntity.getCommId();
-
             if (StringUtils.isEmpty(startDate) && StringUtils.isEmpty(endDate)) {
                 endDate = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));//昨天时间
                 startDate = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -30));//一个月前时间
@@ -806,9 +805,13 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 //                    .between(PssPriceEwarnEntity::getEwarnDate, startDate, endDate)
 //                    .last("group by date(ewarn_date)")
 //                    .list();
-
-            List<PssPriceEwarnEntity> pssPriceEwarnEntities = this.pssPriceEwarnDao.queryPriceRangeByDate(commId, ewarnTypeId, indexId, startDate, endDate);
-
+            Map<String, Object> mp = new HashMap<>();
+            mp.put("commId",commId);
+            mp.put("ewarnTypeId",ewarnTypeId);
+            mp.put("pricTypeId",indexId);
+            mp.put("startDate",startDate);
+            mp.put("endDate",endDate);
+            List<PssPriceEwarnEntity> pssPriceEwarnEntities = this.pssPriceEwarnDao.queryPriceRangeByDate(mp);
             if (!ObjectUtils.isEmpty(pssPriceEwarnEntities)) {
                 StringBuilder commName = new StringBuilder(pssPriceEwarnEntities.get(0).getCommName());
                 if (!StringUtils.isEmpty(sourceName)) {

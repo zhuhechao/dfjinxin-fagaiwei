@@ -59,6 +59,19 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
     }
 
     /**
+     * @Desc: 二级页面(商品总览)-根据3类商品统计指定 指标类型&时间的规格品取值
+     * @Param: [params]
+     * @Return: io.dfjinxin.common.utils.PageUtils
+     * @Author: z.h.c
+     * @Date: 2019/11/13 13:54
+     */
+    @Override
+    public List<Map<String, Object>> downloadByDate(Map<String, Object> params) {
+        List<Map<String, Object>> page = super.baseMapper.downloadByDate(params);
+        return page;
+    }
+
+    /**
      * @Desc: 二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称、时间区域统计规格品各频度下各区域的指标信息
      * @Param: [params]
      * @Return: java.util.Map<java.lang.String, java.lang.Object>
@@ -496,7 +509,6 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         where2.orderByDesc("comm_id");
         where2.orderByDesc("index_name");
         List<WpBaseIndexValEntity> list = wpBaseIndexValDao.selectList(where2);
-
         QueryWrapper<PssCommTotalEntity> where3 = new QueryWrapper();
         for (WpBaseIndexValEntity val : list) {
             where3.eq("comm_id", val.getCommId());
