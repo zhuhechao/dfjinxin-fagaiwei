@@ -4,7 +4,7 @@ server:
     uri-encoding: UTF-8
     max-threads: 1000
     min-spare-threads: 30
-  port: 8081
+  port: 8080
   connection-timeout: 5000ms
   servlet:
     context-path: /fagaiwei_api
@@ -13,7 +13,7 @@ spring:
   # 环境 dev|test|prod
   profiles:
 #    active: test
-    active: @profileActive@
+    active: prod
   # jackson时间格式化
   jackson:
     time-zone: GMT+8
@@ -36,7 +36,7 @@ app:
 
 #启用CA登录配置
 ca:
-  valid: true
+  valid: false
 
 rsp-server:
   url: sp.ndrc.gov.cn
