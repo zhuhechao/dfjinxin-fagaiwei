@@ -40,4 +40,26 @@ public class WpCommPriServiceImpl extends ServiceImpl<WpCommPriDao, WpCommPriEnt
         return baseMapper.selectList(queryWrapper);
     }
 
+    @Override
+    public List<WpCommPriEntity> getDataByDate1(Map<String, Object> params) {
+        String indexId=params.get("indexId").toString();
+        Date startDate= (Date) params.get("startDate");
+        QueryWrapper  queryWrapper=new QueryWrapper<WpCommPriEntity>();
+        queryWrapper.eq("index_id",indexId);
+        queryWrapper.le("data_time",startDate);
+        queryWrapper.orderByDesc(new String[]{"data_time"});
+        return baseMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<WpCommPriEntity> getDataByDate2(Map<String, Object> params) {
+        String indexId=params.get("indexId").toString();
+        QueryWrapper  queryWrapper=new QueryWrapper<WpCommPriEntity>();
+        Date endDate= (Date) params.get("endDate");
+        queryWrapper.eq("index_id",indexId);
+        queryWrapper.le("data_time",endDate);
+        queryWrapper.orderByDesc(new String[]{"data_time"});
+        return baseMapper.selectList(queryWrapper);
+    }
+
 }

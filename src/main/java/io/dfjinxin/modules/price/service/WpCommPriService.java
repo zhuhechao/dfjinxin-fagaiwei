@@ -18,5 +18,9 @@ public interface WpCommPriService extends IService<WpCommPriEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
     List<WpCommPriEntity> getData (Map<String, Object> params) ;
+
+    List<WpCommPriEntity> getDataByDate1 (Map<String, Object> params) ;
+
+    List<WpCommPriEntity> getDataByDate2 (Map<String, Object> params) ;
 }
 

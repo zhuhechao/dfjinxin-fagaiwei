@@ -59,7 +59,7 @@ public class PssPriceEwarnController {
 
     /**
      * @Desc: 根据指标ids, 预警类型查询 各种指标信息
-     * @Param: [indexIds, ewarnTypeId, startDate, endDate]
+     * @Param: [indexIds, ewarnTypeId, sta1rtDate, endDate]
      * @Return: io.dfjinxin.common.utils.R
      * @Author: z.h.c
      * @Date: 2019/11/14 15:33
@@ -109,5 +109,7 @@ public class PssPriceEwarnController {
         Map<String, Object> data = pssPriceEwarnService.queryIndexAvgByIndexId(indexId, ewarnTypeId);
         return R.ok().put("data", data);
     }
+
+
 
 }

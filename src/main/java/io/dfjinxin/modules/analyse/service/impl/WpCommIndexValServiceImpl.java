@@ -14,6 +14,7 @@ import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
 import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
 import io.dfjinxin.modules.price.dao.PssCommTotalDao;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
+import io.dfjinxin.modules.price.entity.WpCommPriEntity;
 import io.dfjinxin.modules.price.service.PssCommTotalService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -518,6 +519,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         }
         return list;
     }
+
 
     /**
      * @Desc: 查询某指标类型下规格品的价格信息

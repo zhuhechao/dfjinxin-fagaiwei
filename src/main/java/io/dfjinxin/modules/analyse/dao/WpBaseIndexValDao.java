@@ -83,4 +83,7 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
             @Param("commId") Integer commId,
             @Param("lastDayStr") String lastDayStr,
             @Param("indexType") String indexType);
+
+    @Select("SELECT COUNT(1) count FROM wp_base_index_val t")
+    List<Map<String, Object>> getDataCount();
 }

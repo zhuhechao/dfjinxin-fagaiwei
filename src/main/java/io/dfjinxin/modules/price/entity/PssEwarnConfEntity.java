@@ -57,14 +57,14 @@ public class PssEwarnConfEntity implements Serializable {
      *
      */
     private BigDecimal ewarnLlmtYellow;
-    /**
-     *
-     */
-    private BigDecimal ewarnUlmtGreen;
-    /**
-     *
-     */
-    private BigDecimal ewarnLlmtGreen;
+//    /**
+//     *
+//     */
+//    private BigDecimal ewarnUlmtGreen;
+//    /**
+//     *
+//     */
+//    private BigDecimal ewarnLlmtGreen;
     /**
      *
      */
@@ -104,6 +104,6 @@ public class PssEwarnConfEntity implements Serializable {
 
     private String colorValYellow;
 
-    private String colorValGreen;
+//    private String colorValGreen;
 
 }

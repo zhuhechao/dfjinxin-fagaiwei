@@ -6,10 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import io.dfjinxin.common.utils.DateUtils;
-import io.dfjinxin.common.utils.MD5Utils;
-import io.dfjinxin.common.utils.PageUtils;
-import io.dfjinxin.common.utils.Query;
+import io.dfjinxin.common.utils.*;
 import io.dfjinxin.common.utils.echart.HttpUtil;
 import io.dfjinxin.modules.analyse.dao.WpBaseIndexValDao;
 import io.dfjinxin.modules.analyse.entity.WpBaseIndexInfoEntity;
@@ -152,6 +149,112 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         return retMap;
     }
 
+
+
+    /**
+     * @Desc: 新的首页展示
+     * @Param: []
+     * @Return: java.util.Map<java.lang.String, java.lang.Object>
+     * @Author: y.b
+     * @Date: 2019/11/16 13:56
+     */
+    @Override
+    public Map<String, Object> indexPageViewLeft( Map<String, Object> params,boolean queryHive) {
+        Map<String, Object> map = new HashMap<>();
+        //获取数据总量
+        List< Map<String, Object>> list1 = wpBaseIndexValDao.getDataCount();
+        map.put("dataTotal",0);
+        if (queryHive) {
+            int tengxunCount = getProgrammeDistribution();
+            if(list1.size() >0){
+                map.put("dataTotal",Integer.parseInt(list1.get(0).get("count").toString())+ tengxunCount);
+            }
+        }else{
+            map.put("dataTotal",list1.get(0).get("count"));
+        }
+        //获取大宗和民生商品数量
+        List< Map<String, Object>> list12 = pssCommTotalDao.getShopCountBycode();
+        if(list12.size()>0){
+            map.put("shopTotal",list12);
+        }
+        Map<String, Object> ma = new HashMap<>();
+        ma.put("itrmDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -1 )));
+       //获取各预警级别商品数量
+        List< Map<String, Object>> list2 = baseMapper.getCountByEwarmType(ma);
+        map.put("ewarmTypeTotal",list2);
+        //获取各预警级别商品数量趋势
+        List< Map<String, Object>> list3 = baseMapper.getCountByEwarmTypeAndDate(params);
+        if(list3.size()>0){
+            List< Map<String, Object>> l1 = new ArrayList<>();
+            List< Map<String, Object>> l2 = new ArrayList<>();
+            List< Map<String, Object>> l3 = new ArrayList<>();
+            Map<String, Object> m1 = new HashMap<>();
+            for (Map<String, Object> entity : list3) {
+                if(entity.get("code_name").equals("高级预警")){
+                    l1.add(entity);
+                }
+                if(entity.get("code_name").equals("中级预警")){
+                    l2.add(entity);
+                }
+                if(entity.get("code_name").equals("低级预警")){
+                    l3.add(entity);
+                }
+            }
+            m1.put("heightEwarm",l1);
+            m1.put("intermediateEwarm",l2);
+            m1.put("lowerEwarm",l3);
+            map.put("ewarmMouthTotal",m1);
+        }else {
+            map.put("ewarmMouthTotal",null);
+        }
+        return  map;
+    }
+    /**
+     * @Desc: 新的首页展示
+     * @Param: []
+     * @Return: java.util.Map<java.lang.String, java.lang.Object>
+     * @Author: y.b
+     * @Date: 2019/11/16 13:56
+     */
+    @Override
+    public Map<String, Object> indexPageViewCenter( Map<String, Object> params) {
+        Map<String, Object> map = new HashMap<>();
+        params.put("itrmDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -1 )));
+        params.put("y_itrmDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -2 )));
+        //获取涨幅前三商品
+        List< Map<String, Object>> list1 = baseMapper.getIncreaseThree(params);
+        map.put("topUpCommodity",list1);
+        //获取跌幅前三商品
+        List< Map<String, Object>> list2 = baseMapper.getDeclineThree(params);
+        map.put("topDownCommodity",list2);
+        //获取指定商品在各省份的价格信息
+        List< Map<String, Object>> list3 = baseMapper.getPriceDistribution(params);
+        int a=0,b=0,c=0;
+        //个预警等级省份数量
+        if(list3.size()>0){
+            for (Map<String, Object> entity : list3) {
+                if(entity.get("stat_area_code").equals("中国")&&entity.get("stat_area_code").equals("全国")){
+                    if(entity.get("code_name").equals("高级预警")){
+                        a++;
+                    }
+                    if(entity.get("code_name").equals("中级预警")){
+                        b++;
+                    }
+                    if(entity.get("code_name").equals("低级预警")){
+                        c++;
+                    }
+                }
+            }
+        }
+        Map<String, Object> ma = new HashMap<>();
+        ma.put("heightCount",a);
+        ma.put("intermediateCount",b);
+        ma.put("lowerCount",c);
+        map.put("provinceCount",ma);
+        map.put("provinceEwarm",list3);
+        return  map;
+    }
+
     /**
      * @Desc: 首页展示 第二次修改,为false不查询Hive
      * @Param: []
@@ -176,7 +279,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             for (PssPriceEwarnEntity entity : priceEwarnList) {
                 if(!list.contains(entity.getCommId())){
                     List<PssPriceEwarnEntity> entities = pssPriceEwarnDao.queryPriceEwarnByDate(entity.getCommId(), lastDayStr2);
-                    list.add(entity.getCommId());
+                   list.add(entity.getCommId());
                     yestDayMaxPricEwarnList.add(entities.get(0));
                 }
             }
@@ -201,14 +304,15 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
         List<RateValDto> rateValDtos = new ArrayList<>();
         List<PssPriceEwarnEntity> ewanInfoList = new ArrayList<>();
-        for (PssPriceEwarnEntity entity : yestDayMaxPricEwarnList) {
+       for (PssPriceEwarnEntity entity : yestDayMaxPricEwarnList) {
             WpAsciiInfoEntity asciiInfoEntity = wpAsciiInfoDao.selectById(entity.getEwarnLevel());
             PssCommTotalEntity commTotalEntity = getParantCommByCommId(entity.getCommId());
-            //把预警商品名称设置为父类商品名称
+          //把预警商品名称设置为父类商品名称
             if (commTotalEntity != null) {
                 entity.setCommName(commTotalEntity.getCommName());
                 entity.setCommId(commTotalEntity.getCommId());
-                entity.setEwarnLevel(asciiInfoEntity.getCodeName());
+              if(asciiInfoEntity!=null)
+                    entity.setEwarnLevel(asciiInfoEntity.getCodeName());
             }
             ewanInfoList.add(entity);
             //计算昨天涨幅&价格最高的预警类型占比
@@ -220,10 +324,11 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         //统计数据总量
         if (queryHive) {
             Long tableRecordCount = wpUpdateInfoService.getEverydayInfoTotal();
-            long baseCount = tableRecordCount == null ? 0 : tableRecordCount.longValue();
+          long baseCount = tableRecordCount == null ? 0 : tableRecordCount.longValue();
             int tengxunCount = getProgrammeDistribution();
             //step1,实时预览-总量(万）
             retMap.put("commTotal", baseCount + tengxunCount);
+
         }
 
         Map<String, Object> lineDateMap = new HashMap<>();
@@ -231,26 +336,25 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         queryWrapper.select("ewarn_level");
         queryWrapper.groupBy("ewarn_level");
         List<PssPriceEwarnEntity> ewarnLevelList = pssPriceEwarnDao.selectList(queryWrapper);
-
-        for (PssPriceEwarnEntity entity : ewarnLevelList) {
+       for (PssPriceEwarnEntity entity : ewarnLevelList) {
             Map<String, List<PwwPriceEwarnDto>> ewarnLevelMap = new HashMap<>();
             List<PwwPriceEwarnDto> dtoList = pssPriceEwarnDao.getEwarnCountByDate(entity.getEwarnLevel(), DateUtils.getMonthFirstDayStr(), lastDayStr);
-            if (dtoList == null) continue;
+           if (dtoList == null) continue;
             //没有预警数据时添加为0
             setDefaultDate(dtoList);
             if ("71".equals(entity.getEwarnLevel())) {
                 //昨天红色预警涨数量
-                ewarnLevelMap.put("红色预警", dtoList);
+                ewarnLevelMap.put("高级预警", dtoList);
             }
             if ("72".equals(entity.getEwarnLevel())) {
-                ewarnLevelMap.put("橙色预警", dtoList);
+                ewarnLevelMap.put("中级预警", dtoList);
             }
             if ("73".equals(entity.getEwarnLevel())) {
-                ewarnLevelMap.put("黄色预警", dtoList);
+                ewarnLevelMap.put("低级预警", dtoList);
             }
-            if ("74".equals(entity.getEwarnLevel())) {
-                ewarnLevelMap.put("绿色预警", dtoList);
-            }
+//            if ("74".equals(entity.getEwarnLevel())) {
+//                ewarnLevelMap.put("绿色预警", dtoList);
+//            }
             lineDateMap.putAll(ewarnLevelMap);
         }
         //step2,商品预警趋势-按预警级别分组统计 从本月一号到昨天预警数据
@@ -262,7 +366,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         retMap.put("ewanInfo", distinctSameSubCommEwarn(ewanInfoList));
         //查询昨日各种预警级别的数量
         List<Map<Integer, Object>> countList = pssPriceEwarnDao.countEwarn(lastDayStr);
-        Map<String, Object> countMap = new HashMap<>();
+       Map<String, Object> countMap = new HashMap<>();
         for (Map<Integer, Object> map : countList) {
             if (map != null && !map.isEmpty()) {
                 Integer key = (Integer) map.get("ewarnLevel");
@@ -279,9 +383,9 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 if (level == 73) {
                     countMap.put("yellowEwarnTotal", sum);
                 }
-                if (level == 74) {
-                    countMap.put("greenEwarnTotal", sum);
-                }
+//                if (level == 74) {
+//                    countMap.put("greenEwarnTotal", sum);
+//                }
             }
         }
 
@@ -290,7 +394,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         temp.put("redEwarnTotal", 0);
         temp.put("orangeEwarnTotal", 0);
         temp.put("yellowEwarnTotal", 0);
-        temp.put("greenEwarnTotal", 0);
+//        temp.put("greenEwarnTotal", 0);
         temp.putAll(countMap);
         retMap.putAll(temp);
         return retMap;
@@ -454,12 +558,10 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             map.put("huanBi", val);
             map.put("tongBi", val);
         }
-
         //step2,规格品价格数据-统计昨天各规格品的商品价格数据
         final String sql = "select pss_comm_total.comm_id from pss_comm_total where data_flag=0 and parent_code=" + commId;
         List<WpBaseIndexValEntity> lastDayValList = wpBaseIndexValDao.queryLastDayPriceByCommId(commId, lastDayStr);
         map.put("priceList", lastDayValList);
-
 
         //step3,地图数据-统计规格品指标类型为'价格'的各省份昨天价格数据
         List<WpBaseIndexValEntity> mapData = wpBaseIndexValService.getprovinceLastDayMapData(commId, "价格", lastDayStr);
@@ -677,10 +779,10 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         Map<String, Object> resultMap = new HashMap<>();
         //先放入默认值不存在的预警返回0
         final String rateZero = "0%";
-        resultMap.put("红色预警", rateZero);
-        resultMap.put("黄色预警", rateZero);
-        resultMap.put("绿色预警", rateZero);
-        resultMap.put("橙色预警", rateZero);
+        resultMap.put("高级预警", rateZero);
+        resultMap.put("中级预警", rateZero);
+//        resultMap.put("绿色预警", rateZero);
+        resultMap.put("低级预警", rateZero);
 
         Iterator<String> iter = map.keySet().iterator();
         int num2 = list.size();
@@ -693,6 +795,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             String result = numberFormat.format((float) num1 / (float) num2 * 100);
             resultMap.put(key, result + "%");
         }
+        System.out.println("resultMap================="+resultMap.toString());
         return resultMap;
     }
 

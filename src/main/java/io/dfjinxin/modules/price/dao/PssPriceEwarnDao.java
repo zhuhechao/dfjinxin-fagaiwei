@@ -149,4 +149,87 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "  AND date(ppw.ewarn_date) BETWEEN #{p.startDate} AND #{p.endDate}\n" +
             "GROUP BY date(ppw.ewarn_date)")
     List<PssPriceEwarnEntity> queryPriceRangeByDate(@Param("p") Map<String, Object> mp);
+
+    /**
+     * @Desc: 统计各预警等级的商品数量
+     * @Param: [itrmDate]
+     * @Author: y.b
+     * @Date: 2020.11.16
+     */
+    @Select("SELECT COUNT(1) cou,t.ewarn_level,m.code_name,n.cou1 total FROM pss_price_ewarn t\n" +
+            "LEFT JOIN wp_ascii_info m ON t.ewarn_level = m.code_id,\n" +
+            "(SELECT COUNT(1) cou1,t1.ewarn_level FROM pss_price_ewarn t1\n" +
+            "WHERE date(t1.ewarn_date) = #{p.itrmDate}) n \n" +
+            "WHERE date(t.ewarn_date) = #{p.itrmDate}\n" +
+            "GROUP BY t.ewarn_level")
+    List< Map<String, Object>> getCountByEwarmType(@Param("p") Map<String, Object> mp);
+
+    /**
+     * @Desc: 统计各预警等级的商品数量趋势
+     * @Param: [itrmDate]
+     * @Author: y.b
+     * @Date: 2020.11.16
+     */
+    @Select("SELECT COUNT(1) cou,t.ewarn_level,DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') ewarn_date,m.code_name FROM pss_price_ewarn t\n" +
+            "LEFT JOIN wp_ascii_info m ON t.ewarn_level = m.code_id\n" +
+            "WHERE date(t.ewarn_date) BETWEEN  #{p.startDate} AND  #{p.endDate}\n" +
+            "GROUP BY t.ewarn_level,DATE_FORMAT(t.ewarn_date,'%Y-%m-%d')\n" +
+            "ORDER BY DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') DESC\n")
+    List< Map<String, Object>> getCountByEwarmTypeAndDate(@Param("p") Map<String, Object> mp);
+
+    /**
+     * @Desc: 统计涨幅前三商品
+     * @Param: [itrmDate]
+     * @Author: y.b
+     * @Date: 2020.11.16
+     */
+    @Select("SELECT t.*,m.code_name,n.comm_name,p.pri_value y_pri_value FROM pss_price_ewarn t \n" +
+            "              LEFT JOIN wp_ascii_info m ON t.ewarn_level = m.code_id\n" +
+            "              LEFT JOIN pss_comm_total n ON n.comm_id = t.comm_id \n" +
+            "              LEFT JOIN (SELECT DISTINCT t1.comm_id, t1.pri_value,t1.pri_range,t1.ewarn_date FROM pss_price_ewarn t1\n" +
+            "              WHERE DATE(t1.ewarn_date) = #{p.y_itrmDate} ) p\n" +
+            "              ON p.comm_id = t.comm_id\n" +
+            "            WHERE DATE(t.ewarn_date) = #{p.itrmDate}\n" +
+            "            AND t.pri_range > 0\n" +
+            "            GROUP BY t.comm_id\n" +
+            "            ORDER BY t.pri_range DESC\n" +
+            "            LIMIT 0,6")
+    List< Map<String, Object>> getIncreaseThree(@Param("p") Map<String, Object> mp);
+
+    /**
+     * @Desc: 统计跌幅前三商品
+     * @Param: [itrmDate]
+     * @Author: y.b
+     * @Date: 2020.11.16
+     */
+    @Select("SELECT t.*,m.code_name,n.comm_name,p.pri_value y_pri_value FROM pss_price_ewarn t \n" +
+            "              LEFT JOIN wp_ascii_info m ON t.ewarn_level = m.code_id\n" +
+            "              LEFT JOIN pss_comm_total n ON n.comm_id = t.comm_id \n" +
+            "              LEFT JOIN (SELECT DISTINCT t1.comm_id, t1.pri_value,t1.pri_range,t1.ewarn_date FROM pss_price_ewarn t1\n" +
+            "              WHERE DATE(t1.ewarn_date) = #{p.y_itrmDate} ) p\n" +
+            "              ON p.comm_id = t.comm_id\n" +
+            "            WHERE DATE(t.ewarn_date) = #{p.itrmDate}\n" +
+            "            AND t.pri_range < 0\n" +
+            "            GROUP BY t.comm_id\n" +
+            "            ORDER BY t.pri_range DESC\n" +
+            "            LIMIT 0,6")
+    List< Map<String, Object>> getDeclineThree(@Param("p") Map<String, Object> mp);
+
+    /**
+     * @Desc: 获取指定商品在各省份的价格信息
+     * @Param: [itrmDate]
+     * @Author: y.b
+     * @Date: 2020.11.16
+     */
+    @Select("SELECT t.ewarn_id,t.comm_id,t.ewarn_date,t.stat_area_code,\n" +
+            "t.pric_type_id,t.ewarn_type_id,t.ewarn_level,t.pri_value,\n" +
+            "t.pri_range,t.unit,m.code_name FROM pss_price_ewarn t\n" +
+            "LEFT JOIN wp_ascii_info m ON t.ewarn_level = m.code_id \n" +
+            "WHERE DATE(t.ewarn_date) = #{p.itrmDate}\n" +
+            "AND t.comm_id = #{p.commId}\n" +
+            "AND t.stat_area_code IS NOT NULL\n" +
+            "AND t.stat_area_code != ''\n" +
+            "GROUP BY t.stat_area_code\n" +
+            "ORDER BY t.pri_range DESC")
+    List< Map<String, Object>> getPriceDistribution(@Param("p") Map<String, Object> mp);
 }

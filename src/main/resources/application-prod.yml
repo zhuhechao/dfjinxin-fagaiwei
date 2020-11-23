@@ -8,9 +8,9 @@ mysql:
     password: 123456
 
 hive:
-    user: hdfs
+    user:
     password:
-    url: jdbc:hive2://172.20.10.63:10000/
+    url: jdbc:hive2://172.20.10.44:10000/default
     driver-class-name: org.apache.hive.jdbc.HiveDriver
     filters: stat
     initialSize: 2
@@ -27,9 +27,9 @@ hive:
 #远程服务python配置
 python:
     #    数据集创建、相关性分析
-    url: http://172.20.10.207:8082/
+    url: http://172.20.10.69:8083/
     #    模型管理
-    url2: http://172.20.10.207:8092
+    url2: http://172.20.10.69:8092
 
 #腾讯接口配置
 tengxun:

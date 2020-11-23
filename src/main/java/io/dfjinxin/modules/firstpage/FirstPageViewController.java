@@ -7,8 +7,10 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -33,6 +35,34 @@ public class FirstPageViewController {
     @ApiOperation("首页-商品预警详细")
     public R firstpage() {
         Map<String, Object> map = pssPriceEwarnService.firstPageView(true);
+
+        return R.ok().put("data", map);
+    }
+
+    /**
+     * 首页
+     */
+    @GetMapping("/viewLeft")
+    @ApiOperation("首页左侧-商品预警详细")
+    public R firstpageLeft( @RequestParam(value = "startDate", required = false) String startDate,
+                            @RequestParam(value = "endDate", required = false) String endDate) {
+        Map<String, Object> ma = new HashMap<>();
+        ma.put("startDate",startDate);
+        ma.put("endDate",endDate);
+        Map<String, Object> map = pssPriceEwarnService.indexPageViewLeft(ma,true);
+
+        return R.ok().put("data", map);
+    }
+
+    /**
+     * 首页
+     */
+    @GetMapping("/viewCenter")
+    @ApiOperation("首页中间和右侧信息")
+    public R firstpageCenter( @RequestParam(value = "commId", required = false) String commId) {
+        Map<String, Object> ma = new HashMap<>();
+        ma.put("commId",commId);
+        Map<String, Object> map = pssPriceEwarnService.indexPageViewCenter(ma);
 
         return R.ok().put("data", map);
     }

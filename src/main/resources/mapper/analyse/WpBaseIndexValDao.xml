@@ -96,8 +96,9 @@
     </select>
 
     <!--add by zhc 11.13 二级页面-根据3类商品统计指定 指标类型&时间的规格品取值-->
-    <select id="queryPageByDate" resultMap="wpBaseIndexValDtoMap">
-        select val.*,total.comm_name
+    <select id="queryPageByDate"  resultType="java.util.HashMap">
+        select val.index_id indexId,val.comm_id commId,val.index_name indexName,val.area_name areaName,val.index_type indexType,
+        val.frequence,val.unit,val.source_name sourceName,val.`value`,val.date,total.comm_name commName
         from wp_base_index_val val
         left join pss_comm_total total
         on val.comm_id = total.comm_id
