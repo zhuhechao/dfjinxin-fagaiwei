@@ -13,7 +13,7 @@ spring:
   # 环境 dev|test|prod
   profiles:
 #    active: test
-    active: @profileActive@
+    active: prod
   # jackson时间格式化
   jackson:
     time-zone: GMT+8

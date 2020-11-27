@@ -7,6 +7,8 @@ package io.dfjinxin.modules.job.task;
 
 import io.dfjinxin.common.utils.DateTime;
 import io.dfjinxin.common.utils.DateUtils;
+import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
+import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
 import io.dfjinxin.modules.price.dao.WpCommPriOrgDao;
 import io.dfjinxin.modules.price.entity.*;
 import io.dfjinxin.modules.price.service.*;
@@ -45,6 +47,8 @@ public class WarnTask implements ITask {
     private WpCommPriOrgService wpCommPriOrgService;
     @Autowired
     private WpAsciiInfoService wpAsciiInfoService;
+    @Autowired
+    private WpBaseIndexValService wpBaseIndexValService;
     @Override
     public void run(String params) throws Exception {
         String[] ids = params.split("@");
@@ -54,6 +58,8 @@ public class WarnTask implements ITask {
         PssEwarnConfEntity pe = pssEwarnConfService.getById(ewarnId);
         //商品配置
         PssCommConfEntity pc = pssCommConfService.getById(commConfId);
+        System.out.println("pe========================="+pe.toString());
+        System.out.println("pc========================="+pe.toString());
         Map<String, Object> cc = new HashMap<String, Object>();
         cc.put("indexId", pc.getIndexId());
         cc.put("endDate", new Date());
@@ -65,52 +71,64 @@ public class WarnTask implements ITask {
         PssPriceEwarnEntity pee = new PssPriceEwarnEntity();
         //常规预警下的取值 wp_comm_pri
         if ("18".equals(pe.getEwarnTypeId())) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            cc.put("areaName", pc.getAreaName());
             cc.put("endDate",  DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -1 ));
-            List<WpCommPriEntity> wys2 = wpCommPriService.getDataByDate2(cc);
-            cc.put("startDate", DateUtils.addDateDays(DateTime.getBeginOf(wys2.get(0).getDataTime()),  -5 ));
-            List<WpCommPriEntity> wys1 = wpCommPriService.getDataByDate1(cc);
-            pee.setCommId(pc.getCommId());
-            pee.setEwarnDate(new Date());
-            pee.setPricTypeId(pc.getIndexId());
-            pee.setEwarnTypeId(pe.getEwarnTypeId());
-            pee.setStatAreaCode(wys2.get(0).getAreaName());
-            pee.setUnit(wys2.get(0).getUnit());//单位
-            if ("1".equals(pe.getEwarnTerm())) {
-                BigDecimal price0 = wys2.get(0).getValue();
-                BigDecimal price1 = wys1.get(0).getValue();
-                BigDecimal b1 = compareResult(price0, price1);
-                pee.setPriRange(b1);
-                //预警级别//R_W:红   O_W:橙     Y_W:黄     G_W:绿
-                pee.setEwarnLevel(ewarnLevelResult(b1.abs(), pe));
-            }
-            pee.setPriValue(wys2.get(0).getValue());
-            if ("2".equals(pe.getEwarnTerm())) {
-                BigDecimal price = wys2.get(0).getValue();//昨天
-                BigDecimal price0 = wys1.get(0).getValue();//前5天
-                BigDecimal price1 = wys1.get(1).getValue();//前6天
-                BigDecimal price2 = wys1.get(2).getValue();//前7天
-                BigDecimal price3 = wys1.get(3).getValue();//前8天
-                BigDecimal price4 = wys1.get(4).getValue();//前9天
-                BigDecimal b0 = compareResult(price, price0);
-                BigDecimal b1 = compareResult(price, price1);
-                BigDecimal b2 = compareResult(price, price2);
-                BigDecimal b3 = compareResult(price, price3);
-                BigDecimal b4 = compareResult(price, price4);
-
-                pee.setPriRange(b0);
-                //预警级别//R_W:红   O_W:橙     Y_W:黄     G_W:绿
-                if (ewarnLevelResult(b0.abs(), pe).equals(ewarnLevelResult(b1, pe)) &&
-                        ewarnLevelResult(b0.abs(), pe).equals(ewarnLevelResult(b2, pe))&&
-                        ewarnLevelResult(b0.abs(), pe).equals(ewarnLevelResult(b3, pe))&&
-                        ewarnLevelResult(b0.abs(), pe).equals(ewarnLevelResult(b4, pe))) {
-                    pee.setEwarnLevel(ewarnLevelResult(b0.abs(), pe));
-                } else {
-                    pee.setEwarnLevel("74");
+            cc.put("commId",pc.getCommId());
+            List<WpBaseIndexValEntity> wys2 = wpBaseIndexValService.getDataByDate2(cc);
+            System.out.println("wys2==================================="+wys2.toString());
+            if(wys2.size()>0){
+                cc.put("startDate", DateUtils.addDateDays(DateTime.getBeginOf(wys2.get(0).getDate()),  -5 ));
+                List<WpBaseIndexValEntity> wys1 = wpBaseIndexValService.getDataByDate1(cc);
+                pee.setCommId(pc.getCommId());
+                pee.setEwarnDate(new Date());
+                pee.setPricTypeId(pc.getIndexId());
+                pee.setEwarnTypeId(pe.getEwarnTypeId());
+                pee.setStatAreaCode(wys2.get(0).getAreaName());
+                pee.setUnit(wys2.get(0).getUnit());//单位
+                if ("1".equals(pe.getEwarnTerm())) {
+                    BigDecimal price0 = new BigDecimal(wys2.get(0).getValue());
+                    BigDecimal price1 = new BigDecimal(wys1.get(0).getValue());
+                    BigDecimal b1 = compareResult(price0, price1);
+                    pee.setPriRange(b1);
+                    //预警级别//R_W:红   O_W:橙     Y_W:黄     G_W:绿
+                    pee.setEwarnLevel(ewarnLevelResult(b1.abs(), pe));
                 }
-            }
-            pssPriceEwarnService.saveOrUpdate(pee);
-            logger.debug("定时任务正在执行，参数为：{}", params);
+                pee.setPriValue(new BigDecimal(wys2.get(0).getValue()));
+                if ("2".equals(pe.getEwarnTerm())) {
+                    BigDecimal price = new BigDecimal(wys2.get(0).getValue());//昨天
+                    BigDecimal price0 = new BigDecimal(wys1.get(0).getValue());//前5天
+                    BigDecimal price1 = new BigDecimal(wys1.get(1).getValue());//前6天
+                    BigDecimal price2 = new BigDecimal(wys1.get(2).getValue());//前7天
+                    BigDecimal price3 = new BigDecimal(wys1.get(3).getValue());//前8天
+                    BigDecimal price4 = new BigDecimal(wys1.get(4).getValue());//前9天
+                    BigDecimal b0 = compareResult(price, price0);
+                    BigDecimal b1 = compareResult(price, price1);
+                    BigDecimal b2 = compareResult(price, price2);
+                    BigDecimal b3 = compareResult(price, price3);
+                    BigDecimal b4 = compareResult(price, price4);
 
+                    pee.setPriRange(b0);
+                    //预警级别//R_W:红   O_W:橙     Y_W:黄     G_W:绿
+                    if (ewarnLevelResult(b0.abs(), pe).equals(ewarnLevelResult(b1, pe)) &&
+                            ewarnLevelResult(b0.abs(), pe).equals(ewarnLevelResult(b2, pe))&&
+                            ewarnLevelResult(b0.abs(), pe).equals(ewarnLevelResult(b3, pe))&&
+                            ewarnLevelResult(b0.abs(), pe).equals(ewarnLevelResult(b4, pe))) {
+                        pee.setEwarnLevel(ewarnLevelResult(b0.abs(), pe));
+                    } else {
+                        pee.setEwarnLevel("74");
+                    }
+                }
+                pssPriceEwarnService.saveOrUpdate(pee);
+                logger.debug("定时任务正在执行，参数为：{}", params);
+            }
         }
         //非常规预警下的取值 wp_cmm_pri_org
         if ("19".equals(pe.getEwarnTypeId())) {

@@ -31,7 +31,7 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
 
     List<PssPriceEwarnEntity> queryEwarnlevel();
 
-    PssPriceEwarnEntity selectMaxRange(
+    Map<String, Object> selectMaxRange(
             @Param("commId") Integer commId,
             @Param("dateStr") String dateStr);
 
@@ -232,4 +232,53 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "GROUP BY t.stat_area_code\n" +
             "ORDER BY t.pri_range DESC")
     List< Map<String, Object>> getPriceDistribution(@Param("p") Map<String, Object> mp);
+
+    /**
+     * @Desc: 获取指定商品在各省份的价格信息
+     * @Param: [itrmDate]
+     * @Author: y.b
+     * @Date: 2020.11.16
+     */
+    @Select("SELECT t.ewarn_id,t.comm_id,t.ewarn_date,t.stat_area_code,\n" +
+            "t.pric_type_id,t.ewarn_type_id,t.ewarn_level,t.pri_value,\n" +
+            "t.pri_range,t.unit,m.code_name,n.comm_name FROM pss_price_ewarn t\n" +
+            "LEFT JOIN wp_ascii_info m ON t.ewarn_level = m.code_id \n" +
+            "LEFT JOIN pss_comm_total n ON n.comm_id = t.comm_id \n" +
+            "WHERE DATE(t.ewarn_date) BETWEEN  #{p.startDate} AND #{p.endDate}\n" +
+            "AND n.parent_code = #{p.commId}\n" +
+            "AND t.stat_area_code in ('中国','全国') \n" +
+            "AND t.stat_area_code IS NOT NULL\n" +
+            "AND t.stat_area_code != ''\n" +
+            "GROUP BY DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') \n" +
+            "ORDER BY t.ewarn_date")
+    List< Map<String, Object>> getEwarmInfoByDate(@Param("p") Map<String, Object> mp);
+
+    /**
+     * @Desc: 获取指定商品价格月趋势和周趋势信息
+     * @Param: [itrmDate]
+     * @Author: y.b
+     * @Date: 2020.11.16
+     */
+    @Select("SELECT t.* FROM pss_price_ewarn t\n" +
+            "WHERE t.stat_area_code = '全国'\n" +
+            "AND t.comm_id = #{p.commId}\n" +
+            "AND t.ewarn_date BETWEEN #{p.startDate} AND #{p.endDate}\n" +
+            "GROUP BY date(t.ewarn_date)\n" +
+            "ORDER BY t.ewarn_date ")
+    List<PssPriceEwarnEntity> getPriceThend(@Param("p") Map<String, Object> mp);
+
+    /**
+     * @Desc: 获取指定商品预测价格月趋势和周趋势信息
+     * @Param: [itrmDate]
+     * @Author: y.b
+     * @Date: 2020.11.16
+     */
+    @Select("SELECT t.* ,m.comm_name FROM pss_price_relt t\n" +
+            "LEFT JOIN pss_comm_total m ON m.comm_id = t.comm_id\n" +
+            "WHERE t.fore_type = '日预测'\n" +
+            "AND t.comm_id = #{p.commId}\n" +
+            "AND t.fore_time BETWEEN #{p.startDate} AND #{p.endDate}\n" +
+            "GROUP BY t.fore_time\n" +
+            "ORDER BY t.fore_time ")
+    List<PssPriceEwarnEntity> getForePriceThend(@Param("p") Map<String, Object> mp);
 }

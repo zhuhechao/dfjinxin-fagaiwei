@@ -17,6 +17,8 @@ public interface PssPriceReltService extends IService<PssPriceReltEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
+    List<Map<String, Object>> queryInfo(Map<String, Object> params);
+
     Map<String, Object> detail(Long id, String foreType, String dateFrom, String DateTo);
 
     PssPriceReltDto queryCommByCommId(Integer commId);

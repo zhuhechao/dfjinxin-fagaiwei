@@ -587,4 +587,36 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         return map;
     }
 
+    @Override
+    public List<WpBaseIndexValEntity> getDataByDate1(Map<String, Object> params) {
+        String indexId=params.get("indexId").toString();
+        Date startDate= (Date) params.get("startDate");
+        QueryWrapper  queryWrapper=new QueryWrapper<WpBaseIndexValEntity>();
+        queryWrapper.eq("index_id",indexId);
+        if(params.get("areaName") != null){
+            queryWrapper.eq("area_name",params.get("areaName"));
+        }
+        queryWrapper.eq("index_type","价格");
+        queryWrapper.eq("comm_id",params.get("commId"));
+        queryWrapper.le("date",startDate);
+        queryWrapper.orderByDesc(new String[]{"date"});
+        return baseMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<WpBaseIndexValEntity> getDataByDate2(Map<String, Object> params) {
+        String indexId=params.get("indexId").toString();
+        QueryWrapper  queryWrapper=new QueryWrapper<WpBaseIndexValEntity>();
+        Date endDate= (Date) params.get("endDate");
+        queryWrapper.eq("index_id",indexId);
+        if(params.get("areaName") != null ){
+            queryWrapper.eq("area_name",params.get("areaName"));
+        }
+        queryWrapper.eq("index_type","价格");
+        queryWrapper.eq("comm_id",params.get("commId"));
+        queryWrapper.le("date",endDate);
+        queryWrapper.orderByDesc(new String[]{"date"});
+        return baseMapper.selectList(queryWrapper);
+    }
+
 }

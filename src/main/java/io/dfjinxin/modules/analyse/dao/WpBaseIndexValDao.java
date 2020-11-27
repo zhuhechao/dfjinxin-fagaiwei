@@ -51,7 +51,7 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
             "                  FROM pss_comm_total\n" +
             "                  WHERE data_flag = 0\n" +
             "                    and parent_code = #{commId})\n" +
-            "  AND val.date = #{lastDayStr}\n" +
+            "  AND val.date <= #{lastDayStr}\n" +
             "GROUP BY val.comm_id")
     List<WpBaseIndexValEntity> queryLastDayPriceByCommId(
             @Param("commId") Integer commId,

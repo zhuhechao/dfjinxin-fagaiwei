@@ -24,6 +24,19 @@ public interface PssPriceReltDao extends BaseMapper<PssPriceReltEntity> {
 
     IPage<PssPriceReltEntity> queryPage(Page page, @Param("param") Map map);
 
+    @Select("SELECT ppr.*, pct.comm_name, pfmr.mod_name, pfmr.MAPE, pfmr.algo_name ,wp.value actual_price,wp.unit\n" +
+            "FROM pss_price_relt ppr \n" +
+            "LEFT JOIN pss_comm_total pct ON ppr.comm_id = pct.comm_id \n" +
+            "LEFT JOIN pss_dataset_info pdi ON ppr.data_set_id = pdi.data_set_id \n" +
+            "LEFT JOIN pss_fore_mod_result pfmr ON ppr.mod_id = pfmr.mod_id \n" +
+            "LEFT JOIN wp_base_index_val wp ON wp.comm_id = ppr.comm_id \n" +
+            "WHERE 1=1 \n" +
+            " AND ppr.fore_type = #{p.foreType} \n" +
+            " AND ppr.comm_id = #{p.commId} \n" +
+            "GROUP BY ppr.fore_time\n" +
+            "ORDER BY ppr.fore_time")
+    List<Map<String, Object>> queryInfo(@Param("p") Map map);
+
     @Select("select relt.*, com.comm_name\n" +
             "from pss_price_relt relt\n" +
             "         left join pss_comm_total com\n" +

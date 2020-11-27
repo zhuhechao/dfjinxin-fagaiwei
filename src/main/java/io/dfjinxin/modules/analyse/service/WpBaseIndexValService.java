@@ -42,6 +42,8 @@ public interface WpBaseIndexValService extends IService<WpBaseIndexValEntity> {
 
     List<WpBaseIndexValEntity> getProvinceMapByCommId(Integer commId,String indexType ,String date);
 
+    List<WpBaseIndexValEntity> getDataByDate1 (Map<String, Object> params) ;
 
+    List<WpBaseIndexValEntity> getDataByDate2 (Map<String, Object> params) ;
 }
 

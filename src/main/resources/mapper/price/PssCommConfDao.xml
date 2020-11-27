@@ -10,10 +10,11 @@
         <result property="delFlag" column="del_flag"/>
         <result property="crteDate" column="crte_date"/>
         <result property="remarks" column="remarks"/>
+        <result property="areaName" column="area_name"/>
     </resultMap>
 
     <insert id="saveCommConf">
-        insert into pss_comm_conf (comm_id,ewarn_id,del_flag,crte_date,index_id)
+        insert into pss_comm_conf (comm_id,ewarn_id,del_flag,crte_date,index_id,area_name)
         values
         <foreach collection="ewarnIds" item="item" index="index" separator=",">
             (
@@ -21,7 +22,8 @@
             #{item},
             0,
             now(),
-            #{indexId}
+            #{indexId},
+            #{areaName}
             )
         </foreach>
     </insert>

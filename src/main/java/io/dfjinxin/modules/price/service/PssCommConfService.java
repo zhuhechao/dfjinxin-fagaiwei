@@ -18,13 +18,13 @@ public interface PssCommConfService extends IService<PssCommConfEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
-    void saveCommConf(Integer commId,List<Integer> ewarnIds,List<Integer> indexIds);
+    void saveCommConf(Integer commId,List<Integer> ewarnIds,List<Integer> indexIds,String areaName);
 
-    List<PssCommConfEntity> getCommConfByParms(Integer commId, List<Integer> ewarnIds, List<Integer> indexIds);
+    List<PssCommConfEntity> getCommConfByParms(Integer commId, List<Integer> ewarnIds, List<Integer> indexIds,String areaName);
 
     void deleteCommConf(Integer confId);
 
-    void saveCommomJob(Integer commId, List<Integer> ewarnIds, List<Integer> indexIds);
+    void saveCommomJob(Integer commId, List<Integer> ewarnIds, List<Integer> indexIds,String areaName);
 
     List<PssCommConfEntity> queryByewarnTypeId(Integer commId, Integer ewarnTypeId);
 }

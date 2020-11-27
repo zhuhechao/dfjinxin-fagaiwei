@@ -23,7 +23,8 @@ public interface PssCommConfDao extends BaseMapper<PssCommConfEntity> {
 
     void saveCommConf(@Param("commId") Integer commId,
                       @Param("indexId") Integer indexId,
-                      @Param("ewarnIds") List<Integer> ewarnIds);
+                      @Param("ewarnIds") List<Integer> ewarnIds,
+                      @Param("areaName") String areaName);
 
 
     @Select("select conf.*, ec.ewarn_type_id, tot.comm_name\n" +

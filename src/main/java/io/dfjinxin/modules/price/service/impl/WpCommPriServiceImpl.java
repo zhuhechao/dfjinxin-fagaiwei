@@ -5,9 +5,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
+import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
+import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
 import io.dfjinxin.modules.price.dao.WpCommPriDao;
 import io.dfjinxin.modules.price.entity.WpCommPriEntity;
 import io.dfjinxin.modules.price.service.WpCommPriService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -17,6 +20,9 @@ import java.util.Map;
 
 @Service("wpCommPriService")
 public class WpCommPriServiceImpl extends ServiceImpl<WpCommPriDao, WpCommPriEntity> implements WpCommPriService {
+
+    @Autowired
+    WpBaseIndexValService wpBaseIndexValService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -36,28 +42,6 @@ public class WpCommPriServiceImpl extends ServiceImpl<WpCommPriDao, WpCommPriEnt
         QueryWrapper  queryWrapper=new QueryWrapper<WpCommPriEntity>();
         queryWrapper.eq("index_id",indexId);
         queryWrapper.between("data_time",startDate,endDate);
-        queryWrapper.orderByDesc(new String[]{"data_time"});
-        return baseMapper.selectList(queryWrapper);
-    }
-
-    @Override
-    public List<WpCommPriEntity> getDataByDate1(Map<String, Object> params) {
-        String indexId=params.get("indexId").toString();
-        Date startDate= (Date) params.get("startDate");
-        QueryWrapper  queryWrapper=new QueryWrapper<WpCommPriEntity>();
-        queryWrapper.eq("index_id",indexId);
-        queryWrapper.le("data_time",startDate);
-        queryWrapper.orderByDesc(new String[]{"data_time"});
-        return baseMapper.selectList(queryWrapper);
-    }
-
-    @Override
-    public List<WpCommPriEntity> getDataByDate2(Map<String, Object> params) {
-        String indexId=params.get("indexId").toString();
-        QueryWrapper  queryWrapper=new QueryWrapper<WpCommPriEntity>();
-        Date endDate= (Date) params.get("endDate");
-        queryWrapper.eq("index_id",indexId);
-        queryWrapper.le("data_time",endDate);
         queryWrapper.orderByDesc(new String[]{"data_time"});
         return baseMapper.selectList(queryWrapper);
     }

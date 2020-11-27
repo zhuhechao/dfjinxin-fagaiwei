@@ -489,7 +489,37 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         map.put("minsheng", minsheng);
         return map;
     }
-
+    /**
+     * 计算二级页面(商品总览)除指标类型信息外的其它数据
+     *
+     * @param commId
+     * @return
+     */
+    @Override
+    public Map<String, Object> ewarmInfo(Integer commId) {
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> param = new HashMap<>();
+        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));//昨天时间
+        String lastMonthDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -31));//一个月前时间
+        String lastYearDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -366));//去年昨天时间
+        String lastYearMonthDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -397));//去年一个月前时间
+        param.put("commId",commId);
+        param.put("startDate",lastMonthDayStr);
+        param.put("endDate",lastDayStr);
+        //近一个月预警信息
+        List< Map<String, Object>> list1 = baseMapper.getEwarmInfoByDate(param);
+        map.put("dangqianyujing",null);
+        if(list1.size()>0){
+            map.put("dangqianyujing",list1.get(list1.size()-1));
+        }
+        map.put("yueyujing",list1);
+        param.put("startDate",lastYearMonthDayStr);
+        param.put("endDate",lastYearDayStr);
+        //去年同期近一个月预警信息
+        List< Map<String, Object>> list2 = baseMapper.getEwarmInfoByDate(param);
+        map.put("qunianyueyujing",list2);
+        return map;
+    }
 
     /**
      * 计算二级页面(商品总览)除指标类型信息外的其它数据
@@ -509,23 +539,23 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         String val = "0%";
 
         // 查询昨天涨幅最大的4类商品预警
-        PssPriceEwarnEntity entity = pssPriceEwarnDao.selectMaxRange(commId, lastDayStr);
+        Map<String, Object> entity = pssPriceEwarnDao.selectMaxRange(commId, lastDayStr);
         if (entity != null) {
             // 昨天价格
-            BigDecimal lastPriValue = entity.getPriValue();
+            BigDecimal lastPriValue = (BigDecimal)entity.get("pri_value");
             BigDecimal ONE = new BigDecimal(1);
             BigDecimal HUN = new BigDecimal(100);
 
-            Date last2Date = DateUtils.addDateDays(entity.getEwarnDate(), -1);
+            Date last2Date = DateUtils.addDateDays((Date)entity.get("ewarn_date"), -1);
             String last2DateStr = DateUtils.dateToStr(last2Date);//前天时间
             QueryWrapper where2 = new QueryWrapper();
             where2.eq("date(ewarn_date)", last2DateStr);
-            where2.eq("comm_id", entity.getCommId());
+            where2.eq("comm_id", entity.get("comm_id"));
             where2.last(" limit 0,1");
             PssPriceEwarnEntity entity1 = pssPriceEwarnDao.selectOne(where2);
             if (entity1 == null) {
                 map.put("tongBi", val);
-                logger.error("商品{}-{},预警价格,数据不存在!", entity.getCommId(), last2DateStr);
+                logger.error("商品{}-{},预警价格,数据不存在!", entity.get("comm_id"), last2DateStr);
             } else {
                 // 前天价格
                 BigDecimal last2DayPriValue = entity1.getPriValue();
@@ -534,34 +564,41 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 String tongBi = tongBiTemp.multiply(HUN).toString() + "%";
                 map.put("tongBi", tongBi);
             }
+            map.put("yujing", entity.get("ewarn_name"));
 
-            //计算上月今日价格-计算环比
-            QueryWrapper where4 = new QueryWrapper();
-            where4.eq("date(ewarn_date)", lastMonthDayStr);
-            where4.eq("comm_id", entity.getCommId());
-            where4.last("limit 0,1");
-
-            PssPriceEwarnEntity entity2 = pssPriceEwarnDao.selectOne(where4);
-
-            if (entity2 == null) {
-                map.put("huanBi", val);
-                logger.error("商品{}-{},预警价格,数据不存在!", entity.getCommId(), lastMonthDayStr);
-            } else {
-                //上月今日价格
-                BigDecimal lastMonthTodayPrice = entity2.getPriValue();
-                // 环比
-                BigDecimal huanBiTemp = lastPriValue.divide(lastMonthTodayPrice, 2, RoundingMode.HALF_UP).subtract(ONE);
-                String huanBi = huanBiTemp.multiply(HUN).toString() + "%";
-                map.put("huanBi", huanBi);
-            }
+//            //计算上月今日价格-计算环比
+//            QueryWrapper where4 = new QueryWrapper();
+//            where4.eq("date(ewarn_date)", lastMonthDayStr);
+//            where4.eq("comm_id", entity.getCommId());
+//            where4.last("limit 0,1");
+//
+//            PssPriceEwarnEntity entity2 = pssPriceEwarnDao.selectOne(where4);
+//
+//            if (entity2 == null) {
+//                map.put("huanBi", val);
+//                logger.error("商品{}-{},预警价格,数据不存在!", entity.getCommId(), lastMonthDayStr);
+//            } else {
+//                //上月今日价格
+//                BigDecimal lastMonthTodayPrice = entity2.getPriValue();
+//                // 环比
+//                BigDecimal huanBiTemp = lastPriValue.divide(lastMonthTodayPrice, 2, RoundingMode.HALF_UP).subtract(ONE);
+//                String huanBi = huanBiTemp.multiply(HUN).toString() + "%";
+//                map.put("huanBi", huanBi);
+//            }
         } else {
+            map.put("yujing","");
             map.put("huanBi", val);
-            map.put("tongBi", val);
         }
         //step2,规格品价格数据-统计昨天各规格品的商品价格数据
         final String sql = "select pss_comm_total.comm_id from pss_comm_total where data_flag=0 and parent_code=" + commId;
         List<WpBaseIndexValEntity> lastDayValList = wpBaseIndexValDao.queryLastDayPriceByCommId(commId, lastDayStr);
-        map.put("priceList", lastDayValList);
+        List<WpBaseIndexValEntity> lis = new ArrayList<>();
+        for (WpBaseIndexValEntity dt : lastDayValList) {
+            if(dt.getDate().equals(lastDayValList.get(0).getDate())){
+                lis.add(dt);
+            }
+        }
+        map.put("priceList", lis);
 
         //step3,地图数据-统计规格品指标类型为'价格'的各省份昨天价格数据
         List<WpBaseIndexValEntity> mapData = wpBaseIndexValService.getprovinceLastDayMapData(commId, "价格", lastDayStr);
@@ -578,7 +615,24 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         //step4,全国价格走势 规格品指标类型是价格、区域是全国的、上月昨天到昨天的数据
         List<String> quanGuoFrequenceList = this.getFrequenceByWhere(lastMonthDayStr, lastDayStr, "中国");
         map.put("quanGuoJiaGeZouShi", this.convertQuYujiaGeByJiaGeZhiBiao(quanGuoFrequenceList, type4CommList, "中国", lastMonthDayStr, lastDayStr));
-
+       //进一个月商品价格走势和涨跌幅
+        Map<String, Object> ma = new HashMap<>();
+        ma.put("commId",commId);
+        ma.put("startDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -31 )));
+        ma.put("endDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -1 )));
+        List<PssPriceEwarnEntity> zhoujagezoushi = baseMapper.getPriceThend(ma);
+        map.put("zhoujagezoushi",zhoujagezoushi);
+        ma.put("startDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -8 )));
+        List<PssPriceEwarnEntity> yuejagezoushi = baseMapper.getPriceThend(ma);
+        map.put("yuejagezoushi",yuejagezoushi);
+        //未来一个月商品预测价格走势
+        ma.put("startDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  0 )));
+        ma.put("endDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  +7 )));
+        List<PssPriceEwarnEntity> zhouyucejagezoushi = baseMapper.getForePriceThend(ma);
+        map.put("zhouyucejagezoushi",zhouyucejagezoushi);
+        ma.put("endDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  +30 )));
+        List<PssPriceEwarnEntity> yueyucejagezoushi = baseMapper.getForePriceThend(ma);
+        map.put("yueyucejagezoushi",yueyucejagezoushi);
         //step5,区域价格分布 规格品指标类型是价格、区域是各省份、自治区的、昨天到上月昨天的数据
         List<String> quYuFrequenceList = this.getFrequenceByWhere(null, lastDayStr, null);
         map.put("quYuJiaGeFengBu", this.convertQuYujiaGeByJiaGeZhiBiao(quYuFrequenceList, type4CommList, null, null, lastDayStr));
@@ -589,7 +643,6 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         where5.inSql("comm_id", sql);
         where5.groupBy("comm_id");
         List<PssPriceReltEntity> tyep4CommList = pssPriceReltDao.selectList(where5);
-
         Map<String, Object> reltRusult = new HashMap<>();
         String[] foreTypeArr = new String[]{"日预测", "周预测", "月预测"};
         for (String foreType : foreTypeArr) {
@@ -681,6 +734,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         }
         where5.groupBy("frequence");
         List<WpBaseIndexValEntity> entities = wpBaseIndexValDao.selectList(where5);
+        System.out.println("entities================================="+entities.toString());
         entities.forEach(entity -> frequenceList.add(entity.getFrequence()));
         return frequenceList;
     }

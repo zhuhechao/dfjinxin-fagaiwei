@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -58,6 +59,31 @@ public class PssPriceReltController {
         PageUtils page = pssPriceReltService.queryPage(params);
 
         return R.ok().put("page", page);
+    }
+
+    /**
+     * @Desc: 价格分析-价格预测(根据3类商品查询该3类商品下的规格品预测信息【3类商品下最多只会有一种规格品做预测】)
+     * @Param: [commName, foreType, parentCode, levelCode, pageIndex, pageSize]
+     * @Return: io.dfjinxin.common.utils.R
+     * @Author: z.h.c
+     * @Date: 2019/12/18 15:25
+     */
+    @GetMapping("/queryInfo")
+    @ApiOperation(value = "价格分析-价格预测(商品预测详情)", notes = "3类商品下最多只会有一种规格品做预测")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "commId", value = "商品id", required = false, dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "foreType", value = "预测类型", required = false, dataType = "String", paramType = "query")
+    })
+    public R queryInfo(
+            @RequestParam(value = "foreType", required = false) String foreType,
+            @RequestParam(value = "commId", required = false) Integer commId) {
+        Map<String, Object> params = new HashMap() {{
+            put("foreType", foreType);
+            put("commId", commId);
+        }};
+        List<Map<String, Object>> page = pssPriceReltService.queryInfo(params);
+
+        return R.ok().put("list", page);
     }
 
     /**

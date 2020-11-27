@@ -47,18 +47,18 @@ public class PssCommConfServiceImpl extends ServiceImpl<PssCommConfDao, PssCommC
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveCommConf(Integer levelCode3Id, List<Integer> ewarnIds, List<Integer> indexIds) {
+    public void saveCommConf(Integer levelCode3Id, List<Integer> ewarnIds, List<Integer> indexIds,String areaName) {
         if (levelCode3Id == null || ewarnIds == null || indexIds == null) {
             return;
         }
 
         for (Integer indexId : indexIds) {
-            pssCommConfDao.saveCommConf(levelCode3Id, indexId, ewarnIds);
+            pssCommConfDao.saveCommConf(levelCode3Id, indexId, ewarnIds,areaName);
         }
     }
 
     @Override
-    public List<PssCommConfEntity> getCommConfByParms(Integer commId, List<Integer> ewarnIds, List<Integer> indexIds) {
+    public List<PssCommConfEntity> getCommConfByParms(Integer commId, List<Integer> ewarnIds, List<Integer> indexIds,String areaName) {
         if (commId == null || ewarnIds == null || indexIds == null) {
             return new ArrayList<>();
         }
@@ -67,12 +67,15 @@ public class PssCommConfServiceImpl extends ServiceImpl<PssCommConfDao, PssCommC
         where.in("index_id", indexIds);
         where.in("ewarn_id", ewarnIds);
         where.eq("del_flag", 0);
+        if(areaName != null && areaName.equals("")==false){
+            where.eq("area_name",areaName);
+        }
         return pssCommConfDao.selectList(where);
     }
 
     @Override
-    public void saveCommomJob(Integer commId, List<Integer> ewarnIds, List<Integer> indexIds) {
-        List<PssCommConfEntity> pcfs = getCommConfByParms(commId, ewarnIds, indexIds);
+    public void saveCommomJob(Integer commId, List<Integer> ewarnIds, List<Integer> indexIds,String areaName) {
+        List<PssCommConfEntity> pcfs = getCommConfByParms(commId, ewarnIds, indexIds,areaName);
         for (PssCommConfEntity py : pcfs) {
             PssEwarnConfEntity pe = pssEwarnConfService.queryEntityByEwarnId(py.getEwarnId() + "");
             StringBuilder sb = new StringBuilder();

@@ -1,6 +1,7 @@
 package io.dfjinxin.modules.price.controller;
 
 import io.dfjinxin.common.utils.R;
+import io.dfjinxin.modules.job.task.ITask;
 import io.dfjinxin.modules.price.service.PssPriceEwarnService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -27,6 +28,10 @@ public class PssPriceEwarnController {
 
     @Autowired
     private PssPriceEwarnService pssPriceEwarnService;
+
+    @Autowired
+    private ITask warnTask;
+
 
     /**
      * @Desc:
@@ -108,6 +113,30 @@ public class PssPriceEwarnController {
             @RequestParam Integer ewarnTypeId) {
         Map<String, Object> data = pssPriceEwarnService.queryIndexAvgByIndexId(indexId, ewarnTypeId);
         return R.ok().put("data", data);
+    }
+
+    /**
+     * @Desc: 根据预警类型、指标id，统考某类指标的月平均、年平均、当前值
+     * 根据3类商品id,查询预警类型是【常规或非常规】的商品信息
+     * @Param: [indexId, ewarnTypeId]
+     * @Return: io.dfjinxin.common.utils.R
+     * @Author: z.h.c
+     * @Date: 2019/11/13 15:31
+     */
+    @GetMapping("/ewarmInfo")
+    @ApiOperation(value = "二级页面(预警展示)", notes = "根据预警类型【常规或非常规】、指标id，统考某类指标的月平均、年平均、当前值")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "commId", value = "商品", required = true, dataType = "Int", paramType = "query")
+    })
+    public R ewarmInfo(
+            @RequestParam Integer commId) {
+        Map<String, Object> data = pssPriceEwarnService.ewarmInfo(commId);
+//        try {
+//            warnTask.run(commId);//"ewarnId:59@commConfId:359");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+        return R.ok().put("data", null);
     }
 
 

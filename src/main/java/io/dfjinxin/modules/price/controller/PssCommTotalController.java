@@ -87,6 +87,7 @@ public class PssCommTotalController {
         Integer commId = (Integer) params.get("commId");
         List<Integer> ewarnIds = (List<Integer>) params.get("ewarnIds");
         List<Integer> indexIds = (List<Integer>) params.get("indexIds");
+        String areaName = params.get("areaName").toString();
         if (commId == null || ewarnIds == null || indexIds == null) {
             return R.error("请求参数为空!");
         }
@@ -105,15 +106,16 @@ public class PssCommTotalController {
             confEntity.setCrteDate(new Date());
             confEntity.setIndexId(indexIds.get(0));
             confEntity.setEwarnId(ewarnIds.get(0));
+            confEntity.setAreaName(areaName);
             pssCommConfService.updateById(confEntity);
         } else {
-            List<PssCommConfEntity> commConfEntityList = pssCommConfService.getCommConfByParms(commId, ewarnIds, indexIds);
+            List<PssCommConfEntity> commConfEntityList = pssCommConfService.getCommConfByParms(commId, ewarnIds, indexIds,areaName);
             if (!commConfEntityList.isEmpty()) {
                 return R.error("该商品已配置此种类型预警!");
             }
-            pssCommConfService.saveCommConf(commId, ewarnIds, indexIds);
+            pssCommConfService.saveCommConf(commId, ewarnIds, indexIds,areaName);
             //添加调度任务
-            pssCommConfService.saveCommomJob(commId, ewarnIds, indexIds);
+            pssCommConfService.saveCommomJob(commId, ewarnIds, indexIds,areaName);
         }
         return R.ok();
     }

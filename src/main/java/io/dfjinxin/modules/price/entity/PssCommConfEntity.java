@@ -43,6 +43,11 @@ public class PssCommConfEntity implements Serializable {
      */
     private String remarks;
 
+    /**
+     *
+     */
+    private String areaName;
+
     private Integer indexId;
 
     @TableField(exist = false)

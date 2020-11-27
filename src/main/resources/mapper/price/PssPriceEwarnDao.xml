@@ -37,14 +37,15 @@
         select count(comm_id) as total,ewarn_level elevel from pss_price_ewarn group by ewarn_level
     </select>
 
-    <select id="selectMaxRange" resultType="io.dfjinxin.modules.price.entity.PssPriceEwarnEntity">
-        select ppe.*
+    <select id="selectMaxRange" resultType="map">
+       select ppe.*,wp.code_name ewarn_name
         from pss_price_ewarn ppe
+				LEFT JOIN wp_ascii_info wp ON wp.code_id = ppe.ewarn_level
         where comm_id in (select pcc.comm_id
                   from pss_comm_total pcc
                   where pcc.parent_code = #{commId})
-        and date(ewarn_date) = #{dateStr}
-        order by pri_range desc
+        and #{dateStr}>= date(ewarn_date)
+        order by ewarn_date desc
         limit 0,1;
     </select>
 

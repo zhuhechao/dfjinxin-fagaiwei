@@ -35,6 +35,12 @@ public class PssPriceReltServiceImpl extends ServiceImpl<PssPriceReltDao, PssPri
     }
 
     @Override
+    public List<Map<String, Object>> queryInfo(Map<String, Object> params) {
+        List<Map<String, Object>> list = baseMapper.queryInfo(params);
+        return list;
+    }
+
+    @Override
     public PageUtils getDataGrid(Map<String, Object> params) {
         Page page = new Page((Integer) params.get("pageIndex"), (Integer) params.get("pageSize"));
         page = (Page) super.baseMapper.getDataGrid(page, params);
