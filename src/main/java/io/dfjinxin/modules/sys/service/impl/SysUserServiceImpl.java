@@ -281,34 +281,20 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		CopyMaps(m9,m7);
 		CopyMaps(md,m7);
 		CopyMaps(md,m3);
-		if(m7.size()>1){
-			Collections.sort(m7,new MapComparatorDesc());
-		}
+		Collections.sort(m7,new MapComparatorDesc());
 		updateMap(m2,m7);
-		if(m2.size()>1){
-			Collections.sort(m2,new MapComparatorDesc());
-		}
-		if(m9.size()>1){
-			Collections.sort(m9,new MapComparatorDesc());
-		}
+		Collections.sort(m2,new MapComparatorDesc());
+		Collections.sort(m9,new MapComparatorDesc());
 		updateMap(m3,m9);
-		if(m3.size()>1){
-			Collections.sort(m3,new MapComparatorDesc());
-		}
-		if(md.size()>1){
-			Collections.sort(md,new MapComparatorDesc());
-		}
+		Collections.sort(m3,new MapComparatorDesc());
+		Collections.sort(md,new MapComparatorDesc());
 		updateMap(m6,md);
-		if(m6.size()>1){
-			Collections.sort(m6,new MapComparatorDesc());
-		}
+		Collections.sort(m6,new MapComparatorDesc());
         updateMap(m1,m7);
         m1.addAll(m6);
         m1.addAll(m8);
-        m1.addAll(m3);
-        if(m1.size()>1){
-			Collections.sort(m1,new MapComparatorDesc());
-		}
+       // m1.addAll(m3);
+		Collections.sort(m1,new MapComparatorDesc());
 		for(Map<String,Object> dt: m1){
 			int flg=(int)dt.get("pare_menu_id");
 			if(flg==1){
