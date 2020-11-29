@@ -177,6 +177,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 			if((int)data.get("depth") == 3) {
 				levelOneMenu(m6,data);
 			}else if((int)data.get("depth") == 2){
+				//系统管理
 				List<Map<String, Object>> lt = new ArrayList<>();
 				Map<String, Object> map = new HashMap<>();
 				String pr = (String) data.get("menu_router");
@@ -202,6 +203,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				map.put("menu_order",data.get("menu_order"));
 				m3.add(map);
 			}else if((int) data.get("depth") == 1 && (int) data.get("pare_menu_id")!= 1) {
+				//二级目录
 				Map<String, Object> map = new HashMap<>();
 				List<Map<String, Object>> lt = new ArrayList<>();
 				String pr = (String) data.get("menu_router");
@@ -219,6 +221,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 			}else if((int) data.get("depth") == 1 && (int) data.get("pare_menu_id")== 1) {
 				levelOneMenu(m1,data);
 			}else if((int) data.get("depth") == 0 && (int) data.get("pare_menu_id")!= 1) {
+				//m7 三级目录
 				Map<String, Object> map = new HashMap<>();
 				String pr = (String) data.get("menu_router");
 				int i= pr.lastIndexOf("/");
@@ -268,24 +271,44 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				m8.add(map);
 			}
 		}
-       //m6 3级 m3 2级 m2深度为1不是1级菜单 m1深度为1并且是1级菜单 m7深度为0不是1级菜单   m8 深度为0且1级菜单
+        //m6 3级 m3 2级
+		// m2深度为1不是1级菜单
+		// m1深度为1并且是1级菜单
+		// m7深度为0不是1级菜单
+		// m8 深度为0且1级菜单
+
 		CopyMaps(m9,m2);
 		CopyMaps(m9,m7);
 		CopyMaps(md,m7);
 		CopyMaps(md,m3);
-		Collections.sort(m7,new MapComparatorDesc());
+		if(m7.size()>1){
+			Collections.sort(m7,new MapComparatorDesc());
+		}
 		updateMap(m2,m7);
-		Collections.sort(m2,new MapComparatorDesc());
-		Collections.sort(m9,new MapComparatorDesc());
+		if(m2.size()>1){
+			Collections.sort(m2,new MapComparatorDesc());
+		}
+		if(m9.size()>1){
+			Collections.sort(m9,new MapComparatorDesc());
+		}
 		updateMap(m3,m9);
-		Collections.sort(m3,new MapComparatorDesc());
-		Collections.sort(md,new MapComparatorDesc());
+		if(m3.size()>1){
+			Collections.sort(m3,new MapComparatorDesc());
+		}
+		if(md.size()>1){
+			Collections.sort(md,new MapComparatorDesc());
+		}
 		updateMap(m6,md);
-		Collections.sort(m6,new MapComparatorDesc());
+		if(m6.size()>1){
+			Collections.sort(m6,new MapComparatorDesc());
+		}
         updateMap(m1,m7);
         m1.addAll(m6);
         m1.addAll(m8);
-		Collections.sort(m1,new MapComparatorDesc());
+        m1.addAll(m3);
+        if(m1.size()>1){
+			Collections.sort(m1,new MapComparatorDesc());
+		}
 		for(Map<String,Object> dt: m1){
 			int flg=(int)dt.get("pare_menu_id");
 			if(flg==1){
