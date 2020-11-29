@@ -259,13 +259,14 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
      * @Author: y.b
      * @Date: 2020.11.16
      */
-    @Select("SELECT t.* FROM pss_price_ewarn t\n" +
-            "WHERE t.stat_area_code = '全国'\n" +
-            "AND t.comm_id = #{p.commId}\n" +
+    @Select("SELECT t.*,n.comm_name  FROM pss_price_ewarn t\n" +
+            "LEFT JOIN pss_comm_total n ON n.comm_id = t.comm_id\n" +
+            "            WHERE t.stat_area_code in ('全国','中国')\n" +
+            "AND n.parent_code = #{p.commId}\n" +
             "AND t.ewarn_date BETWEEN #{p.startDate} AND #{p.endDate}\n" +
-            "GROUP BY date(t.ewarn_date)\n" +
+            " GROUP BY date(t.ewarn_date),t.comm_id\n" +
             "ORDER BY t.ewarn_date ")
-    List<PssPriceEwarnEntity> getPriceThend(@Param("p") Map<String, Object> mp);
+    List<Map<String, Object>> getPriceThend(@Param("p") Map<String, Object> mp);
 
     /**
      * @Desc: 获取指定商品预测价格月趋势和周趋势信息
@@ -273,12 +274,70 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
      * @Author: y.b
      * @Date: 2020.11.16
      */
-    @Select("SELECT t.* ,m.comm_name FROM pss_price_relt t\n" +
+    @Select("SELECT t.mod_id,m.comm_name,t.comm_id,t.index_id,t.data_set_id,t.data_date,\n" +
+            "t.fore_type,t.fore_price value,t.fore_time,t.run_time,t.revi_price,t.revi_time\n" +
+            " FROM pss_price_relt t\n" +
             "LEFT JOIN pss_comm_total m ON m.comm_id = t.comm_id\n" +
             "WHERE t.fore_type = '日预测'\n" +
             "AND t.comm_id = #{p.commId}\n" +
             "AND t.fore_time BETWEEN #{p.startDate} AND #{p.endDate}\n" +
             "GROUP BY t.fore_time\n" +
             "ORDER BY t.fore_time ")
-    List<PssPriceEwarnEntity> getForePriceThend(@Param("p") Map<String, Object> mp);
+    List<Map<String, Object>> getForePriceThend(@Param("p") Map<String, Object> mp);
+
+    /**
+     * @Desc: 获取指定商品预测价格月趋势和周趋势信息
+     * @Param: [itrmDate]
+     * @Author: y.b
+     * @Date: 2020.11.16
+     */
+    @Select("SELECT t.*,n.comm_name  FROM pss_price_ewarn t\n" +
+            "            LEFT JOIN pss_comm_total n ON n.comm_id = t.comm_id\n" +
+            "                        WHERE t.stat_area_code in ('全国','中国')\n" +
+            "            AND n.parent_code <= #{p.commId}\n" +
+            "            AND DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') = #{p.endDate}\n" +
+            "             GROUP BY date(t.ewarn_date),t.comm_id\n" +
+            "            ORDER BY t.pri_range DESC\n" +
+            "            LIMIT 1")
+    List<Map<String, Object>> getMaxPro(@Param("p") Map<String, Object> mp);
+
+    @Select("SELECT t.stat_area_code FROM pss_price_ewarn t\n" +
+            "WHERE t.stat_area_code IS NOT NULL\n" +
+            "GROUP  BY t.stat_area_code")
+    List<Map<String, Object>> getProvince();
+
+    @Select("SELECT m.*,COUNT(1) FROM\n" +
+            "(SELECT t.stat_area_code,t.ewarn_level,n.code_name FROM pss_price_ewarn t\n" +
+            "LEFT JOIN wp_ascii_info n ON n.code_id = t.ewarn_level\n" +
+            "            WHERE t.comm_id = #{p.commId}\n" +
+            "AND t.ewarn_level in (71,72,73)\n" +
+            "            GROUP  BY t.ewarn_level,t.stat_area_code) m\n" +
+            "GROUP BY m.ewarn_level")
+    List<Map<String, Object>> getProvinceByCommId(@Param("p") Map<String, Object> mp);
+
+    /**
+     * @Desc: 统计个省份涨跌幅前三商品
+     * @Param: [itrmDate]
+     * @Author: y.b
+     * @Date: 2020.11.16
+     */
+    @Select("SELECT t.*,m.code_name,n.comm_name,p.pri_value y_pri_value FROM pss_price_ewarn t \n" +
+            "                          LEFT JOIN wp_ascii_info m ON t.ewarn_level = m.code_id\n" +
+            "                         LEFT JOIN pss_comm_total n ON n.comm_id = t.comm_id\n" +
+            "                          LEFT JOIN (SELECT DISTINCT t1.comm_id, t1.pri_value,\n" +
+            "                           t1.pri_range,t1.ewarn_date FROM pss_price_ewarn t1\n" +
+            "                          WHERE DATE(t1.ewarn_date) <= #{p.endDate}) p\n" +
+            "                          ON p.comm_id = t.comm_id\n" +
+            "                        WHERE DATE(t.ewarn_date) <= #{p.endDate}\n" +
+            "AND t.stat_area_code = #{p.province} \n" +
+            "<if test=\"p.up != null and p.up != ''\">\n" +
+            "                        AND t.pri_range > 0\n" +
+            "</if>\n" +
+            "<if test=\"p.down != null and p.down != ''\">\n" +
+            "                        AND t.pri_range < 0\n" +
+            "</if>\n" +
+            "                        GROUP BY t.comm_id\n" +
+            "                        ORDER BY t.pri_range DESC\n" +
+            "                        LIMIT 0,3")
+    List< Map<String, Object>> getUpAndDownThree(@Param("p") Map<String, Object> mp);
 }

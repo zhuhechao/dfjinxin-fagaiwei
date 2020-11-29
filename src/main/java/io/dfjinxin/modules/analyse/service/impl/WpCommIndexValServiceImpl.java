@@ -599,7 +599,9 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         queryWrapper.eq("index_type","价格");
         queryWrapper.eq("comm_id",params.get("commId"));
         queryWrapper.le("date",startDate);
+        queryWrapper.isNotNull("value");
         queryWrapper.orderByDesc(new String[]{"date"});
+        queryWrapper.last(" limit 5 ");
         return baseMapper.selectList(queryWrapper);
     }
 
@@ -615,7 +617,9 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         queryWrapper.eq("index_type","价格");
         queryWrapper.eq("comm_id",params.get("commId"));
         queryWrapper.le("date",endDate);
+        queryWrapper.isNotNull("value");
         queryWrapper.orderByDesc(new String[]{"date"});
+        queryWrapper.last(" limit 1 ");
         return baseMapper.selectList(queryWrapper);
     }
 
