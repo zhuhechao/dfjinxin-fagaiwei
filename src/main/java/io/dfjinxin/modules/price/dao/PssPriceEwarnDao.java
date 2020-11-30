@@ -303,7 +303,9 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "LEFT JOIN wp_ascii_info p ON p.code_id = t.ewarn_level \n" +
             "                                    WHERE t.stat_area_code in ('全国','中国')\n" +
             "                        AND n.parent_code = #{p.commId}\n" +
-            "                        AND DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') in (SELECT MAX(DATE_FORMAT(s.ewarn_date,'%Y-%m-%d')) FROM pss_price_ewarn s)\n" +
+            "                        AND DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') in (SELECT MAX(DATE_FORMAT(s.ewarn_date,'%Y-%m-%d')) FROM pss_price_ewarn s\n" +
+            "                                                                        LEFT JOIN pss_comm_total p ON p.comm_id = s.comm_id\n" +
+            "                                                                           WHERE p.parent_code = #{p.commId})\n" +
             "                          AND t.pri_value >0" +
             "                         GROUP BY date(t.ewarn_date),t.comm_id\n" +
             "                        ORDER BY t.pri_range DESC\n" +
