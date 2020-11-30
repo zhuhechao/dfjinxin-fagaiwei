@@ -312,7 +312,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
         updateMap(m1,m7);
         m1.addAll(m6);
         m1.addAll(m8);
-        m1.addAll(m3);
+       // m1.addAll(m3);
 		Collections.sort(m1,new MapComparatorDesc());
 		for(Map<String,Object> dt: m1){
 			int flg=(int)dt.get("pare_menu_id");
