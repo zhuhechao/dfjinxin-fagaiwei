@@ -157,23 +157,4 @@ public class PssPriceEwarnController {
         return R.ok().put("data", null);
     }
 
-    /**
-     * @Desc: 根据预警类型、指标id，统考某类指标的月平均、年平均、当前值
-     * 根据3类商品id,查询预警类型是【常规或非常规】的商品信息
-     * @Param: [indexId, ewarnTypeId]
-     * @Return: io.dfjinxin.common.utils.R
-     * @Author: z.h.c
-     * @Date: 2019/11/13 15:31
-     */
-    @GetMapping("/test")
-    @ApiOperation(value = "二级页面(预警展示)", notes = "根据预警类型【常规或非常规】、指标id，统考某类指标的月平均、年平均、当前值")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "commId", value = "商品", required = true, dataType = "Int", paramType = "query")
-    })
-    public R indexInfo() {
-        Map<String, Object> data = pssPriceEwarnService.indexInfo();
-        return R.ok().put("data", null);
-    }
-
-
 }

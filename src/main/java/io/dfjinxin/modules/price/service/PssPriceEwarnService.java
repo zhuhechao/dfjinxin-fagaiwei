@@ -27,7 +27,7 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
 
     Map<String, Object> indexPageViewLeft(Map<String, Object> params,boolean queryHive);
 
-    Map<String, Object> indexPageViewCenter(Map<String, Object> params);
+    Map<String, Object> indexPageViewCenter();
 
     List<PssPriceEwarnEntity> getDayReportData(Map<String, Object> params);
 
@@ -50,6 +50,5 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
 
     Map<String, Object> queryIndexLineData2(Integer ewarnTypeId, List<Integer> asList, String startDate, String endDate);
 
-    Map<String, Object> indexInfo();
 }
 

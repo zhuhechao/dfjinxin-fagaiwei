@@ -59,10 +59,8 @@ public class FirstPageViewController {
      */
     @GetMapping("/viewCenter")
     @ApiOperation("首页中间和右侧信息")
-    public R firstpageCenter( @RequestParam(value = "commId", required = false) String commId) {
-        Map<String, Object> ma = new HashMap<>();
-        ma.put("commId",commId);
-        Map<String, Object> map = pssPriceEwarnService.indexPageViewCenter(ma);
+    public R firstpageCenter() {
+        Map<String, Object> map = pssPriceEwarnService.indexPageViewCenter();
 
         return R.ok().put("data", map);
     }
