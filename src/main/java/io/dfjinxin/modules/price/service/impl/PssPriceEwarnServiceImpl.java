@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.base.Joiner;
 import io.dfjinxin.common.utils.*;
 import io.dfjinxin.common.utils.echart.HttpUtil;
 import io.dfjinxin.modules.analyse.dao.WpBaseIndexValDao;
@@ -71,6 +72,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     PssCommTotalService pssCommTotalService;
     @Autowired
     WpBaseIndexValService wpBaseIndexValService;
+
     //    @Autowired
 //    private HiveService hiveService;
     @Autowired
@@ -217,16 +219,96 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
      * @Date: 2019/11/16 13:56
      */
     @Override
-    public Map<String, Object> indexPageViewCenter( Map<String, Object> params) {
+    public Map<String, Object> indexPageViewCenter( ) {
         Map<String, Object> map = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("itrmDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -1 )));
         params.put("y_itrmDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -2 )));
-        //获取涨幅前三商品
+        //获取涨幅前6商品
         List< Map<String, Object>> list1 = baseMapper.getIncreaseThree(params);
+        List<String> comms = new ArrayList<>();
+        if(list1.size()>0){
+            for (Map<String, Object> com : list1) {
+                comms.add(com.get("comm_id").toString());
+            }
+        }
+        params.put("comms",Joiner.on(",").join(comms));
+            if(list1.size()>0){
+            for (Map<String, Object> en1 : list1) {
+                Map<String, Object> yujijgMap = new HashMap<>();
+                List< Map<String, Object>> li1 = new ArrayList<>();
+                List< Map<String, Object>> li2 = new ArrayList<>();
+                List< Map<String, Object>> li3 = new ArrayList<>();
+                params.put("commId",en1.get("comm_id"));
+                List< Map<String, Object>> lisss1= baseMapper.getProvinceByCommId(params);
+                if(lisss1.size()>0){
+                    for (Map<String, Object> en2 : lisss1) {
+                        if(en2.get("ewarn_level").equals(71)){
+                            li1.add(en2);
+                        }
+                        if(en2.get("ewarn_level").equals(72)){
+                            li2.add(en2);
+                        }
+                        if(en2.get("ewarn_level").equals(73)){
+                            li3.add(en2);
+                        }
+                    }
+                }
+                yujijgMap.put("gaoji",li1);
+                yujijgMap.put("zhongji",li2);
+                yujijgMap.put("diji",li3);
+                en1.put("provinceList",yujijgMap);
+            }
+        }
         map.put("topUpCommodity",list1);
-        //获取跌幅前三商品
+        System.out.println("comms----------------------------"+comms.toString());
+        System.out.println("params----------------------------"+params.toString());
+        //获取跌幅前6商品
         List< Map<String, Object>> list2 = baseMapper.getDeclineThree(params);
+        if(list2.size()>0){
+            for (Map<String, Object> ep1 : list2) {
+                Map<String, Object> yujijgMap1 = new HashMap<>();
+                List< Map<String, Object>> lp1 = new ArrayList<>();
+                List< Map<String, Object>> lp2 = new ArrayList<>();
+                List< Map<String, Object>> lp3 = new ArrayList<>();
+                params.put("commId",ep1.get("comm_id"));
+                List< Map<String, Object>> lisss2= baseMapper.getProvinceByCommId(params);
+                if(lisss2.size()>0){
+                    for (Map<String, Object> ep2 : lisss2) {
+                        if(ep2.get("ewarn_level").equals(71)){
+                            lp1.add(ep2);
+                        }
+                        if(ep2.get("ewarn_level").equals(72)){
+                            lp2.add(ep2);
+                        }
+                        if(ep2.get("ewarn_level").equals(73)){
+                            lp3.add(ep2);
+                        }
+                    }
+                }
+                yujijgMap1.put("gaoji",lp1);
+                yujijgMap1.put("zhongji",lp2);
+                yujijgMap1.put("diji",lp3);
+                ep1.put("provinceList",yujijgMap1);
+            }
+        }
         map.put("topDownCommodity",list2);
+        Map<String, Object> parm = new HashMap<>();
+        parm.put("endDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -1 )));
+        List<Map<String, Object>> listp1 = baseMapper.getProvince(parm);
+        if(listp1.size()>0){
+            for (Map<String, Object> ent : listp1) {
+                Map<String, Object> mp1 = new HashMap<>();
+                parm.put("province",ent.get("stat_area_code"));
+                List<Map<String, Object>> upList = baseMapper.getUpThree(parm);
+                List<Map<String, Object>> downList = baseMapper.getDownThree(parm);
+                ent.put("upList",upList);
+                ent.put("downList",downList);
+            }
+        }
+        map.put("mapData",listp1);
+
+
         //获取指定商品在各省份的价格信息
         List< Map<String, Object>> list3 = baseMapper.getPriceDistribution(params);
         int a=0,b=0,c=0;
@@ -564,7 +646,6 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 String tongBi = tongBiTemp.multiply(HUN).toString() + "%";
                 map.put("tongBi", tongBi);
             }
-            map.put("yujing", entity.get("ewarn_name"));
 
 //            //计算上月今日价格-计算环比
 //            QueryWrapper where4 = new QueryWrapper();
@@ -601,8 +682,20 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         map.put("priceList", lis);
 
         //step3,地图数据-统计规格品指标类型为'价格'的各省份昨天价格数据
-        List<WpBaseIndexValEntity> mapData = wpBaseIndexValService.getprovinceLastDayMapData(commId, "价格", lastDayStr);
-        map.put("provinceMap", mapData);
+        Map<String, Object> mapp = new HashMap<>();
+        mapp.put("commId",commId);
+        mapp.put("eDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -1 )));
+        mapp.put("sDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -3000 )));
+        List<Map<String, Object>> provinceLast = wpBaseIndexValDao.getProvince(mapp);
+        if(provinceLast.size()>0){
+            for (Map<String, Object> pList : provinceLast) {
+                mapp.put("province",pList.get("area_name"));
+                mapp.put("itemDate",pList.get("date"));
+                List<Map<String, Object>> commLast = wpBaseIndexValDao.getProvinceCommList(mapp);
+                pList.put("commLast",commLast);
+            }
+        }
+        map.put("provinceMap", provinceLast);
 
         //step3,生产数据情况
         List<WpBaseIndexValEntity> prodData = wpBaseIndexValService.getprovinceLastDayMapData(commId, "生产", lastDayStr);
@@ -620,19 +713,44 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         ma.put("commId",commId);
         ma.put("startDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -31 )));
         ma.put("endDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -1 )));
-        List<PssPriceEwarnEntity> zhoujagezoushi = baseMapper.getPriceThend(ma);
-        map.put("zhoujagezoushi",zhoujagezoushi);
-        ma.put("startDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -8 )));
-        List<PssPriceEwarnEntity> yuejagezoushi = baseMapper.getPriceThend(ma);
-        map.put("yuejagezoushi",yuejagezoushi);
+        List<Map<String, Object>> tp = baseMapper.getMaxPro(ma);
+        map.put("tongBi", 0);
+        map.put("yujing",  "");
+        map.put("price",  0);
+        map.put("unit",  "");
+        if(tp.size()>0){
+            map.put("tongBi", tp.get(0).get("pri_range"));
+            map.put("yujing",  tp.get(0).get("code_name"));
+            map.put("price",  tp.get(0).get("pri_value"));
+            map.put("unit",  tp.get(0).get("unit"));
+        }
+        ma.put("indexType","价格");
+        List<Map<String, Object>> zhoujagezoushi =  wpBaseIndexValDao.getIndexThend(ma);
+        map.put("zhoujagezoushi",null);
+        if(zhoujagezoushi.size()>0){
+            map.put("zhoujagezoushi",this.getList(zhoujagezoushi,7,"zhoushi"));
+        }
+
+        ma.put("startDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -7 )));
+        List<Map<String, Object>> yuejagezoushi = wpBaseIndexValDao.getIndexThend(ma);
+        map.put("yuejagezoushi",null);
+        if(zhoujagezoushi.size()>0){
+            map.put("yuejagezoushi",this.getList(yuejagezoushi,30,"zhoushi"));
+        }
         //未来一个月商品预测价格走势
         ma.put("startDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  0 )));
-        ma.put("endDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  +7 )));
-        List<PssPriceEwarnEntity> zhouyucejagezoushi = baseMapper.getForePriceThend(ma);
-        map.put("zhouyucejagezoushi",zhouyucejagezoushi);
-        ma.put("endDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  +30 )));
-        List<PssPriceEwarnEntity> yueyucejagezoushi = baseMapper.getForePriceThend(ma);
-        map.put("yueyucejagezoushi",yueyucejagezoushi);
+        ma.put("endDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  +6 )));
+        List<Map<String, Object>> zhouyucejagezoushi = baseMapper.getForePriceThend(ma);
+        map.put("zhouyucejagezoushi",null);
+        if(zhoujagezoushi.size()>0){
+            map.put("zhouyucejagezoushi",this.getList(zhouyucejagezoushi,7,"yuce"));
+        }
+        ma.put("endDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  +29 )));
+        List<Map<String, Object>> yueyucejagezoushi = baseMapper.getForePriceThend(ma);
+        map.put("yueyucejagezoushi",null);
+        if(zhoujagezoushi.size()>0){
+            map.put("yueyucejagezoushi",this.getList(yueyucejagezoushi,30,"yuce"));
+        }
         //step5,区域价格分布 规格品指标类型是价格、区域是各省份、自治区的、昨天到上月昨天的数据
         List<String> quYuFrequenceList = this.getFrequenceByWhere(null, lastDayStr, null);
         map.put("quYuJiaGeFengBu", this.convertQuYujiaGeByJiaGeZhiBiao(quYuFrequenceList, type4CommList, null, null, lastDayStr));
@@ -659,22 +777,79 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         }
         map.put("jiaGeYuCe", reltRusult);
 
-        //step7,价格-根据3类商品，统计规格品中昨天涨幅最大的商品价格信息
-        QueryWrapper where2 = new QueryWrapper();
-        where2.inSql("comm_id", sql);
-        where2.eq("date(ewarn_date)", lastDayStr);
-        where2.groupBy("comm_id");
-        where2.orderByDesc("pri_range");
-        where2.orderByDesc("pri_value");
-        where2.last("limit 0,1");
-        PssPriceEwarnEntity lastDayRangeMaxEwarn = pssPriceEwarnDao.selectOne(where2);
-
-        map.put("price", lastDayRangeMaxEwarn == null ? 0 : lastDayRangeMaxEwarn.getPriValue());
-        map.put("unit", lastDayRangeMaxEwarn == null ? null : lastDayRangeMaxEwarn.getUnit());
+//        //step7,价格-根据3类商品，统计规格品中昨天涨幅最大的商品价格信息
+//        QueryWrapper where2 = new QueryWrapper();
+//        where2.inSql("comm_id", sql);
+//        where2.eq("date(ewarn_date)", lastDayStr);
+//        where2.groupBy("comm_id");
+//        where2.orderByDesc("pri_range");
+//        where2.orderByDesc("pri_value");
+//        where2.last("limit 0,1");
+//        PssPriceEwarnEntity lastDayRangeMaxEwarn = pssPriceEwarnDao.selectOne(where2);
+//
+//        map.put("price", lastDayRangeMaxEwarn == null ? 0 : lastDayRangeMaxEwarn.getPriValue());
+//        map.put("unit", lastDayRangeMaxEwarn == null ? null : lastDayRangeMaxEwarn.getUnit());
 
         return map;
     }
+    public List<String> getDate(int size){
+        List<String> dateList = new ArrayList<>();
+        for (int i = 0;i<size;i++){
+            dateList.add(new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -(size-1-i) )));
+        }
+        return   dateList;
+    }
+    public  List<Map<String, Object>>  getList(List<Map<String, Object>> list,int size,String type) {
+        List<Integer> comId = new ArrayList<>();
+        for (Map<String, Object> lis : list) {
+            comId.add((Integer)lis.get("comm_id"));
+        }
+        Set set = new HashSet();
 
+        List<Integer> newList = new ArrayList();
+        for (Integer cd:comId) {
+            if(set.add(cd)){
+                newList.add(cd);
+            }
+        }
+        List<Map<String, Object>> reltRusult = new ArrayList<>();
+        for (Integer sd:newList) {
+            Map<String, Object> mp = new HashMap<>();
+            List<Map<String, Object>> lt = new ArrayList();
+            for (Map<String, Object> sbj:list) {
+                if(sd.equals(sbj.get("comm_id"))){
+                    lt.add(sbj);
+                }
+            }
+            mp.put("list",lt);
+            reltRusult.add(mp);
+        }
+        List<String> dateList=  this.getDate(size);
+        List<Map<String, Object>> reltRusult1 = new ArrayList<>();
+        for (Map<String, Object> sbj:reltRusult) {
+            Map<String, Object> mp1 = new HashMap<>();
+            List<Map<String, Object>> sll1= (List<Map<String, Object>>) sbj.get("list");
+            List<String> values = new ArrayList<>();
+            for (String date1:dateList) {
+                String val = "-";
+                for (Map<String, Object> sbj1:sll1) {
+                    if((sbj1.get("date").toString()).equals(date1)){
+                        val = sbj1.get("value").toString();
+                    }
+                }
+                values.add(val);
+            }
+            mp1.put("xData",dateList);
+            mp1.put("yData",values);
+            mp1.put("commName",sll1.get(0).get("comm_name"));
+            mp1.put("commId",sll1.get(0).get("comm_id"));
+            if(type.equals("zhoushi")){
+                mp1.put("unit",sll1.get(0).get("unit"));
+            }
+            reltRusult1.add(mp1);
+        }
+       return reltRusult1;
+    }
 
     /**
      * @Desc: 二级页面(商品总览)-根据规格品id&预测类型查询

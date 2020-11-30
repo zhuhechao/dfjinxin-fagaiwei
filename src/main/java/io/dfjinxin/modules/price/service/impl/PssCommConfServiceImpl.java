@@ -67,7 +67,7 @@ public class PssCommConfServiceImpl extends ServiceImpl<PssCommConfDao, PssCommC
         where.in("index_id", indexIds);
         where.in("ewarn_id", ewarnIds);
         where.eq("del_flag", 0);
-        if(areaName != null && areaName.equals("")==false){
+        if(areaName != null){
             where.eq("area_name",areaName);
         }
         return pssCommConfDao.selectList(where);

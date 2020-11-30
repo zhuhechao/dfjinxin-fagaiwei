@@ -5,14 +5,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.dfjinxin.common.dto.KpiInfoDto;
-import io.dfjinxin.common.utils.DateUtils;
-import io.dfjinxin.common.utils.KpiTypeEnum;
-import io.dfjinxin.common.utils.PageUtils;
-import io.dfjinxin.common.utils.Query;
+import io.dfjinxin.common.utils.*;
 import io.dfjinxin.modules.analyse.dao.WpBaseIndexValDao;
 import io.dfjinxin.modules.analyse.entity.WpBaseIndexValEntity;
 import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
 import io.dfjinxin.modules.price.dao.PssCommTotalDao;
+import io.dfjinxin.modules.price.dao.PssPriceEwarnDao;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import io.dfjinxin.modules.price.entity.WpCommPriEntity;
 import io.dfjinxin.modules.price.service.PssCommTotalService;
@@ -21,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -34,6 +33,9 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
 
     @Autowired
     private WpBaseIndexValDao wpBaseIndexValDao;
+
+    @Autowired
+    private PssPriceEwarnDao  pssPriceEwarnDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -72,6 +74,14 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         return page;
     }
 
+    public List<String> getDate(int size){
+        List<String> dateList = new ArrayList<>();
+        for (int i = 0;i<size;i++){
+            dateList.add(new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -(size-1-i) )));
+        }
+       return   dateList;
+    }
+
     /**
      * @Desc: 二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称、时间区域统计规格品各频度下各区域的指标信息
      * @Param: [params]
@@ -81,59 +91,153 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
      */
     @Override
     public Map<String, Object> queryLineChartByCondition(Map<String, Object> params) {
-
-        PssCommTotalEntity comm = pssCommTotalService.queryComm(params.containsKey("commId") ? (Integer) params.get("commId") : null);
-        String indexType = params.containsKey("indexType") ? (String) params.get("indexType") : null;
-        Integer indexId = params.containsKey("indexId") ? (Integer) params.get("indexId") : null;
-        if (comm == null || indexType == null || indexId == null) return null;
-
-        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));//昨天时间
-        String lastMonthDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -30));//一个月前时间
-        String startDate = params.containsKey("startDate") ? (String) params.get("startDate") : lastMonthDayStr;
-        String endDate = params.containsKey("endDate") ? (String) params.get("endDate") : lastDayStr;
-
-        QueryWrapper where5 = new QueryWrapper();
-        where5.select("frequence");
-        where5.eq("comm_id", comm.getCommId());
-        where5.eq("index_type", indexType);
-        where5.eq("index_id", indexId);
-        where5.between("date", startDate, endDate);
-        where5.groupBy("frequence");
-        List<WpBaseIndexValEntity> frequenceList = wpBaseIndexValDao.selectList(where5);
-
-        QueryWrapper where = new QueryWrapper();
-        where.select("area_name");
-        where.eq("comm_id", comm.getCommId());
-        where.eq("index_id", indexId);
-        where.eq("index_type", indexType);
-        where.between("date", startDate, endDate);
-
-        QueryWrapper where2 = new QueryWrapper();
-        where2.eq("comm_id", comm.getCommId());
-        where2.eq("index_type", indexType);
-        where2.eq("index_id", indexId);
-        where2.between("date", startDate, endDate);
-
-        Map<String, Object> resMap = new HashMap<>();
-        frequenceList.forEach(frequence -> {
-            Map<String, Object> frequenceMap = new HashMap<>();
-            where.eq("frequence", frequence.getFrequence());
-            where.groupBy("area_name");
-            List<WpBaseIndexValEntity> areaNameList = wpBaseIndexValDao.selectList(where);
-            areaNameList.forEach(areaName -> {
-                Map<String, Object> areaNameMap = new HashMap<>();
-                where2.eq("frequence", frequence.getFrequence());
-                where2.eq("area_name", areaName.getAreaName());
-                where2.orderByAsc("date");
-                List<WpBaseIndexValEntity> valEntityList = wpBaseIndexValDao.selectList(where2);
-                valEntityList.forEach(entity -> entity.setCommName(comm.getCommName()));
-                areaNameMap.put(areaName.getAreaName(), valEntityList);
-                frequenceMap.put(frequence.getFrequence(), areaNameMap);
-            });
-            resMap.putAll(frequenceMap);
-        });
+        Map<String, Object>  resMap = new HashMap<>();
+        params.put("startDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -7 )));
+        params.put("endDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -1 )));
+        List<Map<String, Object>> zhouThend = baseMapper.getIndexThend(params);
+        resMap.put("zhouThend",null);
+        if(zhouThend.size()>0){
+            resMap.put("zhouThend",this.getList(zhouThend,7,"other"));
+        }
+        if((params.get("indexType").toString()).equals("价格")){
+            List<Map<String, Object>> zhouProThend =  pssPriceEwarnDao.getPriceThend(params);
+            resMap.put("zhouProThend",null);
+            if(zhouProThend.size()>0){
+                resMap.put("zhouProThend",this.getList(zhouProThend,7,"jiage"));
+            }
+        }
+        params.put("startDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -29 )));
+        List<Map<String, Object>> yueThend = baseMapper.getIndexThend(params);
+        resMap.put("yueThend",null);
+        if(zhouThend.size()>0){
+            resMap.put("yueThend",this.getList(yueThend,30,"other"));
+        }
+        if((params.get("indexType").toString()).equals("价格")){
+            List<Map<String, Object>> yueProThend =  pssPriceEwarnDao.getPriceThend(params);
+            resMap.put("yueProThend",null);
+            if(yueProThend.size()>0){
+                resMap.put("yueProThend",this.getList(yueProThend,7,"jiage"));
+            }
+        }
         return resMap;
     }
+
+    public  List<Map<String, Object>>  getList(List<Map<String, Object>> list,int size,String type) {
+        List<Integer> comId = new ArrayList<>();
+        for (Map<String, Object> lis : list) {
+            comId.add((Integer)lis.get("comm_id"));
+        }
+        Set set = new HashSet();
+
+        List<Integer> newList = new ArrayList();
+        for (Integer cd:comId) {
+            if(set.add(cd)){
+                newList.add(cd);
+            }
+        }
+        List<Map<String, Object>> reltRusult = new ArrayList<>();
+        for (Integer sd:newList) {
+            Map<String, Object> mp = new HashMap<>();
+            List<Map<String, Object>> lt = new ArrayList();
+            for (Map<String, Object> sbj:list) {
+                if(sd.equals(sbj.get("comm_id"))){
+                    lt.add(sbj);
+                }
+            }
+            mp.put("list",lt);
+            reltRusult.add(mp);
+        }
+        List<String> dateList=  this.getDate(size);
+        List<Map<String, Object>> reltRusult1 = new ArrayList<>();
+        for (Map<String, Object> sbj:reltRusult) {
+            Map<String, Object> mp1 = new HashMap<>();
+            List<Map<String, Object>> sll1= (List<Map<String, Object>>) sbj.get("list");
+            List<String> values = new ArrayList<>();
+            for (String date1:dateList) {
+                String val = "-";
+                for (Map<String, Object> sbj1:sll1) {
+                    if((sbj1.get("date").toString()).equals(date1)){
+                        if(type.equals("jiage")){
+                            val = sbj1.get("pri_range").toString();
+                        }else{
+                            val = sbj1.get("value").toString();
+                        }
+                    }
+                }
+                values.add(val);
+            }
+            mp1.put("xData",dateList);
+            mp1.put("yData",values);
+            mp1.put("commName",sll1.get(0).get("comm_name"));
+            mp1.put("commId",sll1.get(0).get("comm_id"));
+            mp1.put("unit",sll1.get(0).get("unit"));
+            reltRusult1.add(mp1);
+        }
+        return reltRusult1;
+    }
+
+//    /**
+//     * @Desc: 二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称、时间区域统计规格品各频度下各区域的指标信息
+//     * @Param: [params]
+//     * @Return: java.util.Map<java.lang.String, java.lang.Object>
+//     * @Author: z.h.c
+//     * @Date: 2019/11/29 12:30
+//     */
+//    @Override
+//    public Map<String, Object> queryLineChartByCondition(Map<String, Object> params) {
+//
+//        PssCommTotalEntity comm = pssCommTotalService.queryComm(params.containsKey("commId") ? (Integer) params.get("commId") : null);
+//        String indexType = params.containsKey("indexType") ? (String) params.get("indexType") : null;
+//        Integer indexId = params.containsKey("indexId") ? (Integer) params.get("indexId") : null;
+//        if (comm == null || indexType == null || indexId == null) return null;
+//
+//        String lastDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -1));//昨天时间
+//        String lastMonthDayStr = DateUtils.dateToStr(DateUtils.addDateDays(new Date(), -30));//一个月前时间
+//        String startDate = params.containsKey("startDate") ? (String) params.get("startDate") : lastMonthDayStr;
+//        String endDate = params.containsKey("endDate") ? (String) params.get("endDate") : lastDayStr;
+//
+//        QueryWrapper where5 = new QueryWrapper();
+//        where5.select("frequence");
+//        where5.eq("comm_id", comm.getCommId());
+//        where5.eq("index_type", indexType);
+//        where5.eq("index_id", indexId);
+//        where5.between("date", startDate, endDate);
+//        where5.groupBy("frequence");
+//        List<WpBaseIndexValEntity> frequenceList = wpBaseIndexValDao.selectList(where5);
+//
+//        QueryWrapper where = new QueryWrapper();
+//        where.select("area_name");
+//        where.eq("comm_id", comm.getCommId());
+//        where.eq("index_id", indexId);
+//        where.eq("index_type", indexType);
+//        where.between("date", startDate, endDate);
+//
+//        QueryWrapper where2 = new QueryWrapper();
+//        where2.eq("comm_id", comm.getCommId());
+//        where2.eq("index_type", indexType);
+//        where2.eq("index_id", indexId);
+//        where2.between("date", startDate, endDate);
+//
+//        Map<String, Object> resMap = new HashMap<>();
+//        frequenceList.forEach(frequence -> {
+//            Map<String, Object> frequenceMap = new HashMap<>();
+//            where.eq("frequence", frequence.getFrequence());
+//            where.groupBy("area_name");
+//            List<WpBaseIndexValEntity> areaNameList = wpBaseIndexValDao.selectList(where);
+//            areaNameList.forEach(areaName -> {
+//                Map<String, Object> areaNameMap = new HashMap<>();
+//                where2.eq("frequence", frequence.getFrequence());
+//                where2.eq("area_name", areaName.getAreaName());
+//                where2.orderByAsc("date");
+//                List<WpBaseIndexValEntity> valEntityList = wpBaseIndexValDao.selectList(where2);
+//                valEntityList.forEach(entity -> entity.setCommName(comm.getCommName()));
+//                areaNameMap.put(areaName.getAreaName(), valEntityList);
+//                frequenceMap.put(frequence.getFrequence(), areaNameMap);
+//            });
+//            resMap.putAll(frequenceMap);
+//        });
+//        return resMap;
+//    }
 
     /**
      * @Desc: 统计3类品下有哪些指标类型是价格的规格品
@@ -599,7 +703,9 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         queryWrapper.eq("index_type","价格");
         queryWrapper.eq("comm_id",params.get("commId"));
         queryWrapper.le("date",startDate);
+        queryWrapper.isNotNull("value");
         queryWrapper.orderByDesc(new String[]{"date"});
+        queryWrapper.last(" limit 5 ");
         return baseMapper.selectList(queryWrapper);
     }
 
@@ -615,8 +721,9 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         queryWrapper.eq("index_type","价格");
         queryWrapper.eq("comm_id",params.get("commId"));
         queryWrapper.le("date",endDate);
+        queryWrapper.isNotNull("value");
         queryWrapper.orderByDesc(new String[]{"date"});
+        queryWrapper.last(" limit 1 ");
         return baseMapper.selectList(queryWrapper);
     }
-
 }

@@ -147,22 +147,13 @@ public class SecondPageViewController {
     @GetMapping("/lineChart/{commId}")
     @ApiOperation(value = "二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称(id)、时间区域统计规格品各频度下各区域的指标信息")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "indexType", value = "指标类型", required = true, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "indexId", value = "指标名称(id)", required = true, dataType = "Int", paramType = "query"),
-            @ApiImplicitParam(name = "startDate", value = "开始时间", required = true, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "endDate", value = "结束时间", required = true, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "indexType", value = "指标类型", required = true, dataType = "String", paramType = "query")
     })
     public R queryLineChartByCondition(@PathVariable("commId") Integer commId,
-                                       @RequestParam(value = "indexType") String indexType,
-                                       @RequestParam(value = "indexId") Integer indexId,
-                                       @RequestParam(value = "startDate") String startDate,
-                                       @RequestParam(value = "endDate") String endDate) {
+                                       @RequestParam(value = "indexType") String indexType) {
 
         Map<String, Object> params = new HashMap();
         params.put("indexType", indexType);
-        params.put("indexId", indexId);
-        params.put("startDate", startDate);
-        params.put("endDate", endDate);
         params.put("commId", commId);
         Map<String, Object> map = wpBaseIndexValService.queryLineChartByCondition(params);
 
