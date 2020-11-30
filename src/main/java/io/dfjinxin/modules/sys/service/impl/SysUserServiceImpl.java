@@ -277,19 +277,33 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		// m7深度为0不是1级菜单
 		// m8 深度为0且1级菜单
 
+
+		//添加深度为1却不是1级菜单，如价格分析
 		CopyMaps(m9,m2);
+        //添加深度为0不是1级菜单，如相关性分析
 		CopyMaps(m9,m7);
+		//添加深度为0不是1级菜单，如相关性分析
 		CopyMaps(md,m7);
+		//添加深度为2的菜单，如价格预警
 		CopyMaps(md,m3);
 		Collections.sort(m7,new MapComparatorDesc());
+		//组合深度为1不是1级菜单和深度为0不是1级菜单，如价格分析和相关性分析
 		updateMap(m2,m7);
 		Collections.sort(m2,new MapComparatorDesc());
 		Collections.sort(m9,new MapComparatorDesc());
-		updateMap(m3,m9);
+		if(m3.size()>0){
+		//组合2级菜单和对应深度为1不是1级菜单
+			updateMap(m3,m9);
+		}
 		Collections.sort(m3,new MapComparatorDesc());
 		Collections.sort(md,new MapComparatorDesc());
-		updateMap(m6,md);
+		if(m6.size()>0){
+			//组合3级菜单和深度为0不是1级菜单和深度2级的菜单
+			updateMap(m6,md);
+			updateMap(m6,m2);
+		}
 		Collections.sort(m6,new MapComparatorDesc());
+		//深度为1并且是1级菜单，深度为0不是1级菜单
         updateMap(m1,m7);
         m1.addAll(m6);
         m1.addAll(m8);
