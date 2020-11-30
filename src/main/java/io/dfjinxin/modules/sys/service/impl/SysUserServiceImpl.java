@@ -185,7 +185,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				if(i==0){
 					map.put("path",pr.substring(1));
 				}else {
-					map.put("path",pr.substring(1,i));
+					if("/sysconfig/usersconfig".equals(pr)){
+						map.put("path",pr.substring(0,i));
+					}else {
+						map.put("path",pr.substring(1,i));
+					}
 				}
 				if(i==0){
 					map.put("component",pr.substring(1));
@@ -300,6 +304,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		if(m6.size()>0){
 			//组合3级菜单和深度为0不是1级菜单和深度2级的菜单
 			updateMap(m6,md);
+			//组合3级菜单和深度为1不是1级菜单
 			updateMap(m6,m2);
 		}
 		Collections.sort(m6,new MapComparatorDesc());
@@ -307,7 +312,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
         updateMap(m1,m7);
         m1.addAll(m6);
         m1.addAll(m8);
-       // m1.addAll(m3);
+        m1.addAll(m3);
 		Collections.sort(m1,new MapComparatorDesc());
 		for(Map<String,Object> dt: m1){
 			int flg=(int)dt.get("pare_menu_id");
