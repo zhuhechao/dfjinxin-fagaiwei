@@ -1,6 +1,21 @@
 spring:
     profiles:
         include: db
+    redis:
+        database: 2
+        host: localhost
+        port: 6379
+        #password: 123560
+        jedis:
+            pool:
+                #最大连接数
+                max-active: 100
+                #最大阻塞等待时间(负数表示没限制)
+                max-wait: 2000
+                #最大空闲
+                max-idle: 500
+                #最小空闲
+                min-idle: 8
 
 mysql:
     url: jdbc:mysql://172.20.10.69:3306/zhjg?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&zeroDateTimeBehavior=convertToNull
@@ -36,3 +51,8 @@ tengxun:
     path: https://jianguan.urlsec.qq.com/
     appId: fagaiwei
     pwd: fgwprice
+
+auth:
+    client_id: zhdata
+    client_secret: 7900c7ab04894443ac3b2b311fecb24a
+    auth_url: http://47.94.38.59:1443/idp

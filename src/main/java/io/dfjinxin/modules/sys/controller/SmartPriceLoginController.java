@@ -1,10 +1,13 @@
 package io.dfjinxin.modules.sys.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.idsmanager.dingdang.jwt.DingdangUserRetriever;
 import io.dfjinxin.common.utils.MD5Utils;
 import io.dfjinxin.common.utils.R;
+import io.dfjinxin.common.utils.RedisUtil;
 import io.dfjinxin.common.utils.ShiroUtils;
+import io.dfjinxin.modules.sys.entity.UrlEnum;
 import io.dfjinxin.modules.sys.oauth2.OAuth2Token;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.cache.Cache;
@@ -24,7 +27,14 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
@@ -54,10 +64,32 @@ public class SmartPriceLoginController extends AbstractController {
     @Autowired
     private CacheManager cacheManager;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
     @Value("${rsp-server.url}")
     private String rspUrl;
 
+    @Value("${auth.client_id}")
+    private String clientId;
 
+    @Value("${auth.client_secret}")
+    private String clientSecret;
+
+    @Value("${auth.auth_url}")
+    private String authUrl;
+    @Value("${token.access-token.expiration-time}")
+    private Integer accessTokenExpirationTime;
+    @Value("${server.servlet.context-path}")
+    private String applicationName;
+    @Value("${token.refresh-token.expiration-time}")
+    private Integer refreshTokenExpirationTime;
+
+    @Value("${token.old-token.expiration-time}")
+    private Integer oldTokenExpirationTime;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @GetMapping(value = "/login")
     @ApiOperation("发改登陆接口")
@@ -143,13 +175,69 @@ public class SmartPriceLoginController extends AbstractController {
     @Value("${ca.valid}")
     private boolean caVaid;
 
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     @ApiOperation("发改登出接口")
     public R logout() {
-            sysUserTokenService.logout(ShiroUtils.getUserEntity().getUserId());
-            SecurityUtils.getSubject().logout();
-            return R.ok();
+        String userId = ShiroUtils.getUserEntity().getUserId();
+        SysUserTokenEntity entity = sysUserTokenService.lambdaQuery().eq(SysUserTokenEntity::getUserId, userId).one();
+        redisUtil.deleteCache("AccessToken" + entity.getToken(),"RefreshToken" + entity.getToken());
+        SecurityUtils.getSubject().logout();
+        return R.ok();
     }
+
+    /**
+     * 获取accessToken,refreshToken
+     * @param code
+     * @param state
+     * @return
+     */
+    @GetMapping("/login/accessCheck")
+    public R resAccessAudit(@RequestParam(value = "code", required = false) String code, @PathVariable(value = "state", required = false) String state){
+        if(StringUtils.isNotBlank(code)){
+            //获取token
+            MultiValueMap<String, String> formData = new LinkedMultiValueMap<String, String>();
+            formData.add("client_id", clientId);
+            formData.add("grant_type", "authorization_code");
+            formData.add("code", code);
+            formData.add("client_secret", clientSecret);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            String codeBody = restTemplate.exchange(authUrl + UrlEnum.GET_TOKEN_URL.getUrl(), HttpMethod.POST,
+                    new HttpEntity< MultiValueMap<String, String>>(formData,headers), String.class).getBody();
+            JSONObject jsonObject = JSONObject.parseObject(codeBody);
+            String accessToken = (String) jsonObject.get("access_token");
+            String refreshToken = (String) jsonObject.get("refresh_token");
+            String uid = (String) jsonObject.get("uid");
+            //获取用户信息
+            String userInfo= authUrl + UrlEnum.GET_USER_INFO.getUrl()+"?access_token="+accessToken+"&client_id="+clientId+"&uid="+uid;
+            String userBody = restTemplate.exchange(userInfo, HttpMethod.GET,
+                    new HttpEntity< MultiValueMap<String, String>>(null,headers), String.class).getBody();
+            JSONObject userObject = JSONObject.parseObject(userBody);
+            String loginName = (String) userObject.get("loginName");
+            //根据用户Id获取用户信息
+            SysUserEntity userById = sysUserService.getUserById(loginName);
+            //获取菜单信息
+            R res = loginValid(userById);
+            if(StringUtils.isNotBlank(accessToken)){
+                Map<String,Object> acMap = new HashMap();
+                acMap.put("access_token",accessToken);
+                acMap.put("token_time",new Date());
+                redisUtil.hmset("AccessToken"+res.get("token"), acMap );
+            }
+            if(StringUtils.isNotBlank(refreshToken)){
+                Map<String,Object> rfMap = new HashMap();
+                rfMap.put("refresh_token",refreshToken);
+                rfMap.put("token_time",new Date());
+                redisUtil.hmset("RefreshToken"+res.get("token"), rfMap );
+            }
+            return res;
+
+        }else {
+            R res = new R();
+            return res.error(401,"token 获取失败！");
+        }
+    }
+
 
     @GetMapping("/goToService")
     @ApiOperation("集成系统跳转")
