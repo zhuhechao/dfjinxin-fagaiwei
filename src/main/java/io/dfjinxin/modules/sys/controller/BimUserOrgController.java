@@ -13,6 +13,7 @@ import io.dfjinxin.modules.sys.service.SysUserDepService;
 import io.dfjinxin.modules.sys.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/sys/bim")
 @Api(tags = "数据同步")
+@Slf4j
 public class BimUserOrgController extends AbstractController {
     @Resource
     private SysUserService sysUserService;
@@ -55,7 +57,9 @@ public class BimUserOrgController extends AbstractController {
         String bodyParam = BamboocloudUtils.getRequestBody(request);
         bodyParam = BamboocloudUtils.getPlaintext(bodyParam, key, type);
         Map<String, Object> reqmap = (Map<String, Object>) JSON.parse(bodyParam);
+
         if (BamboocloudUtils.verify(reqmap, authType).booleanValue()) {
+            log.info("接收到新增用户参数:{}", reqmap);
             String orgId = (String) reqmap.get("orgId");
             SysUserEntity user = new SysUserEntity();
             user.setCrteDate(new Date());
@@ -71,10 +75,12 @@ public class BimUserOrgController extends AbstractController {
             user.setUserStatus(1);
             user.setStatus(true);
             boolean saveUser = sysUserService.save(user);
+            log.info("保存库表中的用户参数:{},结果:{}", user,saveUser);
             SysUserDepEntity depEntity = new SysUserDepEntity();
             depEntity.setDepId(orgId);
             depEntity.setUserId(userId);
-            sysUserDepService.save(depEntity);
+            boolean saveDept = sysUserDepService.save(depEntity);
+            log.info("保存用户机构中间表中的参数:{},结果:{}", depEntity,saveDept);
             PrintWriter out = response.getWriter();
             out.write(backJson(saveUser, userId, (String) reqmap.get("bimRequestId"), "账号创建失败，报错信息自定义"));
             out.close();
@@ -88,6 +94,7 @@ public class BimUserOrgController extends AbstractController {
         bodyParam = BamboocloudUtils.getPlaintext(bodyParam, key, type);
         Map<String, Object> reqmap = (Map<String, Object>) JSON.parse(bodyParam);
         if (BamboocloudUtils.verify(reqmap, authType).booleanValue()) {
+            log.info("接收到修改用户参数:{}", reqmap);
             SysUserEntity user = sysUserService.getUserById((String) reqmap.get("bimUid"));
             user.setUserPass((String) reqmap.get("bimRemotePwd"));
             user.setUserName((String) reqmap.get("bimRemoteUser"));
@@ -100,9 +107,10 @@ public class BimUserOrgController extends AbstractController {
                     user.setUserStatus(0);
                 }
             }
-            boolean saveUser = sysUserService.updateById(user);
+            boolean updateUser = sysUserService.updateById(user);
+            log.info("修改库表中的用户参数:{},结果:{}", user,updateUser);
             PrintWriter out = response.getWriter();
-            out.write(backJson(saveUser, null, (String) reqmap.get("bimRequestId"), "账号更新失败，报错信息自定义"));
+            out.write(backJson(updateUser, null, (String) reqmap.get("bimRequestId"), "账号更新失败，报错信息自定义"));
             out.close();
         }
     }
@@ -114,11 +122,13 @@ public class BimUserOrgController extends AbstractController {
         bodyParam = BamboocloudUtils.getPlaintext(bodyParam, key, type);
         Map<String, Object> reqmap = (Map<String, Object>) JSON.parse(bodyParam);
         if (BamboocloudUtils.verify(reqmap, authType).booleanValue()) {
+            log.info("接收到删除用户参数:{}", reqmap);
             SysUserEntity user = sysUserService.getUserById((String) reqmap.get("bimUid"));
             user.setUserStatus(0);
-            boolean saveUser = sysUserService.updateById(user);
+            boolean deleteUser = sysUserService.updateById(user);
+            log.info("删除库表中的用户参数:{},结果:{}", user,deleteUser);
             PrintWriter out = response.getWriter();
-            out.write(backJson(saveUser, null, (String) reqmap.get("bimRequestId"), "账号删除失败，报错信息自定义"));
+            out.write(backJson(deleteUser, null, (String) reqmap.get("bimRequestId"), "账号删除失败，报错信息自定义"));
             out.close();
         }
     }
@@ -130,6 +140,7 @@ public class BimUserOrgController extends AbstractController {
         bodyParam = BamboocloudUtils.getPlaintext(bodyParam, key, type);
         Map<String, Object> reqmap = (Map<String, Object>) JSON.parse(bodyParam);
         if (BamboocloudUtils.verify(reqmap, authType).booleanValue()) {
+            log.info("接收到新增组织机构参数:{}", reqmap);
             String parOrgId = (String) reqmap.get("parOrgId");
             String orgName = (String) reqmap.get("orgName");
             SysDepEntity org = new SysDepEntity();
@@ -139,6 +150,7 @@ public class BimUserOrgController extends AbstractController {
             org.setSuperDepId(parOrgId);
             org.setStatus(true);
             boolean saveOrg = sysDepService.save(org);
+            log.info("保存机构中的机构参数:{},结果:{}", org,saveOrg);
             PrintWriter out = response.getWriter();
             out.write(backJson(saveOrg, org.getDepId(), (String) reqmap.get("bimRequestId"), "机构创建失败"));
             out.close();
@@ -153,6 +165,7 @@ public class BimUserOrgController extends AbstractController {
         Map<String, Object> reqmap = (Map<String, Object>) JSON.parse(bodyParam);
 
         if (BamboocloudUtils.verify(reqmap, authType).booleanValue()) {
+            log.info("接收到修改组织机构参数:{}", reqmap);
             SysDepEntity org = sysDepService.getDepId((String) reqmap.get("bimOrgId"));
             org.setSuperDepId((String) reqmap.get("parOrgId"));
             SysDepEntity parOrg = sysDepService.getDepId((String) reqmap.get("parOrgId"));
@@ -167,25 +180,28 @@ public class BimUserOrgController extends AbstractController {
                 }
             }
             org.setUpdDate((Timestamp) new Date());
-            boolean saveUser = sysDepService.updateById(org);
+            boolean updateUser = sysDepService.updateById(org);
+            log.info("修改机构中的机构参数:{},结果:{}", org,updateUser);
             PrintWriter out = response.getWriter();
-            out.write(backJson(saveUser, null, (String) reqmap.get("bimRequestId"), "组织更新失败，报错信息自定义"));
+            out.write(backJson(updateUser, null, (String) reqmap.get("bimRequestId"), "组织更新失败，报错信息自定义"));
             out.close();
         }
     }
 
     @PostMapping("/org-delete")
-    @ApiOperation("删除用户")
+    @ApiOperation("删除组织机构")
     public void deleteOrg(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String bodyParam = BamboocloudUtils.getRequestBody(request);
         bodyParam = BamboocloudUtils.getPlaintext(bodyParam, key, type);
         Map<String, Object> reqmap = (Map<String, Object>) JSON.parse(bodyParam);
         if (BamboocloudUtils.verify(reqmap, authType).booleanValue()) {
-            SysDepEntity user = sysDepService.getDepId((String) reqmap.get("bimOrgId"));
-            user.setStatus(false);
-            boolean saveUser = sysDepService.updateById(user);
+            log.info("接收到删除组织机构参数:{}", reqmap);
+            SysDepEntity sysDepEntity = sysDepService.getDepId((String) reqmap.get("bimOrgId"));
+            sysDepEntity.setStatus(false);
+            boolean deleteDept = sysDepService.updateById(sysDepEntity);
+            log.info("修改机构中的机构参数:{},结果:{}", sysDepEntity,deleteDept);
             PrintWriter out = response.getWriter();
-            out.write(backJson(saveUser, null, (String) reqmap.get("bimRequestId"), "组织删除失败，报错信息自定义"));
+            out.write(backJson(deleteDept, null, (String) reqmap.get("bimRequestId"), "组织删除失败，报错信息自定义"));
             out.close();
         }
     }
@@ -193,7 +209,7 @@ public class BimUserOrgController extends AbstractController {
     @PostMapping("/role-create")
     @ApiOperation("新增角色")
     public void createRole(HttpServletRequest request, HttpServletResponse response) throws IOException {
-       // not need todo
+        // not need todo
     }
 
     @PostMapping("/role-update")
