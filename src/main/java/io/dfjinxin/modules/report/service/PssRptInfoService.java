@@ -28,6 +28,12 @@ public interface PssRptInfoService extends IService<PssRptInfoEntity> {
     List<PssRptInfoEntity> queryRptName(Map<String,Object> params);
 
 
+    /**
+     * 分析报告单独接口
+     * @return
+     */
+    List< Map<String, Object>> queryRpt();
+
 
 }
 

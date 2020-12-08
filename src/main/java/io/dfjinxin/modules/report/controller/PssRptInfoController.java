@@ -100,6 +100,15 @@ public class PssRptInfoController {
         return R.ok().put("page", page);
     }
 
+    //所有分析报告单独接口
+    @GetMapping("/queryRpt")
+    @ApiOperation("所有分析报告单独接口")
+    public R queryRpt() {
+        List< Map<String, Object>> page = pssRptInfoService.queryRpt();
+        return R.ok().put("page", page);
+    }
+
+
 
     /**
      * 信息

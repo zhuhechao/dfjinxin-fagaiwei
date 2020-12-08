@@ -38,6 +38,8 @@ public interface WpBaseIndexValService extends IService<WpBaseIndexValEntity> {
 
     Map<String, Object> queryLineChartByCondition(Map<String, Object> params);
 
+    List<Map<String, Object>> lineChartBy(Map<String, Object> params);
+
     List<PssCommTotalEntity> queryCommListByCommId(Integer commId,String indexType);
 
     List<WpBaseIndexValEntity> getProvinceMapByCommId(Integer commId,String indexType ,String date);
@@ -45,5 +47,7 @@ public interface WpBaseIndexValService extends IService<WpBaseIndexValEntity> {
     List<WpBaseIndexValEntity> getDataByDate1 (Map<String, Object> params) ;
 
     List<WpBaseIndexValEntity> getDataByDate2 (Map<String, Object> params) ;
+
+    List<Map<String, Object>> getPage(Map<String, Object> params);
 }
 

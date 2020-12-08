@@ -62,6 +62,10 @@ public class PssPriceEwarnEntity implements Serializable {
 	/**
 	 *
 	 */
+	private BigDecimal priYonyear;
+	/**
+	 *
+	 */
 	private BigDecimal priRange;
 
 	@TableField(exist = false)

@@ -6,6 +6,7 @@ import io.dfjinxin.modules.report.entity.PssRptInfoEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 import java.util.Map;
@@ -27,4 +28,16 @@ public interface PssRptInfoDao extends BaseMapper<PssRptInfoEntity> {
      * @return
      */
     List<PssRptInfoEntity> queryRptName(@Param("map") Map<String,Object> params);
+
+    /**
+     * 分析报告接口
+     * @return
+     */
+    @Select("SELECT t.* FROM wp_crawler_data t\n" +
+            "WHERE t.data_dt in \n" +
+            "(SELECT MAX(t1.data_dt) FROM wp_crawler_data t1)\n" +
+            "AND t.link IS NOT NULL\n" +
+            "AND t.title IS NOT NULL\n" +
+            "GROUP BY t.title")
+    List< Map<String, Object>> queryRpt();
 }

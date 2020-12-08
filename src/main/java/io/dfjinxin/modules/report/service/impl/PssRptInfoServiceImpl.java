@@ -43,4 +43,12 @@ public class PssRptInfoServiceImpl extends ServiceImpl<PssRptInfoDao, PssRptInfo
     }
 
 
+    /**
+     * 分析报告单独接口
+     * @return
+     */
+    @Override
+    public List< Map<String, Object>> queryRpt() {
+        return pssRptInfoDao.queryRpt();
+    }
 }

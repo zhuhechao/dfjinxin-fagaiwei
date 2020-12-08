@@ -50,5 +50,12 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
 
     Map<String, Object> queryIndexLineData2(Integer ewarnTypeId, List<Integer> asList, String startDate, String endDate);
 
+    List<Map<String, Object>> warningDistribution(Map<String, Object> params);
+
+    List<Map<String, Object>> warningIndexDate(Map<String, Object> params);
+
+    Map<String, Object> getEwarValue(Map<String, Object> params);
+
+    List<Map<String, Object>> viewBy(Map<String, Object> params);
 }
 

@@ -35,7 +35,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
     private WpBaseIndexValDao wpBaseIndexValDao;
 
     @Autowired
-    private PssPriceEwarnDao  pssPriceEwarnDao;
+    private PssPriceEwarnDao pssPriceEwarnDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -74,107 +74,204 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         return page;
     }
 
-    public List<String> getDate(int size){
+    @Override
+    public List<Map<String, Object>> getPage(Map<String, Object> params) {
+        List<Map<String, Object>> page = super.baseMapper.getPage(params);
+        return page;
+    }
+
+    public List<String> getDate(int size) {
         List<String> dateList = new ArrayList<>();
-        for (int i = 0;i<size;i++){
-            dateList.add(new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -(size-1-i) )));
+        for (int i = 0; i < size; i++) {
+            dateList.add(new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -(size - i))));
         }
-       return   dateList;
+        return dateList;
     }
 
     /**
      * @Desc: 二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称、时间区域统计规格品各频度下各区域的指标信息
      * @Param: [params]
-     * @Return: java.util.Map<java.lang.String, java.lang.Object>
+     * @Return: java.util.Map<java.lang.String               ,                               java.lang.Object>
      * @Author: z.h.c
      * @Date: 2019/11/29 12:30
      */
     @Override
     public Map<String, Object> queryLineChartByCondition(Map<String, Object> params) {
-        Map<String, Object>  resMap = new HashMap<>();
-        params.put("startDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -7 )));
-        params.put("endDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -1 )));
-        List<Map<String, Object>> zhouThend = baseMapper.getIndexThend(params);
-        resMap.put("zhouThend",null);
-        if(zhouThend.size()>0){
-            resMap.put("zhouThend",this.getList(zhouThend,7,"other"));
-        }
-        if((params.get("indexType").toString()).equals("价格")){
-            List<Map<String, Object>> zhouProThend =  pssPriceEwarnDao.getPriceThend(params);
+        Map<String, Object> resMap = new HashMap<>();
+        if ((params.get("indexType").toString()).equals("价格")) {
+            params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -7)));
+            params.put("endDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)));
+            List<Map<String, Object>> zhouThend = baseMapper.getJiaGeCommList(params);
+            List<Map<String, Object>> zhouProThend = pssPriceEwarnDao.getThendCommList(params);
+            resMap.put("zhouThend",null);
+            if (zhouThend.size() > 0) {
+                resMap.put("zhouThend", this.getList(zhouThend, 7, params, "jg"));
+            }
             resMap.put("zhouProThend",null);
-            if(zhouProThend.size()>0){
-                resMap.put("zhouProThend",this.getList(zhouProThend,7,"jiage"));
+            if (zhouProThend.size() > 0) {
+                resMap.put("zhouProThend", this.getList(zhouProThend, 7, params, "qs"));
             }
-        }
-        params.put("startDate",new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -29 )));
-        List<Map<String, Object>> yueThend = baseMapper.getIndexThend(params);
-        resMap.put("yueThend",null);
-        if(zhouThend.size()>0){
-            resMap.put("yueThend",this.getList(yueThend,30,"other"));
-        }
-        if((params.get("indexType").toString()).equals("价格")){
-            List<Map<String, Object>> yueProThend =  pssPriceEwarnDao.getPriceThend(params);
+            params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -30)));
+            List<Map<String, Object>> yueThend = baseMapper.getJiaGeCommList(params);
+            List<Map<String, Object>> yueProThend = pssPriceEwarnDao.getThendCommList(params);
+            resMap.put("yueThend",null);
+            if (yueThend.size() > 0) {
+                resMap.put("yueThend", this.getList(yueThend, 30, params, "jg"));
+            }
             resMap.put("yueProThend",null);
-            if(yueProThend.size()>0){
-                resMap.put("yueProThend",this.getList(yueProThend,7,"jiage"));
+            if (yueProThend.size() > 0) {
+                resMap.put("yueProThend", this.getList(yueProThend, 30, params, "qs"));
             }
+            params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -365)));
+            List<Map<String, Object>> nianThend = baseMapper.getJiaGeCommList(params);
+            List<Map<String, Object>> nianProThend = pssPriceEwarnDao.getThendCommList(params);
+            resMap.put("nianThend",null);
+            if (nianThend.size() > 0) {
+                resMap.put("nianThend", this.getList(nianThend, 365, params, "jg"));
+            }
+            resMap.put("nianProThend",null);
+            if (nianProThend.size() > 0) {
+                resMap.put("nianProThend", this.getList(nianProThend, 365, params, "qs"));
+            }
+            //,地图数据-统计规格品指标类型为'价格'的各省份价格数据
+            Map<String, Object> mapp = new HashMap<>();
+            mapp.put("commId", params.get("commId"));
+            List<Map<String, Object>> provinceLast = wpBaseIndexValDao.getCommList(mapp);
+            if (provinceLast.size() > 0) {
+                for (Map<String, Object> pList : provinceLast) {
+                    mapp.put("commId", pList.get("comm_id"));
+                    mapp.put("commDate", pList.get("date"));
+                    List<Map<String, Object>> commLast = wpBaseIndexValDao.getCommProvinceList(mapp);
+                    pList.put("provinceLast", commLast);
+                }
+            }
+            resMap.put("provinceMap", provinceLast);
+        } else {
+            List<Map<String, Object>> zhouThend1 = baseMapper.getRiOrYueOrNianCommId(params);
+            resMap.put("zhouThend", zhouThend1);
         }
         return resMap;
     }
 
-    public  List<Map<String, Object>>  getList(List<Map<String, Object>> list,int size,String type) {
-        List<Integer> comId = new ArrayList<>();
-        for (Map<String, Object> lis : list) {
-            comId.add((Integer)lis.get("comm_id"));
+    @Override
+    public List<Map<String, Object>> lineChartBy(Map<String, Object> params) {
+        List<Map<String, Object>> list = baseMapper.getOtherIndex(params);
+        List<Map<String, Object>> list1 = new ArrayList<>();
+        if (list.size() > 0) {
+            List<String> dateList = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                params.put("indexId", list.get(i).get("index_id"));
+                List<Map<String, Object>> zhouThend11 = baseMapper.getRiOrYueOrNianList(params);
+                if (zhouThend11.size() > 0) {
+                    for (int i1 = 0; i1 < zhouThend11.size(); i1++) {
+                        dateList.add(zhouThend11.get(zhouThend11.size() - 1 - i1).get("date").toString());
+                    }
+                }
+            }
+            list1 = this.getCommItemList(dateList, list, params);
         }
-        Set set = new HashSet();
+        return list1;
+    }
 
-        List<Integer> newList = new ArrayList();
-        for (Integer cd:comId) {
-            if(set.add(cd)){
+    public List<Map<String, Object>> getCommItemList(List<String> dateList, List<Map<String, Object>> idList, Map<String, Object> params) {
+        Set set = new HashSet();
+        List<String> newList = new ArrayList();
+        for (String cd : dateList) {
+            if (set.add(cd)) {
                 newList.add(cd);
             }
         }
-        List<Map<String, Object>> reltRusult = new ArrayList<>();
-        for (Integer sd:newList) {
-            Map<String, Object> mp = new HashMap<>();
-            List<Map<String, Object>> lt = new ArrayList();
-            for (Map<String, Object> sbj:list) {
-                if(sd.equals(sbj.get("comm_id"))){
-                    lt.add(sbj);
-                }
-            }
-            mp.put("list",lt);
-            reltRusult.add(mp);
-        }
-        List<String> dateList=  this.getDate(size);
-        List<Map<String, Object>> reltRusult1 = new ArrayList<>();
-        for (Map<String, Object> sbj:reltRusult) {
-            Map<String, Object> mp1 = new HashMap<>();
-            List<Map<String, Object>> sll1= (List<Map<String, Object>>) sbj.get("list");
-            List<String> values = new ArrayList<>();
-            for (String date1:dateList) {
-                String val = "-";
-                for (Map<String, Object> sbj1:sll1) {
-                    if((sbj1.get("date").toString()).equals(date1)){
-                        if(type.equals("jiage")){
-                            val = sbj1.get("pri_range").toString();
-                        }else{
-                            val = sbj1.get("value").toString();
+        Collections.sort(newList);
+        List<Map<String, Object>> list1 = new ArrayList<>();
+        for (Map<String, Object> id : idList) {
+            params.put("indexId", id.get("index_id"));
+            List<Map<String, Object>> zhouThend = baseMapper.getRiOrYueOrNianList(params);
+            Map<String, Object> map = new HashMap();
+            String unit = "";
+            String indexName = "";
+            List<String> yData = new ArrayList();
+            if (zhouThend.size() > 0) {
+                String val = "0";
+                for (String cd : newList) {
+                    for (Map<String, Object> dts : zhouThend) {
+                        if (cd.equals(dts.get("date").toString())) {
+                            val = dts.get("value").toString();
+                            unit = dts.get("unit").toString();
+                            indexName = dts.get("index_name").toString();
                         }
                     }
+                    yData.add(val);
                 }
-                values.add(val);
             }
-            mp1.put("xData",dateList);
-            mp1.put("yData",values);
-            mp1.put("commName",sll1.get(0).get("comm_name"));
-            mp1.put("commId",sll1.get(0).get("comm_id"));
-            mp1.put("unit",sll1.get(0).get("unit"));
-            reltRusult1.add(mp1);
+            map.put("xData", newList);
+            map.put("indexId", id.get("index_id"));
+            map.put("yData", yData);
+            map.put("unit", unit);
+            map.put("indexName", indexName);
+            list1.add(map);
         }
-        return reltRusult1;
+        return list1;
     }
+
+    public List<Map<String, Object>> getList(List<Map<String, Object>> list, int size, Map<String, Object> params, String type) {
+        List<String> dateList = this.getDate(size);
+        List<Map<String, Object>> list1 = new ArrayList<>();
+        for (Map<String, Object> ls : list) {
+            Map<String, Object> map1 = new HashMap<>();
+            params.put("commsId", ls.get("comm_id"));
+            List<Map<String, Object>> ids = new ArrayList<>();
+            if (type.equals("jg")) {
+                ids = baseMapper.getJiaGeIndexList(params);
+            } else {
+                ids = pssPriceEwarnDao.getThendGuiCommList(params);
+            }
+            if (ids.size() > 0) {
+                List<Map<String, Object>> list2 = new ArrayList<>();
+                for (Map<String, Object> id : ids) {
+                    Map<String, Object> map2 = new HashMap<>();
+                    List<String> yData = new ArrayList<>();
+                    String indexName = "";
+                    String indexId = "";
+                    String unit = "";
+                    params.put("indexId", id.get("index_id"));
+                    List<Map<String, Object>> dList = new ArrayList<>();
+                    if (type.equals("jg")) {
+                        dList = baseMapper.getJiaGeIndexData(params);
+                    } else {
+                        dList = pssPriceEwarnDao.getThendCommData(params);
+                    }
+                    if(dateList.size()>0){
+                        for (String de : dateList) {
+                            String val = "0";
+                            for (Map<String, Object> dt : dList) {
+                                if (de.equals(dt.get("date").toString())) {
+                                    val = dt.get("value").toString();
+                                }
+                            }
+                            indexName = dList.get(0).get("index_name").toString();
+                            indexId = dList.get(0).get("index_id").toString();
+                            unit = dList.get(0).get("unit").toString();
+                            yData.add(val);
+                        }
+                        map2.put("xData", dateList);
+                        map2.put("yData", yData);
+                        map2.put("indexName", indexName);
+                        map2.put("indexId", indexId);
+                        map2.put("unit", unit);
+                        list2.add(map2);
+                    }
+                }
+                if(list2.size()>0){
+                    map1.put("list", list2);
+                    map1.put("commId", ls.get("comm_id"));
+                    map1.put("commName", ls.get("comm_name"));
+                    list1.add(map1);
+                }
+            }
+        }
+        return list1;
+    }
+
 
 //    /**
 //     * @Desc: 二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称、时间区域统计规格品各频度下各区域的指标信息
@@ -476,7 +573,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                     prdMap.put(type, prdList);
                     resultList.add(prdMap);
                     break;
-                    //贸易
+                //贸易
                 case Trd:
                     List<KpiInfoDto> trdList = doIndexInfo(baseIndexInfoEntities, type, lastDayStr);
                     Map<String, List<KpiInfoDto>> trdMap = new HashMap();
@@ -570,19 +667,19 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
         WpBaseIndexValEntity last = valEntities.get(1);
         Double firstVal = first.getValue();
         Double lastVal = last.getValue();
-        if(lastVal == 0){
+        if (lastVal == 0) {
             first.setTongBi("0%");
             valEntities.set(0, first);
-        }else{
+        } else {
             Double tempVal = firstVal - lastVal;
             Double tongBi = tempVal / lastVal * 100;
             DecimalFormat df = new DecimalFormat("#.00");
             DecimalFormat df2 = new DecimalFormat("0.00");
-            if(tongBi < 0 & tongBi >-1){
+            if (tongBi < 0 & tongBi > -1) {
                 first.setTongBi(df2.format(tongBi) + "%");
-            }else if (tongBi >0 & tongBi <1){
+            } else if (tongBi > 0 & tongBi < 1) {
                 first.setTongBi(df2.format(tongBi) + "%");
-            }else{
+            } else {
                 first.setTongBi(df.format(tongBi) + "%");
             }
             valEntities.set(0, first);
@@ -693,17 +790,17 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
 
     @Override
     public List<WpBaseIndexValEntity> getDataByDate1(Map<String, Object> params) {
-        String indexId=params.get("indexId").toString();
-        Date startDate= (Date) params.get("startDate");
-        QueryWrapper  queryWrapper=new QueryWrapper<WpBaseIndexValEntity>();
-        queryWrapper.eq("index_id",indexId);
-        if(params.get("areaName") != null){
-            queryWrapper.eq("area_name",params.get("areaName"));
+        String indexId = params.get("indexId").toString();
+        Date startDate = (Date) params.get("startDate");
+        QueryWrapper queryWrapper = new QueryWrapper<WpBaseIndexValEntity>();
+        queryWrapper.eq("index_id", indexId);
+        if (params.get("areaName") != null) {
+            queryWrapper.eq("area_name", params.get("areaName"));
         }
-        queryWrapper.eq("index_type","价格");
-        queryWrapper.eq("comm_id",params.get("commId"));
-        queryWrapper.le("date",startDate);
-        queryWrapper.gt("value",0);
+        queryWrapper.eq("index_type", "价格");
+        queryWrapper.eq("comm_id", params.get("commId"));
+        queryWrapper.le("date", startDate);
+        queryWrapper.gt("value", 0);
         queryWrapper.isNotNull("value");
         queryWrapper.orderByDesc(new String[]{"date"});
         queryWrapper.last(" limit 5 ");
@@ -712,17 +809,17 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
 
     @Override
     public List<WpBaseIndexValEntity> getDataByDate2(Map<String, Object> params) {
-        String indexId=params.get("indexId").toString();
-        QueryWrapper  queryWrapper=new QueryWrapper<WpBaseIndexValEntity>();
-        Date endDate= (Date) params.get("endDate");
-        queryWrapper.eq("index_id",indexId);
-        if(params.get("areaName") != null ){
-            queryWrapper.eq("area_name",params.get("areaName"));
+        String indexId = params.get("indexId").toString();
+        QueryWrapper queryWrapper = new QueryWrapper<WpBaseIndexValEntity>();
+        Date endDate = (Date) params.get("endDate");
+        queryWrapper.eq("index_id", indexId);
+        if (params.get("areaName") != null) {
+            queryWrapper.eq("area_name", params.get("areaName"));
         }
-        queryWrapper.eq("index_type","价格");
-        queryWrapper.eq("comm_id",params.get("commId"));
-        queryWrapper.le("date",endDate);
-        queryWrapper.gt("value",0);
+        queryWrapper.eq("index_type", "价格");
+        queryWrapper.eq("comm_id", params.get("commId"));
+        queryWrapper.le("date", endDate);
+        queryWrapper.gt("value", 0);
         queryWrapper.isNotNull("value");
         queryWrapper.orderByDesc(new String[]{"date"});
         queryWrapper.last(" limit 1 ");

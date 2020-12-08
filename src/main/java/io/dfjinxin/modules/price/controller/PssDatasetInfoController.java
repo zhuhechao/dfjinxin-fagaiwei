@@ -98,7 +98,7 @@ public class PssDatasetInfoController extends AbstractController {
         LOG.info("调用python-[{}]结束,用时:{}秒!", api, time);
 
         if (StringUtils.isEmpty(result)) {
-            return R.error("数据集创建失败!");
+            return R.error("数据集创建失败1111111111111111111!");
         }
 
         JSONObject jsonObj = JSON.parseObject(result);
@@ -119,7 +119,7 @@ public class PssDatasetInfoController extends AbstractController {
             return R.ok();
         } else {
             LOG.info("数据集创建-失败!");
-            return R.error("数据集创建失败!");
+            return R.error("数据集创建失败222222222222222222222222!"+jsonObj.toString());
         }
     }
 
