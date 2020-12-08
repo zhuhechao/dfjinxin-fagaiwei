@@ -166,37 +166,24 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		}
 
 		if(Integer.parseInt((String) data.get("parent"))==0){
-       		data.put("depth",0);
+			buildChildrenDep(data,list);
 		}
-		if(Integer.parseInt((String) data.get("parent"))==1){
-			data.put("depth",1);
-			buildChildren(data,list);
-		}
+//		if(Integer.parseInt((String) data.get("parent"))==1){
+//			data.put("depth",1);
+//			buildChildren(data,list);
+//		}
 	   }
         for(Map<String, Object> data:list){
-			if((int)data.get("depth") == 3) {
+			if(Integer.parseInt(data.get("depth").toString()) == 3) {
 				levelOneMenu(m6,data);
-			}else if((int)data.get("depth") == 2){
+			}else if(Integer.parseInt(data.get("depth").toString()) == 2){
 				//系统管理
 				List<Map<String, Object>> lt = new ArrayList<>();
 				Map<String, Object> map = new HashMap<>();
 				String pr = (String) data.get("menu_router");
 				int i= pr.lastIndexOf("/");
-				if(i==0){
-					map.put("path",pr.substring(1));
-				}else {
-					if("/sysconfig/usersconfig".equals(pr)){
-						map.put("path",pr.substring(0,i));
-					}else {
-						map.put("path",pr.substring(1,i));
-					}
-				}
-				if(i==0){
-					map.put("component",pr.substring(1));
-				}else {
-					map.put("component",pr.substring(1,i));
-				}
-
+				map.put("path",pr.substring(0,i));
+				map.put("component","Layout");
 				map.put("redirect",pr);
 				Map<String, Object>  m4 = new HashMap<>();
 				m4.put("title",data.get("menu_name"));
@@ -206,7 +193,24 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				map.put("menu_id",data.get("menu_id"));
 				map.put("menu_order",data.get("menu_order"));
 				m3.add(map);
-			}else if((int) data.get("depth") == 1 && (int) data.get("pare_menu_id")!= 1) {
+			}else if(Integer.parseInt(data.get("depth").toString()) == 1 && (int) data.get("pare_menu_id")== 2) {
+				//二级目录
+				Map<String, Object> map = new HashMap<>();
+				List<Map<String, Object>> lt = new ArrayList<>();
+				String pr = (String) data.get("menu_router");
+				int i= pr.lastIndexOf("/");
+				map.put("redirect",pr);
+				map.put("path",pr.substring(0,i));
+				map.put("component","Layout");
+				Map<String, Object>  m4 = new HashMap<>();
+				m4.put("title",data.get("menu_name"));
+				map.put("meta",m4);
+				map.put("children",lt);
+				map.put("pare_menu_id",data.get("pare_menu_id"));
+				map.put("menu_id",data.get("menu_id"));
+				map.put("menu_order",data.get("menu_order"));
+				m2.add(map);
+			}else if(Integer.parseInt(data.get("depth").toString()) == 1 && (int) data.get("pare_menu_id") !=1 && (int) data.get("pare_menu_id") !=2) {
 				//二级目录
 				Map<String, Object> map = new HashMap<>();
 				List<Map<String, Object>> lt = new ArrayList<>();
@@ -222,9 +226,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				map.put("menu_id",data.get("menu_id"));
 				map.put("menu_order",data.get("menu_order"));
 				m2.add(map);
-			}else if((int) data.get("depth") == 1 && (int) data.get("pare_menu_id")== 1) {
+			}else if(Integer.parseInt(data.get("depth").toString()) == 1 && (int) data.get("pare_menu_id")== 1) {
 				levelOneMenu(m1,data);
-			}else if((int) data.get("depth") == 0 && (int) data.get("pare_menu_id")!= 1) {
+			}else if(Integer.parseInt(data.get("depth").toString()) == 0 && (int) data.get("pare_menu_id")!= 1) {
 				//m7 三级目录
 				Map<String, Object> map = new HashMap<>();
 				String pr = (String) data.get("menu_router");
@@ -239,7 +243,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				map.put("menu_id",data.get("menu_id"));
 				map.put("menu_order",data.get("menu_order"));
 				m7.add(map);
-			}else if((int) data.get("depth") == 0 && (int) data.get("pare_menu_id")== 1) {
+			}else if(Integer.parseInt(data.get("depth").toString()) == 0 && (int) data.get("pare_menu_id")== 1) {
 				Map<String, Object> map = new HashMap<>();
 				List<Map<String, Object>> lt = new ArrayList<>();
 				String pr = (String) data.get("menu_router");
@@ -380,6 +384,20 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 			}
 		}
 	}
+
+	private void buildChildrenDep(Map<String,Object> mbean,List<Map<String,Object>> menus){
+		int mid= (int) mbean.get("pare_menu_id");
+		int mth = Integer.parseInt(mbean.get("depth").toString());
+		for(Map<String,Object> dt : menus){
+			int dth = Integer.parseInt( dt.get("depth").toString()) ;
+			if((int)dt.get("menu_id")== mid && Integer.parseInt((String) dt.get("parent"))==1 ){
+				if(dth==0 || (dth - mth) <= 0)
+				   dt.put("depth",mth+1);
+				   buildChildrenDep(dt,menus);
+			}
+		}
+	}
+
 
 	private void menusMap(List<Map<String,Object>> list,List<Map<String,Object>> tmap){
 		int fl = 1;
