@@ -40,3 +40,7 @@ ca:
 
 rsp-server:
   url: sp.ndrc.gov.cn
+
+bim:
+  key: 123456
+  type: AES
