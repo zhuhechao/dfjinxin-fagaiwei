@@ -1430,6 +1430,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     @Override
     public List<Map<String, Object>> warningDistribution(Map<String, Object> params) {
         List<Map<String, Object>> indexList = baseMapper.getThisYearErawCommList(params);
+        if(indexList.size()>0){
+            for (Map<String, Object> lis : indexList) {
+                params.put("commId",lis.get("comm_id"));
+                lis.put("subList",baseMapper.getThisYearErawIndexList(params));
+            }
+        }
         return indexList;
     }
 
@@ -1444,38 +1450,71 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     public List<Map<String, Object>> warningIndexDate(Map<String, Object> params) {
         List<Map<String, Object>> lis = new ArrayList<>();
         List<String> dateList = this.getDate(Calendar.getInstance().get(Calendar.DAY_OF_YEAR), "yujing");
-        List<Map<String, Object>> ids = baseMapper.getThisYearErawIndexList(params);
-        for (Map<String, Object> id : ids) {
-            params.put("indexId", id.get("pric_type_id"));
-            List<Map<String, Object>> ls = baseMapper.warningIndexDate(params);
-            Map<String, Object> map = new HashMap<>();
-            List<String> huanbiData = new ArrayList<>();
-            List<String> tongbiData = new ArrayList<>();
-            String indexName = "";
-            String unit = "";
-            if (ls.size() > 0) {
-                for (String itrm1 : dateList) {
-                    String str1 = "0";
-                    String str2 = "0";
-                    for (Map<String, Object> itrm : ls) {
-                        if (itrm1.equals(itrm.get("date").toString())) {
-                            str1 = itrm.get("pri_range").toString();
-                            str2 = itrm.get("pri_yonyear").toString();
-                            indexName = itrm.get("index_name").toString();
-                            unit = itrm.get("unit").toString();
+        List<String> ids = (List<String>)params.get("indexId");
+        if(ids.size()>0){
+            for (String id : ids) {
+                params.put("indexId", id);
+                List<Map<String, Object>> ls = baseMapper.warningIndexDate(params);
+                Map<String, Object> map = new HashMap<>();
+                List<String> huanbiData = new ArrayList<>();
+                List<String> tongbiData = new ArrayList<>();
+                String indexName = "";
+                String unit = "";
+                if (ls.size() > 0) {
+                    for (String itrm1 : dateList) {
+                        String str1 = "0";
+                        String str2 = "0";
+                        for (Map<String, Object> itrm : ls) {
+                            if (itrm1.equals(itrm.get("date").toString())) {
+                                str1 = itrm.get("pri_range").toString();
+                                str2 = itrm.get("pri_yonyear").toString();
+                                indexName = itrm.get("index_name").toString();
+                                unit = itrm.get("unit").toString();
+                            }
                         }
+                        huanbiData.add(str1);
+                        tongbiData.add(str2);
                     }
-                    huanbiData.add(str1);
-                    tongbiData.add(str2);
                 }
+                map.put("indexName", indexName);
+                map.put("unit", unit);
+                map.put("xData", dateList);
+                map.put("huanbiData", huanbiData);
+                map.put("tongbiData", tongbiData);
+                lis.add(map);
             }
-            map.put("indexName", indexName);
-            map.put("unit", unit);
-            map.put("xData", dateList);
-            map.put("huanbiData", huanbiData);
-            map.put("tongbiData", tongbiData);
-            lis.add(map);
         }
+//        for (Map<String, Object> id : ids) {
+//            params.put("indexId", id.get("pric_type_id"));
+//            List<Map<String, Object>> ls = baseMapper.warningIndexDate(params);
+//            Map<String, Object> map = new HashMap<>();
+//            List<String> huanbiData = new ArrayList<>();
+//            List<String> tongbiData = new ArrayList<>();
+//            String indexName = "";
+//            String unit = "";
+//            if (ls.size() > 0) {
+//                for (String itrm1 : dateList) {
+//                    String str1 = "0";
+//                    String str2 = "0";
+//                    for (Map<String, Object> itrm : ls) {
+//                        if (itrm1.equals(itrm.get("date").toString())) {
+//                            str1 = itrm.get("pri_range").toString();
+//                            str2 = itrm.get("pri_yonyear").toString();
+//                            indexName = itrm.get("index_name").toString();
+//                            unit = itrm.get("unit").toString();
+//                        }
+//                    }
+//                    huanbiData.add(str1);
+//                    tongbiData.add(str2);
+//                }
+//            }
+//            map.put("indexName", indexName);
+//            map.put("unit", unit);
+//            map.put("xData", dateList);
+//            map.put("huanbiData", huanbiData);
+//            map.put("tongbiData", tongbiData);
+//            lis.add(map);
+//        }
         return lis;
     }
 
@@ -1576,5 +1615,23 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             }
         }
         return dataList;
+    }
+
+    @Override
+    public  Map<String, Object> fore(Map<String, Object> params) {
+        params.put("satrtDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -30)));
+        params.put("endDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), +30)));
+        List<Map<String, Object>> duanqiEwar = baseMapper.getDayFore(params);
+        Calendar ca = Calendar.getInstance();//得到一个Calendar的实例
+        ca.setTime(DateUtils.addDateDays(DateTime.getBeginOf(new Date()),  -0 )); //设置时间为当前时间
+        ca.add(Calendar.YEAR, -10); //年份减1
+        params.put("satrtYear",  new SimpleDateFormat("yyyy").format(ca.getTime()));
+        ca.add(Calendar.YEAR, +20); //年份减1
+        params.put("endYear", new SimpleDateFormat("yyyy").format(ca.getTime()));
+        List<Map<String, Object>> changqiEwar = baseMapper.getYearFore(params);
+        Map<String, Object> map = new HashMap<>();
+        map.put("duanqiEwar",duanqiEwar);
+        map.put("changqiEwar",changqiEwar);
+        return  map;
     }
 }

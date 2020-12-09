@@ -30,12 +30,19 @@
 
 
 
+
+
     <!-- 条件查询 -->
     <sql id="rptInfoWhere">
         <where>
+
             <!--报告类型-->
             <if test="param.rptType!= null and param.rptType!= '' ">
                 rpt_type = #{param.rptType}
+            </if>
+            <!--报告类型-->
+            <if test="param.name!= null and param.name!= '' ">
+                AND rpt_name like #{param.name}
             </if>
             <!--报告频度-->
             <if test="param.rptFreq!= null and param.rptFreq!= '' ">

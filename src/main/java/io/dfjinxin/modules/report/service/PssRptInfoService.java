@@ -18,6 +18,8 @@ public interface PssRptInfoService extends IService<PssRptInfoEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
+    PageUtils queryPage1(Map<String, Object> params);
+
 
 
 

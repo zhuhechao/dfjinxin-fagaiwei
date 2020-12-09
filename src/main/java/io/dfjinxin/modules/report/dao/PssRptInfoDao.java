@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.dfjinxin.modules.report.entity.PssRptInfoEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.dfjinxin.modules.report.entity.WpCarwlerDataEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -22,6 +23,11 @@ import java.util.Map;
 public interface PssRptInfoDao extends BaseMapper<PssRptInfoEntity> {
 
     IPage<PssRptInfoEntity> queryPage(Page page, @Param("param") Map<String, Object> map);
+
+    @Select("SELECT t.* FROM wp_crawler_data t\n" +
+            "WHERE t.title like #{p.name}\n" +
+            "GROUP BY t.link")
+    IPage<Map<String, Object>> queryPage1(Page page, @Param("p") Map<String, Object> map);
 
     /**
      * 分析报告单独接口

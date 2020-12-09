@@ -431,7 +431,7 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "                        LIMIT 0,3")
     List< Map<String, Object>> getDownThree(@Param("p") Map<String, Object> mp);
 
-    @Select("SELECT t.comm_id\n" +
+    @Select("SELECT t.comm_id,m.comm_name\n" +
             "             FROM pss_price_ewarn t\n" +
             "            LEFT JOIN pss_comm_total m ON t.comm_id = m.comm_id\n" +
             "WHERE  DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') BETWEEN #{p.startDate} AND #{p.endDate}  \n" +
@@ -440,13 +440,13 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "ORDER BY t.comm_id ")
     List< Map<String, Object>> getThendCommList(@Param("p") Map<String, Object> mp);
 
-    @Select("SELECT t.pric_type_id index_id\n" +
-            "             FROM pss_price_ewarn t\n" +
-            "            LEFT JOIN pss_comm_total m ON t.comm_id = m.comm_id\n" +
+    @Select("SELECT t.pric_type_id index_id,m.index_name\n" +
+            "                        FROM pss_price_ewarn t\n" +
+            "                        LEFT JOIN wp_base_index_info m ON t.pric_type_id = m.index_id\n" +
             "WHERE  DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') BETWEEN #{p.startDate} AND #{p.endDate}  \n" +
-            "AND t.comm_id = #{p.commsId}\n" +
-            "GROUP BY t.comm_id\n" +
-            "ORDER BY t.comm_id ")
+            "AND t.comm_id = #{p.id}\n" +
+            "GROUP BY t.pric_type_id\n" +
+            "ORDER BY t.pric_type_id ")
     List< Map<String, Object>> getThendGuiCommList(@Param("p") Map<String, Object> mp);
 
     @Select("SELECT t.pric_type_id index_id,t.pri_value,t.pri_range value,t.unit,fo.index_name,\n" +
@@ -475,13 +475,14 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "ORDER BY t.comm_id ")
     List< Map<String, Object>> getThisYearErawCommList(@Param("p") Map<String, Object> mp);
 
+
     /**
      * @Desc: 当前价格预警规格品指标集合
      * @Param: [itrmDate]
      * @Author: y.b
      * @Date: 2020.11.16
      */
-    @Select("SELECT t.pric_type_id,fo.index_name\n" +
+    @Select("SELECT t.pric_type_id index_id,fo.index_name\n" +
             "             FROM pss_price_ewarn t\n" +
             "            LEFT JOIN pss_comm_total m ON t.comm_id = m.comm_id\n" +
             "            LEFT JOIN wp_base_index_info fo ON fo.index_id = t.pric_type_id\n" +
@@ -524,4 +525,36 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "GROUP BY DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') \n" +
             "ORDER BY  DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') ")
     List< Map<String, Object>> warningIndexDate(@Param("p") Map<String, Object> mp);
+
+
+    /**
+     * @Desc: 价格长期预测
+     * @Param: [itrmDate]
+     * @Author: y.b
+     * @Date: 2020.11.16
+     */
+    @Select("SELECT t.comm_id,t.fore_time date,t.fore_price,m.comm_name FROM pss_price_relt t\n" +
+            "LEFT JOIN pss_comm_total m ON m.comm_id = t.comm_id\n" +
+            "WHERE t.fore_type = '年预测'\n" +
+            "AND t.comm_id = #{p.commId}\n" +
+            "AND fore_time BETWEEN #{p.satrtYear} AND #{p.endYear}\n" +
+            "GROUP BY fore_time \n" +
+            "ORDER BY fore_time ")
+    List< Map<String, Object>> getYearFore(@Param("p") Map<String, Object> mp);
+
+
+    /**
+     * @Desc: 价格短期预测
+     * @Param: [itrmDate]
+     * @Author: y.b
+     * @Date: 2020.11.16
+     */
+    @Select("SELECT t.comm_id,DATE_FORMAT(t.fore_time,'%Y-%m-%d') date,t.fore_price,m.comm_name FROM pss_price_relt t\n" +
+            "LEFT JOIN pss_comm_total m ON m.comm_id = t.comm_id\n" +
+            "WHERE t.fore_type = '日预测'\n" +
+            "AND t.comm_id = #{p.commId}\n" +
+            "AND DATE_FORMAT(t.fore_time,'%Y-%m-%d') BETWEEN #{p.satrtDate} AND #{p.endDate}\n" +
+            "GROUP BY DATE_FORMAT(t.fore_time,'%Y-%m-%d') \n" +
+            "ORDER BY DATE_FORMAT(t.fore_time,'%Y-%m-%d') ")
+    List< Map<String, Object>> getDayFore(@Param("p") Map<String, Object> mp);
 }

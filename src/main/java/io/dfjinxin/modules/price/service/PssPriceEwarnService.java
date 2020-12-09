@@ -57,5 +57,7 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
     Map<String, Object> getEwarValue(Map<String, Object> params);
 
     List<Map<String, Object>> viewBy(Map<String, Object> params);
+
+    Map<String, Object> fore(Map<String, Object> params);
 }
 

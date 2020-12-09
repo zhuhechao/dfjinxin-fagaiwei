@@ -54,6 +54,7 @@ public class PssRptInfoController {
             @ApiImplicitParam(name = "rptStatus", value = "报告状态，1是有效，0是删除", required = false, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "minCrteTime", value = "生成报告最小日期", required = false, dataType = "Date", paramType = "query"),
             @ApiImplicitParam(name = "maxCrteTime", value = "生成报告最大日期", required = false, dataType = "Date", paramType = "query"),
+            @ApiImplicitParam(name = "name", value = "报告名称", required = false, dataType = "Date", paramType = "query")
     })
     public R list(
             @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
@@ -62,21 +63,29 @@ public class PssRptInfoController {
             @RequestParam(value = "rptFreq", required = false) String rptFreq,
             @RequestParam(value = "rptStatus", required = false) String rptStatus,
             @RequestParam(value = "minCrteTime", required = false) Date minCrteTime,
-            @RequestParam(value = "maxCrteTime", required = false) Date maxCrteTime
+            @RequestParam(value = "maxCrteTime", required = false) Date maxCrteTime,
+             @RequestParam(value = "name", required = false) String name
     ) {
         Map<String, Object> params = new HashMap() {{
             put("pageIndex", pageIndex);
             put("pageSize", pageSize);
-
             put("rptType", rptType);
             put("rptFreq", rptFreq);
             put("rptStatus", rptStatus);
             put("minCrteTime", minCrteTime);
             put("maxCrteTime", maxCrteTime);
+            put("name", "%"+name+"%");
         }};
-        PageUtils pageOne = pssRptInfoService.queryPage(params);
-        return R.ok().put("page", pageOne);
+        if(rptType.equals("0")){
+            PageUtils pageOne = pssRptInfoService.queryPage(params);
+            return R.ok().put("page", pageOne);
+        }else{
+            PageUtils pageOne1 = pssRptInfoService.queryPage1(params);
+            return R.ok().put("page", pageOne1);
+        }
     }
+
+
 
 
     //所有分析报告单独接口

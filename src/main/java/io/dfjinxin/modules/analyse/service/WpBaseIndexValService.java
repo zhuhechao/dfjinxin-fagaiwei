@@ -40,6 +40,8 @@ public interface WpBaseIndexValService extends IService<WpBaseIndexValEntity> {
 
     List<Map<String, Object>> lineChartBy(Map<String, Object> params);
 
+    List<Map<String, Object>> linejgBy(Map<String, Object> params);
+
     List<PssCommTotalEntity> queryCommListByCommId(Integer commId,String indexType);
 
     List<WpBaseIndexValEntity> getProvinceMapByCommId(Integer commId,String indexType ,String date);

@@ -94,7 +94,7 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
             "AND t.date BETWEEN #{p.startDate} AND #{p.endDate}\n" +
             "AND t.index_type =  '价格'\n" +
             "AND t.frequence = '日'\n" +
-            "AND t.area_name in ('全国','中国')\n" +
+//            "AND t.area_name in ('全国','中国')\n" +
             "GROUP BY t.comm_id")
     List<Map<String, Object>> getIndexThendCommIds(@Param("p") Map<String, Object> params);
 
@@ -103,7 +103,7 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
             "AND t.date BETWEEN #{p.startDate} AND #{p.endDate}\n" +
             "AND t.index_type =  '价格'\n" +
             "AND t.frequence = '日'\n" +
-            "AND t.area_name in ('全国','中国')\n" +
+//            "AND t.area_name in ('全国','中国')\n" +
             "GROUP BY t.index_id")
     List<Map<String, Object>> getIndexThendIndexs(@Param("p") Map<String, Object> params);
 
@@ -112,7 +112,7 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
             "AND t.date BETWEEN #{p.startDate} AND #{p.endDate}\n" +
             "AND t.index_type =  '价格'\n" +
             "AND t.frequence = '日'\n" +
-            "AND t.area_name in ('全国','中国')\n" +
+//            "AND t.area_name in ('全国','中国')\n" +
             "GROUP BY t.date\n" +
             "order BY t.date")
     List<Map<String, Object>> getIndexThend(@Param("p") Map<String, Object> params);
@@ -129,7 +129,7 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
 
     @Select("SELECT  t.index_id,t.index_name FROM wp_base_index_val t\n" +
             "WHERE  t.index_type =  #{p.indexType}\n" +
-            "AND t.comm_id = #{p.commsId}\n" +
+            "AND t.comm_id = #{p.id}\n" +
             "AND t.date BETWEEN #{p.startDate} AND #{p.endDate}\n" +
             "GROUP BY t.comm_id\n" +
             "order BY t.comm_id")

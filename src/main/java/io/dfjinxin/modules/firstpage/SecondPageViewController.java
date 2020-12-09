@@ -221,6 +221,26 @@ public class SecondPageViewController {
         return R.ok().put("data", map);
     }
 
+    @GetMapping("/linejgBy/{type}")
+    @ApiOperation(value = "二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称(id)、时间区域统计规格品各频度下各区域的指标信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "dateType", value = "日期类型", required = true, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "indexId", value = "日期类型", required = true, dataType = "List<String>", paramType = "query")
+    })
+    public R linejgBy(@PathVariable(value = "type") String type,
+                      @RequestParam(value = "dateType") String dateType,
+                      @RequestParam(value = "indexId") List<String> indexId) {
+
+        Map<String, Object> params = new HashMap();
+        params.put("type", type);
+        params.put("dateType", dateType);
+        params.put("indexId", indexId);
+        params.put("indexType", "价格");
+        List<Map<String, Object>> map = wpBaseIndexValService.linejgBy(params);
+
+        return R.ok().put("data", map);
+    }
+
     @GetMapping("/provinceMap/{commId}")
     @ApiOperation(value = "二级页面(商品总览)-价格指标页签-规格品各省份地图数据:根据规格品id、指标类型、日期 获取各省份数据",
             notes = "日期(yyyy-MM-dd)为空默认获取昨天数据")
@@ -272,17 +292,28 @@ public class SecondPageViewController {
         return R.ok().put("data", list).put("ewarnSection", list1);
     }
 
-    @GetMapping("/commIndexDate/{commId}")
+    @GetMapping("/commIndexDate")
     @ApiOperation(value = "二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称(id)、时间区域统计规格品各频度下各区域的指标信息")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "indexId", value = "日期", required = false, dataType = "List<String>", paramType = "query"),
             @ApiImplicitParam(name = "year", value = "日期", required = false, dataType = "String", paramType = "query")
     })
-    public R commIndexDate(@PathVariable("commId") String commId,
+    public R commIndexDate(@RequestParam(value = "indexId") List<String> indexId,
                            @RequestParam(value = "year") String year) {
         Map<String, Object> ma = new HashMap<>();
-        ma.put("commId", commId);
+        ma.put("indexId", indexId);
         ma.put("year", year);
         List<Map<String, Object>> list = pssPriceEwarnService.warningIndexDate(ma);
+        return R.ok().put("data", list);
+    }
+
+    @GetMapping("/fore/{commId}")
+    @ApiOperation(value = "二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称(id)、时间区域统计规格品各频度下各区域的指标信息")
+    @ApiImplicitParams({})
+    public R fore(@PathVariable("commId") String commId) {
+        Map<String, Object> ma = new HashMap<>();
+        ma.put("commId", commId);
+        Map<String, Object> list = pssPriceEwarnService.fore(ma);
         return R.ok().put("data", list);
     }
 
