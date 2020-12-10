@@ -287,8 +287,8 @@ public class SecondPageViewController {
         Map<String, Object> ma = new HashMap<>();
         ma.put("commId", commId);
         ma.put("year", year);
-        List<Map<String, Object>> list = pssPriceEwarnService.warningDistribution(ma);
         Map<String, Object> list1 = pssPriceEwarnService.getEwarValue(ma);
+        List<Map<String, Object>> list = pssPriceEwarnService.warningDistribution(ma);
         return R.ok().put("data", list).put("ewarnSection", list1);
     }
 

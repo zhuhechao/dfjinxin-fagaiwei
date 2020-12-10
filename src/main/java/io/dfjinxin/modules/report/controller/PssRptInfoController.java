@@ -76,7 +76,7 @@ public class PssRptInfoController {
             put("maxCrteTime", maxCrteTime);
             put("name", "%"+name+"%");
         }};
-        if(rptType.equals("0")){
+        if(rptType.equals("1")){
             PageUtils pageOne = pssRptInfoService.queryPage(params);
             return R.ok().put("page", pageOne);
         }else{
