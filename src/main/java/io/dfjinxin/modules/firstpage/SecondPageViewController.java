@@ -207,10 +207,10 @@ public class SecondPageViewController {
     @GetMapping("/lineChartBy")
     @ApiOperation(value = "二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称(id)、时间区域统计规格品各频度下各区域的指标信息")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "indexId", value = "指标类型", required = true, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "indexId", value = "指标类型", required = true, dataType = "List<String>", paramType = "query"),
             @ApiImplicitParam(name = "indexType", value = "指标类型", required = true, dataType = "String", paramType = "query")
     })
-    public R lineChartBy(@RequestParam(value = "indexId") String indexId,
+    public R lineChartBy(@RequestParam(value = "indexId") List<String> indexId,
                          @RequestParam(value = "indexType") String indexType) {
 
         Map<String, Object> params = new HashMap();
@@ -267,7 +267,6 @@ public class SecondPageViewController {
         ca.setTime(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)); //设置时间为当前时间
         ca.add(Calendar.YEAR, -1); //年份减1
         Date lastMonth = ca.getTime(); //结果
-        System.out.println("lastMonth============================" + lastMonth);
         try {
             warnTask.run(id);
         } catch (Exception e) {

@@ -112,6 +112,7 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
             "AND t.date BETWEEN #{p.startDate} AND #{p.endDate}\n" +
             "AND t.index_type =  '价格'\n" +
             "AND t.frequence = '日'\n" +
+            "AND t.value >0\n" +
 //            "AND t.area_name in ('全国','中国')\n" +
             "GROUP BY t.date\n" +
             "order BY t.date")
@@ -135,8 +136,9 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
             "order BY t.comm_id")
     List<Map<String, Object>> getJiaGeIndexList(@Param("p") Map<String, Object> params);
 
-    @Select("SELECT  t.index_id,t.index_name,t.date,t.`value`,t.unit FROM wp_base_index_val t\n" +
-            "WHERE  t.index_type =  #{p.indexType}\n" +
+    @Select("SELECT  t.index_id,t.index_name,t.date,t.value,t.unit FROM wp_base_index_val t\n" +
+            "WHERE t.value>0\n" +
+            "AND t.index_type =  #{p.indexType}\n" +
             "AND t.index_id = #{p.indexId}\n" +
             "AND t.date BETWEEN #{p.startDate} AND #{p.endDate}\n" +
             "GROUP BY t.date\n" +
@@ -218,6 +220,22 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
             "GROUP BY t.comm_id\n" +
             "order BY t.comm_id " )
     List<Map<String, Object>> getRiOrYueOrNianCommId(@Param("p") Map<String, Object> params);
+
+    @Select("SELECT t.index_id,concat(t.index_name, '--', t.area_name) index_name,t.frequence FROM wp_base_index_val t     \n" +
+            "WHERE  t.index_type =  #{p.indexType}\n" +
+            "AND t.comm_id  = #{p.commId}\n" +
+            "GROUP BY t.index_id\n" +
+            "order BY t.index_id " )
+    List<Map<String, Object>> getRiOrYueOrNianIndexId(@Param("p") Map<String, Object> params);
+
+    @Select("SELECT t.index_id,concat(t.index_name, '--', t.area_name) index_name,t.`value`,t.date,t.unit FROM wp_base_index_val t \n" +
+            "WHERE  t.index_type =  #{p.indexType}\n" +
+            "AND t.index_id  = #{p.indexId}\n" +
+            "AND t.value>0\n" +
+            "GROUP BY t.date\n" +
+            "order BY t.date \n" +
+            "LIMIT 1000" )
+    List<Map<String, Object>> getRiOrYueOrNianData(@Param("p") Map<String, Object> params);
 
     @Select("SELECT t.comm_id commId,p.comm_name commName,info.index_name indexName,info.source_name sourceName,info.frequence,\n" +
             "           DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') date,t.pric_type_id indexId,\n" +

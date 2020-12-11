@@ -32,7 +32,6 @@ public class PssRptInfoServiceImpl extends ServiceImpl<PssRptInfoDao, PssRptInfo
         IPage<PssRptInfoEntity> page  =  baseMapper.queryPage(new Page<>(no, limit), params);
         return new PageUtils(page);
     }
-
     @Override
     public PageUtils queryPage1(Map<String, Object> params) {
         Long no = params.containsKey("page") ? Long.valueOf(params.get("pageIndex").toString()) : 1;

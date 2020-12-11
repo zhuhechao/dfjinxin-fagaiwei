@@ -324,6 +324,7 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "                       LEFT JOIN wp_base_index_info fo ON fo.index_id = t.index_id\n" +
             "            WHERE t.fore_type = '日预测'\n" +
             "AND t.index_id = #{p.indexId}\n" +
+            "AND t.fore_price >0\n" +
             "AND DATE_FORMAT(t.fore_time,'%Y-%m-%d') BETWEEN #{p.startDate} AND #{p.endDate}\n" +
             "GROUP BY DATE_FORMAT(t.fore_time,'%Y-%m-%d')\n" +
             "ORDER BY DATE_FORMAT(t.fore_time,'%Y-%m-%d')")
@@ -377,28 +378,42 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
      * @Author: y.b
      * @Date: 2020.11.16
      */
-    @Select("SELECT t.comm_id,t.ewarn_id,t.ewarn_date,\n" +
-            "t.ewarn_level,t.ewarn_type_id,t.pric_type_id,\n" +
-            "t.pri_range,t.pri_value,t.stat_area_code,t.unit,\n" +
-            "m.code_name,n.comm_name,p.pri_value y_pri_value,\n" +
-            "g.img_name,s.comm_id shangpinId,s.comm_name shangpinName FROM pss_price_ewarn t \n" +
-            "                                      LEFT JOIN wp_ascii_info m ON t.ewarn_level = m.code_id\n" +
-            "                                     LEFT JOIN pss_comm_total n ON n.comm_id = t.comm_id\n" +
-            "                                      LEFT JOIN (SELECT DISTINCT t1.comm_id, t1.pri_value,\n" +
-            "                                       t1.pri_range,t1.ewarn_date FROM pss_price_ewarn t1\n" +
-            "                                      WHERE DATE(t1.ewarn_date)  BETWEEN '2020-11-20' AND  #{p.endDate}) p\n" +
-            "                                      ON p.comm_id = t.comm_id\n" +
-            "            LEFT JOIN pss_comm_total_img g ON n.parent_code = g.comm_id \n" +
-            "\t\t\t\t\t\tLEFT JOIN pss_comm_total s ON g.comm_id = s.comm_id \n" +
-            "                                    WHERE DATE(t.ewarn_date)  BETWEEN '2020-11-20' AND   #{p.endDate}\n" +
-            "                                   AND t.stat_area_code = #{p.province} \n" +
-            "                                        AND  0 <  t.pri_range\n" +
-            "             AND g.img_name IS NOT NULL \n" +
-            "             AND g.img_name != '' \n" +
-            "            AND t.stat_area_code in  (SELECT w.area_name FROM wp_area_info w WHERE w.area_id BETWEEN 1 AND 32) \n" +
-            "                                    GROUP BY t.comm_id\n" +
-            "                                    ORDER BY t.pri_range DESC\n" +
-            "                                    LIMIT 0,3")
+//    @Select("SELECT t.comm_id,t.ewarn_id,t.ewarn_date,\n" +
+//            "t.ewarn_level,t.ewarn_type_id,t.pric_type_id,\n" +
+//            "t.pri_range,t.pri_value,t.stat_area_code,t.unit,\n" +
+//            "m.code_name,n.comm_name,p.pri_value y_pri_value,\n" +
+//            "g.img_name,s.comm_id shangpinId,s.comm_name shangpinName FROM pss_price_ewarn t \n" +
+//            "                                      LEFT JOIN wp_ascii_info m ON t.ewarn_level = m.code_id\n" +
+//            "                                     LEFT JOIN pss_comm_total n ON n.comm_id = t.comm_id\n" +
+//            "                                      LEFT JOIN (SELECT DISTINCT t1.comm_id, t1.pri_value,\n" +
+//            "                                       t1.pri_range,t1.ewarn_date FROM pss_price_ewarn t1\n" +
+//            "                                      WHERE DATE(t1.ewarn_date)  BETWEEN #{p.satrtDate} AND  #{p.endDate}) p\n" +
+//            "                                      ON p.comm_id = t.comm_id\n" +
+//            "            LEFT JOIN pss_comm_total_img g ON n.parent_code = g.comm_id \n" +
+//            "\t\t\t\t\t\tLEFT JOIN pss_comm_total s ON g.comm_id = s.comm_id \n" +
+//            "                                    WHERE DATE(t.ewarn_date)  BETWEEN #{p.satrtDate} AND   #{p.endDate}\n" +
+//            "                                   AND t.stat_area_code = #{p.province} \n" +
+//            "                                        AND  0 <  t.pri_range\n" +
+//            "             AND g.img_name IS NOT NULL \n" +
+//            "             AND g.img_name != '' \n" +
+//            "            AND t.stat_area_code in  (SELECT w.area_name FROM wp_area_info w WHERE w.area_id BETWEEN 1 AND 32) \n" +
+//            "                                    GROUP BY t.comm_id\n" +
+//            "                                    ORDER BY t.pri_range DESC\n" +
+//            "                                    LIMIT 0,3")
+//    List< Map<String, Object>> getUpThree(@Param("p") Map<String, Object> mp);
+    @Select("SELECT t.comm_id,ps.comm_name,MAX(t.pri_range) pri_range,t.pri_value,t.unit,\n" +
+            "t.stat_area_code,pc.comm_name shangpinName,pc.comm_id shangpinId ,pm.img_name\n" +
+            "FROM pss_price_ewarn t\n" +
+            "LEFT JOIN pss_comm_total ps ON ps.comm_id = t.comm_id\n" +
+            "LEFT JOIN pss_comm_total pc ON pc.comm_id = ps.parent_code\n" +
+            "LEFT JOIN pss_comm_total_img pm ON pm.comm_id = pc.comm_id\n" +
+            "WHERE ps.level_code = 3\n" +
+            "AND t.pri_range >0\n" +
+            "AND t.stat_area_code = #{p.province}\n" +
+            "AND DATE(t.ewarn_date)  BETWEEN #{p.satrtDate} AND   #{p.endDate}\n" +
+            "GROUP BY t.comm_id\n" +
+            "ORDER BY t.pri_range DESC\n" +
+            "LIMIT 0,3")
     List< Map<String, Object>> getUpThree(@Param("p") Map<String, Object> mp);
 
     /**
@@ -407,28 +422,19 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
      * @Author: y.b
      * @Date: 2020.11.16
      */
-    @Select("SELECT t.comm_id,t.ewarn_id,t.ewarn_date,\n" +
-            "t.ewarn_level,t.ewarn_type_id,t.pric_type_id,\n" +
-            "t.pri_range,t.pri_value,t.stat_area_code,t.unit,\n" +
-            "m.code_name,n.comm_name,p.pri_value y_pri_value,g.img_name,\n" +
-            "s.comm_id shangpinId,s.comm_name shangpinName  FROM pss_price_ewarn t \n" +
-            "                          LEFT JOIN wp_ascii_info m ON t.ewarn_level = m.code_id\n" +
-            "                         LEFT JOIN pss_comm_total n ON n.comm_id = t.comm_id\n" +
-            "                          LEFT JOIN (SELECT DISTINCT t1.comm_id, t1.pri_value,\n" +
-            "                           t1.pri_range,t1.ewarn_date FROM pss_price_ewarn t1\n" +
-            "                          WHERE DATE(t1.ewarn_date)  BETWEEN '2020-11-20' AND  #{p.endDate}) p\n" +
-            "                          ON p.comm_id = t.comm_id\n" +
-            "LEFT JOIN pss_comm_total_img g ON n.parent_code = g.comm_id \n" +
-            "LEFT JOIN pss_comm_total s ON g.comm_id = s.comm_id \n" +
-            "                        WHERE DATE(t.ewarn_date)  BETWEEN '2020-11-20' AND  #{p.endDate}\n" +
-            "                       AND t.stat_area_code = #{p.province} \n" +
-            "                            AND   t.pri_range <0\n" +
-            "             AND g.img_name IS NOT NULL \n" +
-            "             AND g.img_name != '' \n" +
-            "AND t.stat_area_code in  (SELECT w.area_name FROM wp_area_info w WHERE w.area_id BETWEEN 1 AND 32) \n" +
-            "                        GROUP BY t.comm_id\n" +
-            "                        ORDER BY ABS(t.pri_range) DESC\n" +
-            "                        LIMIT 0,3")
+    @Select("SELECT t.comm_id,ps.comm_name,-MAX(ABS(t.pri_range)) pri_range,t.pri_value,t.unit,\n" +
+            "t.stat_area_code,pc.comm_name shangpinName,pc.comm_id shangpinId ,pm.img_name\n" +
+            "FROM pss_price_ewarn t\n" +
+            "LEFT JOIN pss_comm_total ps ON ps.comm_id = t.comm_id\n" +
+            "LEFT JOIN pss_comm_total pc ON pc.comm_id = ps.parent_code\n" +
+            "LEFT JOIN pss_comm_total_img pm ON pm.comm_id = pc.comm_id\n" +
+            "WHERE ps.level_code = 3\n" +
+            "AND t.pri_range <0\n" +
+            "AND t.stat_area_code = #{p.province}\n" +
+            "AND DATE(t.ewarn_date)  BETWEEN #{p.satrtDate} AND   #{p.endDate}\n" +
+            "GROUP BY t.comm_id\n" +
+            "ORDER BY ABS(t.pri_range) DESC\n" +
+            "LIMIT 0,3")
     List< Map<String, Object>> getDownThree(@Param("p") Map<String, Object> mp);
 
     @Select("SELECT t.comm_id,m.comm_name\n" +
@@ -455,6 +461,7 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "                       LEFT JOIN wp_base_index_info fo ON fo.index_id = t.pric_type_id\n\n" +
             "WHERE  DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') BETWEEN #{p.startDate} AND #{p.endDate}  \n" +
             "AND t.pric_type_id = #{p.indexId}\n" +
+            "AND t.pri_value>0\n" +
             "GROUP BY DATE_FORMAT(t.ewarn_date,'%Y-%m-%d')\n" +
             "ORDER BY DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') ")
     List< Map<String, Object>> getThendCommData(@Param("p") Map<String, Object> mp);
@@ -533,10 +540,11 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
      * @Author: y.b
      * @Date: 2020.11.16
      */
-    @Select("SELECT t.comm_id,t.fore_time date,t.fore_price,m.comm_name FROM pss_price_relt t\n" +
+    @Select("SELECT t.comm_id,t.fore_time date,t.fore_price,t.actual_price,m.comm_name FROM pss_price_relt t\n" +
             "LEFT JOIN pss_comm_total m ON m.comm_id = t.comm_id\n" +
             "WHERE t.fore_type = '年预测'\n" +
             "AND t.comm_id = #{p.commId}\n" +
+            "AND t.fore_price >0\n" +
             "AND fore_time BETWEEN #{p.satrtYear} AND #{p.endYear}\n" +
             "GROUP BY fore_time \n" +
             "ORDER BY fore_time ")
@@ -549,10 +557,11 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
      * @Author: y.b
      * @Date: 2020.11.16
      */
-    @Select("SELECT t.comm_id,DATE_FORMAT(t.fore_time,'%Y-%m-%d') date,t.fore_price,m.comm_name FROM pss_price_relt t\n" +
+    @Select("SELECT t.comm_id,DATE_FORMAT(t.fore_time,'%Y-%m-%d') date,t.fore_price,t.actual_price,m.comm_name FROM pss_price_relt t\n" +
             "LEFT JOIN pss_comm_total m ON m.comm_id = t.comm_id\n" +
             "WHERE t.fore_type = '日预测'\n" +
             "AND t.comm_id = #{p.commId}\n" +
+            "AND t.fore_price >0\n" +
             "AND DATE_FORMAT(t.fore_time,'%Y-%m-%d') BETWEEN #{p.satrtDate} AND #{p.endDate}\n" +
             "GROUP BY DATE_FORMAT(t.fore_time,'%Y-%m-%d') \n" +
             "ORDER BY DATE_FORMAT(t.fore_time,'%Y-%m-%d') ")

@@ -166,6 +166,12 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
             resMap.put("provinceMap", provinceLast);
         } else {
             List<Map<String, Object>> zhouThend1 = baseMapper.getRiOrYueOrNianCommId(params);
+            if(zhouThend1.size()>0){
+                for (Map<String, Object> pList1 : zhouThend1) {
+                    params.put("commId",pList1.get("comm_id"));
+                    pList1.put("subList",baseMapper.getRiOrYueOrNianIndexId(params));
+                }
+            }
             resMap.put("zhouThend", zhouThend1);
         }
         return resMap;
@@ -173,72 +179,184 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
 
     @Override
     public List<Map<String, Object>> lineChartBy(Map<String, Object> params) {
-        List<Map<String, Object>> list = baseMapper.getOtherIndex(params);
-        List<Map<String, Object>> list1 = new ArrayList<>();
-        if (list.size() > 0) {
-            List<String> dateList = new ArrayList<>();
-            for (int i = 0; i < list.size(); i++) {
-                params.put("indexId", list.get(i).get("index_id"));
-                List<Map<String, Object>> zhouThend11 = baseMapper.getRiOrYueOrNianList(params);
-                if (zhouThend11.size() > 0) {
-                    for (int i1 = 0; i1 < zhouThend11.size(); i1++) {
-                        dateList.add(zhouThend11.get(zhouThend11.size() - 1 - i1).get("date").toString());
+        List<Map<String, Object>> dataList = new ArrayList<>();
+        List<String> ids = (List<String>) params.get("indexId");
+        if (ids.size() > 0) {
+            if (ids.size() == 1) {
+                params.put("indexId", ids.get(0));
+                List<Map<String, Object>> list1 = baseMapper.getRiOrYueOrNianData(params);
+                if (list1.size() > 0) {
+                    Map<String, Object> map1 = new HashMap<>();
+                    List<String> yData = new ArrayList<>();
+                    List<String> xData = new ArrayList<>();
+                    String indexName = list1.get(0).get("index_name").toString();
+                    String indexId = list1.get(0).get("index_id").toString();
+                    String unit = list1.get(0).get("unit").toString();
+                    for (Map<String, Object> l1 : list1) {
+                        yData.add(l1.get("value").toString());
+                        xData.add(l1.get("date").toString());
+                    }
+                    map1.put("indexName", indexName);
+                    map1.put("unit", unit);
+                    map1.put("indexId", indexId);
+                    map1.put("xData", xData);
+                    map1.put("yData", yData);
+                    dataList.add(map1);
+                }
+            } else {
+                List<String> dates = new ArrayList<>();
+                List<Map<String, Object>> list3 = new ArrayList<>();
+                List<String> idList = new ArrayList<>();
+                for (String it1 : ids) {
+                    params.put("indexId", it1);
+                    List<Map<String, Object>> list2 = baseMapper.getRiOrYueOrNianData(params);
+                    if (list2.size() > 0) {
+                        idList.add(it1);
+                        for (Map<String, Object> l2 : list2) {
+                            list3.add(l2);
+                            dates.add(l2.get("date").toString());
+                        }
+                    }
+                }
+                Set set = new HashSet();
+                List<String> newList = new ArrayList();
+                if (dates.size() > 0) {
+                    for (String cd : dates) {
+                        if (set.add(cd)) {
+                            newList.add(cd);
+                        }
+                    }
+                    Collections.sort(newList);
+                }
+                if (list3.size() > 0) {
+                    for (String it2 : idList) {
+                        Map<String, Object> map2 = new HashMap<>();
+                        List<String> yData = new ArrayList<>();
+                        String indexName = "";
+                        String indexId = "";
+                        String unit = "";
+                        for (String de : newList) {
+                            String val = "-";
+                            for (Map<String, Object> l3 : list3) {
+                                if (it2.equals(l3.get("index_id").toString()) && de.equals(l3.get("date").toString())) {
+                                    val = l3.get("value").toString();
+                                    indexName = l3.get("index_name").toString();
+                                    indexId = l3.get("index_id").toString();
+                                    unit = l3.get("unit").toString();
+                                }
+                            }
+                            yData.add(val);
+                        }
+                        map2.put("indexName", indexName);
+                        map2.put("unit", unit);
+                        map2.put("indexId", indexId);
+                        map2.put("xData", newList);
+                        map2.put("yData", yData);
+                        dataList.add(map2);
                     }
                 }
             }
-            list1 = this.getCommItemList(dateList, list, params);
         }
-        return list1;
+        return dataList;
     }
 
     @Override
     public List<Map<String, Object>> linejgBy(Map<String, Object> params) {
         List<String> ids = (List<String>) params.get("indexId");
-        int siz = 7;
         params.put("endDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)));
         if ("周".equals(params.get("dateType").toString())) {
             params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -7)));
         } else if ("月".equals(params.get("dateType").toString())) {
-            siz = 30;
             params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -30)));
         } else {
-            siz = 365;
             params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -365)));
         }
         List<Map<String, Object>> dataList = new ArrayList<>();
-        List<String> dateList = this.getDate(siz);
+        List<String> dateList = new ArrayList<>();
         if (ids.size() > 0) {
-            List<Map<String, Object>> list = new ArrayList<>();
-            for (String id : ids) {
-                params.put("indexId", id);
+            if (ids.size() == 1) {
+                List<Map<String, Object>> list1 = new ArrayList<>();
+                params.put("indexId", ids.get(0));
                 if ("1".equals(params.get("type").toString())) {
-                    list = baseMapper.getJiaGeIndexData(params);
+                    list1 = baseMapper.getJiaGeIndexData(params);
                 } else {
-                    list = pssPriceEwarnDao.getThendCommData(params);
+                    list1 = pssPriceEwarnDao.getThendCommData(params);
                 }
-                Map<String, Object> map1 = new HashMap<>();
-                List<String> yData = new ArrayList<>();
-                String indexName = "";
-                String indexId = "";
-                String unit = "";
-                for (String de : dateList) {
-                    String val = "0";
-                    for (Map<String, Object> li : list) {
-                        if (de.equals(li.get("date").toString())) {
-                            val = li.get("value").toString();
-                            indexName = li.get("index_name").toString();
-                            unit = li.get("unit").toString();
-                            indexId = li.get("index_id").toString();
+                if (list1.size() > 0) {
+                    Map<String, Object> map1 = new HashMap<>();
+                    List<String> yData = new ArrayList<>();
+                    List<String> xData = new ArrayList<>();
+                    String indexName = list1.get(0).get("index_name").toString();
+                    String indexId = list1.get(0).get("index_id").toString();
+                    String unit = list1.get(0).get("unit").toString();
+                    for (Map<String, Object> l1 : list1) {
+                        yData.add(l1.get("value").toString());
+                        xData.add(l1.get("date").toString());
+                    }
+                    map1.put("indexName", indexName);
+                    map1.put("unit", unit);
+                    map1.put("indexId", indexId);
+                    map1.put("xData", xData);
+                    map1.put("yData", yData);
+                    dataList.add(map1);
+                }
+            } else {
+                List<String> dates = new ArrayList<>();
+                List<Map<String, Object>> list3 = new ArrayList<>();
+                List<String> idList = new ArrayList<>();
+                for (String it1 : ids) {
+                    List<Map<String, Object>> list2 = new ArrayList<>();
+                    params.put("indexId", it1);
+                    if ("1".equals(params.get("type").toString())) {
+                        list2 = baseMapper.getJiaGeIndexData(params);
+                    } else {
+                        list2 = pssPriceEwarnDao.getThendCommData(params);
+                    }
+                    if (list2.size() > 0) {
+                        idList.add(it1);
+                        for (Map<String, Object> l2 : list2) {
+                            list3.add(l2);
+                            dates.add(l2.get("date").toString());
                         }
                     }
-                    yData.add(val);
                 }
-                map1.put("indexName",indexName);
-                map1.put("unit",unit);
-                map1.put("indexId",indexId);
-                map1.put("xData",dateList);
-                map1.put("yData",yData);
-                dataList.add(map1);
+                Set set = new HashSet();
+                List<String> newList = new ArrayList();
+                if (dates.size() > 0) {
+                    for (String cd : dates) {
+                        if (set.add(cd)) {
+                            newList.add(cd);
+                        }
+                    }
+                    Collections.sort(newList);
+                }
+                if (list3.size() > 0) {
+                    for (String it2 : idList) {
+                        Map<String, Object> map2 = new HashMap<>();
+                        List<String> yData = new ArrayList<>();
+                        String indexName = "";
+                        String indexId = "";
+                        String unit = "";
+                        for (String de : newList) {
+                            String val = "-";
+                            for (Map<String, Object> l3 : list3) {
+                                if (it2.equals(l3.get("index_id").toString()) && de.equals(l3.get("date").toString())) {
+                                    val = l3.get("value").toString();
+                                    indexName = l3.get("index_name").toString();
+                                    indexId = l3.get("index_id").toString();
+                                    unit = l3.get("unit").toString();
+                                }
+                            }
+                            yData.add(val);
+                        }
+                        map2.put("indexName", indexName);
+                        map2.put("unit", unit);
+                        map2.put("indexId", indexId);
+                        map2.put("xData", newList);
+                        map2.put("yData", yData);
+                        dataList.add(map2);
+                    }
+                }
             }
         }
         return dataList;
