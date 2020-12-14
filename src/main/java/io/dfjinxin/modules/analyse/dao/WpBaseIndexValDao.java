@@ -228,7 +228,7 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
             "order BY t.index_id " )
     List<Map<String, Object>> getRiOrYueOrNianIndexId(@Param("p") Map<String, Object> params);
 
-    @Select("SELECT t.index_id,concat(t.index_name, '--', t.area_name) index_name,t.`value`,t.date,t.unit FROM wp_base_index_val t \n" +
+    @Select("SELECT t.index_id,concat(t.index_name, '--', t.area_name) index_name,t.`value`,t.date,t.unit,t.source_name FROM wp_base_index_val t \n" +
             "WHERE  t.index_type =  #{p.indexType}\n" +
             "AND t.index_id  = #{p.indexId}\n" +
             "AND t.value>0\n" +

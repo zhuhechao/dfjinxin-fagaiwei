@@ -192,6 +192,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                     String indexName = list1.get(0).get("index_name").toString();
                     String indexId = list1.get(0).get("index_id").toString();
                     String unit = list1.get(0).get("unit").toString();
+                    String sourceName = list1.get(0).get("source_name").toString();
                     for (Map<String, Object> l1 : list1) {
                         yData.add(l1.get("value").toString());
                         xData.add(l1.get("date").toString());
@@ -201,6 +202,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                     map1.put("indexId", indexId);
                     map1.put("xData", xData);
                     map1.put("yData", yData);
+                    map1.put("sourceName", sourceName);
                     dataList.add(map1);
                 }
             } else {
@@ -235,6 +237,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                         String indexName = "";
                         String indexId = "";
                         String unit = "";
+                        String sourceName = "";
                         for (String de : newList) {
                             String val = "-";
                             for (Map<String, Object> l3 : list3) {
@@ -243,6 +246,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                                     indexName = l3.get("index_name").toString();
                                     indexId = l3.get("index_id").toString();
                                     unit = l3.get("unit").toString();
+                                    sourceName = l3.get("source_name").toString();
                                 }
                             }
                             yData.add(val);
@@ -252,6 +256,8 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                         map2.put("indexId", indexId);
                         map2.put("xData", newList);
                         map2.put("yData", yData);
+                        map2.put("yData", yData);
+                        map2.put("sourceName", sourceName);
                         dataList.add(map2);
                     }
                 }
