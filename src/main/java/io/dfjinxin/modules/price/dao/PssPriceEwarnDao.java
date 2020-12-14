@@ -541,10 +541,10 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
      * @Date: 2020.11.16
      */
     @Select("SELECT t.comm_id,t.fore_time date,t.fore_price,t.actual_price,m.comm_name, i.index_name, i.unit FROM pss_price_relt t\n" +
-            "LEFT JOIN pss_comm_total m " +
+            "LEFT JOIN pss_comm_total m\n" +
             "ON m.comm_id = t.comm_id \n" +
-            "LEFT JOIN wp_base_index_info i " +
-            "on i.index_id = t.index_id"+
+            "LEFT JOIN wp_base_index_info i\n" +
+            "on i.index_id = t.index_id\n"+
             "WHERE t.fore_type = '年预测'\n" +
             "AND t.comm_id = #{p.commId}\n" +
             "And t.index_id = #{p.indexId}\n" +
@@ -563,7 +563,7 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
      */
     @Select("SELECT t.comm_id,DATE_FORMAT(t.fore_time,'%Y-%m-%d') date,t.fore_price,t.actual_price,m.comm_name ,i.index_name, i.unit  FROM pss_price_relt t\n" +
             "LEFT JOIN pss_comm_total m ON m.comm_id = t.comm_id\n" +
-            "LEFT JOIN wp_base_index_info i on i.index_id = t.index_id"+
+            "LEFT JOIN wp_base_index_info i on i.index_id = t.index_id\n"+
             "WHERE t.fore_type = '日预测'\n" +
             "AND t.comm_id = #{p.commId}\n" +
             "And t.index_id = #{p.indexId}\n" +
