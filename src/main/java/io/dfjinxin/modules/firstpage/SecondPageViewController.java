@@ -309,9 +309,10 @@ public class SecondPageViewController {
     @GetMapping("/fore/{commId}")
     @ApiOperation(value = "二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称(id)、时间区域统计规格品各频度下各区域的指标信息")
     @ApiImplicitParams({})
-    public R fore(@PathVariable("commId") String commId) {
+    public R fore(@PathVariable("commId") String commId,@RequestParam(value = "indexId") String indexId) {
         Map<String, Object> ma = new HashMap<>();
         ma.put("commId", commId);
+        ma.put("indexId", indexId);
         Map<String, Object> list = pssPriceEwarnService.fore(ma);
         return R.ok().put("data", list);
     }
