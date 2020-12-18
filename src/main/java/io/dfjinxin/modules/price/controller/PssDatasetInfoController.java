@@ -139,13 +139,16 @@ public class PssDatasetInfoController extends AbstractController {
         if (queryEntity == null) {
             return R.error("数据集,不存在!");
         }
+        String indeVar = entity.getIndeVar();
+        JSONObject parse = (JSONObject) JSONObject.parse(indeVar);
+        parse.put("dataSetEngName", queryEntity.getDataSetEngName());
         // 12-18 begin
         final String api = "createDataSet";
-        LOG.info("调用python-[{}]服务,请求参数-{}", api, entity.getIndeVar());
+        LOG.info("调用python-[{}]服务,请求参数-{}", api, parse.toJSONString());
         long startTime = System.currentTimeMillis();
         String result = null;
         try {
-            result = PythonApiUtils.doPost(pyUrl + api, entity.getIndeVar());
+            result = PythonApiUtils.doPost(pyUrl + api, parse.toJSONString());
         } catch (Exception e) {
             return R.error("调用python-" + api + "服务异常。更新失败!");
         }
