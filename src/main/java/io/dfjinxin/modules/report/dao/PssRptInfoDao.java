@@ -44,6 +44,7 @@ public interface PssRptInfoDao extends BaseMapper<PssRptInfoEntity> {
             "(SELECT MAX(t1.data_dt) FROM wp_crawler_data t1)\n" +
             "AND t.link IS NOT NULL\n" +
             "AND t.title IS NOT NULL\n" +
+            "and t.comm_name  = #{p.commName}" +
             "GROUP BY t.title")
-    List< Map<String, Object>> queryRpt();
+    List< Map<String, Object>> queryRpt(@Param("p") Map<String,Object> params);
 }

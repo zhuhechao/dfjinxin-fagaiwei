@@ -56,21 +56,21 @@ public class SecondPageViewController {
     public R queryIndexTypeByCommId(@PathVariable("commId") Integer commId) {
         logger.info("二级页面(商品总览),req commId:{}", commId);
 //        指标类型信息
-        List<Map<String, Object>> list = wpBaseIndexValService.secondPageIndexType(commId);
+//        List<Map<String, Object>> list = wpBaseIndexValService.secondPageIndexType(commId);
         Map<String, Object> resMap = new HashMap<>();
-        for (Map<String, Object> var : list) {
-            for (Map.Entry<String, Object> entry : var.entrySet()) {
-                resMap.put(entry.getKey(), entry.getValue());
-            }
-        }
+//        for (Map<String, Object> var : list) {
+//            for (Map.Entry<String, Object> entry : var.entrySet()) {
+//                resMap.put(entry.getKey(), entry.getValue());
+//            }
+//        }
 
         //其它数据
         Map<String, Object> zfMap = pssPriceEwarnService.secondPageDetail(commId);
         resMap.putAll(zfMap);
 
-        //统计3类品下 有哪些指标类类型是价格的规格品
-        List<PssCommTotalEntity> type4commList = wpBaseIndexValService.queryCommListByCommId(commId, "价格");
-        return R.ok().put("data", resMap).put("type4commList", type4commList);
+//        //统计3类品下 有哪些指标类类型是价格的规格品
+//        List<PssCommTotalEntity> type4commList = wpBaseIndexValService.queryCommListByCommId(commId, "价格");
+        return R.ok().put("data", resMap);//.put("type4commList", type4commList);
     }
 
     /**
@@ -307,12 +307,36 @@ public class SecondPageViewController {
     }
 
     @GetMapping("/fore/{commId}")
-    @ApiOperation(value = "二级页面(商品总览)-折线图:根据4类商品id、指标类型、指标名称(id)、时间区域统计规格品各频度下各区域的指标信息")
+    @ApiOperation(value = "价格预测页面接口")
     @ApiImplicitParams({})
     public R fore(@PathVariable("commId") String commId) {
         Map<String, Object> ma = new HashMap<>();
         ma.put("commId", commId);
         Map<String, Object> list = pssPriceEwarnService.fore(ma);
+        return R.ok().put("data", list);
+    }
+
+    @GetMapping("/foreDate/{type}")
+    @ApiOperation(value = "价格预测页面接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "indexId", value = "指标id", required = false, dataType = "String", paramType = "query")
+           })
+    public R foreDate(@PathVariable("type") String type,
+                      @RequestParam(value = "indexId") String indexId) {
+        Map<String, Object> ma = new HashMap<>();
+        ma.put("type", type);
+        ma.put("indexId", indexId);
+        List<Map<String, Object>> list = pssPriceEwarnService.foreData(ma);
+        return R.ok().put("data", list);
+    }
+
+    @GetMapping("/ewarmMap/{commId}")
+    @ApiOperation(value = "规格品预警信息省份分布")
+    @ApiImplicitParams({})
+    public R ewarmMap(@PathVariable("commId") String commId) {
+        Map<String, Object> ma = new HashMap<>();
+        ma.put("commId", commId);
+        Map<String, Object> list = pssPriceEwarnService.ewarmMap(ma);
         return R.ok().put("data", list);
     }
 

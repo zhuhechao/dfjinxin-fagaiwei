@@ -179,6 +179,7 @@ public class TengXunYuQing {
         params.put("programmeId", converCommId(commId));
         params.put("appType", 0);
         params.put("dateType", 1);
+        params.put("size", 50);
         final String apiUrl = "analyze/getHeatTop";
         String jsonStr = JSON.toJSONString(params);
         logger.info("the getHeatTrend req params:{}", jsonStr);

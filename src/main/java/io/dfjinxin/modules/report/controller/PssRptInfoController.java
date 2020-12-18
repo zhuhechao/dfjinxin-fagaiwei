@@ -112,8 +112,14 @@ public class PssRptInfoController {
     //所有分析报告单独接口
     @GetMapping("/queryRpt")
     @ApiOperation("所有分析报告单独接口")
-    public R queryRpt() {
-        List< Map<String, Object>> page = pssRptInfoService.queryRpt();
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "commName", value = "传参商品报告和所有的商品报告文件", required = false, dataType = "String", paramType = "query"),
+    })
+    public R queryRpt( @RequestParam(value = "commName", required = false) String commName) {
+        Map<String, Object> params = new HashMap();
+
+        params.put("commName",commName);
+        List< Map<String, Object>> page = pssRptInfoService.queryRpt(params);
         return R.ok().put("page", page);
     }
 
@@ -159,10 +165,22 @@ public class PssRptInfoController {
      * 删除
      */
     @PostMapping("/delete")
-    @RequiresPermissions("report:pssrptinfo:delete")
+//    @RequiresPermissions("report:pssrptinfo:delete")
     @ApiOperation("报告运行信息删除")
     public R delete(@RequestBody Long[] rptIds) {
         pssRptInfoService.removeByIds(Arrays.asList(rptIds));
+
+        return R.ok();
+    }
+
+    /**
+     * 删除
+     */
+    @PostMapping("/deleteReptiles")
+//    @RequiresPermissions("report:pssrptinfo:delete")
+    @ApiOperation("删除爬虫报告")
+    public R deleteReptiles(@RequestBody Long[] rptIds) {
+//        pssRptInfoService.deleteReptiles(Arrays.asList(rptIds));
 
         return R.ok();
     }

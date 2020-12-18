@@ -132,8 +132,8 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
             "WHERE  t.index_type =  #{p.indexType}\n" +
             "AND t.comm_id = #{p.id}\n" +
             "AND t.date BETWEEN #{p.startDate} AND #{p.endDate}\n" +
-            "GROUP BY t.comm_id\n" +
-            "order BY t.comm_id")
+            "GROUP BY t.index_id\n" +
+            "order BY t.index_id")
     List<Map<String, Object>> getJiaGeIndexList(@Param("p") Map<String, Object> params);
 
     @Select("SELECT  t.index_id,t.index_name,t.date,t.value,t.unit FROM wp_base_index_val t\n" +
@@ -251,4 +251,13 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
             "ORDER BY t.ewarn_date DESC\n" +
             "LIMIT 10")
     List<Map<String, Object>> getPage( @Param("p") Map map);
+
+    @Select("SELECT t.index_id,t.index_name,t.date ,t.`value`,t.unit \n" +
+            "FROM wp_base_index_val t\n" +
+            "WHERE t.frequence = '日'\n" +
+            " AND t.index_id = #{p.indexId}\n" +
+            "AND t.date  BETWEEN #{p.satrtDate} AND #{p.endDate}\n" +
+            " GROUP BY t.date\n" +
+            "ORDER BY t.date")
+    List<Map<String, Object>>  getDayFore( @Param("p") Map map);
 }

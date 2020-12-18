@@ -55,7 +55,7 @@ public class PssRptInfoServiceImpl extends ServiceImpl<PssRptInfoDao, PssRptInfo
      * @return
      */
     @Override
-    public List< Map<String, Object>> queryRpt() {
-        return pssRptInfoDao.queryRpt();
+    public List< Map<String, Object>> queryRpt(Map<String,Object> params) {
+        return pssRptInfoDao.queryRpt(params);
     }
 }

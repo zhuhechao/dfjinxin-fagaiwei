@@ -34,7 +34,13 @@ public interface PssRptInfoService extends IService<PssRptInfoEntity> {
      * 分析报告单独接口
      * @return
      */
-    List< Map<String, Object>> queryRpt();
+    List< Map<String, Object>> queryRpt(Map<String,Object> params);
+
+    /**
+     * 分析报告单独接口
+     * @return
+     */
+//    List< Map<String, Object>> deleteReptiles(List<String> params);
 
 
 }
