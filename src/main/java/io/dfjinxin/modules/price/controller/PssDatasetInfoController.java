@@ -119,7 +119,7 @@ public class PssDatasetInfoController extends AbstractController {
             return R.ok();
         } else {
             LOG.info("数据集创建-失败!");
-            return R.error("数据集创建失败222222222222222222222222!"+jsonObj.toString());
+            return R.error("数据集创建失败222222222222222222222222!" + jsonObj.toString());
         }
     }
 
@@ -139,15 +139,40 @@ public class PssDatasetInfoController extends AbstractController {
         if (queryEntity == null) {
             return R.error("数据集,不存在!");
         }
-        entity.setIndeVar(entity.getIndeVar());
-        entity.setCommIndevalPath(entity.getCommIndevalPath());
-        entity.setMacroIndevalPath(entity.getMacroIndevalPath());
-        entity.setDataTime(new Date());
-        //TODO
-//        entity.setUserId(super.getUserId());
-        entity.setUserId("1");
-        pssDatasetInfoService.updateById(entity);
-        return R.ok();
+        // 12-18 begin
+        final String api = "createDataSet";
+        LOG.info("调用python-[{}]服务,请求参数-{}", api, entity.getIndeVar());
+        long startTime = System.currentTimeMillis();
+        String result = null;
+        try {
+            result = PythonApiUtils.doPost(pyUrl + api, entity.getIndeVar());
+        } catch (Exception e) {
+            return R.error("调用python-" + api + "服务异常。更新失败!");
+        }
+        Long time = (System.currentTimeMillis() - startTime) / 1000;
+        LOG.info("调用python-[{}]结束,用时:{}秒!", api, time);
+
+        if (StringUtils.isEmpty(result)) {
+            return R.error("数据集更新失败1111111111111111111!");
+        }
+        // 12-18 end
+        JSONObject jsonObj = JSON.parseObject(result);
+        String code = jsonObj.containsKey("code") ? jsonObj.getString("code") : null;
+        if ("succ".equals(code)) {
+            String tableName = jsonObj.containsKey("name") ? jsonObj.getString("name") : null;
+            String shape = jsonObj.containsKey("shape") ? jsonObj.getString("shape") : null;
+            String indevar = jsonObj.containsKey("exist_ids") ? jsonObj.getString("exist_ids") : null;
+            entity.setDataSetEngName(tableName);
+            entity.setShape(shape);
+            entity.setIndeVar(indevar);
+            entity.setDataTime(new Date());
+            pssDatasetInfoService.updateById(entity);
+            LOG.info("数据集更新-成功!");
+            return R.ok();
+        } else {
+            LOG.info("数据集更新-失败!");
+            return R.error("数据集更新失败3333333333333!" + jsonObj.toString());
+        }
     }
 
     /**
