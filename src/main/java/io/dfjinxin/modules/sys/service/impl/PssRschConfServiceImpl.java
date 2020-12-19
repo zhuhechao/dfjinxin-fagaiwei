@@ -27,10 +27,9 @@ public class PssRschConfServiceImpl extends ServiceImpl<PssRschConfDao, PssRschC
         params.put("delFlag", "0");
         addQueryCondition(params, "delFlag", "del_flag", "eq", qr);
         //addQueryCondition(params,"rcshId","rcsh_id",qr);
-        qr.orderByDesc("create_time");
-
+        //qr.orderByDesc("create_time");
         IPage<PssRschConfEntity> page = this.page(
-                new Query<PssRschConfEntity>().getPage(params),
+                new Query<PssRschConfEntity>().getPage(params,"create_time",false),
                 qr
         );
 
