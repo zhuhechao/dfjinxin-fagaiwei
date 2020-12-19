@@ -162,12 +162,18 @@ public class PssDatasetInfoController extends AbstractController {
         JSONObject jsonObj = JSON.parseObject(result);
         String code = jsonObj.containsKey("code") ? jsonObj.getString("code") : null;
         if ("succ".equals(code)) {
-            String tableName = jsonObj.containsKey("name") ? jsonObj.getString("name") : null;
+            String tableName  = jsonObj.containsKey("name") ? jsonObj.getString("name") : null;
             String shape = jsonObj.containsKey("shape") ? jsonObj.getString("shape") : null;
             String indevar = jsonObj.containsKey("exist_ids") ? jsonObj.getString("exist_ids") : null;
-            entity.setDataSetEngName(tableName);
-            entity.setShape(shape);
-            entity.setIndeVar(indevar);
+            if(StringUtils.isNotBlank(tableName)){
+                entity.setDataSetEngName(tableName);
+            }
+            if(StringUtils.isNotBlank(shape)){
+                entity.setShape(shape);
+            }
+            if(StringUtils.isNotBlank(indevar)){
+                entity.setIndeVar(indevar);
+            }
             entity.setDataTime(new Date());
             pssDatasetInfoService.updateById(entity);
             LOG.info("数据集更新-成功!");
