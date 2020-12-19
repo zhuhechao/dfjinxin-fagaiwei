@@ -53,8 +53,8 @@ public class SecondPageViewController {
      */
     @GetMapping("/view/{commId}")
     @ApiOperation(value = "二级页面(商品总览)-展示", notes = "根据3级商品id 获取相应该商品所有4级商品 指标信息 eg:58")
-    public R queryIndexTypeByCommId(@PathVariable("commId") Integer commId) {
-        logger.info("二级页面(商品总览),req commId:{}", commId);
+    public R queryIndexTypeByCommId(@PathVariable("") Integer commId) {
+        logger.info("二级页面(商品总览),req commId:{commId}", commId);
 //        指标类型信息
 //        List<Map<String, Object>> list = wpBaseIndexValService.secondPageIndexType(commId);
         Map<String, Object> resMap = new HashMap<>();
@@ -309,9 +309,10 @@ public class SecondPageViewController {
     @GetMapping("/fore/{commId}")
     @ApiOperation(value = "价格预测页面接口")
     @ApiImplicitParams({})
-    public R fore(@PathVariable("commId") String commId) {
+    public R fore(@PathVariable("commId") String commId,@RequestParam(value = "indexId") String indexId) {
         Map<String, Object> ma = new HashMap<>();
         ma.put("commId", commId);
+        ma.put("indexId", indexId);
         Map<String, Object> list = pssPriceEwarnService.fore(ma);
         return R.ok().put("data", list);
     }

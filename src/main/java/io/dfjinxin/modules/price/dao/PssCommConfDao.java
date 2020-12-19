@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
- *
  * @author z.h.c
  * @email z.h.c@126.com
  * @date 2019-08-27 19:33:54
@@ -36,6 +34,9 @@ public interface PssCommConfDao extends BaseMapper<PssCommConfEntity> {
             "  and conf.del_flag = 0\n" +
             "  and ec.del_flag = 0\n" +
             "  and ec.ewarn_type_id = #{ewarnTypeId}")
-    List<PssCommConfEntity> queryByewarnTypeId(@Param("commId")Integer commId,
-                                                @Param("ewarnTypeId")Integer ewarnTypeId);
+    List<PssCommConfEntity> queryByewarnTypeId(@Param("commId") Integer commId,
+                                               @Param("ewarnTypeId") Integer ewarnTypeId);
+
+    @Select("select * from pss_comm_conf  where del_flag = 0\n")
+    List<PssCommConfEntity> queryAll();
 }
