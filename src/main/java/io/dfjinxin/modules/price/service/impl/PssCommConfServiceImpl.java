@@ -75,7 +75,7 @@ public class PssCommConfServiceImpl extends ServiceImpl<PssCommConfDao, PssCommC
 
     @Override
     public void saveCommomJob(Integer commId, List<Integer> ewarnIds, List<Integer> indexIds,String areaName) {
-        List<PssCommConfEntity> pcfs = getCommConfByParms(commId, ewarnIds, indexIds,areaName);
+        List<PssCommConfEntity> pcfs = getCommConfByParms(commId, ewarnIds, indexIds, areaName);
         for (PssCommConfEntity py : pcfs) {
             PssEwarnConfEntity pe = pssEwarnConfService.queryEntityByEwarnId(py.getEwarnId() + "");
             StringBuilder sb = new StringBuilder();
@@ -98,6 +98,11 @@ public class PssCommConfServiceImpl extends ServiceImpl<PssCommConfDao, PssCommC
     @Override
     public List<PssCommConfEntity> queryByewarnTypeId(Integer commId, Integer ewarnTypeId) {
         return pssCommConfDao.queryByewarnTypeId(commId, ewarnTypeId);
+    }
+
+    @Override
+    public List<PssCommConfEntity> queryAll() {
+        return pssCommConfDao.queryAll();
     }
 
 
