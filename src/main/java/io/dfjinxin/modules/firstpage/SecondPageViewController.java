@@ -309,10 +309,9 @@ public class SecondPageViewController {
     @GetMapping("/fore/{commId}")
     @ApiOperation(value = "价格预测页面接口")
     @ApiImplicitParams({})
-    public R fore(@PathVariable("commId") String commId,@RequestParam(value = "indexId") String indexId) {
+    public R fore(@PathVariable("commId") String commId) {
         Map<String, Object> ma = new HashMap<>();
         ma.put("commId", commId);
-        ma.put("indexId", indexId);
         Map<String, Object> list = pssPriceEwarnService.fore(ma);
         return R.ok().put("data", list);
     }

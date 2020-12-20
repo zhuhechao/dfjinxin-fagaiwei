@@ -330,32 +330,6 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "ORDER BY DATE_FORMAT(t.fore_time,'%Y-%m-%d')")
     List<Map<String, Object>> getForePriceThend(@Param("p") Map<String, Object> mp);
 
-    /**
-     * @Desc: 获取指定商品预测价格月趋势和周趋势信息
-     * @Param: [itrmDate]
-     * @Author: y.b
-     * @Date: 2020.11.16
-     */
-    @Select("SELECT t.comm_id,t.ewarn_id,t.ewarn_date,\n" +
-            "                        t.ewarn_level,t.ewarn_type_id,t.pric_type_id,\n" +
-            "                        t.pri_range,t.pri_value,t.stat_area_code,t.unit,\n" +
-            "                       m.code_name,n.comm_name,f.comm_id shangpinId,f.comm_name shangpinName,f.img_name\n" +
-            "            FROM pss_price_ewarn t \n" +
-            "            LEFT JOIN wp_ascii_info m ON t.ewarn_level = m.code_id\n" +
-            "            LEFT JOIN pss_comm_total n ON n.comm_id = t.comm_id\n" +
-            "            LEFT JOIN (SELECT t1.comm_id,t1.comm_name,t2.img_name FROM pss_comm_total t1\n" +
-            "                       LEFT JOIN pss_comm_total_img t2 ON t1.comm_id = t2.comm_id) f ON f.comm_id = n.parent_code\n" +
-            "                       WHERE t.pri_range > 0\n" +
-            "                       AND t.pri_value >0\n" +
-            "                       AND t.ewarn_date BETWEEN #{p.smaDate} AND #{p.emaDate}\n" +
-            "                        AND t.stat_area_code IS NOT NULL \n" +
-            "                                     AND f.img_name IS NOT NULL \n" +
-            "                                     AND f.img_name != ''\n" +
-            "                                   AND n.parent_code = #{p.commId}\n" +
-            "                                   GROUP BY t.comm_id\n" +
-            "                                    ORDER BY t.pri_range DESC\n" +
-            "                        LIMIT 1")
-    List<Map<String, Object>> getMaxPro(@Param("p") Map<String, Object> mp);
 
     @Select("SELECT t.stat_area_code FROM pss_price_ewarn t\n" +
             "WHERE t.stat_area_code IS NOT NULL \n" +
@@ -554,6 +528,23 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "ORDER BY fore_time ")
     List< Map<String, Object>> getYearFore(@Param("p") Map<String, Object> mp);
 
+    /**
+     * @Desc: 价格长期预测
+     * @Param: [itrmDate]
+     * @Author: y.b
+     * @Date: 2020.11.16
+     */
+    @Select("SELECT t.index_id,n.index_name\n" +
+            "            FROM pss_price_relt t\n" +
+            "            LEFT JOIN pss_comm_total p ON p.comm_id = t.comm_id\n" +
+            "LEFT JOIN wp_base_index_info n ON n.index_id = t.index_id\n" +
+            "            WHERE t.fore_type = #{p.foreType}\n" +
+            "            AND (p.parent_code = #{p.commId} OR t.comm_id = #{p.commId})\n" +
+            "            AND t.fore_time  >= #{p.satrtDate1}\n" +
+            "AND n.index_name IS NOT NULL\n" +
+            "            GROUP BY t.index_id ")
+    List< Map<String, Object>> getForeIndex(@Param("p") Map<String, Object> mp);
+
 
     /**
      * @Desc: 价格短期预测
@@ -572,4 +563,50 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "GROUP BY DATE_FORMAT(t.fore_time,'%Y-%m-%d') \n" +
             "ORDER BY DATE_FORMAT(t.fore_time,'%Y-%m-%d') ")
     List< Map<String, Object>> getDayFore(@Param("p") Map<String, Object> mp);
+
+
+    @Select("SELECT t.comm_id,p.comm_name,t.pri_range,t.pri_value,t.ewarn_level,n.code_name,t.unit," +
+            "DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') date,fo.index_name" +
+            " FROM pss_price_ewarn t\n" +
+            "LEFT JOIN wp_ascii_info n ON t.ewarn_level = n.code_id\n" +
+            "LEFT JOIN pss_comm_total p ON p.comm_id = t.comm_id \n" +
+            "LEFT JOIN wp_base_index_info fo ON fo.index_id = t.pric_type_id\n" +
+            "WHERE  t.comm_id = #{p.commId}\n" +
+            "AND t.stat_area_code = #{p.areaName}\n" +
+            "AND t.pri_range = #{p.val}\n" +
+            "ORDER BY t.ewarn_date desc\n" +
+            "LIMIT 1")
+    List< Map<String, Object>> getCommIdByArea(@Param("p") Map<String, Object> mp);
+
+    @Select("SELECT t.comm_id ,p.comm_name,t.pri_range,t.pri_value,t.unit,t.ewarn_date," +
+            "t.ewarn_level,w.code_name,t.pri_yonyear,t.stat_area_code  " +
+            "FROM pss_price_ewarn t\n" +
+            "LEFT JOIN pss_comm_total p ON t.comm_id = p.comm_id\n" +
+            "LEFT JOIN wp_ascii_info w ON w.code_id = t.ewarn_level\n" +
+            "WHERE t.comm_id = #{p.commId}\n" +
+            "AND DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') BETWEEN #{p.startDate} AND #{p.endDate}\n" +
+            "ORDER BY ABS(t.pri_range) DESC\n" +
+            "LIMIT 1")
+    Map<String, Object> getMaxPro(@Param("p") Map<String, Object> mp);
+
+    @Select("SELECT t.stat_area_code,MAX(t.pri_range) maxPro,MIN(t.pri_range) minPro FROM pss_price_ewarn t\n" +
+            "WHERE t.stat_area_code in (SELECT a.area_name FROM wp_area_info a WHERE a.area_id BETWEEN 1 AND 32)\n" +
+            "AND t.comm_id = #{p.commId}\n" +
+            "AND DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') BETWEEN #{p.startDate} AND #{p.endDate}\n" +
+            "GROUP BY t.stat_area_code")
+    List< Map<String, Object>> getAreaByCommId(@Param("p") Map<String, Object> mp);
+
+    /**
+     * @Desc: 获取指定商品预测价格月趋势和周趋势信息
+     * @Param: [itrmDate]
+     * @Author: y.b
+     * @Date: 2020.11.16
+     */
+    @Select("SELECT t.comm_id ,p.comm_name FROM pss_price_ewarn t\n" +
+            "LEFT JOIN pss_comm_total p ON t.comm_id = p.comm_id\n" +
+            "WHERE p.parent_code = #{p.commId}\n" +
+            "AND t.ewarn_date BETWEEN #{p.smaDate} AND #{p.emaDate}\n" +
+            "GROUP BY t.comm_id")
+    List<Map<String, Object>> getMaxProCommid(@Param("p") Map<String, Object> mp);
+
 }
