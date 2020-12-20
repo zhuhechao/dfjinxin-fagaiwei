@@ -1657,7 +1657,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             Calendar ca = Calendar.getInstance();//得到一个Calendar的实例
             ca.setTime(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -0)); //设置时间为当前时间
             ca.add(Calendar.YEAR, 0); //年份减1
-            params.put("satrtDate1", new SimpleDateFormat("yyyy").format(ca.getTime()));
+            params.put("satrtYear", new SimpleDateFormat("yyyy").format(ca.getTime()));
             duanqiEwar1 = baseMapper.getYearFore(params);
         }
         return duanqiEwar1;
