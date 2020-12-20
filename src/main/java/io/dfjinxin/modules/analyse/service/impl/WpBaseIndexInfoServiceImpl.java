@@ -39,14 +39,14 @@ public class WpBaseIndexInfoServiceImpl extends ServiceImpl<WpBaseIndexInfoDao, 
     }
 
     @Override
-    public List<WpBaseIndexInfoEntity> getIndexNameByType(Integer commId) {
+    public List<WpBaseIndexInfoEntity> getIndexNameByType(Integer indexId) {
 
-        if (commId == null) {
+        if (indexId == null) {
             return new ArrayList<>();
         }
 
         QueryWrapper<WpBaseIndexInfoEntity> where = new QueryWrapper<>();
-        where.eq("comm_id", commId);
+        where.eq("index_id", indexId);
         where.eq("index_flag", 0);
         where.eq("index_type", "价格");
         where.like("index_used", "预警");
