@@ -24,7 +24,7 @@ public interface PssRptInfoDao extends BaseMapper<PssRptInfoEntity> {
 
     IPage<PssRptInfoEntity> queryPage(Page page, @Param("param") Map<String, Object> map);
 
-    @Select("SELECT t.title rptName,t.data_dt crteTime,t.link,t.web FROM wp_crawler_data t\n" +
+    @Select("SELECT t.title rptName,t.data_dt crteTime,t.link,t.web,t.comm_name commName,t.id rptId,t.report_flag  FROM wp_crawler_data t\n" +
             "WHERE t.title like #{p.name}\n" +
             "GROUP BY t.link")
     IPage<Map<String, Object>> queryPage1(Page page, @Param("p") Map<String, Object> map);
