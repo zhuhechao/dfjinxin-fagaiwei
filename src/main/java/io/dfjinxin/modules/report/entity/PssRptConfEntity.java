@@ -44,6 +44,10 @@ public class PssRptConfEntity implements Serializable {
 	 */
 	private Integer rschId;
 	/**
+	 * 调度配置id 类型为自动  时有值 手动时为空
+	 */
+	private String rschName;
+	/**
 	 * 报告日期
 	 */
 	private Date rptDate;
