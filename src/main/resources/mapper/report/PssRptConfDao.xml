@@ -10,6 +10,7 @@
         <result property="rptType" column="rpt_type"/>
         <result property="rptFreq" column="rpt_freq"/>
         <result property="rschId" column="rsch_id"/>
+        <result property="rschName" column="rsch_name"/>
         <result property="rptDate" column="rpt_date"/>
         <result property="rptName" column="rpt_name"/>
         <result property="commName" column="comm_name"/>

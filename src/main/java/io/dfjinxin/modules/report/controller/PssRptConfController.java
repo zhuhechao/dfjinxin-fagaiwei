@@ -97,7 +97,6 @@ public class PssRptConfController {
     @ApiOperation("保存-报告配置更新")
     public R update(@RequestBody PssRptConfEntity pssRptConf){
 		pssRptConfService.updateById(pssRptConf);
-
         return R.ok();
     }
 
