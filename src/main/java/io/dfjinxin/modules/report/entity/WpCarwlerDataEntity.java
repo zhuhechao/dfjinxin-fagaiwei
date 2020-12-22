@@ -1,35 +1,57 @@
 package io.dfjinxin.modules.report.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
- * @ClassName PssRptTemplateEntity
- * @Author：lym 863968235@qq.com
- * @Date： 2019/12/27 17:04
- * 修改备注：
+ * 
+ * 
+ * @author mxq
+ * @email 397968061@qq.com
+ * @date 2019-09-20 11:07:08
  */
 @Data
 @TableName("wp_crawler_data")
 public class WpCarwlerDataEntity implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    private static final long serialVersionUID = 1L;
-
-
-    //模板名称
-    private String data_dt;
-
-    //模板路径
-    private String title;
-
-    //模板名称
-    private String link;
-
-    //模板名称
-    private String web;
-
+	/**
+	 * 主键id
+	 */
+	@TableId
+	private Integer id;
+	/**
+	 * 报告时间
+	 */
+	private String data_dt;
+	/**
+	 * 报告名称
+	 */
+	private Integer title;
+	/**
+	 * 报告链接
+	 */
+	private String link;
+	/**
+	 * 来源
+	 */
+	private String web;
+	/**
+	 * 商品名称
+	 */
+	private String comm_name;
+	/**
+	 * 报告类型，默认为日
+	 */
+	private String report_type;
+	/**
+	 * 报告状态，0有效，1无效
+	 */
+	private String report_flag;
 
 
 }

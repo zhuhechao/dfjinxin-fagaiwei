@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import io.dfjinxin.config.propertie.AppProperties;
+import io.dfjinxin.modules.report.service.WpCarwlerDataService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -36,6 +37,8 @@ import javax.servlet.http.HttpServletResponse;
 public class PssRptInfoController {
     @Autowired
     private PssRptInfoService pssRptInfoService;
+    @Autowired
+    private WpCarwlerDataService wpCarwlerDataService;
     @Autowired
     private AppProperties appProperties;
     @Autowired
@@ -80,7 +83,7 @@ public class PssRptInfoController {
             PageUtils pageOne = pssRptInfoService.queryPage(params);
             return R.ok().put("page", pageOne);
         }else{
-            PageUtils pageOne1 = pssRptInfoService.queryPage1(params);
+            PageUtils pageOne1 = wpCarwlerDataService.queryPage(params);
             return R.ok().put("page", pageOne1);
         }
     }
@@ -153,7 +156,6 @@ public class PssRptInfoController {
      * 修改
      */
     @PostMapping("/update")
-    @RequiresPermissions("report:pssrptinfo:update")
     @ApiOperation("报告运行信息更新")
     public R update(@RequestBody PssRptInfoEntity pssRptInfo) {
         pssRptInfoService.updateById(pssRptInfo);
