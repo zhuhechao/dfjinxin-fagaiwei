@@ -57,8 +57,8 @@ tengxun:
 #auth接口参数
 auth:
     client_id: zhdata
-    client_secret: 7900c7ab04894443ac3b2b311fecb24a
-    auth_url: http://47.94.38.59:1443/idp
+    client_secret: 08904d8053584736930e2e8c47afb4b8
+    auth_url: https://172.20.11.5/idp
 
 token:
     #domain: localhost
