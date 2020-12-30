@@ -9,11 +9,13 @@ import io.dfjinxin.modules.price.service.PssCommConfService;
 import io.dfjinxin.modules.price.service.PssCommTotalService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.curator.shaded.com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -78,8 +80,10 @@ public class PssCommTotalController {
      */
     @PostMapping("/saveAndUpdate")
     @ApiOperation(value = "商品配置-保存&修改配置",
-            notes = "新增操作 commId:4类商品id,ewarnIds:预警id列表,indexIds:商品对应指标类型为价格的列表 .eg:{\"commId\":172, \"ewarnIds\":[3,8],\"indexIds\":[39,40,41] } " +
-                    "更新操作 confId: 主键id,commId:4类商品id,ewarnIds:预警id,indexIds:商品对应指标类型为价格 eg:{\"confId\":1,\"commId\":172, \"ewarnIds\":[9],\"indexIds\":[42] }")
+            notes = "新增操作 commId:4类商品id,ewarnIds:预警id列表,indexIds:商品对应指标类型为价格的列表 .eg:{\"commId\":172, \"ewarnIds\":[3," +
+                    "8],\"indexIds\":[39,40,41] } " +
+                    "更新操作 confId: 主键id,commId:4类商品id,ewarnIds:预警id,indexIds:商品对应指标类型为价格 eg:{\"confId\":1," +
+                    "\"commId\":172, \"ewarnIds\":[9],\"indexIds\":[42] }")
     public R saveAndUpdate(@RequestBody Map<String, Object> params) {
         if (params.isEmpty() || params.size() == 0) {
             R.error("请求参数为空!");
@@ -109,13 +113,14 @@ public class PssCommTotalController {
             confEntity.setAreaName(areaName);
             pssCommConfService.updateById(confEntity);
         } else {
-            List<PssCommConfEntity> commConfEntityList = pssCommConfService.getCommConfByParms(commId, ewarnIds, indexIds,areaName);
+            List<PssCommConfEntity> commConfEntityList = pssCommConfService.getCommConfByParms(commId, ewarnIds,
+                    indexIds, areaName);
             if (!commConfEntityList.isEmpty()) {
                 return R.error("该商品已配置此种类型预警!");
             }
-            pssCommConfService.saveCommConf(commId, ewarnIds, indexIds,areaName);
+            pssCommConfService.saveCommConf(commId, ewarnIds, indexIds, areaName);
             //添加调度任务
-            pssCommConfService.saveCommomJob(commId, ewarnIds, indexIds,areaName);
+            pssCommConfService.saveCommomJob(commId, ewarnIds, indexIds, areaName);
         }
         return R.ok();
     }
@@ -161,6 +166,24 @@ public class PssCommTotalController {
     public R queryPageList() {
         List<PssCommTotalEntity> list = pssCommTotalService.getAll();
         return R.ok().put("data", list);
+    }
+
+    @PostMapping("/updateByHand")
+    @ApiOperation("商品配置-手动执行调度")
+    public R updateByHand() {
+        List<PssCommConfEntity> list = pssCommConfService.queryAll();
+        LOG.info("手动执行调度开始:{}", list.size());
+        list.forEach(pssCommConfEntity -> {
+            List<Integer> eWarnIdList = Lists.newArrayList();
+            List<Integer> indexIdList = Lists.newArrayList();
+            eWarnIdList.add(pssCommConfEntity.getEwarnId());
+            indexIdList.add(pssCommConfEntity.getIndexId());
+            LOG.info("手动执行调度参数:{},{},{},{}", pssCommConfEntity.getCommId(), pssCommConfEntity.getEwarnId(),
+                    pssCommConfEntity.getIndexId(), pssCommConfEntity.getAreaName());
+            pssCommConfService.saveCommomJob(pssCommConfEntity.getCommId(), eWarnIdList,
+                    indexIdList, pssCommConfEntity.getAreaName());
+        });
+        return R.ok();
     }
 
 }

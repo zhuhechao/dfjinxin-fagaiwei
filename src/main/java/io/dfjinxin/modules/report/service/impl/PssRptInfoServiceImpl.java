@@ -1,7 +1,7 @@
 package io.dfjinxin.modules.report.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,11 +27,12 @@ public class PssRptInfoServiceImpl extends ServiceImpl<PssRptInfoDao, PssRptInfo
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        Page page = new Page((Integer) params.get("pageIndex"), (Integer) params.get("pageSize"));
-        page = (Page) super.baseMapper.queryPage(page, params);
+        System.out.println("params11================"+params.toString());
+        Long no = params.containsKey("pageIndex") ? Long.valueOf(params.get("pageIndex").toString()) : 1;
+        Long limit = params.containsKey("pageSize") ? Long.valueOf(params.get("pageSize").toString()) : 10;
+        IPage<PssRptInfoEntity> page  =  baseMapper.queryPage( new Page<>(no, limit), params);
         return new PageUtils(page);
     }
-
 
     /**
      * 分析报告单独接口
@@ -43,4 +44,12 @@ public class PssRptInfoServiceImpl extends ServiceImpl<PssRptInfoDao, PssRptInfo
     }
 
 
+    /**
+     * 分析报告单独接口
+     * @return
+     */
+    @Override
+    public List< Map<String, Object>> queryRpt(Map<String,Object> params) {
+        return pssRptInfoDao.queryRpt(params);
+    }
 }

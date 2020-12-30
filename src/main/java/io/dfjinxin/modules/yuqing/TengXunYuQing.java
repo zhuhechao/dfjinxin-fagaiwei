@@ -96,6 +96,57 @@ public class TengXunYuQing {
         return R.ok().put("data", result);
     }
 
+
+    /**
+     * 2、 获取热度分布
+     * 接口名：
+     * <p>
+     * <p>
+     * 请求：
+     * POST
+     * Content-Type
+     * <p>
+     * unixTime：1540794339
+     * appid："fagaiwei"
+     * signid:：
+     * programmeId：方案id long类型  即同步过去的商品id
+     * appType：类型 int类型 0：定向监测舆情分析  1：话题分析  这里填0即可
+     * dateType：日期类型 int类型 0：今天  1:7天内  2:30天内  这里填1即可
+     *
+     * @param commId
+     * @return
+     */
+    @PostMapping("getHeatDis/{commId}")
+    @ApiOperation("获取热度分布,参数为3类商品id")
+    public R getHeatDis(@PathVariable Integer commId) {
+
+        logger.info("获取热度分布,请求参数:{}", commId);
+        long unixTime = new Date().getTime() / 1000;
+        String signid = MD5Utils.getMD5(unixTime + MD5Utils.getMD5(appId + pwd));
+        Map<String, Object> params = new HashMap<>();
+        params.put("unixTime", unixTime);
+        params.put("appid", appId);
+        params.put("signid", signid);
+        params.put("programmeId", converCommId(commId));
+        params.put("appType", 0);
+        params.put("dateType", 1);
+        String jsonStr = JSON.toJSONString(params);
+        logger.info("the getHeatTrend req params:{}", jsonStr);
+        String apiUrl = "analyze/getHeatDis";
+        final String url = path + apiUrl;
+        logger.info("the request url: {}", url);
+        String res = null;
+        try {
+            res = HttpUtil.doPostJson(url, jsonStr);
+        } catch (Exception e) {
+            logger.error("call-商品舆情热度分布-异常:{}", e);
+            return R.error("调用腾讯接口-getHeatDis异常");
+        }
+        Object result = converResult(res);
+//        logger.info("the result:{}", result);
+        return R.ok().put("data", result);
+    }
+
     /**
      * 商品热点舆情
      * 接口名： analyze/getHeatTop
@@ -128,6 +179,7 @@ public class TengXunYuQing {
         params.put("programmeId", converCommId(commId));
         params.put("appType", 0);
         params.put("dateType", 1);
+        params.put("size", 50);
         final String apiUrl = "analyze/getHeatTop";
         String jsonStr = JSON.toJSONString(params);
         logger.info("the getHeatTrend req params:{}", jsonStr);

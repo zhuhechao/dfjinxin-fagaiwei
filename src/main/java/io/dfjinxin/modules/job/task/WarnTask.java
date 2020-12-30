@@ -18,10 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -51,6 +48,7 @@ public class WarnTask implements ITask {
     private WpBaseIndexValService wpBaseIndexValService;
     @Override
     public void run(String params) throws Exception {
+        System.out.println("params=================================="+params);
         String[] ids = params.split("@");
         String ewarnId = ids[0].substring(ids[0].indexOf(":") + 1, ids[0].length());
         String commConfId = ids[1].substring(ids[1].indexOf(":") + 1, ids[1].length());
@@ -74,7 +72,7 @@ public class WarnTask implements ITask {
             cc.put("commId",pc.getCommId());
             List<WpBaseIndexValEntity> wys2 = wpBaseIndexValService.getDataByDate2(cc);
             if(wys2.size()>0){
-                cc.put("startDate", DateUtils.addDateDays(DateTime.getBeginOf(wys2.get(0).getDate()),  -5 ));
+                cc.put("startDate", DateUtils.addDateDays(DateTime.getBeginOf(wys2.get(0).getDate()),  -15 ));
                 List<WpBaseIndexValEntity> wys1 = wpBaseIndexValService.getDataByDate1(cc);
                 pee.setCommId(pc.getCommId());
                 pee.setEwarnDate(new Date());
@@ -122,6 +120,19 @@ public class WarnTask implements ITask {
                         pee.setEwarnLevel("74");
                     }
                 }
+                Calendar ca = Calendar.getInstance();//得到一个Calendar的实例
+                ca.setTime(DateUtils.addDateDays(DateTime.getBeginOf(wys2.get(0).getDate()),  -0 )); //设置时间为当前时间
+                ca.add(Calendar.YEAR, -1); //年份减1
+                cc.put("endDate",ca.getTime());
+                List<WpBaseIndexValEntity> wys3 = wpBaseIndexValService.getDataByDate2(cc);
+                if(wys3.size()>0){
+                    BigDecimal pri1 = new BigDecimal(wys3.get(0).getValue());
+                    BigDecimal pri0 = new BigDecimal(wys1.get(0).getValue());
+                    BigDecimal b3 = compareResult(pri0, pri1);
+                    pee.setPriYonyear(b3);
+                }else{
+                    pee.setPriYonyear(new BigDecimal(0));
+                }
                 pssPriceEwarnService.saveOrUpdate(pee);
                 logger.debug("定时任务正在执行，参数为：{}", params);
             }
@@ -164,7 +175,6 @@ public class WarnTask implements ITask {
                     pee.setEwarnLevel("74");
                 }
             }
-            System.out.println("pee==================================="+pee.toString());
             pssPriceEwarnService.saveOrUpdate(pee);
             logger.debug("定时任务正在执行，参数为：{}", params);
         }
@@ -177,7 +187,7 @@ public class WarnTask implements ITask {
         if(b2.compareTo(new BigDecimal(0))==0){
             return  new BigDecimal(0);
         }
-        return b1.subtract(b2).divide(b2, 2, BigDecimal.ROUND_HALF_UP);
+        return (b1.subtract(b2).divide(b2, 4, BigDecimal.ROUND_HALF_UP)).multiply( new BigDecimal(100));
     }
 
     //价格涨跌幅所属级别判断

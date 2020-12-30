@@ -23,14 +23,12 @@ import io.dfjinxin.modules.sys.entity.SysUserEntity;
 import io.dfjinxin.modules.sys.service.SysRoleService;
 import io.dfjinxin.modules.sys.service.SysUserRoleService;
 import io.dfjinxin.modules.sys.service.SysUserService;
-import io.netty.util.internal.ObjectUtil;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -155,8 +153,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		List<Map<String, Object>> m6 = new ArrayList<>();
 		List<Map<String, Object>> m7 = new ArrayList<>();
 		List<Map<String, Object>> m8 = new ArrayList<>();
-		List<Map<String, Object>> ms = new ArrayList<>();
-		List<Map<String, Object>> mf = new ArrayList<>();
 		List<Map<String, Object>> m9 = new ArrayList<>();
 		List<Map<String, Object>> md = new ArrayList<>();
 		List<Map<String, Object>> tmp = new ArrayList<>();
@@ -170,40 +166,26 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
        	if((int)data.get("pare_menu_id")==0){
        		break;
 		}
+
 		if(Integer.parseInt((String) data.get("parent"))==0){
-       		data.put("depth",0);
+			buildChildrenDep(data,list);
 		}
-		if(Integer.parseInt((String) data.get("parent"))==1){
-			data.put("depth",1);
-			buildChildren(data,null,list);
-		}
+//		if(Integer.parseInt((String) data.get("parent"))==1){
+//			data.put("depth",1);
+//			buildChildren(data,list);
+//		}
 	   }
         for(Map<String, Object> data:list){
-        	if((int)data.get("depth") == 4){
-				levelOneMenu(mf,data);
-			}else if((int)data.get("depth") == 3) {
+			if(Integer.parseInt(data.get("depth").toString()) == 3) {
 				levelOneMenu(m6,data);
-			}else if((int)data.get("depth") == 2 && (int) data.get("pare_menu_id")!= 1 ){
+			}else if(Integer.parseInt(data.get("depth").toString()) == 2){
 				//系统管理
 				List<Map<String, Object>> lt = new ArrayList<>();
 				Map<String, Object> map = new HashMap<>();
 				String pr = (String) data.get("menu_router");
 				int i= pr.lastIndexOf("/");
-				if(i==0){
-					map.put("path",pr.substring(1));
-				}else {
-					if("/sysconfig/usersconfig".equals(pr)){
-						map.put("path",pr.substring(0,i));
-					}else {
-						map.put("path",pr.substring(1,i));
-					}
-				}
-				if(i==0){
-					map.put("component",pr.substring(1));
-				}else {
-					map.put("component",pr.substring(1,i));
-				}
-
+				map.put("path",pr.substring(0,i));
+				map.put("component","Layout");
 				map.put("redirect",pr);
 				Map<String, Object>  m4 = new HashMap<>();
 				m4.put("title",data.get("menu_name"));
@@ -213,9 +195,24 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				map.put("menu_id",data.get("menu_id"));
 				map.put("menu_order",data.get("menu_order"));
 				m3.add(map);
-			}else if((int)data.get("depth") == 2){
-				levelOneMenu(ms,data);
-			} else if((int) data.get("depth") == 1 && (int) data.get("pare_menu_id")!= 1) {
+			}else if(Integer.parseInt(data.get("depth").toString()) == 1 && (int) data.get("pare_menu_id")== 2) {
+				//二级目录
+				Map<String, Object> map = new HashMap<>();
+				List<Map<String, Object>> lt = new ArrayList<>();
+				String pr = (String) data.get("menu_router");
+				int i= pr.lastIndexOf("/");
+				map.put("redirect",pr);
+				map.put("path",pr.substring(0,i));
+				map.put("component","Layout");
+				Map<String, Object>  m4 = new HashMap<>();
+				m4.put("title",data.get("menu_name"));
+				map.put("meta",m4);
+				map.put("children",lt);
+				map.put("pare_menu_id",data.get("pare_menu_id"));
+				map.put("menu_id",data.get("menu_id"));
+				map.put("menu_order",data.get("menu_order"));
+				m2.add(map);
+			}else if(Integer.parseInt(data.get("depth").toString()) == 1 && (int) data.get("pare_menu_id") !=1 && (int) data.get("pare_menu_id") !=2) {
 				//二级目录
 				Map<String, Object> map = new HashMap<>();
 				List<Map<String, Object>> lt = new ArrayList<>();
@@ -231,9 +228,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				map.put("menu_id",data.get("menu_id"));
 				map.put("menu_order",data.get("menu_order"));
 				m2.add(map);
-			}else if((int) data.get("depth") == 1 && (int) data.get("pare_menu_id")== 1) {
+			}else if(Integer.parseInt(data.get("depth").toString()) == 1 && (int) data.get("pare_menu_id")== 1) {
 				levelOneMenu(m1,data);
-			}else if((int) data.get("depth") == 0 && (int) data.get("pare_menu_id")!= 1) {
+			}else if(Integer.parseInt(data.get("depth").toString()) == 0 && (int) data.get("pare_menu_id")!= 1) {
 				//m7 三级目录
 				Map<String, Object> map = new HashMap<>();
 				String pr = (String) data.get("menu_router");
@@ -248,7 +245,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				map.put("menu_id",data.get("menu_id"));
 				map.put("menu_order",data.get("menu_order"));
 				m7.add(map);
-			}else if((int) data.get("depth") == 0 && (int) data.get("pare_menu_id")== 1) {
+			}else if(Integer.parseInt(data.get("depth").toString()) == 0 && (int) data.get("pare_menu_id")== 1) {
 				Map<String, Object> map = new HashMap<>();
 				List<Map<String, Object>> lt = new ArrayList<>();
 				String pr = (String) data.get("menu_router");
@@ -284,14 +281,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 				m8.add(map);
 			}
 		}
-        //m6 3级
-		// m3 2级不是1级菜单
+        //m6 3级 m3 2级
 		// m2深度为1不是1级菜单
 		// m1深度为1并且是1级菜单
 		// m7深度为0不是1级菜单
 		// m8 深度为0且1级菜单
-        //ms 2级且为1级菜单
-		//mf 4级目录
+
 
 		//添加深度为1却不是1级菜单，如价格分析
 		CopyMaps(m9,m2);
@@ -301,42 +296,29 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		CopyMaps(md,m7);
 		//添加深度为2的菜单，如价格预警
 		CopyMaps(md,m3);
+		//添加深度为1不是1级菜单
+		CopyMaps(md,m2);
 		Collections.sort(m7,new MapComparatorDesc());
 		//组合深度为1不是1级菜单和深度为0不是1级菜单，如价格分析和相关性分析
 		updateMap(m2,m7);
-		//ms 2级且为1级菜单,组合深度为1不是1级菜单和深度为0不是1级菜单
-		updateMap(ms,m7);
 		Collections.sort(m2,new MapComparatorDesc());
 		Collections.sort(m9,new MapComparatorDesc());
 		if(m3.size()>0){
 		//组合2级菜单和对应深度为1不是1级菜单
 			updateMap(m3,m9);
-			updateMap(ms,m9);
 		}
 		Collections.sort(m3,new MapComparatorDesc());
 		Collections.sort(md,new MapComparatorDesc());
 		if(m6.size()>0){
 			//组合3级菜单和深度为0不是1级菜单和深度2级的菜单
 			updateMap(m6,md);
-			//组合3级菜单和深度为1不是1级菜单
-			updateMap(m6,m2);
 		}
 		Collections.sort(m6,new MapComparatorDesc());
 		//深度为1并且是1级菜单，深度为0不是1级菜单
         updateMap(m1,m7);
-        if(mf.size()>0){
-        	//4级和3级
-        	updateMap(mf,m6);
-			//深度为0不是1级菜单和深度2级的菜单
-			updateMap(mf,md);
-			//组合2级菜单和深度为1不是1级菜单
-			updateMap(mf,m2);
-		}
         m1.addAll(m6);
         m1.addAll(m8);
-        m1.addAll(m3);
-        m1.addAll(ms);
-        m1.addAll(mf);
+       // m1.addAll(m3);
 		Collections.sort(m1,new MapComparatorDesc());
 		for(Map<String,Object> dt: m1){
 			int flg=(int)dt.get("pare_menu_id");
@@ -389,21 +371,33 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		}
 	}
 
-	private void buildChildren(Map<String,Object> mbean,Map<String,Object> cbean,List<Map<String,Object>> menus){
-		int mid = 0;
-		if(ObjectUtils.isEmpty(cbean)){
-			mid = (int) mbean.get("menu_id");
-		}else {
-			mid = (int) cbean.get("menu_id");
-		}
+	private void buildChildren(Map<String,Object> mbean,List<Map<String,Object>> menus){
+		int mid= (int) mbean.get("menu_id");
 		int dth = (int) mbean.get("depth");
 		for(Map<String,Object> dt : menus){
-			//cbean拥有下级，所以深度+1
-				if((int)dt.get("pare_menu_id")== mid && Integer.parseInt((String) dt.get("parent"))==1) {
-					mbean.put("depth", dth + 1);
-					buildChildren(mbean,dt,menus);
+			if((int)dt.get("pare_menu_id")== mid && Integer.parseInt((String) dt.get("parent"))==1){
+             mbean.put("depth",dth+1);
+            for(Map<String,Object> data : menus){
+            	 if((int)dt.get("menu_id")== (int)data.get("pare_menu_id") && Integer.parseInt((String) data.get("parent"))== 1){
+					int dthh = (int) mbean.get("depth");
+					mbean.put("depth",dthh+1);
 				}
 			}
+			}
+		}
+	}
+
+	private void buildChildrenDep(Map<String,Object> mbean,List<Map<String,Object>> menus){
+		int mid= (int) mbean.get("pare_menu_id");
+		int mth = Integer.parseInt(mbean.get("depth").toString());
+		for(Map<String,Object> dt : menus){
+			int dth = Integer.parseInt( dt.get("depth").toString()) ;
+			if((int)dt.get("menu_id")== mid && Integer.parseInt((String) dt.get("parent"))==1 ){
+				if(dth==0 || (dth - mth) <= 0)
+				   dt.put("depth",mth+1);
+				   buildChildrenDep(dt,menus);
+			}
+		}
 	}
 
 

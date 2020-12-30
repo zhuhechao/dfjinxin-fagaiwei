@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import io.dfjinxin.config.propertie.AppProperties;
+import io.dfjinxin.modules.report.service.WpCarwlerDataService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -37,6 +38,8 @@ public class PssRptInfoController {
     @Autowired
     private PssRptInfoService pssRptInfoService;
     @Autowired
+    private WpCarwlerDataService wpCarwlerDataService;
+    @Autowired
     private AppProperties appProperties;
     @Autowired
     private HttpServletResponse response;
@@ -54,6 +57,7 @@ public class PssRptInfoController {
             @ApiImplicitParam(name = "rptStatus", value = "报告状态，1是有效，0是删除", required = false, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "minCrteTime", value = "生成报告最小日期", required = false, dataType = "Date", paramType = "query"),
             @ApiImplicitParam(name = "maxCrteTime", value = "生成报告最大日期", required = false, dataType = "Date", paramType = "query"),
+            @ApiImplicitParam(name = "name", value = "报告名称", required = false, dataType = "Date", paramType = "query")
     })
     public R list(
             @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
@@ -62,21 +66,29 @@ public class PssRptInfoController {
             @RequestParam(value = "rptFreq", required = false) String rptFreq,
             @RequestParam(value = "rptStatus", required = false) String rptStatus,
             @RequestParam(value = "minCrteTime", required = false) Date minCrteTime,
-            @RequestParam(value = "maxCrteTime", required = false) Date maxCrteTime
+            @RequestParam(value = "maxCrteTime", required = false) Date maxCrteTime,
+             @RequestParam(value = "name", required = false) String name
     ) {
         Map<String, Object> params = new HashMap() {{
             put("pageIndex", pageIndex);
             put("pageSize", pageSize);
-
             put("rptType", rptType);
             put("rptFreq", rptFreq);
             put("rptStatus", rptStatus);
             put("minCrteTime", minCrteTime);
             put("maxCrteTime", maxCrteTime);
+            put("name", "%"+name+"%");
         }};
-        PageUtils pageOne = pssRptInfoService.queryPage(params);
-        return R.ok().put("page", pageOne);
+        if(rptType.equals("0")){
+            PageUtils pageOne = pssRptInfoService.queryPage(params);
+            return R.ok().put("page", pageOne);
+        }else{
+            PageUtils pageOne1 = wpCarwlerDataService.queryPage(params);
+            return R.ok().put("page", pageOne1);
+        }
     }
+
+
 
 
     //所有分析报告单独接口
@@ -99,6 +111,21 @@ public class PssRptInfoController {
 
         return R.ok().put("page", page);
     }
+
+    //所有分析报告单独接口
+    @GetMapping("/queryRpt")
+    @ApiOperation("所有分析报告单独接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "commName", value = "传参商品报告和所有的商品报告文件", required = false, dataType = "String", paramType = "query"),
+    })
+    public R queryRpt( @RequestParam(value = "commName", required = false) String commName) {
+        Map<String, Object> params = new HashMap();
+
+        params.put("commName",commName);
+        List< Map<String, Object>> page = pssRptInfoService.queryRpt(params);
+        return R.ok().put("page", page);
+    }
+
 
 
     /**
@@ -129,7 +156,6 @@ public class PssRptInfoController {
      * 修改
      */
     @PostMapping("/update")
-    @RequiresPermissions("report:pssrptinfo:update")
     @ApiOperation("报告运行信息更新")
     public R update(@RequestBody PssRptInfoEntity pssRptInfo) {
         pssRptInfoService.updateById(pssRptInfo);
@@ -141,10 +167,22 @@ public class PssRptInfoController {
      * 删除
      */
     @PostMapping("/delete")
-    @RequiresPermissions("report:pssrptinfo:delete")
+//    @RequiresPermissions("report:pssrptinfo:delete")
     @ApiOperation("报告运行信息删除")
     public R delete(@RequestBody Long[] rptIds) {
         pssRptInfoService.removeByIds(Arrays.asList(rptIds));
+
+        return R.ok();
+    }
+
+    /**
+     * 删除
+     */
+    @PostMapping("/deleteReptiles")
+//    @RequiresPermissions("report:pssrptinfo:delete")
+    @ApiOperation("删除爬虫报告")
+    public R deleteReptiles(@RequestBody Long[] rptIds) {
+//        pssRptInfoService.deleteReptiles(Arrays.asList(rptIds));
 
         return R.ok();
     }
