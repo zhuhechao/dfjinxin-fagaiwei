@@ -1445,37 +1445,6 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 lis.add(map);
             }
         }
-//        for (Map<String, Object> id : ids) {
-//            params.put("indexId", id.get("pric_type_id"));
-//            List<Map<String, Object>> ls = baseMapper.warningIndexDate(params);
-//            Map<String, Object> map = new HashMap<>();
-//            List<String> huanbiData = new ArrayList<>();
-//            List<String> tongbiData = new ArrayList<>();
-//            String indexName = "";
-//            String unit = "";
-//            if (ls.size() > 0) {
-//                for (String itrm1 : dateList) {
-//                    String str1 = "0";
-//                    String str2 = "0";
-//                    for (Map<String, Object> itrm : ls) {
-//                        if (itrm1.equals(itrm.get("date").toString())) {
-//                            str1 = itrm.get("pri_range").toString();
-//                            str2 = itrm.get("pri_yonyear").toString();
-//                            indexName = itrm.get("index_name").toString();
-//                            unit = itrm.get("unit").toString();
-//                        }
-//                    }
-//                    huanbiData.add(str1);
-//                    tongbiData.add(str2);
-//                }
-//            }
-//            map.put("indexName", indexName);
-//            map.put("unit", unit);
-//            map.put("xData", dateList);
-//            map.put("huanbiData", huanbiData);
-//            map.put("tongbiData", tongbiData);
-//            lis.add(map);
-//        }
         return lis;
     }
 

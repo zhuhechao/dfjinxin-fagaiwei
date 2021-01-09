@@ -46,7 +46,7 @@ public class WpBaseIndexInfoServiceImpl extends ServiceImpl<WpBaseIndexInfoDao, 
         }
 
         QueryWrapper<WpBaseIndexInfoEntity> where = new QueryWrapper<>();
-        where.eq("index_id", indexId);
+        where.eq("comm_id", indexId);
         where.eq("index_flag", 0);
         where.eq("index_type", "价格");
         where.like("index_used", "预警");

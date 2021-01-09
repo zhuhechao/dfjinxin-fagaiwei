@@ -31,7 +31,7 @@ public class WpCarwlerDataEntity implements Serializable {
 	/**
 	 * 报告名称
 	 */
-	private Integer title;
+	private String title;
 	/**
 	 * 报告链接
 	 */
