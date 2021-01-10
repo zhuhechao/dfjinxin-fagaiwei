@@ -1,8 +1,11 @@
 package io.dfjinxin.modules.price.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.dfjinxin.common.dto.PssCommTotalDto;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
+import io.dfjinxin.modules.report.entity.PssRptInfoEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -44,4 +47,10 @@ public interface PssCommTotalDao extends BaseMapper<PssCommTotalEntity> {
             "ON m2.comm_id = m3.parent_code\n" +
             "GROUP BY m1.comm_id")
     List<Map<String, Object>> getShopCountBycode();
+
+    IPage<Map<String, Object>> queryPage(Page page, @Param("p") Map<String, Object> map);
+
+    List<Map<String, Object>> queryLevel1();
+    List<Map<String, Object>> queryLevel2();
+    List<Map<String, Object>> queryLevel3();
 }

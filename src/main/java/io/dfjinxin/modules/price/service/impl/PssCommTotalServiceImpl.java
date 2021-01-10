@@ -2,6 +2,7 @@ package io.dfjinxin.modules.price.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.dfjinxin.common.dto.PssCommTotalDto;
 import io.dfjinxin.common.utils.PageUtils;
@@ -86,7 +87,6 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
         resultMap.put("commLevelCode_3", commType4);
         return resultMap;
     }
-
     /**
      * @Desc: 查询商品预警配置, 只有四类商品会配置预警
      * @Param: [pssCommTotalDto]
@@ -95,7 +95,48 @@ public class PssCommTotalServiceImpl extends ServiceImpl<PssCommTotalDao, PssCom
      * @Date: 2019/10/12 13:05
      */
     @Override
-    public PageUtils queryPageList(PssCommTotalDto pssCommTotalDto) {
+    public PageUtils queryPageList(Map<String,Object> params) {
+        Long no = params.containsKey("pageIndex") ? Long.valueOf(params.get("pageIndex").toString()) : 1;
+        Long limit = params.containsKey("pageSize") ? Long.valueOf(params.get("pageSize").toString()) : 10;
+        IPage<Map<String, Object>> page  =  baseMapper.queryPage( new Page<>(no, limit), params);
+        return new PageUtils(page);
+    }
+
+    @Override
+    public  List<Map<String, Object>> queryLevel1() {
+        List<Map<String, Object>> page1  =  baseMapper.queryLevel1();
+        List<Map<String, Object>> page2  =  baseMapper.queryLevel2();
+        List<Map<String, Object>> page3  =  baseMapper.queryLevel3();
+        for (Map<String, Object> entity : page1) {
+            List<Map<String, Object>> l1 = new ArrayList<>();
+            for (Map<String, Object> entity1 : page2) {
+                List<Map<String, Object>> l2 = new ArrayList<>();
+                entity.put("subList",null);
+                if (entity.get("comm_id").equals(entity1.get("parent_code"))) {
+                    for (Map<String, Object> entity2 : page3) {
+                        entity2.put("subList",null);
+                        if (entity2.get("parent_code").equals(entity1.get("comm_id"))) {
+                            l2.add(entity2);
+                        }
+                    }
+                    entity1.put("subList",l2);
+                    l1.add(entity1);
+                }
+                entity.put("subList",l1);
+            }
+        }
+        return page1;
+    }
+
+    /**
+     * @Desc: 查询商品预警配置, 只有四类商品会配置预警
+     * @Param: [pssCommTotalDto]
+     * @Return: io.dfjinxin.common.utils.PageUtils
+     * @Author: z.h.c
+     * @Date: 2019/10/12 13:05
+     */
+//    @Override
+    public PageUtils queryPageList1(PssCommTotalDto pssCommTotalDto) {
 
         String levelCode_0 = pssCommTotalDto.getCommLevelCode_0();
         String levelCode_1 = pssCommTotalDto.getCommLevelCode_1();

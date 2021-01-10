@@ -71,6 +71,69 @@
         select distinct parent_code from pss_comm_total
         where comm_id in (#{commIds})
     </select>
+    <select id="queryLevel1" parameterType="map" resultType="map">
+      SELECT t.comm_id,t.comm_name FROM  pss_comm_total t
+      WHERE t.level_code = 0
+    </select>
+    <select id="queryLevel2" parameterType="map" resultType="map">
+        SELECT t.comm_id,t.comm_name,t.parent_code FROM  pss_comm_total t
+        WHERE t.level_code = 1
+    </select>
+    <select id="queryLevel3" parameterType="map" resultType="map">
+        SELECT t.comm_id,t.comm_name,t.parent_code FROM  pss_comm_total t
+        WHERE t.level_code = 2
+    </select>
+
+    <select id="queryPage" parameterType="map" resultType="map">
+       SELECT h4.code_id ewarn_type_id,h4.code_name ewarn_type_name,h.comm_id,h.ewarn_id,h3.ewarn_name,h.conf_id,DATE_FORMAT(h.crte_date,'%Y-%m-%d') crte_date,h.index_id,h2.index_name,h.remarks,
+        h1.comm_id0,h1.comm_id1,h1.comm_id2,h1.comm_id3,h1.comm_name0,h1.comm_name1,
+        h1.comm_name2,h1.comm_name3
+        FROM pss_comm_conf h
+        LEFT JOIN (
+            SELECT t.parent_code parent_code3,
+            t1.comm_id0,t1.comm_id1,t1.comm_id2,t.comm_id comm_id3,t1.comm_name0,t1.comm_name1,t1.comm_name2,t.comm_name comm_name3
+             FROM pss_comm_total t
+            LEFT JOIN (
+                SELECT f.comm_id comm_id2,f.comm_name comm_name2,f.parent_code parent_code2,f1.comm_id0,f1.comm_id1,f1.comm_name0,f1.comm_name1 FROM pss_comm_total f
+                LEFT JOIN (
+                    SELECT g.comm_id comm_id1,g.comm_name comm_name1,g1.comm_id0,g1.comm_name0 FROM pss_comm_total g
+                    LEFT JOIN (
+                        SELECT y.comm_id comm_id0,y.comm_name comm_name0 FROM pss_comm_total y
+                        WHERE y.level_code = 0
+                        AND y.comm_name IS NOT NULL
+                    ) g1 ON  g.parent_code = g1.comm_id0
+                    WHERE g.level_code = 1
+                ) f1 ON f.parent_code = f1.comm_id1
+                WHERE f.level_code = 2
+            ) t1 ON t.parent_code = t1.comm_id2
+            WHERE t.level_code = 3
+        ) h1 ON h.comm_id = h1.comm_id3
+        LEFT JOIN wp_base_index_info h2 ON h.index_id = h2.index_id
+        LEFT JOIN pss_ewarn_conf h3 ON h.ewarn_id = h3.ewarn_id
+        LEFT JOIN wp_ascii_info h4 ON h4.code_id = h3.ewarn_type_id
+        WHERE h3.ewarn_type_id= 18
+        AND h3.ewarn_name IS NOT NULL
+        AND h3.ewarn_name != ''
+        AND h2.index_name IS NOT NULL
+        AND h2.index_name != ''
+        AND h1.comm_name0 IS NOT NULL
+        AND h1.comm_name0 != ''
+        AND h1.comm_name1 IS NOT NULL
+        AND h1.comm_name1 != ''
+        AND h1.comm_name2 IS NOT NULL
+        AND h1.comm_name2 != ''
+        AND h1.comm_name3 IS NOT NULL
+        AND h1.comm_name3 != ''
+        <if test="p.commLevelCode_0 != null and p.commLevelCode_0 != ''">
+            AND h1.comm_id0 = #{p.commLevelCode_0}
+        </if>
+        <if test="p.commLevelCode_1 != null and p.commLevelCode_1 != ''">
+            AND h1.comm_id1 = #{p.commLevelCode_1}
+        </if>
+        <if test="p.commLevelCode_2 != null and p.commLevelCode_2 != ''">
+            AND h1.comm_id2 = #{p.commLevelCode_2}
+        </if>
+    </select>
 
 
 </mapper>

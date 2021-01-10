@@ -1,7 +1,10 @@
 package io.dfjinxin.modules.price.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.dfjinxin.modules.price.entity.PssCommConfEntity;
+import io.dfjinxin.modules.report.entity.PssRptInfoEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -39,4 +42,5 @@ public interface PssCommConfDao extends BaseMapper<PssCommConfEntity> {
 
     @Select("select * from pss_comm_conf  where del_flag = 0\n")
     List<PssCommConfEntity> queryAll();
+
 }

@@ -50,12 +50,13 @@ public class PssCommTotalController {
 
     @PostMapping("/queryPageList")
     @ApiOperation("商品预警配置-查询")
-    public R queryPageList(@RequestBody(required = false) PssCommTotalDto params) {
+    public R queryPageList(@RequestBody(required = false) Map<String,Object> params) {
 
         LOG.info("商品预警配置-查询,请求参数:{}", params);
-        params.startNumber();
+//        params.startNumber();
         PageUtils page = pssCommTotalService.queryPageList(params);
-        return R.ok().put("data", page);
+        List<Map<String, Object>> list = pssCommTotalService.queryLevel1();
+        return R.ok().put("data", page).put("list", list);
     }
 
     @PostMapping("/queryCommInfoPageList")
