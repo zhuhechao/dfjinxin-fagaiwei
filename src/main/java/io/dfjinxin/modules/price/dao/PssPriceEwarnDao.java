@@ -163,13 +163,38 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
      * @Author: y.b
      * @Date: 2020.11.16
      */
-    @Select("SELECT COUNT(1) cou,t.ewarn_level,m.code_name,n.cou1 total FROM pss_price_ewarn t\n" +
-            "LEFT JOIN wp_ascii_info m ON t.ewarn_level = m.code_id,\n" +
-            "(SELECT COUNT(1) cou1,t1.ewarn_level FROM pss_price_ewarn t1\n" +
-            "WHERE date(t1.ewarn_date) = #{p.itrmDate}) n \n" +
-            "WHERE date(t.ewarn_date) = #{p.itrmDate}\n" +
-            "GROUP BY t.ewarn_level")
+    @Select("SELECT COUNT(1) cou,f.ewarn_level,f.code_name ,f1.cou total FROM (\n" +
+            "SELECT t1.ewarn_level ,m.code_name\n" +
+            "FROM pss_price_ewarn t1\n" +
+            "LEFT JOIN wp_ascii_info m ON t1.ewarn_level = m.code_id\n" +
+            "            WHERE date(t1.ewarn_date) = #{p.itrmDate}\n" +
+            "\t\t\t\t\t\tAND t1.stat_area_code in ('全国','中国')\n" +
+            "GROUP BY t1.comm_id) f,\n" +
+            "(SELECT COUNT(DISTINCT t2.comm_id) cou FROM pss_price_ewarn t2\n" +
+            "            WHERE date(t2.ewarn_date) = #{p.itrmDate}\n" +
+            "\t\t\t\t\t\tAND t2.stat_area_code in ('全国','中国')\n" +
+            ") f1\n" +
+            "GROUP BY f.ewarn_level\n" +
+            "ORDER BY f.ewarn_level ")
     List< Map<String, Object>> getCountByEwarmType(@Param("p") Map<String, Object> mp);
+
+    @Select("SELECT f.comm_id,tt.comm_name,wp.index_id,wp.index_name,f.ewarn_level,f.code_name ,f.ewarn_date,\n" +
+            "f.pri_value,f.unit,f.pri_range\n" +
+            "FROM (\n" +
+            "SELECT t1.ewarn_level ,m.code_name,t1.comm_id,t1.pri_value,t1.pri_range,t1.ewarn_date,t1.unit \n" +
+            "FROM pss_price_ewarn t1\n" +
+            "LEFT JOIN wp_ascii_info m ON t1.ewarn_level = m.code_id\n" +
+            "            WHERE date(t1.ewarn_date) = #{p.itrmDate}\n" +
+            "\t\t\t\t\t\tAND t1.stat_area_code in ('全国','中国')\n" +
+            "GROUP BY t1.comm_id) f\n" +
+            "LEFT JOIN pss_comm_total tt ON tt.comm_id = f.comm_id\n" +
+            "LEFT JOIN wp_base_index_val wp ON wp.comm_id = f.comm_id\n" +
+            "WHERE 1=1 \n" +
+            "AND date(f.ewarn_date) = #{p.itrmDate}\n" +
+            "AND f.ewarn_level = #{p.ewarnLevel}\n" +
+            "GROUP BY wp.index_id\n" +
+            "ORDER BY f.pri_range desc\n")
+    List< Map<String, Object>> getEwarmIndexList(@Param("p") Map<String, Object> mp);
 
     /**
      * @Desc: 统计各预警等级的商品数量趋势
@@ -180,6 +205,7 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
     @Select("SELECT COUNT(1) cou,t.ewarn_level,DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') ewarn_date,m.code_name FROM pss_price_ewarn t\n" +
             "LEFT JOIN wp_ascii_info m ON t.ewarn_level = m.code_id\n" +
             "WHERE date(t.ewarn_date) BETWEEN  #{p.startDate} AND  #{p.endDate}\n" +
+            "AND t.stat_area_code in ('全国','中国')\n" +
             "GROUP BY t.ewarn_level,DATE_FORMAT(t.ewarn_date,'%Y-%m-%d')\n" +
             "ORDER BY DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') DESC\n")
     List< Map<String, Object>> getCountByEwarmTypeAndDate(@Param("p") Map<String, Object> mp);
