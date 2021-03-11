@@ -179,9 +179,16 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             map.put("shopTotal", list12);
         }
         Map<String, Object> ma = new HashMap<>();
-        ma.put("itrmDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)));
+        ma.put("itrmDate", "2020-10-20");//new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)));
         //获取各预警级别商品数量
         List<Map<String, Object>> list2 = baseMapper.getCountByEwarmType(ma);
+        if (list2.size() > 0) {
+            for (Map<String, Object> ent2 : list2) {
+                ma.put("ewarnLevel",ent2.get("ewarn_level"));
+                List<Map<String, Object>> lis2 = baseMapper.getEwarmIndexList(ma);
+                ent2.put("indexList",lis2);
+            }
+        }
         map.put("ewarmTypeTotal", list2);
         //获取各预警级别商品数量趋势
         List<Map<String, Object>> list3 = baseMapper.getCountByEwarmTypeAndDate(params);
