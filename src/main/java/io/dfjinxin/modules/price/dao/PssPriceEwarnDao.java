@@ -193,12 +193,16 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
      * @Author: y.b
      * @Date: 2020.11.16
      */
-    @Select("SELECT COUNT(1) cou,t.ewarn_level,DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') ewarn_date,m.code_name FROM pss_price_ewarn t\n" +
-            "LEFT JOIN wp_ascii_info m ON t.ewarn_level = m.code_id\n" +
-            "WHERE date(t.ewarn_date) BETWEEN  #{p.startDate} AND  #{p.endDate}\n" +
-            "AND t.stat_area_code in ('全国','中国')\n" +
-            "GROUP BY t.ewarn_level,DATE_FORMAT(t.ewarn_date,'%Y-%m-%d')\n" +
-            "ORDER BY DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') DESC\n")
+    @Select("SELECT COUNT(1) cou,f.code_name,f.ewarn_date,f.ewarn_level FROM (\n" +
+            "SELECT t.comm_id,t.ewarn_level,DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') ewarn_date,m.code_name \n" +
+            "FROM pss_price_ewarn t\n" +
+            "            LEFT JOIN wp_ascii_info m ON t.ewarn_level = m.code_id\n" +
+            "            WHERE date(t.ewarn_date) BETWEEN  #{p.startDate} AND  #{p.endDate}\n" +
+            "            AND t.stat_area_code in ('全国','中国')\n" +
+            "           GROUP BY DATE_FORMAT(t.ewarn_date,'%Y-%m-%d'),t.comm_id\n" +
+            ") f\n" +
+            "GROUP BY f.ewarn_level,f.ewarn_date\n" +
+            "ORDER BY f.ewarn_date DESC\n")
     List< Map<String, Object>> getCountByEwarmTypeAndDate(@Param("p") Map<String, Object> mp);
 
     /**
@@ -218,7 +222,7 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "           LEFT JOIN pss_comm_total_img t2 ON t1.comm_id = t2.comm_id) f ON f.comm_id = n.parent_code\n" +
             "           WHERE t.pri_range > 0\n" +
             "           AND t.pri_value >0\n" +
-            "           AND t.stat_area_code in  (SELECT ts.area_name FROM wp_area_info ts WHERE ts.area_id <= 32) \n" +
+            "           AND t.stat_area_code in ('全国','中国') \n" +
             "            AND t.stat_area_code IS NOT NULL \n" +
             "                         AND f.img_name IS NOT NULL \n" +
             "                         AND f.img_name != ''\n" +
@@ -245,7 +249,7 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "           LEFT JOIN pss_comm_total_img t2 ON t1.comm_id = t2.comm_id) f ON f.comm_id = n.parent_code\n" +
             "           WHERE t.pri_range <0 \n" +
             "           AND t.pri_value >0\n" +
-            "           AND t.stat_area_code in  (SELECT ts.area_name FROM wp_area_info ts WHERE ts.area_id <= 32) \n" +
+            "          AND t.stat_area_code in ('全国','中国') \n" +
             "            AND t.stat_area_code IS NOT NULL \n" +
             "                         AND f.img_name IS NOT NULL \n" +
             "                         AND f.img_name != ''\n" +
