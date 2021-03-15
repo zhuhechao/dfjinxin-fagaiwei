@@ -21,7 +21,7 @@ spring:
 mysql:
       url: jdbc:mysql://localhost:3306/zhjg?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&zeroDateTimeBehavior=convertToNull
       username: root
-      password: root
+      password:
 
 hive:
     #  公司测试环境
