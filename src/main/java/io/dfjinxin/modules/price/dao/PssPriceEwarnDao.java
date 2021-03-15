@@ -178,22 +178,13 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "ORDER BY f.ewarn_level ")
     List< Map<String, Object>> getCountByEwarmType(@Param("p") Map<String, Object> mp);
 
-    @Select("SELECT f.comm_id,tt.comm_name,wp.index_id,wp.index_name,f.ewarn_level,f.code_name ,f.ewarn_date,\n" +
-            "f.pri_value,f.unit,f.pri_range\n" +
-            "FROM (\n" +
-            "SELECT t1.ewarn_level ,m.code_name,t1.comm_id,t1.pri_value,t1.pri_range,t1.ewarn_date,t1.unit \n" +
-            "FROM pss_price_ewarn t1\n" +
-            "LEFT JOIN wp_ascii_info m ON t1.ewarn_level = m.code_id\n" +
-            "            WHERE date(t1.ewarn_date) = #{p.itrmDate}\n" +
-            "\t\t\t\t\t\tAND t1.stat_area_code in ('全国','中国')\n" +
-            "GROUP BY t1.comm_id) f\n" +
-            "LEFT JOIN pss_comm_total tt ON tt.comm_id = f.comm_id\n" +
-            "LEFT JOIN wp_base_index_val wp ON wp.comm_id = f.comm_id\n" +
-            "WHERE 1=1 \n" +
-            "AND date(f.ewarn_date) = #{p.itrmDate}\n" +
-            "AND f.ewarn_level = #{p.ewarnLevel}\n" +
-            "GROUP BY wp.index_id\n" +
-            "ORDER BY f.pri_range desc\n")
+    @Select("SELECT t.comm_id,tt.comm_name,t.ewarn_date,t.ewarn_level,t.pri_value,t.pri_range,t.unit FROM pss_price_ewarn t\n" +
+            "LEFT JOIN pss_comm_total tt ON tt.comm_id = t.comm_id\n" +
+            "WHERE t.stat_area_code in ('全国','中国')\n" +
+            "AND date(t.ewarn_date) = #{p.itrmDate}\n" +
+            "AND t.ewarn_level = #{p.ewarnLevel}  \n" +
+            "GROUP BY t.comm_id\n" +
+            "ORDER BY t.pri_range DESC")
     List< Map<String, Object>> getEwarmIndexList(@Param("p") Map<String, Object> mp);
 
     /**

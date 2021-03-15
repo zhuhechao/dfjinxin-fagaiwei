@@ -59,6 +59,7 @@ auth:
     client_id: zhdata
     client_secret: 08904d8053584736930e2e8c47afb4b8
     auth_url: https://172.20.11.5/idp
+    reject_url: https://iam.ndrc.gov.cn:443/idp/profile/OAUTH2/Redirect/GLO?redirctToUrl=https://iam.ndrc.gov.cn:8443/apphub/&redirectToLogin=true&entityId=zhdata
 
 token:
     #domain: localhost

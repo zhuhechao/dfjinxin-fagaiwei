@@ -36,7 +36,7 @@ app:
 
 #启用CA登录配置
 ca:
-  valid: false
+  valid: true
 
 rsp-server:
   url: sp.ndrc.gov.cn

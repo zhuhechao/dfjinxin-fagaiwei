@@ -78,15 +78,9 @@ public class SmartPriceLoginController extends AbstractController {
 
     @Value("${auth.auth_url}")
     private String authUrl;
-    @Value("${token.access-token.expiration-time}")
-    private Integer accessTokenExpirationTime;
-    @Value("${server.servlet.context-path}")
-    private String applicationName;
-    @Value("${token.refresh-token.expiration-time}")
-    private Integer refreshTokenExpirationTime;
 
-    @Value("${token.old-token.expiration-time}")
-    private Integer oldTokenExpirationTime;
+    @Value("${auth.reject_url}")
+    private String rejectUrl;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -178,11 +172,20 @@ public class SmartPriceLoginController extends AbstractController {
     @PostMapping("/logout")
     @ApiOperation("发改登出接口")
     public R logout() {
-        String userId = ShiroUtils.getUserEntity().getUserId();
-        SysUserTokenEntity entity = sysUserTokenService.lambdaQuery().eq(SysUserTokenEntity::getUserId, userId).one();
-        redisUtil.deleteCache("AccessToken" + entity.getToken(),"RefreshToken" + entity.getToken());
-        SecurityUtils.getSubject().logout();
-        return R.ok();
+        R r = new R();
+        try {
+            String userId = ShiroUtils.getUserEntity().getUserId();
+            SysUserTokenEntity entity = sysUserTokenService.lambdaQuery().eq(SysUserTokenEntity::getUserId, userId).one();
+            redisUtil.deleteCache("AccessToken" + entity.getToken(),"RefreshToken" + entity.getToken());
+            SecurityUtils.getSubject().logout();
+            r.put("code",0);
+            r.put("redirectUrl",rejectUrl);
+        }catch (Exception e){
+            r.put("code",1);
+            r.put("msg", e.getMessage());
+        }
+
+        return r;
     }
 
     /**
@@ -206,14 +209,19 @@ public class SmartPriceLoginController extends AbstractController {
                     new HttpEntity< MultiValueMap<String, String>>(formData,headers), String.class).getBody();
             JSONObject jsonObject = JSONObject.parseObject(codeBody);
             String accessToken = (String) jsonObject.get("access_token");
+            logger.info("获取的accessToken，accessToken信息，{}",accessToken);
             String refreshToken = (String) jsonObject.get("refresh_token");
+            logger.info("获取的refreshToken，refreshToken信息，{}",refreshToken);
             String uid = (String) jsonObject.get("uid");
+            logger.info("获取的uid，uid信息，{}",uid);
             //获取用户信息
             String userInfo= authUrl + UrlEnum.GET_USER_INFO.getUrl()+"?access_token="+accessToken+"&client_id="+clientId+"&uid="+uid;
+            logger.info("获取的token，token，{}",userInfo);
             String userBody = restTemplate.exchange(userInfo, HttpMethod.GET,
                     new HttpEntity< MultiValueMap<String, String>>(null,headers), String.class).getBody();
             JSONObject userObject = JSONObject.parseObject(userBody);
             String loginName = (String) userObject.get("loginName");
+            logger.info("获取的loginName，用户信息，{}",loginName);
             //根据用户Id获取用户信息
             SysUserEntity userById = sysUserService.getUserById(loginName);
             //获取菜单信息
