@@ -63,5 +63,7 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
     List<Map<String, Object>> foreData(Map<String, Object> params);
 
     Map<String, Object> ewarmMap(Map<String, Object> params);
+
+    Map<String, Object> viewMap(Map<String, Object> params);
 }
 

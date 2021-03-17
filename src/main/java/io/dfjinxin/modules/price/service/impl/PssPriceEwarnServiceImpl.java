@@ -306,21 +306,21 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
             }
         }
         map.put("topDownCommodity", list2);
-        Map<String, Object> parm = new HashMap<>();
-        parm.put("satrtDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -7)));
-        parm.put("endDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)));
-        List<Map<String, Object>> listp1 = baseMapper.getProvince(parm);
-        if (listp1.size() > 0) {
-            for (Map<String, Object> ent : listp1) {
-                Map<String, Object> mp1 = new HashMap<>();
-                parm.put("province", ent.get("stat_area_code"));
-                List<Map<String, Object>> upList = baseMapper.getUpThree(parm);
-                List<Map<String, Object>> downList = baseMapper.getDownThree(parm);
-                ent.put("upList", upList);
-                ent.put("downList", downList);
-            }
-        }
-        map.put("mapData", listp1);
+//        Map<String, Object> parm = new HashMap<>();
+//        parm.put("satrtDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -7)));
+//        parm.put("endDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)));
+//        List<Map<String, Object>> listp1 = baseMapper.getProvince(parm);
+//        if (listp1.size() > 0) {
+//            for (Map<String, Object> ent : listp1) {
+//                Map<String, Object> mp1 = new HashMap<>();
+//                parm.put("province", ent.get("stat_area_code"));
+//                List<Map<String, Object>> upList = baseMapper.getUpThree(parm);
+//                List<Map<String, Object>> downList = baseMapper.getDownThree(parm);
+//                ent.put("upList", upList);
+//                ent.put("downList", downList);
+//            }
+//        }
+//        map.put("mapData", listp1);
 
 
         //获取指定商品在各省份的价格信息
@@ -349,6 +349,43 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         map.put("provinceCount", ma);
         map.put("provinceEwarm", list3);
         return map;
+    }
+
+    /**
+     * @Desc: 新的首页查询地图数据
+     * @Param: []
+     * @Return: java.util.Map<java.lang.String                                                               ,                                                                                                                               java.lang.Object>
+     * @Author: y.b
+     * @Date: 2019/11/16 13:56
+     */
+    @Override
+    public Map<String, Object> viewMap(Map<String, Object> params) {
+        params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -7)));
+        params.put("endDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)));
+        params.put("upRange","");
+        params.put("downRange","");
+        if("1".equalsIgnoreCase(params.get("type").toString())){
+            params.put("upRange",1);
+        }else{
+            params.put("downRange",1);
+        }
+        System.out.println("params=========="+params.toString());
+        List<Map<String, Object>> list = baseMapper.getEwarnProvince(params);
+        System.out.println("list=========="+list.toString());
+        List<Map<String, Object>> lists = new ArrayList<>();
+        if (list.size() > 0) {
+            for (Map<String, Object> entity : list) {
+                params.put("ewarnDate",entity.get("ewarn_date"));
+                params.put("ewarnProvince",entity.get("stat_area_code"));
+                List<Map<String, Object>> li =  baseMapper.getEwarnProvinceInfo(params);
+                if(li.size() > 0){
+                    lists.addAll(li);
+                }
+            }
+        }
+        Map<String, Object> ma = new HashMap<>();
+        ma.put("ewarnProvinceList",lists);
+        return  ma;
     }
 
     /**
