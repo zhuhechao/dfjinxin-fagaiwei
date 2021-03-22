@@ -25,7 +25,7 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
 
     Map<String, Object> firstPageView(boolean queryHive);
 
-    Map<String, Object> indexPageViewLeft(Map<String, Object> params,boolean queryHive);
+    Map<String, Object> indexPageViewLeft(Map<String, Object> params, boolean queryHive);
 
     Map<String, Object> indexPageViewCenter();
 
@@ -63,5 +63,7 @@ public interface PssPriceEwarnService extends IService<PssPriceEwarnEntity> {
     List<Map<String, Object>> foreData(Map<String, Object> params);
 
     Map<String, Object> ewarmMap(Map<String, Object> params);
+
+    Map<String, Object> viewMap(Map<String, Object> params);
 }
 

@@ -8,6 +8,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  *
  *
@@ -26,4 +28,7 @@ public interface WpBaseIndexInfoDao extends BaseMapper<WpBaseIndexInfoEntity> {
             "  and index_flag = 0\n" +
             "  and info.index_id = #{indexId}")
     DataSetIndexInfoDto getIndexInfoByIndexId(@Param("indexId") Object indexId);
+
+   @Select("select  comm_id,index_type,index_name,index_used,unit,area_name,frequence,source_name,index_flag , count( DISTINCT index_name)  from wp_base_index_info wbii where wbii.comm_id = #{indexId} and wbii.index_flag = 0 and wbii.index_type = '价格' and wbii.index_used = '预警'  GROUP BY wbii.index_name ")
+    List<WpBaseIndexInfoEntity> selIndexName(@Param("indexId")Integer indexId);
 }

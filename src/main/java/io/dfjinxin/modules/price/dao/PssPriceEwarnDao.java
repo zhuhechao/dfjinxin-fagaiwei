@@ -314,6 +314,31 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "ORDER BY t.ewarn_date ")
     List<Map<String, Object>> getPriceThend(@Param("p") Map<String, Object> mp);
 
+    /**
+     * @Desc: 获取指定商品预警在各省分布
+     * @Param: [itrmDate]
+     * @Author: y.b
+     * @Date: 2020.11.16
+     */
+    List<Map<String, Object>> getEwarnProvince(@Param("p") Map<String, Object> mp);
+
+    /**
+     * @Desc: 获取指定商品预警在各省分布
+     * @Param: [itrmDate]
+     * @Author: y.b
+     * @Date: 2020.11.16
+     */
+    @Select("SELECT t.comm_id,ps.comm_name,t.stat_area_code,t.ewarn_id,max(t.ewarn_date) ewarn_date, \n" +
+            "t.ewarn_level,t.ewarn_type_id,t.pric_type_id,\n" +
+            " t.pri_range,t.pri_value,t.unit\n" +
+            "FROM pss_price_ewarn t \n" +
+            "left join pss_comm_total ps on ps.comm_id = t.comm_id\n" +
+            "where t.comm_id = #{p.commId}\n" +
+            "and t.ewarn_date = #{p.ewarnDate}\n" +
+            "and t.stat_area_code  = #{p.ewarnProvince}\n" +
+            "limit 1")
+    List<Map<String, Object>> getEwarnProvinceInfo(@Param("p") Map<String, Object> mp);
+
 
     @Select("SELECT t.comm_id,m.comm_name\n" +
             "                         FROM pss_price_relt t\n" +

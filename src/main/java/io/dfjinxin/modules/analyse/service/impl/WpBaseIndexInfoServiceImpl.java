@@ -10,9 +10,8 @@ import io.dfjinxin.modules.analyse.entity.WpBaseIndexInfoEntity;
 import io.dfjinxin.modules.analyse.service.WpBaseIndexInfoService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service("wpBaseIndexInfoService")
@@ -45,12 +44,12 @@ public class WpBaseIndexInfoServiceImpl extends ServiceImpl<WpBaseIndexInfoDao, 
             return new ArrayList<>();
         }
 
-        QueryWrapper<WpBaseIndexInfoEntity> where = new QueryWrapper<>();
-        where.eq("comm_id", indexId);
-        where.eq("index_flag", 0);
-        where.eq("index_type", "价格");
-        where.like("index_used", "预警");
-        return baseMapper.selectList(where);
+//        QueryWrapper<WpBaseIndexInfoEntity> where = new QueryWrapper<>();
+//        where.eq("comm_id", indexId);
+//        where.eq("index_flag", 0);
+//        where.eq("index_type", "价格");
+//        where.like("index_used", "预警");
+        return baseMapper.selIndexName(indexId);
     }
 
     @Override
