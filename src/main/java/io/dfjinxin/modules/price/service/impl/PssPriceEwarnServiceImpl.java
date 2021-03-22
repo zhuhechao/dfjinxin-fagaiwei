@@ -369,9 +369,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         }else{
             params.put("downRange",1);
         }
-        System.out.println("params=========="+params.toString());
         List<Map<String, Object>> list = baseMapper.getEwarnProvince(params);
-        System.out.println("list=========="+list.toString());
         List<Map<String, Object>> lists = new ArrayList<>();
         if (list.size() > 0) {
             for (Map<String, Object> entity : list) {
