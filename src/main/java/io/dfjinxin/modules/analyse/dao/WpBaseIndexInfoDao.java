@@ -29,6 +29,16 @@ public interface WpBaseIndexInfoDao extends BaseMapper<WpBaseIndexInfoEntity> {
             "  and info.index_id = #{indexId}")
     DataSetIndexInfoDto getIndexInfoByIndexId(@Param("indexId") Object indexId);
 
-   @Select("select  comm_id,index_type,index_name,index_used,unit,area_name,frequence,source_name,index_flag , count( DISTINCT index_name)  from wp_base_index_info wbii where wbii.comm_id = #{indexId} and wbii.index_flag = 0 and wbii.index_type = '价格' and wbii.index_used = '预警'  GROUP BY wbii.index_name ")
-    List<WpBaseIndexInfoEntity> selIndexName(@Param("indexId")Integer indexId);
+
+   @Select("select  comm_id,index_type,index_name,index_used,unit,area_name,frequence,source_name,index_flag , count( DISTINCT area_name)  from wp_base_index_info wbii where wbii.comm_id = #{indexId} and wbii.index_flag = 0 and wbii.index_type = #{indexType} and wbii.index_used  #{indexUsed} and wbii.index_name = #{indexName}   GROUP BY wbii.area_name ")
+    List<WpBaseIndexInfoEntity> selIndexName(@Param("indexId")Integer indexId,@Param("indexType")String indexType,@Param("indexUsed")String indexUsed,@Param("indexName")String indexName);
+
+
+    @Select("select  comm_id,index_type,index_name,index_used,unit,area_name,frequence,source_name,index_flag , count( DISTINCT index_name)  from wp_base_index_info wbii where wbii.comm_id = #{indexId} and wbii.index_flag = 0 and wbii.index_name = #{indexName} and wbii.index_used = #{indexUsed} and wbii.area_name = #{areaName}  GROUP BY wbii.index_name ")
+    List<WpBaseIndexInfoEntity> selAreaName(@Param("indexId")Integer indexId,@Param("indexType")String indexType,@Param("indexUsed")String indexUsed,@Param("areaName")String areaName);
+
+    @Select("select  comm_id,index_type,index_name,index_used,unit,area_name,frequence,source_name,index_flag , count( DISTINCT index_name)  from wp_base_index_info wbii where wbii.comm_id = #{indexId} and wbii.index_flag = 0 and wbii.index_type = #{indexType} and wbii.index_used = #{indexUsed} and wbii.area_name = #{areaName}  GROUP BY wbii.index_name ")
+    List<WpBaseIndexInfoEntity> selIndexUsed(@Param("indexId")Integer indexId,@Param("indexType")String indexType,@Param("indexUsed")String indexUsed,@Param("areaName")String areaName);
+
+
 }

@@ -70,4 +70,10 @@ public class WpBaseIndexInfoEntity implements Serializable {
 	@TableField(exist = false)
 	private List subList;
 
+	@TableField(exist = false)
+	private List<WpIndexAreaEntity> areaNames;
+
+	@TableField(exist = false)
+	private List<WpIndexNameEntity> indexNames;
+
 }

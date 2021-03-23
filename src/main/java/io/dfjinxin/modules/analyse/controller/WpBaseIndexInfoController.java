@@ -6,10 +6,7 @@ import io.dfjinxin.modules.analyse.service.WpBaseIndexInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,6 +30,12 @@ public class WpBaseIndexInfoController {
     @ApiOperation("根据4类商品id获取该商品指标类型为'价格'的指标名称,eg:172,115,201")
     public R info(@PathVariable("indexId") Integer indexId) {
         List<WpBaseIndexInfoEntity> indexNameByList = wpBaseIndexInfoService.getIndexNameByType(indexId);
+        return R.ok().put("data", indexNameByList);
+    }
+    @GetMapping("/indexInfo")
+    @ApiOperation("根据4类商品id获取该商品指标类型为'价格'的指标名称,eg:172,115,201")
+    public R indexInfo(@RequestParam("indexId") Integer indexId,@RequestParam("indexName") String indexName,@RequestParam("areaName") String areaName) {
+        List<WpBaseIndexInfoEntity> indexNameByList = wpBaseIndexInfoService.getIndexNameByInfo(indexId,indexName,areaName);
         return R.ok().put("data", indexNameByList);
     }
 
