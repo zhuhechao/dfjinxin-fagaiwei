@@ -65,17 +65,17 @@ public class FirstPageViewController {
         return R.ok().put("data", map);
     }
 
-    /**
-     * 首页
-     */
-    @GetMapping("/viewMap")
-    @ApiOperation("首页中间和右侧信息")
-    public R viewMap(@RequestParam(value = "commId", required = false) String commId,
-                     @RequestParam(value = "type", required = false) String type) {
-        Map<String, Object> ma = new HashMap<>();
-        ma.put("commId",commId);
-        ma.put("type",type);
-        Map<String, Object> map = pssPriceEwarnService.viewMap(ma);
-        return R.ok().put("data", map);
-    }
+//    /**
+//     * 首页
+//     */
+//    @GetMapping("/viewMap")
+//    @ApiOperation("首页中间和右侧信息")
+//    public R viewMap(@RequestParam(value = "commId", required = false) String commId,
+//                     @RequestParam(value = "type", required = false) String type) {
+//        Map<String, Object> ma = new HashMap<>();
+//        ma.put("commId",commId);
+//        ma.put("type",type);
+//        Map<String, Object> map = pssPriceEwarnService.viewMap(ma);
+//        return R.ok().put("data", map);
+//    }
 }

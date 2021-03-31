@@ -232,34 +232,36 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         params.put("itrmDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)));
         params.put("y_itrmDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -2)));
         //获取涨幅前6商品
-        params.put("smaDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -7)));
-        params.put("emaDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)));
+        params.put("smaDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -40)));
+        params.put("emaDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -30)));
         List<Map<String, Object>> list1 = baseMapper.getIncreaseThree(params);
         if (list1.size() > 0) {
             for (Map<String, Object> en1 : list1) {
-                Map<String, Object> yujijgMap = new HashMap<>();
-                List<Map<String, Object>> li1 = new ArrayList<>();
-                List<Map<String, Object>> li2 = new ArrayList<>();
-                List<Map<String, Object>> li3 = new ArrayList<>();
+//                Map<String, Object> yujijgMap = new HashMap<>();
+//                List<Map<String, Object>> li1 = new ArrayList<>();
+//                List<Map<String, Object>> li2 = new ArrayList<>();
+//                List<Map<String, Object>> li3 = new ArrayList<>();
                 params.put("commId", en1.get("comm_id"));
                 List<Map<String, Object>> lisss1 = baseMapper.getProvinceByCommId(params);
-                if (lisss1.size() > 0) {
-                    for (Map<String, Object> en2 : lisss1) {
-                        if (en2.get("ewarn_level").equals(71)) {
-                            li1.add(en2);
-                        }
-                        if (en2.get("ewarn_level").equals(72)) {
-                            li2.add(en2);
-                        }
-                        if (en2.get("ewarn_level").equals(73)) {
-                            li3.add(en2);
-                        }
-                    }
-                }
-                yujijgMap.put("gaoji", li1);
-                yujijgMap.put("zhongji", li2);
-                yujijgMap.put("diji", li3);
-                en1.put("provinceList", yujijgMap);
+                params.put("type", 1);
+                en1.put("itemProvinceList",viewMap(params));
+//                if (lisss1.size() > 0) {
+//                    for (Map<String, Object> en2 : lisss1) {
+//                        if (en2.get("ewarn_level").equals(71)) {
+//                            li1.add(en2);
+//                        }
+//                        if (en2.get("ewarn_level").equals(72)) {
+//                            li2.add(en2);
+//                        }
+//                        if (en2.get("ewarn_level").equals(73)) {
+//                            li3.add(en2);
+//                        }
+//                    }
+//                }
+//                yujijgMap.put("gaoji", li1);
+//                yujijgMap.put("zhongji", li2);
+//                yujijgMap.put("diji", li3);
+//                en1.put("provinceList", yujijgMap);
             }
         }
         map.put("topUpCommodity", list1);
@@ -286,42 +288,28 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 List<Map<String, Object>> lp3 = new ArrayList<>();
                 params.put("commId", ep1.get("comm_id"));
                 List<Map<String, Object>> lisss2 = baseMapper.getProvinceByCommId(params);
-                if (lisss2.size() > 0) {
-                    for (Map<String, Object> ep2 : lisss2) {
-                        if (ep2.get("ewarn_level").equals(71)) {
-                            lp1.add(ep2);
-                        }
-                        if (ep2.get("ewarn_level").equals(72)) {
-                            lp2.add(ep2);
-                        }
-                        if (ep2.get("ewarn_level").equals(73)) {
-                            lp3.add(ep2);
-                        }
-                    }
-                }
-                yujijgMap1.put("gaoji", lp1);
-                yujijgMap1.put("zhongji", lp2);
-                yujijgMap1.put("diji", lp3);
-                ep1.put("provinceList", yujijgMap1);
+                params.put("type", 0);
+                ep1.put("itemProvinceList",viewMap(params));
+//                if (lisss2.size() > 0) {
+//                    for (Map<String, Object> ep2 : lisss2) {
+//                        if (ep2.get("ewarn_level").equals(71)) {
+//                            lp1.add(ep2);
+//                        }
+//                        if (ep2.get("ewarn_level").equals(72)) {
+//                            lp2.add(ep2);
+//                        }
+//                        if (ep2.get("ewarn_level").equals(73)) {
+//                            lp3.add(ep2);
+//                        }
+//                    }
+//                }
+//                yujijgMap1.put("gaoji", lp1);
+//                yujijgMap1.put("zhongji", lp2);
+//                yujijgMap1.put("diji", lp3);
+//                ep1.put("provinceList", yujijgMap1);
             }
         }
         map.put("topDownCommodity", list2);
-//        Map<String, Object> parm = new HashMap<>();
-//        parm.put("satrtDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -7)));
-//        parm.put("endDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)));
-//        List<Map<String, Object>> listp1 = baseMapper.getProvince(parm);
-//        if (listp1.size() > 0) {
-//            for (Map<String, Object> ent : listp1) {
-//                Map<String, Object> mp1 = new HashMap<>();
-//                parm.put("province", ent.get("stat_area_code"));
-//                List<Map<String, Object>> upList = baseMapper.getUpThree(parm);
-//                List<Map<String, Object>> downList = baseMapper.getDownThree(parm);
-//                ent.put("upList", upList);
-//                ent.put("downList", downList);
-//            }
-//        }
-//        map.put("mapData", listp1);
-
 
         //获取指定商品在各省份的价格信息
         List<Map<String, Object>> list3 = baseMapper.getPriceDistribution(params);
@@ -358,7 +346,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
      * @Author: y.b
      * @Date: 2019/11/16 13:56
      */
-    @Override
+//    @Override
     public Map<String, Object> viewMap(Map<String, Object> params) {
         params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -7)));
         params.put("endDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)));

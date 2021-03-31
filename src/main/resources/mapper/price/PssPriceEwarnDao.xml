@@ -39,7 +39,7 @@
         SELECT t.comm_id,t.stat_area_code,max(t.ewarn_date) ewarn_date
         FROM pss_price_ewarn t
         where t.comm_id = #{p.commId}
-        and date(t.ewarn_date) BETWEEN #{p.startDate} and #{p.endDate}
+        and date(t.ewarn_date) BETWEEN #{p.smaDate} and #{p.emaDate}
         and t.stat_area_code in (
         SELECT w.area_name FROM wp_area_info w WHERE w.area_id BETWEEN 1 AND 32
         )
