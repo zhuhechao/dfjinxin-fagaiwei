@@ -10,7 +10,11 @@ import io.dfjinxin.modules.analyse.entity.WpBaseIndexInfoEntity;
 import io.dfjinxin.modules.analyse.entity.WpIndexAreaEntity;
 import io.dfjinxin.modules.analyse.entity.WpIndexNameEntity;
 import io.dfjinxin.modules.analyse.service.WpBaseIndexInfoService;
+import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
+import io.dfjinxin.modules.price.service.PssCommTotalService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
@@ -22,6 +26,10 @@ import java.util.stream.Collectors;
 
 @Service("wpBaseIndexInfoService")
 public class WpBaseIndexInfoServiceImpl extends ServiceImpl<WpBaseIndexInfoDao, WpBaseIndexInfoEntity> implements WpBaseIndexInfoService {
+
+     @Autowired
+     private PssCommTotalService commTotalService;
+
 
     @Override
     public List<WpBaseIndexInfoEntity> getIndexTreeByIds(String [] ids) {
@@ -82,9 +90,18 @@ public class WpBaseIndexInfoServiceImpl extends ServiceImpl<WpBaseIndexInfoDao, 
         if (commId == null) {
             return new ArrayList<>();
         }
+        List<PssCommTotalEntity> resList = commTotalService.lambdaQuery().and(i -> i.eq(PssCommTotalEntity::getCommId, commId).or().eq(PssCommTotalEntity::getParentCode, commId)).list();
+        List<Integer> collect = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(resList)){
+            collect = resList.stream().filter(t -> !t.getCommId().equals(commId)).map(t -> t.getCommId()).distinct().collect(Collectors.toList());
+        }
         WpBaseIndexInfoEntity res = new WpBaseIndexInfoEntity();
         QueryWrapper<WpBaseIndexInfoEntity> where = new QueryWrapper<>();
-        where.eq("comm_id", commId);
+        if(!CollectionUtils.isEmpty(collect)){
+            where.in("comm_id",collect);
+        }else {
+            where.eq("comm_id", commId);
+        }
         where.eq("index_flag", 0);
         where.eq("index_type", "价格");
         where.like("index_used", "预警");
