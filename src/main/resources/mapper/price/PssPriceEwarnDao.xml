@@ -41,7 +41,7 @@
         where t.comm_id = #{p.commId}
         and date(t.ewarn_date) BETWEEN #{p.smaDate} and #{p.emaDate}
         and t.stat_area_code in (
-        SELECT w.area_name FROM wp_area_info w WHERE w.area_id BETWEEN 1 AND 32
+        SELECT w.area_name FROM wp_area_info w WHERE w.area_id BETWEEN 1 AND 32 or w.parent_id BETWEEN 1 AND 32
         )
         <if test="p.upRange != null and p.upRange!= ''">
             and t.pri_range >0

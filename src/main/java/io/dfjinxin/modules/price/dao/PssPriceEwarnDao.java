@@ -388,7 +388,7 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "LEFT JOIN wp_ascii_info m ON t.ewarn_level = m.code_id\n" +
             "WHERE t.comm_id = #{p.commId}\n" +
             " AND DATE(t.ewarn_date)    BETWEEN '2020-11-20' AND  #{p.itrmDate}\n" +
-            "AND t.stat_area_code in  (SELECT w.area_name FROM wp_area_info w WHERE w.area_id BETWEEN 1 AND 32) \n" +
+            "AND t.stat_area_code in  (SELECT w.area_name FROM wp_area_info w WHERE w.area_id BETWEEN 1 AND 32 or w.parent_id  BETWEEN 1 AND 32 ) \n" +
             "GROUP BY t.ewarn_level,t.stat_area_code\n")
     List<Map<String, Object>> getProvinceByCommId(@Param("p") Map<String, Object> mp);
 
@@ -632,11 +632,28 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
     Map<String, Object> getMaxPro(@Param("p") Map<String, Object> mp);
 
     @Select("SELECT t.stat_area_code,MAX(t.pri_range) maxPro,MIN(t.pri_range) minPro FROM pss_price_ewarn t\n" +
-            "WHERE t.stat_area_code in (SELECT a.area_name FROM wp_area_info a WHERE a.area_id BETWEEN 1 AND 32)\n" +
+            "WHERE t.stat_area_code in (SELECT a.area_name FROM wp_area_info a WHERE a.area_id BETWEEN 1 AND 32 or  a.parent_id BETWEEN 1 AND 32 )\n" +
             "AND t.comm_id = #{p.commId}\n" +
             "AND DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') BETWEEN #{p.startDate} AND #{p.endDate}\n" +
             "GROUP BY t.stat_area_code")
     List< Map<String, Object>> getAreaByCommId(@Param("p") Map<String, Object> mp);
+
+
+    @Select( "<script>" +
+            " SELECT DISTINCT w2.area_name areaName ,w1.area_name contryName FROM wp_area_info w1 JOIN wp_area_info w2 ON (w1.area_id = w2.parent_id OR w1.area_id = w2.area_id) AND w1.area_id BETWEEN 1 AND 32 and w2.area_name in ( " +
+            " <foreach collection =\"areas\" item=\"item\" index= \"index\" separator =\",\">" +
+            "#{item} " +
+            "</foreach>"    +
+            " ) " +
+            "</script>"   )
+    List< Map<String, String>> getProArea(@Param("areas") List<String> areas);
+
+    @Select("SELECT t.stat_area_code,MAX(t.pri_range) maxPro,MIN(t.pri_range) minPro FROM pss_price_ewarn t\n" +
+            "WHERE t.stat_area_code in (SELECT a.area_name FROM wp_area_info a WHERE a.parent_id BETWEEN 1 AND 32)\n" +
+            "AND t.comm_id = #{p.commId}\n" +
+            "AND DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') BETWEEN #{p.startDate} AND #{p.endDate}\n" +
+            "GROUP BY t.stat_area_code")
+    List< Map<String, Object>> getProAreaByCommId(@Param("p") Map<String, Object> mp);
 
     /**
      * @Desc: 获取指定商品预测价格月趋势和周趋势信息

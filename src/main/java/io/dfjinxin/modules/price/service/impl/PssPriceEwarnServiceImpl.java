@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
@@ -246,6 +247,25 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 params.put("type", 1);
                 en1.put("itemProvinceList",viewMap(params));
                 if (lisss1.size() > 0) {
+                    List<String> areaCode = lisss1.stream().map(t -> (String)t.get("stat_area_code")).distinct().collect(Collectors.toList());
+                    List<Map<String, String>> proArea = baseMapper.getProArea(areaCode);
+                    Map<String,Object> couFlg = new HashMap<>();
+                    for(Map<String, String> pr : proArea){
+                        if(pr.get("areaName").equals(pr.get("contryName"))){
+                            couFlg.put(pr.get("areaName"),1);
+                        }
+                    }
+                    Iterator<Map<String, Object>> iterator = lisss1.iterator();
+                    while (iterator.hasNext()){
+                        Map<String, Object> pr= iterator.next();
+                        for(Map<String, String> pa : proArea){
+                            if(pr.get("stat_area_code").equals(pa.get("areaName")) && !pa.get("areaName").equals(pa.get("contryName")) && couFlg.containsKey(pa.get("contryName"))){
+                                iterator.remove();
+                            }else if(pr.get("stat_area_code").equals(pa.get("areaName")) && !pa.get("areaName").equals(pa.get("contryName"))){
+                                pr.put("stat_area_code",pa.get("contryName"));
+                            }
+                        }
+                    }
                     for (Map<String, Object> en2 : lisss1) {
                         if (en2.get("ewarn_level").equals(71)) {
                             li1.add(en2);
@@ -291,6 +311,25 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 params.put("type", 0);
                 ep1.put("itemProvinceList",viewMap(params));
                 if (lisss2.size() > 0) {
+                    List<String> areaCode = lisss2.stream().map(t -> (String)t.get("stat_area_code")).distinct().collect(Collectors.toList());
+                    List<Map<String, String>> proArea = baseMapper.getProArea(areaCode);
+                    Map<String,Object> couFlg = new HashMap<>();
+                    for(Map<String, String> pr : proArea){
+                        if(pr.get("areaName").equals(pr.get("contryName"))){
+                            couFlg.put(pr.get("areaName"),1);
+                        }
+                    }
+                    Iterator<Map<String, Object>> iterator = lisss2.iterator();
+                    while (iterator.hasNext()){
+                        Map<String, Object> pr= iterator.next();
+                        for(Map<String, String> pa : proArea){
+                            if(pr.get("stat_area_code").equals(pa.get("areaName")) && !pa.get("areaName").equals(pa.get("contryName")) && couFlg.containsKey(pa.get("contryName"))){
+                                iterator.remove();
+                            }else if(pr.get("stat_area_code").equals(pa.get("areaName")) && !pa.get("areaName").equals(pa.get("contryName"))){
+                                pr.put("stat_area_code",pa.get("contryName"));
+                            }
+                        }
+                    }
                     for (Map<String, Object> ep2 : lisss2) {
                         if (ep2.get("ewarn_level").equals(71)) {
                             lp1.add(ep2);
@@ -360,10 +399,39 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         List<Map<String, Object>> list = baseMapper.getEwarnProvince(params);
         List<Map<String, Object>> lists = new ArrayList<>();
         if (list.size() > 0) {
+            List<String> areaCode = list.stream().map(t -> (String)t.get("stat_area_code")).distinct().collect(Collectors.toList());
+            List<Map<String, String>> proArea = baseMapper.getProArea(areaCode);
+            Map<String,Object> couFlg = new HashMap<>();
+            for(Map<String, String> pr : proArea){
+                if(pr.get("areaName").equals(pr.get("contryName"))){
+                    couFlg.put(pr.get("areaName"),1);
+                }
+            }
+            Iterator<Map<String, Object>> iterator = list.iterator();
+            while (iterator.hasNext()){
+                Map<String, Object> pr= iterator.next();
+                if(!couFlg.containsKey(pr.get("stat_area_code"))){
+                    for(Map<String, String> pa : proArea){
+                        if( pr.get("stat_area_code").equals(pa.get("areaName")) && couFlg.containsKey(pa.get("contryName"))){
+                            iterator.remove();
+                        }
+                    }
+                }
+            }
             for (Map<String, Object> entity : list) {
                 params.put("ewarnDate",entity.get("ewarn_date"));
                 params.put("ewarnProvince",entity.get("stat_area_code"));
                 List<Map<String, Object>> li =  baseMapper.getEwarnProvinceInfo(params);
+                Iterator<Map<String, Object>> res = li.iterator();
+                while (res.hasNext()){
+                    Map<String, Object> pr= res.next();
+                    for(Map<String, String> pa : proArea){
+                        if(pr.get("stat_area_code").equals(pa.get("areaName"))){
+                            pr.put("stat_area_code",pa.get("contryName"));
+                        }
+                    }
+                }
+
                 if(li.size() > 0){
                     lists.addAll(li);
                 }
@@ -1667,11 +1735,30 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         Map<String, Object> mapp = new HashMap<>();
         params.put("endDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)));
         params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -30)));
+        //各个省指定商品在一个月内价格的最大值和最小值
         List<Map<String, Object>> list = baseMapper.getAreaByCommId(params);
         Map<String, Object> maxErawInfo = baseMapper.getMaxPro(params);
         mapp.put("maxErawInfo",maxErawInfo);
         List<Map<String, Object>> rutList = new ArrayList<>();
         if (list.size() > 0) {
+            //市级和省的对应关系
+            List<String> areaCode = list.stream().map(t -> (String)t.get("stat_area_code")).distinct().collect(Collectors.toList());
+            List<Map<String, String>> proArea = baseMapper.getProArea(areaCode);
+            Map<String,Object> couFlg = new HashMap<>();
+            for(Map<String, String> pr : proArea){
+               if(pr.get("areaName").equals(pr.get("contryName"))){
+                   couFlg.put(pr.get("areaName"),1);
+               }
+            }
+            Iterator<Map<String, String>> iterator = proArea.iterator();
+            while (iterator.hasNext()){
+                Map<String, String> pr= iterator.next();
+                if(!pr.get("areaName").equals(pr.get("contryName"))&& couFlg.containsKey(pr.get("contryName"))){
+                      iterator.remove();
+                }
+            }
+            //首级标志
+            Map<String,Object> proFlg = new HashMap<>();
             for (Map<String, Object> de : list) {
                 Map<String, Object> map = new HashMap<>();
                 double val = Math.abs(Double.valueOf(de.get("maxPro").toString()).doubleValue()) > Math.abs(Double.valueOf(de.get("minPro").toString()).doubleValue()) ? Double.valueOf(de.get("maxPro").toString()).doubleValue() : Double.valueOf(de.get("minPro").toString()).doubleValue();
@@ -1679,7 +1766,6 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 params.put("val", val);
                 List<Map<String, Object>> list1 = baseMapper.getCommIdByArea(params);
                 if (list1.size() > 0) {
-                    map.put("name", de.get("stat_area_code"));
                     map.put("value", val);
                     map.put("ewarnLevel", list1.get(0).get("ewarn_level"));
                     map.put("ewarnName", list1.get(0).get("code_name"));
@@ -1689,7 +1775,21 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                     map.put("date", list1.get(0).get("date"));
                     map.put("priValue", list1.get(0).get("pri_value"));
                     map.put("indexName", list1.get(0).get("index_name"));
-                    rutList.add(map);
+                    if(!CollectionUtils.isEmpty(proArea)){
+                        for(Map<String, String> p : proArea){
+                            if(de.get("stat_area_code").equals(p.get("areaName")) ){
+                                if(!proFlg.containsKey(p.get("contryName"))){
+                                    rutList.add(map);
+                                }
+                                map.put("name", p.get("contryName"));
+                                proFlg.put(p.get("contryName"),1);
+                            }
+                        }
+                    }else {
+                        map.put("name", de.get("stat_area_code"));
+                        rutList.add(map);
+                    }
+
                 }
             }
         }
