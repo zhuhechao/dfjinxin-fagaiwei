@@ -87,7 +87,7 @@
     <select id="queryPage" parameterType="map" resultType="map">
        SELECT h4.code_id ewarn_type_id,h4.code_name ewarn_type_name,h.comm_id,h.ewarn_id,h3.ewarn_name,h.conf_id,DATE_FORMAT(h.crte_date,'%Y-%m-%d') crte_date,h.index_id,h2.index_name,h.remarks,
         h1.comm_id0,h1.comm_id1,h1.comm_id2,h1.comm_id3,h1.comm_name0,h1.comm_name1,
-        h1.comm_name2,h1.comm_name3
+        h1.comm_name2,h1.comm_name3 , h.area_name
         FROM pss_comm_conf h
         LEFT JOIN (
             SELECT t.parent_code parent_code3,
