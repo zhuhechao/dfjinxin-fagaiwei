@@ -5,9 +5,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.dfjinxin.modules.analyse.entity.WpMcroIndexInfoEntity;
 import io.dfjinxin.modules.analyse.entity.WpMcroIndexValEntity;
+import io.dfjinxin.modules.price.dto.AreaPrice;
+import io.dfjinxin.modules.price.dto.ChinaAreaInfo;
 import io.dfjinxin.modules.price.dto.PwwPriceEwarnDto;
 import io.dfjinxin.modules.price.entity.PssPriceEwarnEntity;
 import io.dfjinxin.modules.price.entity.PssPriceReltEntity;
+import java.util.Set;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -668,4 +671,23 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "GROUP BY t.comm_id")
     List<Map<String, Object>> getMaxProCommid(@Param("p") Map<String, Object> mp);
 
+    /***
+     * @Author LiangJianCan
+     * @Description  获取全中国城市的信息
+     * @Date 2021/4/21 15:17
+     * @Param []
+     * @return java.util.List<io.dfjinxin.modules.price.dto.ChinaAreaInfo>
+     **/
+    @Select("select parent_id as parentId , area_name as areaName , area_id as areaId "
+            + "from wp_area_info where area_type = 0")
+    List<ChinaAreaInfo> getChinaAreaInfo();
+
+    /***
+     * @Author LiangJianCan
+     * @Description  通过commid,地域名称和日期查询各省份和对应的价格
+     * @Date 2021/4/21 15:55
+     * @Param [commId, areaName, date]
+     * @return java.util.List<io.dfjinxin.modules.price.dto.AreaPrice>
+     **/
+    List<AreaPrice> getAreaPrice(@Param("commId")String commId , @Param("areaName")Set<String> areaName ,@Param("date")String date);
 }

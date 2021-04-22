@@ -73,5 +73,18 @@
         group by ewarn_level
     </select>
 
+    <select id="getAreaPrice" resultType="io.dfjinxin.modules.price.dto.AreaPrice">
+    select comm_id as commId , stat_area_code as  areaName, max(pri_value) as price from pss_price_ewarn
+     where comm_id = #{commId,jdbcType=VARCHAR}
+     <if test="areaName != null and areaName.size() != 0">
+        and stat_area_code in
+        <foreach collection="areaName" separator=" , " open=" ( " close=" ) " item="item">
+        #{item,jdbcType=VARCHAR}
+        </foreach>
+    </if>
+    and ewarn_date <![CDATA[ >= ]]> STR_TO_DATE (#{date,jdbcType=VARCHAR} ,'%Y-%m-%d')
+    group by stat_area_code
+</select>
+
 
 </mapper>
