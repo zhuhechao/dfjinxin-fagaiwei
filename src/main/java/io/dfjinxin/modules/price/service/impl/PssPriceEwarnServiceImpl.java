@@ -1856,7 +1856,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
     private List<ChinaAreaInfo> getChildren(ChinaAreaInfo root, List<ChinaAreaInfo> all) {
         List<ChinaAreaInfo> list = all.stream().filter(entity -> {
             return entity.getParentId().equals(root.getAreaId());
-        }).peek((entity) -> entity.setChinaAreaInfos(getChildren(entity, all))).collect(Collectors.toList());
+        }).collect(Collectors.toList());
         return list;
     }
 }
