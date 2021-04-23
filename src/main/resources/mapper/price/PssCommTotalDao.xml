@@ -124,6 +124,7 @@
         AND h1.comm_name2 != ''
         AND h1.comm_name3 IS NOT NULL
         AND h1.comm_name3 != ''
+        and h.del_flag = 0
         <if test="p.commLevelCode_0 != null and p.commLevelCode_0 != ''">
             AND h1.comm_id0 = #{p.commLevelCode_0}
         </if>

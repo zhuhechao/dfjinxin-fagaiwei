@@ -16,6 +16,8 @@ import io.dfjinxin.modules.analyse.service.WpBaseIndexInfoService;
 import io.dfjinxin.modules.analyse.service.WpBaseIndexValService;
 import io.dfjinxin.modules.hive.service.HiveService;
 import io.dfjinxin.modules.price.dao.*;
+import io.dfjinxin.modules.price.dto.AreaPrice;
+import io.dfjinxin.modules.price.dto.ChinaAreaInfo;
 import io.dfjinxin.modules.price.dto.PwwPriceEwarnDto;
 import io.dfjinxin.modules.price.dto.RateValDto;
 import io.dfjinxin.modules.price.entity.*;
@@ -24,6 +26,7 @@ import io.dfjinxin.modules.price.service.PssCommTotalService;
 import io.dfjinxin.modules.price.service.PssPriceEwarnService;
 import io.dfjinxin.modules.price.service.WpUpdateInfoService;
 import io.dfjinxin.modules.yuqing.TengXunYuQing;
+import java.util.stream.Stream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1735,65 +1738,125 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         Map<String, Object> mapp = new HashMap<>();
         params.put("endDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)));
         params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -30)));
-        //各个省指定商品在一个月内价格的最大值和最小值
-        List<Map<String, Object>> list = baseMapper.getAreaByCommId(params);
+//        //各个省指定商品在一个月内价格的最大值和最小值
+////        List<Map<String, Object>> list = baseMapper.getAreaByCommId(params);
         Map<String, Object> maxErawInfo = baseMapper.getMaxPro(params);
         mapp.put("maxErawInfo",maxErawInfo);
-        List<Map<String, Object>> rutList = new ArrayList<>();
-        if (list.size() > 0) {
-            //市级和省的对应关系
-            List<String> areaCode = list.stream().map(t -> (String)t.get("stat_area_code")).distinct().collect(Collectors.toList());
-            List<Map<String, String>> proArea = baseMapper.getProArea(areaCode);
-            Map<String,Object> couFlg = new HashMap<>();
-            for(Map<String, String> pr : proArea){
-               if(pr.get("areaName").equals(pr.get("contryName"))){
-                   couFlg.put(pr.get("areaName"),1);
-               }
-            }
-            Iterator<Map<String, String>> iterator = proArea.iterator();
-            while (iterator.hasNext()){
-                Map<String, String> pr= iterator.next();
-                if(!pr.get("areaName").equals(pr.get("contryName"))&& couFlg.containsKey(pr.get("contryName"))){
-                      iterator.remove();
-                }
-            }
-            //首级标志
-            Map<String,Object> proFlg = new HashMap<>();
-            for (Map<String, Object> de : list) {
-                Map<String, Object> map = new HashMap<>();
-                double val = Math.abs(Double.valueOf(de.get("maxPro").toString()).doubleValue()) > Math.abs(Double.valueOf(de.get("minPro").toString()).doubleValue()) ? Double.valueOf(de.get("maxPro").toString()).doubleValue() : Double.valueOf(de.get("minPro").toString()).doubleValue();
-                params.put("areaName", de.get("stat_area_code"));
-                params.put("val", val);
-                List<Map<String, Object>> list1 = baseMapper.getCommIdByArea(params);
-                if (list1.size() > 0) {
-                    map.put("value", val);
-                    map.put("ewarnLevel", list1.get(0).get("ewarn_level"));
-                    map.put("ewarnName", list1.get(0).get("code_name"));
-                    map.put("commId", list1.get(0).get("comm_id"));
-                    map.put("commName", list1.get(0).get("comm_name"));
-                    map.put("unit", list1.get(0).get("unit"));
-                    map.put("date", list1.get(0).get("date"));
-                    map.put("priValue", list1.get(0).get("pri_value"));
-                    map.put("indexName", list1.get(0).get("index_name"));
-                    if(!CollectionUtils.isEmpty(proArea)){
-                        for(Map<String, String> p : proArea){
-                            if(de.get("stat_area_code").equals(p.get("areaName")) ){
-                                if(!proFlg.containsKey(p.get("contryName"))){
-                                    rutList.add(map);
-                                }
-                                map.put("name", p.get("contryName"));
-                                proFlg.put(p.get("contryName"),1);
-                            }
-                        }
-                    }else {
-                        map.put("name", de.get("stat_area_code"));
-                        rutList.add(map);
-                    }
+//        List<Map<String, Object>> rutList = new ArrayList<>();
+//        if (list.size() > 0) {
+//            //市级和省的对应关系
+//            List<String> areaCode = list.stream().map(t -> (String)t.get("stat_area_code")).distinct().collect(Collectors.toList());
+//            List<Map<String, String>> proArea = baseMapper.getProArea(areaCode);
+//            Map<String,Object> couFlg = new HashMap<>();
+//            for(Map<String, String> pr : proArea){
+//               if(pr.get("areaName").equals(pr.get("contryName"))){
+//                   couFlg.put(pr.get("areaName"),1);
+//               }
+//            }
+//            Iterator<Map<String, String>> iterator = proArea.iterator();
+//            while (iterator.hasNext()){
+//                Map<String, String> pr= iterator.next();
+//                if(!pr.get("areaName").equals(pr.get("contryName"))&& couFlg.containsKey(pr.get("contryName"))){
+//                      iterator.remove();
+//                }
+//            }
+//            //首级标志
+//            Map<String,Object> proFlg = new HashMap<>();
+//            for (Map<String, Object> de : list) {
+//                Map<String, Object> map = new HashMap<>();
+//                double val = Math.abs(Double.valueOf(de.get("maxPro").toString()).doubleValue()) > Math.abs(Double.valueOf(de.get("minPro").toString()).doubleValue()) ? Double.valueOf(de.get("maxPro").toString()).doubleValue() : Double.valueOf(de.get("minPro").toString()).doubleValue();
+//                params.put("areaName", de.get("stat_area_code"));
+//                params.put("val", val);
+//                List<Map<String, Object>> list1 = baseMapper.getCommIdByArea(params);
+//                if (list1.size() > 0) {
+//                    map.put("value", val);
+//                    map.put("ewarnLevel", list1.get(0).get("ewarn_level"));
+//                    map.put("ewarnName", list1.get(0).get("code_name"));
+//                    map.put("commId", list1.get(0).get("comm_id"));
+//                    map.put("commName", list1.get(0).get("comm_name"));
+//                    map.put("unit", list1.get(0).get("unit"));
+//                    map.put("date", list1.get(0).get("date"));
+//                    map.put("priValue", list1.get(0).get("pri_value"));
+//                    map.put("indexName", list1.get(0).get("index_name"));
+//                    if(!CollectionUtils.isEmpty(proArea)){
+//                        for(Map<String, String> p : proArea){
+//                            if(de.get("stat_area_code").equals(p.get("areaName")) ){
+//                                if(!proFlg.containsKey(p.get("contryName"))){
+//                                    rutList.add(map);
+//                                }
+//                                map.put("name", p.get("contryName"));
+//                                proFlg.put(p.get("contryName"),1);
+//                            }
+//                        }
+//                    }else {
+//                        map.put("name", de.get("stat_area_code"));
+//                        rutList.add(map);
+//                    }
+//
+//                }
+//            }
+//        }
+//        mapp.put("mapData",null);
 
+        String commId = params.get("commId").toString();
+        //全国的省份以及市
+        Map<String, List<ChinaAreaInfo>> listMap = handleChinaAreaInfo();
+
+        //全国的省份
+        Set<String> areaName = listMap.keySet();
+        //获取昨天的日期
+        String format = new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1));
+//        String format = "2021-04-16";
+        //根据省份获取改省份对应商品的价格
+        List<AreaPrice> commIdList = baseMapper.getAreaPrice(commId, areaName, format);
+
+        //当省份没有获取到数据的时候 , 获取改省份下的城市 作为省份的价格
+        if (commIdList.size() < listMap.size()) {
+            //有价格的省份
+            List<String> collect = commIdList.stream().map(AreaPrice::getAreaName).collect(Collectors.toList());
+            listMap.forEach((k, v) -> {
+                if (!collect.contains(k)) {
+                    //获取没有该省份价格下的城市
+                    Set<String> cityList = v.get(0).getChinaAreaInfos().stream().map(ChinaAreaInfo::getAreaName)
+                            .collect(Collectors.toSet());
+                    List<AreaPrice> areaPrice = baseMapper.getAreaPrice(commId, cityList, format);
+                    if (areaPrice.isEmpty()) {
+                        //当该省份的城市价格为空,修改省份为空
+                        commIdList.add(new AreaPrice(commId, k, null));
+                    } else {
+                        //否则设置该市的价格为该省份的价格
+                        commIdList.add(new AreaPrice(commId, k, areaPrice.get(0).getPrice()));
+                    }
                 }
-            }
+            });
         }
-        mapp.put("mapData",rutList);
+        mapp.put("mapData",commIdList);
         return mapp;
+    }
+
+    /***
+     * @Author LiangJianCan
+     * @Description  获取中国的省份以及省份里面的城市
+     * @Date 2021/4/21 15:35
+     * @Param []
+     * @return java.util.Map<java.lang.String,java.util.List<io.dfjinxin.modules.price.dto.ChinaAreaInfo>>
+     **/
+    private Map<String, List<ChinaAreaInfo>> handleChinaAreaInfo(){
+        List<ChinaAreaInfo> chinaAreaInfo = baseMapper.getChinaAreaInfo();
+
+        Map<String, List<ChinaAreaInfo>> listMap = chinaAreaInfo.stream().filter((entity) ->
+                entity.getParentId() == 0).peek((entity -> {
+            //获取当前菜单的子菜单
+            entity.setChinaAreaInfos(getChildren(entity, chinaAreaInfo));
+        })).collect(Collectors.groupingBy(ChinaAreaInfo::getAreaName));
+
+        return listMap;
+    }
+
+    private List<ChinaAreaInfo> getChildren(ChinaAreaInfo root, List<ChinaAreaInfo> all) {
+        List<ChinaAreaInfo> list = all.stream().filter(entity -> {
+            return entity.getParentId().equals(root.getAreaId());
+        }).peek((entity) -> entity.setChinaAreaInfos(getChildren(entity, all))).collect(Collectors.toList());
+        return list;
     }
 }
