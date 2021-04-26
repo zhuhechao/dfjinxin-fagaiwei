@@ -7,6 +7,7 @@ import io.dfjinxin.modules.analyse.entity.WpMcroIndexInfoEntity;
 import io.dfjinxin.modules.analyse.entity.WpMcroIndexValEntity;
 import io.dfjinxin.modules.price.dto.AreaPrice;
 import io.dfjinxin.modules.price.dto.ChinaAreaInfo;
+import io.dfjinxin.modules.price.dto.CommMessage;
 import io.dfjinxin.modules.price.dto.PwwPriceEwarnDto;
 import io.dfjinxin.modules.price.entity.PssPriceEwarnEntity;
 import io.dfjinxin.modules.price.entity.PssPriceReltEntity;
@@ -623,16 +624,14 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "LIMIT 1")
     List< Map<String, Object>> getCommIdByArea(@Param("p") Map<String, Object> mp);
 
-    @Select("SELECT t.comm_id ,p.comm_name,t.pri_range,t.pri_value,t.unit,t.ewarn_date," +
-            "t.ewarn_level,w.code_name,t.pri_yonyear,t.stat_area_code  " +
-            "FROM pss_price_ewarn t\n" +
-            "LEFT JOIN pss_comm_total p ON t.comm_id = p.comm_id\n" +
-            "LEFT JOIN wp_ascii_info w ON w.code_id = t.ewarn_level\n" +
-            "WHERE t.comm_id = #{p.commId}\n" +
-            "AND DATE_FORMAT(t.ewarn_date,'%Y-%m-%d') BETWEEN #{p.startDate} AND #{p.endDate}\n" +
-            "ORDER BY ABS(t.pri_range) DESC\n" +
-            "LIMIT 1")
-    Map<String, Object> getMaxPro(@Param("p") Map<String, Object> mp);
+    /***
+     * @Author LiangJianCan
+     * @Description  根据时间查询商品价格参数
+     * @Date 2021/4/26 14:10
+     * @Param [format]
+     * @return java.util.Map<java.lang.String,java.lang.Object>
+     **/
+    Map<String, Object> getMaxPro(@Param("format") String format ,@Param("commId") String commId);
 
     @Select("SELECT t.stat_area_code,MAX(t.pri_range) maxPro,MIN(t.pri_range) minPro FROM pss_price_ewarn t\n" +
             "WHERE t.stat_area_code in (SELECT a.area_name FROM wp_area_info a WHERE a.area_id BETWEEN 1 AND 32 or  a.parent_id BETWEEN 1 AND 32 )\n" +
@@ -699,4 +698,13 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
      * @return java.lang.String
      **/
     String getLastRecordDate(@Param("commId")String commId );
+
+    /***
+     * @Author LiangJianCan
+     * @Description  首页轮播图内容
+     * @Date 2021/4/26 19:00
+     * @Param [commId]
+     * @return java.util.List<io.dfjinxin.modules.price.dto.CommMessage>
+     **/
+    List<CommMessage> getCommMessageByCommId(@Param("commId")String commId);
 }

@@ -90,5 +90,46 @@
     select STR_TO_DATE(ewarn_date,'%Y-%m-%d') from pss_price_ewarn where comm_id = #{commId,jdbcType=VARCHAR} order by ewarn_date desc limit 1
 </select>
 
+<select id="getMaxPro" resultType="java.util.Map">
+    SELECT
+        t.comm_id,
+        p.comm_name,
+        t.pri_range,
+        t.pri_value,
+        t.unit,
+        t.ewarn_date,
+        t.ewarn_level,
+        w.code_name,
+        t.pri_yonyear,
+        t.stat_area_code
+    FROM
+        pss_price_ewarn t
+        LEFT JOIN pss_comm_total p ON t.comm_id = p.comm_id
+        LEFT JOIN wp_ascii_info w ON w.code_id = t.ewarn_level
+    WHERE
+        t.comm_id = #{commId,jdbcType=VARCHAR}
+        AND t.ewarn_date <![CDATA[ >= ]]> STR_TO_DATE (#{format,jdbcType=VARCHAR} ,'%Y-%m-%d')
+    ORDER BY
+        ABS( t.pri_range ) DESC
+        LIMIT 1
+</select>
+
+<select id="getCommMessageByCommId" resultType="io.dfjinxin.modules.price.dto.CommMessage">
+    SELECT
+        n.comm_name AS commName,
+        t.stat_area_code AS commArea,
+        t.pri_value AS commPrice,
+        t.unit AS commUnit,
+        t.pri_range AS commRange
+    FROM
+        pss_price_ewarn t
+        LEFT JOIN pss_comm_total n ON n.comm_id = t.comm_id
+    WHERE
+        t.comm_id = #{commId,jdbcType=VARCHAR}
+        AND t.stat_area_code IN ( SELECT w.area_name FROM wp_area_info w WHERE w.area_id BETWEEN 1 AND 32 OR w.parent_id BETWEEN 1 AND 32 )
+        AND t.ewarn_date = ( SELECT max( ewarn_date ) FROM pss_price_ewarn WHERE comm_id = #{commId,jdbcType=VARCHAR} )
+
+</select>
+
 
 </mapper>

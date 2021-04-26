@@ -18,6 +18,7 @@ import io.dfjinxin.modules.hive.service.HiveService;
 import io.dfjinxin.modules.price.dao.*;
 import io.dfjinxin.modules.price.dto.AreaPrice;
 import io.dfjinxin.modules.price.dto.ChinaAreaInfo;
+import io.dfjinxin.modules.price.dto.CommMessage;
 import io.dfjinxin.modules.price.dto.PwwPriceEwarnDto;
 import io.dfjinxin.modules.price.dto.RateValDto;
 import io.dfjinxin.modules.price.entity.*;
@@ -241,16 +242,21 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         List<Map<String, Object>> list1 = baseMapper.getIncreaseThree(params);
         if (list1.size() > 0) {
             for (Map<String, Object> en1 : list1) {
+                String commId = String.valueOf(en1.get("comm_id"));
+                List<CommMessage> commMessageByCommId = baseMapper.getCommMessageByCommId(commId);
+
                 Map<String, Object> yujijgMap = new HashMap<>();
                 List<Map<String, Object>> li1 = new ArrayList<>();
                 List<Map<String, Object>> li2 = new ArrayList<>();
                 List<Map<String, Object>> li3 = new ArrayList<>();
-                params.put("commId", en1.get("comm_id"));
+                params.put("commId", commId);
+                //获取2020-11-20到昨天的 该commId发生的高级,中级 和低级预警
                 List<Map<String, Object>> lisss1 = baseMapper.getProvinceByCommId(params);
                 params.put("type", 1);
                 en1.put("itemProvinceList",viewMap(params));
                 if (lisss1.size() > 0) {
                     List<String> areaCode = lisss1.stream().map(t -> (String)t.get("stat_area_code")).distinct().collect(Collectors.toList());
+                    //获取前6的各个地区对应的省份
                     List<Map<String, String>> proArea = baseMapper.getProArea(areaCode);
                     Map<String,Object> couFlg = new HashMap<>();
                     for(Map<String, String> pr : proArea){
@@ -284,6 +290,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 yujijgMap.put("gaoji", li1);
                 yujijgMap.put("zhongji", li2);
                 yujijgMap.put("diji", li3);
+                yujijgMap.put("commMessage",commMessageByCommId);
                 en1.put("provinceList", yujijgMap);
             }
         }
@@ -399,10 +406,12 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         }else{
             params.put("downRange",1);
         }
+        // 获取 最近一个星期  该commId 各省份 涨幅度
         List<Map<String, Object>> list = baseMapper.getEwarnProvince(params);
         List<Map<String, Object>> lists = new ArrayList<>();
         if (list.size() > 0) {
             List<String> areaCode = list.stream().map(t -> (String)t.get("stat_area_code")).distinct().collect(Collectors.toList());
+            //获取 该地区 所在 的省份
             List<Map<String, String>> proArea = baseMapper.getProArea(areaCode);
             Map<String,Object> couFlg = new HashMap<>();
             for(Map<String, String> pr : proArea){
@@ -1735,81 +1744,18 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
     @Override
     public Map<String, Object> ewarmMap(Map<String, Object> params) {
-        Map<String, Object> mapp = new HashMap<>();
-        params.put("endDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)));
-        params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -30)));
-//        //各个省指定商品在一个月内价格的最大值和最小值
-////        List<Map<String, Object>> list = baseMapper.getAreaByCommId(params);
-        Map<String, Object> maxErawInfo = baseMapper.getMaxPro(params);
-        mapp.put("maxErawInfo",maxErawInfo);
-//        List<Map<String, Object>> rutList = new ArrayList<>();
-//        if (list.size() > 0) {
-//            //市级和省的对应关系
-//            List<String> areaCode = list.stream().map(t -> (String)t.get("stat_area_code")).distinct().collect(Collectors.toList());
-//            List<Map<String, String>> proArea = baseMapper.getProArea(areaCode);
-//            Map<String,Object> couFlg = new HashMap<>();
-//            for(Map<String, String> pr : proArea){
-//               if(pr.get("areaName").equals(pr.get("contryName"))){
-//                   couFlg.put(pr.get("areaName"),1);
-//               }
-//            }
-//            Iterator<Map<String, String>> iterator = proArea.iterator();
-//            while (iterator.hasNext()){
-//                Map<String, String> pr= iterator.next();
-//                if(!pr.get("areaName").equals(pr.get("contryName"))&& couFlg.containsKey(pr.get("contryName"))){
-//                      iterator.remove();
-//                }
-//            }
-//            //首级标志
-//            Map<String,Object> proFlg = new HashMap<>();
-//            for (Map<String, Object> de : list) {
-//                Map<String, Object> map = new HashMap<>();
-//                double val = Math.abs(Double.valueOf(de.get("maxPro").toString()).doubleValue()) > Math.abs(Double.valueOf(de.get("minPro").toString()).doubleValue()) ? Double.valueOf(de.get("maxPro").toString()).doubleValue() : Double.valueOf(de.get("minPro").toString()).doubleValue();
-//                params.put("areaName", de.get("stat_area_code"));
-//                params.put("val", val);
-//                List<Map<String, Object>> list1 = baseMapper.getCommIdByArea(params);
-//                if (list1.size() > 0) {
-//                    map.put("value", val);
-//                    map.put("ewarnLevel", list1.get(0).get("ewarn_level"));
-//                    map.put("ewarnName", list1.get(0).get("code_name"));
-//                    map.put("commId", list1.get(0).get("comm_id"));
-//                    map.put("commName", list1.get(0).get("comm_name"));
-//                    map.put("unit", list1.get(0).get("unit"));
-//                    map.put("date", list1.get(0).get("date"));
-//                    map.put("priValue", list1.get(0).get("pri_value"));
-//                    map.put("indexName", list1.get(0).get("index_name"));
-//                    if(!CollectionUtils.isEmpty(proArea)){
-//                        for(Map<String, String> p : proArea){
-//                            if(de.get("stat_area_code").equals(p.get("areaName")) ){
-//                                if(!proFlg.containsKey(p.get("contryName"))){
-//                                    rutList.add(map);
-//                                }
-//                                map.put("name", p.get("contryName"));
-//                                proFlg.put(p.get("contryName"),1);
-//                            }
-//                        }
-//                    }else {
-//                        map.put("name", de.get("stat_area_code"));
-//                        rutList.add(map);
-//                    }
-//
-//                }
-//            }
-//        }
-//        mapp.put("mapData",null);
-
         String commId = params.get("commId").toString();
+        //获取最后一记录的日期
+        String format = baseMapper.getLastRecordDate(commId);
+        Map<String, Object> mapp = new HashMap<>();
+        Map<String, Object> maxErawInfo = baseMapper.getMaxPro(format,commId);
+        mapp.put("maxErawInfo",maxErawInfo);
+
         //全国的省份以及市
         Map<String, List<ChinaAreaInfo>> listMap = handleChinaAreaInfo();
 
         //全国的省份
         Set<String> areaName = listMap.keySet();
-        //获取昨天的日期
-//        String format = new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1));
-        //获取最后一记录的日期
-        String format = baseMapper.getLastRecordDate(commId);
-
-//        String format = "2021-04-16";
         //根据省份获取改省份对应商品的价格
         List<AreaPrice> commIdList = baseMapper.getAreaPrice(commId, areaName, format);
 
