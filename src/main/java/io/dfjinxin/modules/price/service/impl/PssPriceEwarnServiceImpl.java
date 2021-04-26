@@ -313,10 +313,14 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         if (list2.size() > 0) {
             for (Map<String, Object> ep1 : list2) {
                 Map<String, Object> yujijgMap1 = new HashMap<>();
+
+                String commId = String.valueOf(ep1.get("comm_id"));
+                List<CommMessage> commMessageByCommId = baseMapper.getCommMessageByCommId(commId);
+
                 List<Map<String, Object>> lp1 = new ArrayList<>();
                 List<Map<String, Object>> lp2 = new ArrayList<>();
                 List<Map<String, Object>> lp3 = new ArrayList<>();
-                params.put("commId", ep1.get("comm_id"));
+                params.put("commId", commId);
                 List<Map<String, Object>> lisss2 = baseMapper.getProvinceByCommId(params);
                 params.put("type", 0);
                 ep1.put("itemProvinceList",viewMap(params));
@@ -355,6 +359,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 yujijgMap1.put("gaoji", lp1);
                 yujijgMap1.put("zhongji", lp2);
                 yujijgMap1.put("diji", lp3);
+                yujijgMap1.put("commMessage", commMessageByCommId);
+
                 ep1.put("provinceList", yujijgMap1);
             }
         }
