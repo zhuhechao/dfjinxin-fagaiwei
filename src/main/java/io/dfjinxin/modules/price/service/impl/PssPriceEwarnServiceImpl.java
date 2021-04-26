@@ -1805,7 +1805,10 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         //全国的省份
         Set<String> areaName = listMap.keySet();
         //获取昨天的日期
-        String format = new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1));
+//        String format = new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1));
+        //获取最后一记录的日期
+        String format = baseMapper.getLastRecordDate(commId);
+
 //        String format = "2021-04-16";
         //根据省份获取改省份对应商品的价格
         List<AreaPrice> commIdList = baseMapper.getAreaPrice(commId, areaName, format);

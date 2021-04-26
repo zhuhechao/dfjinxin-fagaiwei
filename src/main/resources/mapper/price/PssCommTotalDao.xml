@@ -134,6 +134,12 @@
         <if test="p.commLevelCode_2 != null and p.commLevelCode_2 != ''">
             AND h1.comm_id2 = #{p.commLevelCode_2}
         </if>
+        <if test="p.areaName != null and p.areaName != ''">
+            and h.area_name  = #{p.areaName}
+        </if>
+        <if test="p.commLevelCode_3 != null and p.commLevelCode_3 != ''">
+            and h1.comm_id3 =  #{p.commLevelCode_3}
+        </if>
     </select>
 
 

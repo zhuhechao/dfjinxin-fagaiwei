@@ -86,5 +86,9 @@
     group by stat_area_code
 </select>
 
+<select id="getLastRecordDate" resultType="java.lang.String">
+    select STR_TO_DATE(ewarn_date,'%Y-%m-%d') from pss_price_ewarn where comm_id = #{commId,jdbcType=VARCHAR} order by ewarn_date desc limit 1
+</select>
+
 
 </mapper>

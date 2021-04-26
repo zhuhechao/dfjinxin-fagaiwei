@@ -690,4 +690,13 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
      * @return java.util.List<io.dfjinxin.modules.price.dto.AreaPrice>
      **/
     List<AreaPrice> getAreaPrice(@Param("commId")String commId , @Param("areaName")Set<String> areaName ,@Param("date")String date);
+
+    /***
+     * @Author LiangJianCan
+     * @Description  获取最近有记录的日期
+     * @Date 2021/4/25 9:42
+     * @Param []
+     * @return java.lang.String
+     **/
+    String getLastRecordDate(@Param("commId")String commId );
 }
