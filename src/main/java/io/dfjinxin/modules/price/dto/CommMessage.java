@@ -3,7 +3,9 @@ package io.dfjinxin.modules.price.dto;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @Author LiangJianCan
@@ -11,6 +13,8 @@ import lombok.Data;
  * @Description
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CommMessage implements Serializable {
 
     @ApiModelProperty(value = "商品名称", name = "commName")

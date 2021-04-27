@@ -131,5 +131,65 @@
 
 </select>
 
+<select id="getAreaPrice2" resultType="io.dfjinxin.modules.price.dto.AreaPrice">
+    SELECT
+        ewarn.stat_area_code as areaName,
+        ewarn.comm_id as commId,
+        ewarn.pri_value as price
+    FROM
+        pss_price_ewarn ewarn
+        RIGHT JOIN (
+        SELECT
+            MAX( ewarn_id ) AS ewarn_id
+        FROM
+            pss_price_ewarn
+        WHERE
+            stat_area_code IN (
+            <if test="areaName == null ">
+                SELECT w.area_name FROM wp_area_info w WHERE w.area_id BETWEEN 1 AND 32
+            </if>
+            <if test="areaName != null and areaName.size() != 0">
+                <foreach collection="areaName" separator=" , " item="item">
+                    #{item,jdbcType=VARCHAR}
+                </foreach>
+            </if>
+             )
+            AND comm_id = #{commId,jdbcType=VARCHAR}
+        GROUP BY
+            stat_area_code
+        ) temp ON ewarn.`ewarn_id` = temp.ewarn_id
+
+</select>
+
+<select id="getCommMessageByCommId2" resultType="io.dfjinxin.modules.price.dto.CommMessage">
+        select
+            n.comm_name AS commName,
+            t.stat_area_code AS commArea,
+            t.pri_value AS commPrice,
+            t.unit AS commUnit,
+            t.pri_range AS commRange
+         from
+        (SELECT
+            MAX( ewarn_id ) AS ewarn_id
+        FROM
+            pss_price_ewarn
+        WHERE
+            comm_id = #{commId,jdbcType=VARCHAR} and
+            stat_area_code IN (
+            <if test="areaName != null and areaName.size() != 0">
+                <foreach collection="areaName" item="item" separator=" , ">
+                #{item,jdbcType=VARCHAR}
+                </foreach>
+            </if>
+            <if test="areaName == null">
+            SELECT w.area_name FROM wp_area_info w WHERE w.area_id BETWEEN 1 AND 32
+            </if>
+            )
+        GROUP BY
+            stat_area_code) temp
+            left join pss_price_ewarn t on temp.ewarn_id = t.ewarn_id
+            left join pss_comm_total n ON n.comm_id = t.comm_id
+</select>
+
 
 </mapper>

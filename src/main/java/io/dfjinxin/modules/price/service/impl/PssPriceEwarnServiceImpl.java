@@ -240,10 +240,32 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         params.put("smaDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -7)));
         params.put("emaDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)));
         List<Map<String, Object>> list1 = baseMapper.getIncreaseThree(params);
+
+        //全国的省份以及市
+        Map<String, List<ChinaAreaInfo>> listMap = handleChinaAreaInfo();
+
         if (list1.size() > 0) {
             for (Map<String, Object> en1 : list1) {
                 String commId = String.valueOf(en1.get("comm_id"));
-                List<CommMessage> commMessageByCommId = baseMapper.getCommMessageByCommId(commId);
+                List<CommMessage> commMessageByCommId = baseMapper.getCommMessageByCommId2(commId,null);
+                if (commMessageByCommId.size() < listMap.size()){
+                    Set<String> collect = commMessageByCommId.stream().map(CommMessage::getCommArea)
+                            .collect(Collectors.toSet());
+                    listMap.forEach((k, v) -> {
+                        if (!collect.contains(k)) {
+                            //获取没有该省份价格下的城市
+                            Set<String> cityList = v.get(0).getChinaAreaInfos().stream().map(ChinaAreaInfo::getAreaName).collect(Collectors.toSet());
+                            if (cityList.size() > 0){
+                                List<CommMessage> commMessageByCommId2 = baseMapper.getCommMessageByCommId2(commId, cityList);
+                                if (commMessageByCommId2.size() > 0){
+                                    CommMessage commMessage = commMessageByCommId2.get(0);
+                                    //否则设置该市的价格为该省份的价格
+                                    commMessageByCommId.add(new CommMessage(commMessage.getCommName(), k, commMessage.getCommPrice(),commMessage.getCommUnit(),commMessage.getCommRange()));
+                                }
+                            }
+                        }
+                    });
+                }
 
                 Map<String, Object> yujijgMap = new HashMap<>();
                 List<Map<String, Object>> li1 = new ArrayList<>();
@@ -315,8 +337,27 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 Map<String, Object> yujijgMap1 = new HashMap<>();
 
                 String commId = String.valueOf(ep1.get("comm_id"));
-                List<CommMessage> commMessageByCommId = baseMapper.getCommMessageByCommId(commId);
+                List<CommMessage> commMessageByCommId = baseMapper.getCommMessageByCommId2(commId,null);
 
+                //当返回的数据与当前中国省份的数据数量不匹配时候 , 吧当前省份里的城市当做当前省份的数据
+                if (commMessageByCommId.size() < listMap.size()){
+                    Set<String> collect = commMessageByCommId.stream().map(CommMessage::getCommArea)
+                            .collect(Collectors.toSet());
+                    listMap.forEach((k, v) -> {
+                        if (!collect.contains(k)) {
+                            //获取没有该省份价格下的城市
+                            Set<String> cityList = v.get(0).getChinaAreaInfos().stream().map(ChinaAreaInfo::getAreaName).collect(Collectors.toSet());
+                            if (cityList.size() > 0){
+                                List<CommMessage> commMessageByCommId2 = baseMapper.getCommMessageByCommId2(commId, cityList);
+                                if (commMessageByCommId2.size() > 0){
+                                    CommMessage commMessage = commMessageByCommId2.get(0);
+                                    //否则设置该市的价格为该省份的价格
+                                    commMessageByCommId.add(new CommMessage(commMessage.getCommName(), k, commMessage.getCommPrice(),commMessage.getCommUnit(),commMessage.getCommRange()));
+                                }
+                            }
+                        }
+                    });
+                }
                 List<Map<String, Object>> lp1 = new ArrayList<>();
                 List<Map<String, Object>> lp2 = new ArrayList<>();
                 List<Map<String, Object>> lp3 = new ArrayList<>();
@@ -1759,33 +1800,33 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
 
         //全国的省份以及市
         Map<String, List<ChinaAreaInfo>> listMap = handleChinaAreaInfo();
-
-        //全国的省份
-        Set<String> areaName = listMap.keySet();
-        //根据省份获取改省份对应商品的价格
-        List<AreaPrice> commIdList = baseMapper.getAreaPrice(commId, areaName, format);
-
+        //获取数据库中存在的 省份数据
+        List<AreaPrice> areaPrice2 = baseMapper.getAreaPrice2(commId,null);
         //当省份没有获取到数据的时候 , 获取改省份下的城市 作为省份的价格
-        if (commIdList.size() < listMap.size()) {
+        if (areaPrice2.size() < listMap.size()){
             //有价格的省份
-            List<String> collect = commIdList.stream().map(AreaPrice::getAreaName).collect(Collectors.toList());
+            List<String> collect = areaPrice2.stream().map(AreaPrice::getAreaName).collect(Collectors.toList());
             listMap.forEach((k, v) -> {
                 if (!collect.contains(k)) {
                     //获取没有该省份价格下的城市
                     Set<String> cityList = v.get(0).getChinaAreaInfos().stream().map(ChinaAreaInfo::getAreaName)
                             .collect(Collectors.toSet());
-                    List<AreaPrice> areaPrice = baseMapper.getAreaPrice(commId, cityList, format);
-                    if (areaPrice.isEmpty()) {
-                        //当该省份的城市价格为空,修改省份为空
-                        commIdList.add(new AreaPrice(commId, k, null));
+                    if (cityList.isEmpty()){
+                        areaPrice2.add(new AreaPrice(commId, k, null));
                     } else {
-                        //否则设置该市的价格为该省份的价格
-                        commIdList.add(new AreaPrice(commId, k, areaPrice.get(0).getPrice()));
+                        List<AreaPrice> areaPrice = baseMapper.getAreaPrice2(commId, cityList);
+                        if (areaPrice.isEmpty()) {
+                            //当该省份的城市价格为空,修改省份为空
+                            areaPrice2.add(new AreaPrice(commId, k, null));
+                        } else {
+                            //否则设置该市的价格为该省份的价格
+                            areaPrice2.add(new AreaPrice(commId, k, areaPrice.get(0).getPrice()));
+                        }
                     }
                 }
             });
         }
-        mapp.put("mapData",commIdList);
+        mapp.put("mapData",areaPrice2);
         return mapp;
     }
 

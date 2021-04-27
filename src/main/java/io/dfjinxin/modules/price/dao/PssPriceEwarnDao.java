@@ -678,7 +678,7 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
      * @return java.util.List<io.dfjinxin.modules.price.dto.ChinaAreaInfo>
      **/
     @Select("select parent_id as parentId , area_name as areaName , area_id as areaId "
-            + "from wp_area_info where area_type = 0")
+            + "from wp_area_info where area_type = 0 and area_id > 0")
     List<ChinaAreaInfo> getChinaAreaInfo();
 
     /***
@@ -707,4 +707,23 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
      * @return java.util.List<io.dfjinxin.modules.price.dto.CommMessage>
      **/
     List<CommMessage> getCommMessageByCommId(@Param("commId")String commId);
+
+
+    /***
+     * @Author LiangJianCan
+     * @Description  获取该commId在price_ewarn表的各省份最新记录的价格等信息
+     * @Date 2021/4/27 11:26
+     * @Param [commId]
+     * @return java.util.List<io.dfjinxin.modules.price.dto.AreaPrice>
+     **/
+    List<AreaPrice> getAreaPrice2(@Param("commId")String commId ,@Param("areaName")Set<String> areaName);
+
+    /***
+     * @Author LiangJianCan
+     * @Description  当areaName为空的时候查全国的数据,当不为空的时候查询当前城市的数据
+     * @Date 2021/4/27 15:23
+     * @Param [commId, areaName]
+     * @return java.util.List<io.dfjinxin.modules.price.dto.CommMessage>
+     **/
+    List<CommMessage> getCommMessageByCommId2(@Param("commId")String commId,@Param("areaName")Set<String> areaName);
 }
