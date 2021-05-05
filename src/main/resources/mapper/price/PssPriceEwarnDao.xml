@@ -191,5 +191,43 @@
             left join pss_comm_total n ON n.comm_id = t.comm_id
 </select>
 
+<select id="getCommMessageByCommId4" resultType="io.dfjinxin.modules.price.dto.CommMessage2">
+SELECT
+	n.comm_name AS commName,
+	t.stat_area_code AS commArea,
+	t.pri_value AS commPrice,
+	t.unit AS commUnit,
+	t.pri_range AS commRange,
+	areaInfo.provinceName,
+	areaInfo.areaId,
+	areaInfo.parentAreaId
+FROM
+	(
+	SELECT
+		MAX( ewarn_id ) AS ewarn_id
+	FROM
+		pss_price_ewarn
+	WHERE
+		comm_id = #{commId,jdbcType=VARCHAR}
+		AND stat_area_code IN ( SELECT w.area_name FROM wp_area_info w WHERE w.area_id BETWEEN 1 AND 32 OR w.parent_id BETWEEN 1 AND 32 )
+	GROUP BY
+		stat_area_code
+	) temp
+	LEFT JOIN pss_price_ewarn t ON temp.ewarn_id = t.ewarn_id
+	LEFT JOIN pss_comm_total n ON n.comm_id = t.comm_id
+	LEFT JOIN (
+	SELECT
+		w2.area_name areaName,
+		w1.area_name provinceName,
+		w2.area_id areaId,
+		w2.parent_id parentAreaId
+	FROM
+		wp_area_info w1
+		JOIN wp_area_info w2 ON ( w1.area_id = w2.parent_id OR w1.area_id = w2.area_id )
+		AND w1.area_id BETWEEN 1
+		AND 32
+	) areaInfo ON t.stat_area_code = areaInfo.areaName
+</select>
+
 
 </mapper>

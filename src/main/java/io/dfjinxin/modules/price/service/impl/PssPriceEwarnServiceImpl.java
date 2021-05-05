@@ -19,6 +19,7 @@ import io.dfjinxin.modules.price.dao.*;
 import io.dfjinxin.modules.price.dto.AreaPrice;
 import io.dfjinxin.modules.price.dto.ChinaAreaInfo;
 import io.dfjinxin.modules.price.dto.CommMessage;
+import io.dfjinxin.modules.price.dto.CommMessage2;
 import io.dfjinxin.modules.price.dto.PwwPriceEwarnDto;
 import io.dfjinxin.modules.price.dto.RateValDto;
 import io.dfjinxin.modules.price.entity.*;
@@ -242,30 +243,47 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         List<Map<String, Object>> list1 = baseMapper.getIncreaseThree(params);
 
         //全国的省份以及市
-        Map<String, List<ChinaAreaInfo>> listMap = handleChinaAreaInfo();
+//        Map<String, List<ChinaAreaInfo>> listMap = handleChinaAreaInfo();
 
         if (list1.size() > 0) {
             for (Map<String, Object> en1 : list1) {
                 String commId = String.valueOf(en1.get("comm_id"));
-                List<CommMessage> commMessageByCommId = baseMapper.getCommMessageByCommId2(commId,null);
-                if (commMessageByCommId.size() < listMap.size()){
-                    Set<String> collect = commMessageByCommId.stream().map(CommMessage::getCommArea)
-                            .collect(Collectors.toSet());
-                    listMap.forEach((k, v) -> {
-                        if (!collect.contains(k)) {
-                            //获取没有该省份价格下的城市
-                            Set<String> cityList = v.get(0).getChinaAreaInfos().stream().map(ChinaAreaInfo::getAreaName).collect(Collectors.toSet());
-                            if (cityList.size() > 0){
-                                List<CommMessage> commMessageByCommId2 = baseMapper.getCommMessageByCommId2(commId, cityList);
-                                if (commMessageByCommId2.size() > 0){
-                                    CommMessage commMessage = commMessageByCommId2.get(0);
-                                    //否则设置该市的价格为该省份的价格
-                                    commMessageByCommId.add(new CommMessage(commMessage.getCommName(), k, commMessage.getCommPrice(),commMessage.getCommUnit(),commMessage.getCommRange()));
-                                }
-                            }
-                        }
-                    });
-                }
+
+                //包括省份和城市的数据
+                List<CommMessage2> commMessageByCommId4 = baseMapper.getCommMessageByCommId4(commId);
+                //获取省份的数据
+                List<CommMessage2> collect = commMessageByCommId4.stream().filter(entity -> "0".equals(entity.getParentAreaId())).collect(Collectors.toList());
+
+                //获取查出省份的id
+                List<String> collect1 = collect.stream().map(CommMessage2::getAreaId).collect(Collectors.toList());
+                //获取不是省份的城市的数据
+                commMessageByCommId4.stream().filter(entity -> !"0".equals(entity.getParentAreaId())).forEach(entity ->{
+                    //该城市的省份没有数据时候,把该城市的数据作为该省份的的数据
+                    if (!collect1.contains(entity.getParentAreaId())){
+                        collect.add(entity);
+                        collect1.add(entity.getParentAreaId());
+                    }
+                });
+
+//                List<CommMessage> commMessageByCommId = baseMapper.getCommMessageByCommId2(commId,null);
+//                if (commMessageByCommId.size() < listMap.size()){
+//                    Set<String> collect = commMessageByCommId.stream().map(CommMessage::getCommArea)
+//                            .collect(Collectors.toSet());
+//                    listMap.forEach((k, v) -> {
+//                        if (!collect.contains(k)) {
+//                            //获取没有该省份价格下的城市
+//                            Set<String> cityList = v.get(0).getChinaAreaInfos().stream().map(ChinaAreaInfo::getAreaName).collect(Collectors.toSet());
+//                            if (cityList.size() > 0){
+//                                List<CommMessage> commMessageByCommId2 = baseMapper.getCommMessageByCommId3(commId, cityList);
+//                                if (commMessageByCommId2.size() > 0){
+//                                    CommMessage commMessage = commMessageByCommId2.get(0);
+//                                    //否则设置该市的价格为该省份的价格
+//                                    commMessageByCommId.add(new CommMessage(commMessage.getCommName(), k, commMessage.getCommPrice(),commMessage.getCommUnit(),commMessage.getCommRange()));
+//                                }
+//                            }
+//                        }
+//                    });
+//                }
 
                 Map<String, Object> yujijgMap = new HashMap<>();
                 List<Map<String, Object>> li1 = new ArrayList<>();
@@ -275,28 +293,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 //获取2020-11-20到昨天的 该commId发生的高级,中级 和低级预警
                 List<Map<String, Object>> lisss1 = baseMapper.getProvinceByCommId(params);
                 params.put("type", 1);
-                en1.put("itemProvinceList",viewMap(params));
+//                en1.put("itemProvinceList",viewMap(params));
                 if (lisss1.size() > 0) {
-                    List<String> areaCode = lisss1.stream().map(t -> (String)t.get("stat_area_code")).distinct().collect(Collectors.toList());
-                    //获取前6的各个地区对应的省份
-                    List<Map<String, String>> proArea = baseMapper.getProArea(areaCode);
-                    Map<String,Object> couFlg = new HashMap<>();
-                    for(Map<String, String> pr : proArea){
-                        if(pr.get("areaName").equals(pr.get("contryName"))){
-                            couFlg.put(pr.get("areaName"),1);
-                        }
-                    }
-                    Iterator<Map<String, Object>> iterator = lisss1.iterator();
-                    while (iterator.hasNext()){
-                        Map<String, Object> pr= iterator.next();
-                        for(Map<String, String> pa : proArea){
-                            if(pr.get("stat_area_code").equals(pa.get("areaName")) && !pa.get("areaName").equals(pa.get("contryName")) && couFlg.containsKey(pa.get("contryName"))){
-                                iterator.remove();
-                            }else if(pr.get("stat_area_code").equals(pa.get("areaName")) && !pa.get("areaName").equals(pa.get("contryName"))){
-                                pr.put("stat_area_code",pa.get("contryName"));
-                            }
-                        }
-                    }
                     for (Map<String, Object> en2 : lisss1) {
                         if (en2.get("ewarn_level").equals(71)) {
                             li1.add(en2);
@@ -312,7 +310,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 yujijgMap.put("gaoji", li1);
                 yujijgMap.put("zhongji", li2);
                 yujijgMap.put("diji", li3);
-                yujijgMap.put("commMessage",commMessageByCommId);
+                yujijgMap.put("commMessage",collect);
                 en1.put("provinceList", yujijgMap);
             }
         }
@@ -337,54 +335,52 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 Map<String, Object> yujijgMap1 = new HashMap<>();
 
                 String commId = String.valueOf(ep1.get("comm_id"));
-                List<CommMessage> commMessageByCommId = baseMapper.getCommMessageByCommId2(commId,null);
+
+                //包括省份和城市的数据
+                List<CommMessage2> commMessageByCommId4 = baseMapper.getCommMessageByCommId4(commId);
+                //获取省份的数据
+                List<CommMessage2> collect = commMessageByCommId4.stream().filter(entity -> "0".equals(entity.getParentAreaId())).collect(Collectors.toList());
+
+                //获取查出省份的id
+                List<String> collect1 = collect.stream().map(CommMessage2::getAreaId).collect(Collectors.toList());
+                //获取不是省份的城市的数据
+                commMessageByCommId4.stream().filter(entity -> !"0".equals(entity.getParentAreaId())).forEach(entity ->{
+                    //该城市的省份没有数据时候,把该城市的数据作为该省份的的数据
+                    if (!collect1.contains(entity.getParentAreaId())){
+                        collect.add(entity);
+                        collect1.add(entity.getParentAreaId());
+                    }
+                });
+
+//                List<CommMessage> commMessageByCommId = baseMapper.getCommMessageByCommId2(commId,null);
 
                 //当返回的数据与当前中国省份的数据数量不匹配时候 , 吧当前省份里的城市当做当前省份的数据
-                if (commMessageByCommId.size() < listMap.size()){
-                    Set<String> collect = commMessageByCommId.stream().map(CommMessage::getCommArea)
-                            .collect(Collectors.toSet());
-                    listMap.forEach((k, v) -> {
-                        if (!collect.contains(k)) {
-                            //获取没有该省份价格下的城市
-                            Set<String> cityList = v.get(0).getChinaAreaInfos().stream().map(ChinaAreaInfo::getAreaName).collect(Collectors.toSet());
-                            if (cityList.size() > 0){
-                                List<CommMessage> commMessageByCommId2 = baseMapper.getCommMessageByCommId2(commId, cityList);
-                                if (commMessageByCommId2.size() > 0){
-                                    CommMessage commMessage = commMessageByCommId2.get(0);
-                                    //否则设置该市的价格为该省份的价格
-                                    commMessageByCommId.add(new CommMessage(commMessage.getCommName(), k, commMessage.getCommPrice(),commMessage.getCommUnit(),commMessage.getCommRange()));
-                                }
-                            }
-                        }
-                    });
-                }
+//                if (commMessageByCommId.size() < listMap.size()){
+//                    Set<String> collect = commMessageByCommId.stream().map(CommMessage::getCommArea)
+//                            .collect(Collectors.toSet());
+//                    listMap.forEach((k, v) -> {
+//                        if (!collect.contains(k)) {
+//                            //获取没有该省份价格下的城市
+//                            Set<String> cityList = v.get(0).getChinaAreaInfos().stream().map(ChinaAreaInfo::getAreaName).collect(Collectors.toSet());
+//                            if (cityList.size() > 0){
+//                                List<CommMessage> commMessageByCommId2 = baseMapper.getCommMessageByCommId3(commId, cityList);
+//                                if (commMessageByCommId2.size() > 0){
+//                                    CommMessage commMessage = commMessageByCommId2.get(0);
+//                                    //否则设置该市的价格为该省份的价格
+//                                    commMessageByCommId.add(new CommMessage(commMessage.getCommName(), k, commMessage.getCommPrice(),commMessage.getCommUnit(),commMessage.getCommRange()));
+//                                }
+//                            }
+//                        }
+//                    });
+//                }
                 List<Map<String, Object>> lp1 = new ArrayList<>();
                 List<Map<String, Object>> lp2 = new ArrayList<>();
                 List<Map<String, Object>> lp3 = new ArrayList<>();
                 params.put("commId", commId);
                 List<Map<String, Object>> lisss2 = baseMapper.getProvinceByCommId(params);
                 params.put("type", 0);
-                ep1.put("itemProvinceList",viewMap(params));
+//                ep1.put("itemProvinceList",viewMap(params));
                 if (lisss2.size() > 0) {
-                    List<String> areaCode = lisss2.stream().map(t -> (String)t.get("stat_area_code")).distinct().collect(Collectors.toList());
-                    List<Map<String, String>> proArea = baseMapper.getProArea(areaCode);
-                    Map<String,Object> couFlg = new HashMap<>();
-                    for(Map<String, String> pr : proArea){
-                        if(pr.get("areaName").equals(pr.get("contryName"))){
-                            couFlg.put(pr.get("areaName"),1);
-                        }
-                    }
-                    Iterator<Map<String, Object>> iterator = lisss2.iterator();
-                    while (iterator.hasNext()){
-                        Map<String, Object> pr= iterator.next();
-                        for(Map<String, String> pa : proArea){
-                            if(pr.get("stat_area_code").equals(pa.get("areaName")) && !pa.get("areaName").equals(pa.get("contryName")) && couFlg.containsKey(pa.get("contryName"))){
-                                iterator.remove();
-                            }else if(pr.get("stat_area_code").equals(pa.get("areaName")) && !pa.get("areaName").equals(pa.get("contryName"))){
-                                pr.put("stat_area_code",pa.get("contryName"));
-                            }
-                        }
-                    }
                     for (Map<String, Object> ep2 : lisss2) {
                         if (ep2.get("ewarn_level").equals(71)) {
                             lp1.add(ep2);
@@ -400,7 +396,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 yujijgMap1.put("gaoji", lp1);
                 yujijgMap1.put("zhongji", lp2);
                 yujijgMap1.put("diji", lp3);
-                yujijgMap1.put("commMessage", commMessageByCommId);
+                yujijgMap1.put("commMessage", collect);
 
                 ep1.put("provinceList", yujijgMap1);
             }
@@ -408,30 +404,31 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         map.put("topDownCommodity", list2);
 
         //获取指定商品在各省份的价格信息
-        List<Map<String, Object>> list3 = baseMapper.getPriceDistribution(params);
-        int a = 0, b = 0, c = 0;
-        //个预警等级省份数量
-        if (list3.size() > 0) {
-            for (Map<String, Object> entity : list3) {
-                if (entity.get("stat_area_code").equals("中国") && entity.get("stat_area_code").equals("全国")) {
-                    if (entity.get("code_name").equals("高级预警")) {
-                        a++;
-                    }
-                    if (entity.get("code_name").equals("中级预警")) {
-                        b++;
-                    }
-                    if (entity.get("code_name").equals("低级预警")) {
-                        c++;
-                    }
-                }
-            }
-        }
-        Map<String, Object> ma = new HashMap<>();
-        ma.put("heightCount", a);
-        ma.put("intermediateCount", b);
-        ma.put("lowerCount", c);
-        map.put("provinceCount", ma);
-        map.put("provinceEwarm", list3);
+//        List<Map<String, Object>> list3 = baseMapper.getPriceDistribution(params);
+//        int a = 0, b = 0, c = 0;
+//        //个预警等级省份数量
+//        if (list3.size() > 0) {
+//            for (Map<String, Object> entity : list3) {
+//                if (entity.get("stat_area_code").equals("中国") && entity.get("stat_area_code").equals("全国")) {
+//                    if (entity.get("code_name").equals("高级预警")) {
+//                        a++;
+//                    }
+//                    if (entity.get("code_name").equals("中级预警")) {
+//                        b++;
+//                    }
+//                    if (entity.get("code_name").equals("低级预警")) {
+//                        c++;
+//                    }
+//                }
+//            }
+//        }
+//        Map<String, Object> ma = new HashMap<>();
+//        ma.put("heightCount", a);
+//        ma.put("intermediateCount", b);
+//        ma.put("lowerCount", c);
+//        map.put("provinceCount", ma);
+//        map.put("provinceEwarm", list3);
+
         return map;
     }
 
@@ -1569,6 +1566,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         List<Map<String, Object>> lis = new ArrayList<>();
         List<String> dateList = this.getDate(Calendar.getInstance().get(Calendar.DAY_OF_YEAR), "yujing");
         List<String> ids = (List<String>) params.get("indexId");
+        String str1 = "0";
+        String str2 = "0";
         if (ids.size() > 0) {
             for (String id : ids) {
                 params.put("indexId", id);
@@ -1580,8 +1579,6 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 String unit = "";
                 if (ls.size() > 0) {
                     for (String itrm1 : dateList) {
-                        String str1 = "0";
-                        String str2 = "0";
                         for (Map<String, Object> itrm : ls) {
                             if (itrm1.equals(itrm.get("date").toString())) {
                                 str1 = itrm.get("pri_range").toString();
@@ -1799,34 +1796,51 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         mapp.put("maxErawInfo",maxErawInfo);
 
         //全国的省份以及市
-        Map<String, List<ChinaAreaInfo>> listMap = handleChinaAreaInfo();
-        //获取数据库中存在的 省份数据
-        List<AreaPrice> areaPrice2 = baseMapper.getAreaPrice2(commId,null);
-        //当省份没有获取到数据的时候 , 获取改省份下的城市 作为省份的价格
-        if (areaPrice2.size() < listMap.size()){
-            //有价格的省份
-            List<String> collect = areaPrice2.stream().map(AreaPrice::getAreaName).collect(Collectors.toList());
-            listMap.forEach((k, v) -> {
-                if (!collect.contains(k)) {
-                    //获取没有该省份价格下的城市
-                    Set<String> cityList = v.get(0).getChinaAreaInfos().stream().map(ChinaAreaInfo::getAreaName)
-                            .collect(Collectors.toSet());
-                    if (cityList.isEmpty()){
-                        areaPrice2.add(new AreaPrice(commId, k, null));
-                    } else {
-                        List<AreaPrice> areaPrice = baseMapper.getAreaPrice2(commId, cityList);
-                        if (areaPrice.isEmpty()) {
-                            //当该省份的城市价格为空,修改省份为空
-                            areaPrice2.add(new AreaPrice(commId, k, null));
-                        } else {
-                            //否则设置该市的价格为该省份的价格
-                            areaPrice2.add(new AreaPrice(commId, k, areaPrice.get(0).getPrice()));
-                        }
-                    }
-                }
-            });
-        }
-        mapp.put("mapData",areaPrice2);
+//        Map<String, List<ChinaAreaInfo>> listMap = handleChinaAreaInfo();
+//        //获取数据库中存在的 省份数据
+//        List<AreaPrice> areaPrice2 = baseMapper.getAreaPrice2(commId,null);
+//        //当省份没有获取到数据的时候 , 获取改省份下的城市 作为省份的价格
+//        if (areaPrice2.size() < listMap.size()){
+//            //有价格的省份
+//            List<String> collect = areaPrice2.stream().map(AreaPrice::getAreaName).collect(Collectors.toList());
+//            listMap.forEach((k, v) -> {
+//                if (!collect.contains(k)) {
+//                    //获取没有该省份价格下的城市
+//                    Set<String> cityList = v.get(0).getChinaAreaInfos().stream().map(ChinaAreaInfo::getAreaName)
+//                            .collect(Collectors.toSet());
+//                    if (cityList.isEmpty()){
+//                        areaPrice2.add(new AreaPrice(commId, k, null));
+//                    } else {
+//                        List<AreaPrice> areaPrice = baseMapper.getAreaPrice2(commId, cityList);
+//                        if (areaPrice.isEmpty()) {
+//                            //当该省份的城市价格为空,修改省份为空
+//                            areaPrice2.add(new AreaPrice(commId, k, null));
+//                        } else {
+//                            //否则设置该市的价格为该省份的价格
+//                            areaPrice2.add(new AreaPrice(commId, k, areaPrice.get(0).getPrice()));
+//                        }
+//                    }
+//                }
+//            });
+//        }
+
+        //包括省份和城市的数据
+        List<CommMessage2> commMessageByCommId4 = baseMapper.getCommMessageByCommId4(commId);
+        //获取省份的数据
+        List<CommMessage2> collect = commMessageByCommId4.stream().filter(entity -> "0".equals(entity.getParentAreaId())).collect(Collectors.toList());
+
+        //获取查出省份的id
+        List<String> collect1 = collect.stream().map(CommMessage2::getAreaId).collect(Collectors.toList());
+        //获取不是省份的城市的数据
+        commMessageByCommId4.stream().filter(entity -> !"0".equals(entity.getParentAreaId())).forEach(entity ->{
+            //该城市的省份没有数据时候,把该城市的数据作为该省份的的数据
+            if (!collect1.contains(entity.getParentAreaId())){
+                collect.add(entity);
+                collect1.add(entity.getParentAreaId());
+            }
+        });
+
+        mapp.put("mapData",collect);
         return mapp;
     }
 
