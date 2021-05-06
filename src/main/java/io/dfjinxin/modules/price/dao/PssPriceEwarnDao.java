@@ -8,6 +8,7 @@ import io.dfjinxin.modules.analyse.entity.WpMcroIndexValEntity;
 import io.dfjinxin.modules.price.dto.AreaPrice;
 import io.dfjinxin.modules.price.dto.ChinaAreaInfo;
 import io.dfjinxin.modules.price.dto.CommMessage;
+import io.dfjinxin.modules.price.dto.CommMessage2;
 import io.dfjinxin.modules.price.dto.PwwPriceEwarnDto;
 import io.dfjinxin.modules.price.entity.PssPriceEwarnEntity;
 import io.dfjinxin.modules.price.entity.PssPriceReltEntity;
@@ -726,4 +727,6 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
      * @return java.util.List<io.dfjinxin.modules.price.dto.CommMessage>
      **/
     List<CommMessage> getCommMessageByCommId2(@Param("commId")String commId,@Param("areaName")Set<String> areaName);
+
+    List<CommMessage2> getCommMessageByCommId4(@Param("commId")String commId );
 }
