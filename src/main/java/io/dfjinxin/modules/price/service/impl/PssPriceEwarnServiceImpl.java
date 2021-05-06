@@ -1569,6 +1569,8 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
         List<Map<String, Object>> lis = new ArrayList<>();
         List<String> dateList = this.getDate(Calendar.getInstance().get(Calendar.DAY_OF_YEAR), "yujing");
         List<String> ids = (List<String>) params.get("indexId");
+        String str1 = "0";
+        String str2 = "0";
         if (ids.size() > 0) {
             for (String id : ids) {
                 params.put("indexId", id);
@@ -1580,8 +1582,6 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 String unit = "";
                 if (ls.size() > 0) {
                     for (String itrm1 : dateList) {
-                        String str1 = "0";
-                        String str2 = "0";
                         for (Map<String, Object> itrm : ls) {
                             if (itrm1.equals(itrm.get("date").toString())) {
                                 str1 = itrm.get("pri_range").toString();
