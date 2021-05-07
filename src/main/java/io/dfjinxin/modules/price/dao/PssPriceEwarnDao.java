@@ -667,7 +667,7 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
     @Select("SELECT t.comm_id ,p.comm_name FROM pss_price_ewarn t\n" +
             "LEFT JOIN pss_comm_total p ON t.comm_id = p.comm_id\n" +
             "WHERE p.parent_code = #{p.commId}\n" +
-            "AND t.ewarn_date BETWEEN #{p.smaDate} AND #{p.emaDate}\n" +
+//            "AND t.ewarn_date BETWEEN #{p.smaDate} AND #{p.emaDate}\n" +
             "GROUP BY t.comm_id")
     List<Map<String, Object>> getMaxProCommid(@Param("p") Map<String, Object> mp);
 
