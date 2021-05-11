@@ -1,14 +1,20 @@
 package io.dfjinxin.modules.price.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
 import io.dfjinxin.common.dto.PssCommTotalDto;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.R;
+import io.dfjinxin.modules.job.entity.ScheduleJobEntity;
+import io.dfjinxin.modules.job.service.ScheduleJobService;
 import io.dfjinxin.modules.price.entity.PssCommConfEntity;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import io.dfjinxin.modules.price.service.PssCommConfService;
 import io.dfjinxin.modules.price.service.PssCommTotalService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import org.apache.curator.shaded.com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +46,9 @@ public class PssCommTotalController {
 
     @Autowired
     private PssCommConfService pssCommConfService;
+
+    @Autowired
+    private ScheduleJobService scheduleJobService;
 
     @GetMapping("/getCommType")
     @ApiOperation("商品配置-获取商品类型&商品大类")
@@ -159,6 +168,14 @@ public class PssCommTotalController {
             return R.error("商品配置conf_id-" + confId + ",数据不存在!");
         }
         pssCommConfService.deleteCommConf(confId);
+        //删除定时任务  ewarnId:54@commConfId:1717
+        QueryWrapper<ScheduleJobEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("params","ewarnId:" + commConfEntity.getEwarnId() + "@commConfId:" + confId);
+        List<ScheduleJobEntity> entityList = scheduleJobService.queryWrapper(queryWrapper);
+        if (!entityList.isEmpty()){
+            scheduleJobService.deleteBatch(entityList.stream().map(ScheduleJobEntity::getJobId).toArray(Long[]::new));
+        }
+
         return R.ok();
     }
 

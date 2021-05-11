@@ -108,7 +108,7 @@ public class PssRschConfController {
      * 删除
      */
     @PostMapping("/delete")
-    @ApiOperation("修改")
+    @ApiOperation("删除")
     @ApiImplicitParams({ @ApiImplicitParam(name = "pssRschConf", value = "主键id数组", required = true, dataType = "long[]", paramType = "query")
     })
     @RequiresPermissions("job:pssrschconf:delete")

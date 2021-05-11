@@ -12,6 +12,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.modules.job.entity.ScheduleJobEntity;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,4 +59,6 @@ public interface ScheduleJobService extends IService<ScheduleJobEntity> {
 	 * 恢复运行
 	 */
 	void resume(Long[] jobIds);
+
+	List<ScheduleJobEntity> queryWrapper(Wrapper<ScheduleJobEntity> wrapper);
 }

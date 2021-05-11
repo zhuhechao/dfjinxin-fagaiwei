@@ -11,6 +11,7 @@ package io.dfjinxin.modules.job.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.dfjinxin.common.exception.RRException;
 import io.dfjinxin.common.utils.Constant;
 import io.dfjinxin.common.utils.PageUtils;
 import io.dfjinxin.common.utils.Query;
@@ -18,6 +19,7 @@ import io.dfjinxin.modules.job.dao.ScheduleJobDao;
 import io.dfjinxin.modules.job.entity.ScheduleJobEntity;
 import io.dfjinxin.modules.job.service.ScheduleJobService;
 import io.dfjinxin.modules.job.utils.ScheduleUtils;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import org.apache.commons.lang.StringUtils;
 import org.quartz.CronTrigger;
 import org.quartz.Scheduler;
@@ -142,5 +144,13 @@ public class ScheduleJobServiceImpl extends ServiceImpl<ScheduleJobDao, Schedule
 
     	updateBatch(jobIds, Constant.ScheduleStatus.NORMAL.getValue());
     }
-    
+
+	@Override
+	public List<ScheduleJobEntity> queryWrapper(Wrapper<ScheduleJobEntity> wrapper) {
+		if (Objects.isNull(wrapper)){
+			throw new RRException("参数不能为空");
+		}
+		List<ScheduleJobEntity> result = baseMapper.selectList(wrapper);
+		return result;
+	}
 }
