@@ -261,7 +261,7 @@ public interface PssPriceEwarnDao extends BaseMapper<PssPriceEwarnEntity> {
             "                       AND t.ewarn_date BETWEEN #{p.smaDate} AND #{p.emaDate}\n" +
             "                        GROUP BY t.comm_id\n" +
             "                        ORDER BY ABS(t.pri_range) DESC\n" +
-            "                       ")
+            "                   limit 6    ")
     List< Map<String, Object>> getDeclineThree(@Param("p") Map<String, Object> mp);
 
     /**
