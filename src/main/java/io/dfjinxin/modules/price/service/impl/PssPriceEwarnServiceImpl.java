@@ -293,7 +293,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 //获取2020-11-20到昨天的 该commId发生的高级,中级 和低级预警
                 List<Map<String, Object>> lisss1 = baseMapper.getProvinceByCommId(params);
                 params.put("type", 1);
-//                en1.put("itemProvinceList",viewMap(params));
+                en1.put("itemProvinceList",viewMap(params));
                 if (lisss1.size() > 0) {
                     for (Map<String, Object> en2 : lisss1) {
                         if (en2.get("ewarn_level").equals(71)) {
@@ -379,7 +379,7 @@ public class PssPriceEwarnServiceImpl extends ServiceImpl<PssPriceEwarnDao, PssP
                 params.put("commId", commId);
                 List<Map<String, Object>> lisss2 = baseMapper.getProvinceByCommId(params);
                 params.put("type", 0);
-//                ep1.put("itemProvinceList",viewMap(params));
+                ep1.put("itemProvinceList",viewMap(params));
                 if (lisss2.size() > 0) {
                     for (Map<String, Object> ep2 : lisss2) {
                         if (ep2.get("ewarn_level").equals(71)) {
