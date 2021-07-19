@@ -14,6 +14,7 @@ import io.dfjinxin.modules.price.dao.PssPriceEwarnDao;
 import io.dfjinxin.modules.price.entity.PssCommTotalEntity;
 import io.dfjinxin.modules.price.entity.WpCommPriEntity;
 import io.dfjinxin.modules.price.service.PssCommTotalService;
+import java.text.ParseException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -99,8 +100,16 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
     public Map<String, Object> queryLineChartByCondition(Map<String, Object> params) {
         Map<String, Object> resMap = new HashMap<>();
         if ((params.get("indexType").toString()).equals("价格")) {
-            params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -7)));
-            params.put("endDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -1)));
+            //获取最近有记录的时间
+            String endDateStr = baseMapper.getDayBycommIdfromWpBaseIndexVal(params);
+            Date endDate = new Date();
+            try {
+                 endDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDateStr);
+            } catch (ParseException e) {
+            }
+
+            params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(endDate), -7)));
+            params.put("endDate", new SimpleDateFormat("yyyy-MM-dd").format(endDate));
             List<Map<String, Object>> zhouThend = baseMapper.getJiaGeCommList(params);
             List<Map<String, Object>> zhouProThend = pssPriceEwarnDao.getThendCommList(params);
             if (zhouThend.size() > 0) {
@@ -117,7 +126,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                 }
             }
             resMap.put("zhouProThend", zhouProThend);
-            params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -30)));
+            params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(endDate), -30)));
             List<Map<String, Object>> yueThend = baseMapper.getJiaGeCommList(params);
             List<Map<String, Object>> yueProThend = pssPriceEwarnDao.getThendCommList(params);
             if (yueThend.size() > 0) {
@@ -134,7 +143,7 @@ public class WpCommIndexValServiceImpl extends ServiceImpl<WpBaseIndexValDao, Wp
                 }
             }
             resMap.put("yueProThend", yueProThend);
-            params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(new Date()), -365)));
+            params.put("startDate", new SimpleDateFormat("yyyy-MM-dd").format(DateUtils.addDateDays(DateTime.getBeginOf(endDate), -365)));
             List<Map<String, Object>> nianThend = baseMapper.getJiaGeCommList(params);
             List<Map<String, Object>> nianProThend = pssPriceEwarnDao.getThendCommList(params);
             if (nianThend.size() > 0) {

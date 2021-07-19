@@ -260,4 +260,13 @@ public interface WpBaseIndexValDao extends BaseMapper<WpBaseIndexValEntity> {
             " GROUP BY t.date\n" +
             "ORDER BY t.date")
     List<Map<String, Object>>  getDayFore( @Param("p") Map map);
+
+
+    @Select("SELECT t.date FROM wp_base_index_val t  "
+            + "   LEFT JOIN pss_comm_total pss ON pss.comm_id = t.comm_id  "
+            + "            WHERE  t.index_type =  '价格' "
+            + "            AND pss.parent_code = #{p.commId} "
+            + "            GROUP BY t.comm_id  "
+            + "            order BY t.date desc limit 1 ")
+    String getDayBycommIdfromWpBaseIndexVal(@Param("p") Map map);
 }
